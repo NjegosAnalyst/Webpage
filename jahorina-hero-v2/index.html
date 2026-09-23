@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="sr-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jahorina Hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     Jahorina Hero v2 — samostalna verzija (bez DC/Tweaks omotača)
+     Sve klase imaju prefiks "jh-" da se ne sudaraju sa WP temom.
+     Akcenat se mijenja preko --jh-accent.
+     ============================================================ */
+  html,body{margin:0;padding:0}
+
+  .jh-hero{
+    --jh-accent:#00B9F2;
+    --jh-bg:#0a1120;
+    position:relative;width:100%;min-height:100vh;
+    padding:clamp(14px,1.6vw,22px);
+    background:var(--jh-bg);
+    font-family:'Barlow',sans-serif;
+  }
+  .jh-hero,.jh-hero *,.jh-hero *::before,.jh-hero *::after{box-sizing:border-box}
+
+  @keyframes jhRiseIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+  @keyframes jhFadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes jhCardIn{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
+
+  .jh-frame{
+    position:relative;width:100%;
+    height:calc(100vh - clamp(28px,3.2vw,44px));min-height:660px;
+    border-radius:26px;overflow:hidden;background:var(--jh-bg);
+  }
+
+  /* ---------- pozadina + scrim slojevi ---------- */
+  .jh-photo{position:absolute;inset:0;background:url('assets/jahorina-zalazak.jpg') center 50%/cover no-repeat}
+
+  /* ---------- skijaš (isječak bez pozadine) ---------- */
+  .jh-skier{
+    position:absolute;z-index:4;pointer-events:none;
+    right:clamp(24px,7vw,130px);bottom:0;
+    height:80%;width:auto;
+    /* donjih 18% PNG-a je već providno — noge se utapaju u more oblaka */
+    animation:jhRiseIn 1s cubic-bezier(.2,.7,.2,1) .35s both;
+  }
+  .jh-skier img{
+    display:block;height:100%;width:auto;
+    /* blago spušten ton da dnevna fotka legne na zalazak */
+    filter:brightness(.92) saturate(.95) drop-shadow(0 30px 50px rgba(6,11,22,.45));
+  }
+  .jh-scrim{position:absolute;inset:0;pointer-events:none}
+  .jh-scrim--left{background:linear-gradient(100deg,rgba(6,11,22,.72) 0%,rgba(6,11,22,.40) 34%,rgba(6,11,22,0) 62%)}
+  .jh-scrim--bottom{background:linear-gradient(0deg,rgba(6,11,22,.70) 0%,rgba(6,11,22,0) 42%)}
+  .jh-scrim--top{background:linear-gradient(180deg,rgba(6,11,22,.35) 0%,rgba(6,11,22,0) 22%)}
+
+  /* ---------- header ---------- */
+  .jh-header{
+    position:absolute;top:0;left:0;right:0;z-index:6;
+    display:flex;align-items:center;justify-content:space-between;gap:28px;
+    padding:clamp(22px,2.4vw,34px) clamp(24px,3vw,46px);
+    animation:jhFadeIn 1s ease both;
+  }
+  .jh-logo{display:block;flex-shrink:0}
+  .jh-logo img{height:46px;width:auto;display:block}
+
+  .jh-nav{display:flex;align-items:center;gap:clamp(20px,2.4vw,40px)}
+  .jh-nav__link{
+    display:inline-flex;align-items:center;gap:6px;
+    font-family:inherit;font-size:16px;font-weight:500;color:rgba(255,255,255,.9);
+    text-decoration:none;transition:color .2s;cursor:pointer;
+    background:none;border:0;padding:0;
+  }
+  .jh-nav__link:hover{color:#fff}
+  .jh-nav__chevron{transition:transform .2s}
+
+  .jh-dropdown{position:relative}
+  .jh-dropdown__menu{
+    position:absolute;top:calc(100% + 16px);left:0;min-width:200px;z-index:20;
+    background:rgba(14,20,34,.92);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,.16);border-radius:14px;
+    box-shadow:0 24px 48px -16px rgba(0,0,0,.6);overflow:hidden;
+    display:none;
+  }
+  .jh-dropdown.is-open .jh-dropdown__menu{display:block;animation:jhCardIn .25s cubic-bezier(.2,.7,.2,1) both}
+  .jh-dropdown.is-open .jh-nav__chevron{transform:rotate(180deg)}
+  .jh-dropdown__menu a{
+    display:block;padding:13px 20px;
+    font-size:14.5px;font-weight:500;color:rgba(255,255,255,.88);text-decoration:none;
+    border-bottom:1px solid rgba(255,255,255,.08);transition:background .15s;
+  }
+  .jh-dropdown__menu a:last-child{border-bottom:0}
+  .jh-dropdown__menu a:hover{background:rgba(255,255,255,.08);color:#fff}
+
+  .jh-actions{display:flex;align-items:center;gap:12px}
+  .jh-btn{
+    display:inline-flex;align-items:center;gap:9px;
+    font-family:'Barlow',sans-serif;font-size:15px;letter-spacing:.3px;
+    text-decoration:none;border-radius:40px;white-space:nowrap;
+  }
+  .jh-btn--ghost{
+    padding:12px 24px;font-weight:600;color:#fff;
+    background:rgba(255,255,255,.10);border:1.5px solid rgba(255,255,255,.5);
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+    transition:background .2s,border-color .2s;
+  }
+  .jh-btn--ghost:hover{background:rgba(255,255,255,.2);border-color:#fff}
+  .jh-btn--solid{
+    padding:13px 26px;font-weight:700;color:#0d1524;background:#fff;
+    transition:transform .2s,box-shadow .2s;
+  }
+  .jh-btn--solid:hover{transform:translateY(-2px);box-shadow:0 12px 26px -10px rgba(0,0,0,.6)}
+  .jh-btn--solid span{font-size:16px}
+
+  /* ---------- naslov ---------- */
+  .jh-headline{position:absolute;left:clamp(24px,3vw,52px);top:clamp(150px,25%,240px);z-index:5}
+  .jh-kicker{
+    font-family:'Archivo',sans-serif;font-size:11px;font-weight:600;letter-spacing:5px;
+    color:rgba(255,255,255,.75);text-transform:uppercase;margin-bottom:20px;
+    animation:jhRiseIn .8s cubic-bezier(.2,.7,.2,1) .1s both;
+  }
+  .jh-title{
+    margin:0;font-family:'Archivo',sans-serif;font-weight:800;
+    font-size:clamp(52px,8.4vw,132px);line-height:.94;letter-spacing:-1px;
+    color:#fff;text-shadow:0 6px 40px rgba(0,0,0,.4);
+  }
+  .jh-title span{display:block;animation:jhRiseIn .85s cubic-bezier(.2,.7,.2,1) both}
+  .jh-title span:nth-child(1){animation-delay:.2s}
+  .jh-title span:nth-child(2){animation-delay:.32s}
+  .jh-title span:nth-child(3){animation-delay:.44s;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.92)}
+
+  /* ---------- dole lijevo: opis + ocjena ---------- */
+  .jh-intro{
+    position:absolute;left:clamp(24px,3vw,52px);bottom:clamp(26px,3.4vw,46px);z-index:5;
+    max-width:400px;display:flex;align-items:flex-end;gap:26px;
+    animation:jhFadeIn 1.1s ease .6s both;
+  }
+  .jh-intro p{margin:0;font-size:clamp(14px,1.05vw,16px);line-height:1.55;color:rgba(255,255,255,.82)}
+  .jh-rating{display:flex;align-items:center;gap:8px;white-space:nowrap}
+  .jh-rating__star{color:#f5b638;font-size:20px;line-height:1}
+  .jh-rating__value{font-family:'Archivo',sans-serif;font-weight:700;font-size:22px;color:#fff}
+
+  /* ---------- dole desno: spojena traka brzih linkova ---------- */
+  .jh-quick{
+    position:absolute;right:clamp(24px,3vw,52px);bottom:clamp(26px,3.4vw,46px);z-index:6;
+    display:flex;border-radius:18px;overflow:hidden;
+    background:rgba(255,255,255,.10);border:1.5px solid rgba(255,255,255,.4);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    box-shadow:0 20px 40px -18px rgba(0,0,0,.55);
+    animation:jhCardIn .9s cubic-bezier(.2,.7,.2,1) .55s both;
+  }
+  .jh-quick__item{
+    position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+    width:clamp(70px,6vw,84px);height:clamp(74px,6.2vw,88px);
+    text-decoration:none;background:transparent;
+    border-right:1px solid rgba(255,255,255,.22);transition:background .2s,filter .2s;
+  }
+  .jh-quick__item:last-child{border-right:0}
+  .jh-quick__item:hover{background:rgba(255,255,255,.14)}
+  .jh-quick__item--accent,.jh-quick__item--accent:hover{background:var(--jh-accent)}
+  .jh-quick__item--accent:hover{filter:brightness(1.1)}
+  .jh-quick__label{font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;color:#fff}
+  .jh-quick__label--word{font-size:9.5px;letter-spacing:.3px}
+  .jh-quick__live{
+    position:absolute;top:14px;right:16px;width:7px;height:7px;border-radius:50%;
+    background:#ff4d4d;box-shadow:0 0 0 3px rgba(255,77,77,.25);
+  }
+
+  /* ---------- mobilni meni (hamburger) ---------- */
+  .jh-burger{
+    display:none;width:44px;height:44px;border-radius:50%;
+    background:rgba(255,255,255,.10);border:1.5px solid rgba(255,255,255,.5);
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+    align-items:center;justify-content:center;cursor:pointer;padding:0;
+  }
+
+  /* ============================================================
+     Responsive — dizajn je rađen za 1440×820; ispod su prilagodbe
+     da se na manjim ekranima ništa ne preklapa.
+     ============================================================ */
+  @media (max-width:1100px){
+    .jh-header{flex-wrap:wrap}
+    .jh-burger{display:inline-flex}
+    .jh-nav{
+      display:none;order:3;width:100%;flex-direction:column;align-items:stretch;gap:0;
+      background:rgba(14,20,34,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+      border:1px solid rgba(255,255,255,.16);border-radius:14px;overflow:hidden;
+    }
+    .jh-header.is-menu-open .jh-nav{display:flex;animation:jhCardIn .25s cubic-bezier(.2,.7,.2,1) both}
+    .jh-nav > a,.jh-dropdown > .jh-nav__link{width:100%;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .jh-nav > a:last-child{border-bottom:0}
+    .jh-dropdown__menu{position:static;min-width:0;border:0;border-radius:0;box-shadow:none;background:rgba(255,255,255,.04)}
+    .jh-dropdown__menu a{padding-left:34px}
+  }
+  @media (max-width:760px){
+    .jh-frame{height:auto;min-height:calc(100svh - 28px);display:flex;flex-direction:column}
+    .jh-header{gap:12px;padding:20px}
+    .jh-actions{gap:8px}
+    .jh-logo img{height:34px}
+    .jh-btn--ghost{display:none}
+    .jh-btn--solid{padding:11px 20px;font-size:14px}
+    .jh-headline,.jh-intro,.jh-quick{position:relative;left:auto;right:auto;top:auto;bottom:auto}
+    .jh-skier{right:-6%;top:84px;bottom:auto;height:auto;width:96%}
+    .jh-skier img{width:100%;height:auto}
+    .jh-headline{margin-top:auto;padding:150px 24px 0}
+    .jh-intro{padding:24px 24px 0;max-width:none}
+    .jh-quick{margin:24px;align-self:stretch}
+    .jh-quick__item{flex:1;width:auto}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .jh-hero *{animation:none !important;transition:none !important}
+  }
+</style>
+</head>
+<body>
+
+<section class="jh-hero" aria-label="Olimpijski centar Jahorina">
+  <div class="jh-frame">
+
+    <div class="jh-photo" role="img" aria-label="Zalazak sunca iznad mora oblaka na Jahorini"></div>
+    <div class="jh-scrim jh-scrim--left"></div>
+    <div class="jh-scrim jh-scrim--bottom"></div>
+    <div class="jh-scrim jh-scrim--top"></div>
+
+    <picture class="jh-skier">
+      <source srcset="assets/skijas.webp" type="image/webp">
+      <img src="assets/skijas.png" alt="" width="1135" height="947">
+    </picture>
+
+    <!-- ===== HEADER ===== -->
+    <header class="jh-header">
+      <a href="#" class="jh-logo"><img src="assets/logo-white-lockup.png" alt="Jahorina — Olimpijski centar"></a>
+
+      <nav class="jh-nav" aria-label="Glavni meni">
+        <div class="jh-dropdown">
+          <button type="button" class="jh-nav__link" aria-expanded="false" aria-haspopup="true">
+            O nama
+            <svg class="jh-nav__chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9 L12 15 L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="jh-dropdown__menu">
+            <a href="#">Istorija centra</a>
+            <a href="#">Naš tim</a>
+            <a href="#">Galerija</a>
+            <a href="#">Nagrade</a>
+            <a href="#">Kontakt info</a>
+          </div>
+        </div>
+        <a href="#" class="jh-nav__link">Cjenovnik</a>
+        <a href="#" class="jh-nav__link">Vijesti</a>
+        <a href="#" class="jh-nav__link">Kontakt</a>
+      </nav>
+
+      <div class="jh-actions">
+        <a href="#" class="jh-btn jh-btn--ghost">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M6.5 2.5 L2 4.5 V15.5 L6.5 13.5 L11.5 15.5 L16 13.5 V2.5 L11.5 4.5 Z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/><line x1="6.5" y1="2.5" x2="6.5" y2="13.5" stroke="#fff" stroke-width="1.4"/><line x1="11.5" y1="4.5" x2="11.5" y2="15.5" stroke="#fff" stroke-width="1.4"/></svg>
+          Ski mapa
+        </a>
+        <a href="#" class="jh-btn jh-btn--solid">Web shop <span aria-hidden="true">→</span></a>
+        <button type="button" class="jh-burger" aria-label="Otvori meni" aria-expanded="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7 H20 M4 12 H20 M4 17 H20" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== NASLOV ===== -->
+    <div class="jh-headline">
+      <div class="jh-kicker">Olimpijski centar Jahorina</div>
+      <h1 class="jh-title">
+        <span>Otkrij</span>
+        <span>čaroliju</span>
+        <span>Jahorine</span>
+      </h1>
+    </div>
+
+    <!-- ===== DOLE LIJEVO: opis + ocjena ===== -->
+    <div class="jh-intro">
+      <p>Olimpijske staze, noćno skijanje i vrhunsko gostoprimstvo — doživi zimu na najpoznatijoj planini regije.</p>
+      <div class="jh-rating" aria-label="Ocjena 4.8">
+        <span class="jh-rating__star" aria-hidden="true">★</span>
+        <span class="jh-rating__value">4.8</span>
+      </div>
+    </div>
+
+    <!-- ===== DOLE DESNO: brzi linkovi ===== -->
+    <div class="jh-quick">
+      <a href="#" class="jh-quick__item" aria-label="Žičare: 0 od 18 radi">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 16 H21 M6 16 V10 L12 5 L18 10 V16" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="5" r="1.4" fill="#fff"/></svg>
+        <span class="jh-quick__label">0/18</span>
+      </a>
+      <a href="#" class="jh-quick__item" aria-label="Staze: 0 od 5 otvoreno">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20 L18 6 M18 6 H12 M18 6 V12" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="jh-quick__label">0/5</span>
+      </a>
+      <a href="#" class="jh-quick__item">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><line x1="7" y1="5" x2="7" y2="19" stroke="#fff" stroke-width="1.5"/><line x1="12" y1="5" x2="12" y2="19" stroke="#fff" stroke-width="1.5"/><line x1="17" y1="5" x2="17" y2="19" stroke="#fff" stroke-width="1.5"/></svg>
+        <span class="jh-quick__label jh-quick__label--word">ŠKOLA</span>
+      </a>
+      <a href="#" class="jh-quick__item jh-quick__item--accent" aria-label="Virtuelna tura 360°">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12 a8 8 0 0 1 14-5.3 M20 12 a8 8 0 0 1-14 5.3" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/><path d="M18 5 v3 h-3 M6 19 v-3 h3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="jh-quick__label">360°</span>
+      </a>
+      <a href="#" class="jh-quick__item" aria-label="Kamere uživo">
+        <span class="jh-quick__live" aria-hidden="true"></span>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="6" width="14" height="11" rx="1.6" stroke="#fff" stroke-width="1.5"/><path d="M17 9.5 L21 7 V16 L17 13.5" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <span class="jh-quick__label jh-quick__label--word">UŽIVO</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var hero = document.querySelector('.jh-hero');
+  if (!hero) return;
+
+  // "O nama" dropdown — otvara se na klik, zatvara klikom van ili Esc
+  var dd = hero.querySelector('.jh-dropdown');
+  var ddBtn = dd.querySelector('button');
+  function setDropdown(open) {
+    dd.classList.toggle('is-open', open);
+    ddBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  ddBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    setDropdown(!dd.classList.contains('is-open'));
+  });
+
+  // Hamburger (samo na užim ekranima)
+  var header = hero.querySelector('.jh-header');
+  var burger = hero.querySelector('.jh-burger');
+  burger.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var open = !header.classList.contains('is-menu-open');
+    header.classList.toggle('is-menu-open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!dd.contains(e.target)) setDropdown(false);
+    if (!header.contains(e.target)) {
+      header.classList.remove('is-menu-open');
+      burger.setAttribute('aria-expanded', 'false');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      setDropdown(false);
+      header.classList.remove('is-menu-open');
+      burger.setAttribute('aria-expanded', 'false');
+    }
+  });
+})();
+</script>
+</body>
+</html>
