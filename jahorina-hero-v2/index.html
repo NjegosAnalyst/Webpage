@@ -21,12 +21,12 @@
     /* tamni neumorphism — mekane dvostruke sjene (tamna dole-desno, svjetlija gore-lijevo) */
     --nm-surface:rgba(20,30,49,.82);
     --nm-surface-2:#172238;
-    --nm-dark:rgba(0,0,0,.62);
-    --nm-light:rgba(78,104,150,.30);
-    --nm-raised:7px 7px 16px var(--nm-dark),-6px -6px 14px var(--nm-light),inset 1px 1px 0 rgba(255,255,255,.07);
-    --nm-raised-sm:4px 4px 10px var(--nm-dark),-3px -3px 9px var(--nm-light),inset 1px 1px 0 rgba(255,255,255,.07);
-    --nm-inset:inset 5px 5px 12px rgba(0,0,0,.62),inset -4px -4px 10px rgba(78,104,150,.24);
-    --nm-inset-sm:inset 3px 3px 7px rgba(0,0,0,.6),inset -3px -3px 7px rgba(78,104,150,.22);
+    --nm-dark:rgba(0,0,0,.42);
+    --nm-light:rgba(78,104,150,.16);
+    --nm-raised:4px 4px 10px var(--nm-dark),-3px -3px 9px var(--nm-light),inset 1px 1px 0 rgba(255,255,255,.05);
+    --nm-raised-sm:3px 3px 7px var(--nm-dark),-2px -2px 6px var(--nm-light),inset 1px 1px 0 rgba(255,255,255,.05);
+    --nm-inset:inset 3px 3px 8px rgba(0,0,0,.42),inset -3px -3px 7px rgba(78,104,150,.14);
+    --nm-inset-sm:inset 2px 2px 5px rgba(0,0,0,.4),inset -2px -2px 5px rgba(78,104,150,.13);
     position:relative;width:100%;min-height:100vh;
     padding:clamp(14px,1.6vw,22px);
     background:#0c1424;
@@ -42,7 +42,7 @@
     position:relative;width:100%;
     height:calc(100vh - clamp(28px,3.2vw,44px));min-height:660px;
     border-radius:26px;overflow:hidden;background:var(--jh-bg);
-    box-shadow:16px 16px 36px rgba(0,0,0,.7),-12px -12px 30px rgba(46,64,98,.38);
+    box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22);
   }
 
   /* ---------- pozadina + scrim slojevi ---------- */
@@ -131,7 +131,7 @@
     box-shadow:inset -2px -2px 4px rgba(13,21,36,.08),inset 2px 2px 3px #fff,0 12px 28px -12px rgba(0,0,0,.65);
     transition:transform .2s,box-shadow .2s;
   }
-  .jh-btn--solid{box-shadow:inset -2px -2px 4px rgba(13,21,36,.1),inset 2px 2px 3px #fff,6px 6px 16px rgba(0,0,0,.6),-5px -5px 14px rgba(78,104,150,.3)}
+  .jh-btn--solid{box-shadow:inset -2px -2px 4px rgba(13,21,36,.1),inset 2px 2px 3px #fff,4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16)}
   .jh-btn--solid:hover{transform:translateY(-2px)}
   .jh-btn--solid:active{transform:none;box-shadow:inset 3px 3px 7px rgba(13,21,36,.25),inset -3px -3px 6px #fff}
   .jh-btn--solid span{font-size:16px}
@@ -193,7 +193,7 @@
   .jh-quick__item:active{transform:none;box-shadow:var(--nm-inset-sm)}
   .jh-quick__item--accent{
     background:linear-gradient(145deg,#2CCBF8,#00A6DB);
-    box-shadow:4px 4px 10px rgba(0,0,0,.55),-3px -3px 9px rgba(78,104,150,.3),inset 1px 1px 0 rgba(255,255,255,.4),0 0 26px -4px rgba(0,185,242,.6);
+    box-shadow:3px 3px 7px rgba(0,0,0,.4),-2px -2px 6px rgba(78,104,150,.16),inset 1px 1px 0 rgba(255,255,255,.35),0 0 20px -6px rgba(0,185,242,.5);
   }
   .jh-quick__item--accent:hover{filter:brightness(1.08)}
   .jh-quick__item--accent:active{box-shadow:inset 3px 3px 8px rgba(0,80,120,.55),inset -2px -2px 6px rgba(255,255,255,.25)}
