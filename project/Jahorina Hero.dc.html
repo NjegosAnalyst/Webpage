@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  @keyframes riseIn{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes cueBob{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(7px);opacity:1}}
+</style>
+</helmet>
+
+<div style="position:relative;width:100%;height:100vh;min-height:720px;overflow:hidden;font-family:'Barlow',sans-serif;--accent: {{ accent }};background:#0d1830">
+
+  <!-- ===== BACKGROUND ===== -->
+  <div style="position:absolute;inset:0;background-image:url('assets/jahorina-hero.jpg');background-size:cover;background-position:center 38%"></div>
+  <!-- ljetni preliv (aktivira se prekidačem) -->
+  <div style="position:absolute;inset:0;opacity:{{ summerOpacity }};transition:opacity .7s ease;mix-blend-mode:soft-light;background:radial-gradient(120% 85% at 30% 32%, rgba(255,224,128,.55), rgba(255,224,128,0) 55%), linear-gradient(180deg,#2f6a42 0%, #6ba05e 55%, #c7dc98 100%)"></div>
+  <!-- scrim za čitljivost teksta -->
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(6,12,26,.55) 0%, rgba(6,12,26,.20) 30%, rgba(6,12,26,.15) 55%, rgba(6,12,26,.55) 100%)"></div>
+
+  <!-- ===== HEADER ===== -->
+  <header style="position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:32px;padding:26px clamp(28px,4vw,64px);animation:fadeIn 1s ease both">
+    <!-- logo -->
+    <img src="assets/logo-white-lockup.png" alt="Jahorina — Olimpijski centar" style="height:54px;width:auto;display:block">
+    <!-- nav -->
+    <nav style="display:flex;align-items:center;gap:clamp(18px,2.2vw,38px)">
+      <a href="#" style="font-size:16px;font-weight:500;color:rgba(255,255,255,.92);text-decoration:none;padding-bottom:4px;border-bottom:2px solid transparent;transition:border-color .2s,color .2s" style-hover="border-bottom:2px solid var(--accent, #00B9F2);color:#fff">O nama</a>
+      <a href="#" style="font-size:16px;font-weight:500;color:rgba(255,255,255,.92);text-decoration:none;padding-bottom:4px;border-bottom:2px solid transparent;transition:border-color .2s,color .2s" style-hover="border-bottom:2px solid var(--accent, #00B9F2);color:#fff">Cjenovnik</a>
+      <a href="#" style="font-size:16px;font-weight:500;color:rgba(255,255,255,.92);text-decoration:none;padding-bottom:4px;border-bottom:2px solid transparent;transition:border-color .2s,color .2s" style-hover="border-bottom:2px solid var(--accent, #00B9F2);color:#fff">Vijesti</a>
+      <a href="#" style="font-size:16px;font-weight:500;color:rgba(255,255,255,.92);text-decoration:none;padding-bottom:4px;border-bottom:2px solid transparent;transition:border-color .2s,color .2s" style-hover="border-bottom:2px solid var(--accent, #00B9F2);color:#fff">Foto galerija</a>
+      <a href="#" style="font-size:16px;font-weight:500;color:rgba(255,255,255,.92);text-decoration:none;padding-bottom:4px;border-bottom:2px solid transparent;transition:border-color .2s,color .2s" style-hover="border-bottom:2px solid var(--accent, #00B9F2);color:#fff">Video galerija</a>
+      <div style="width:1px;height:22px;background:rgba(255,255,255,.28)"></div>
+      <button style="display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:4px" aria-label="Pretraga">
+        <svg width="19" height="19" viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="6" stroke="#fff" stroke-width="2"></circle><line x1="13.2" y1="13.2" x2="18" y2="18" stroke="#fff" stroke-width="2" stroke-linecap="round"></line></svg>
+      </button>
+      <a href="#" style="font-size:15px;font-weight:700;letter-spacing:1px;color:#fff;text-decoration:none">EN</a>
+    </nav>
+  </header>
+
+  <!-- ===== CENTAR ===== -->
+  <div style="position:relative;z-index:4;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 24px;margin-top:clamp(20px,4vh,60px)">
+
+    <!-- LJETO / ZIMA toggle -->
+    <div style="display:flex;align-items:center;gap:18px;margin-bottom:clamp(24px,4vh,44px);animation:riseIn .8s cubic-bezier(.2,.7,.2,1) both;animation-delay:.1s">
+      <span style="font-family:'Archivo',sans-serif;font-weight:700;font-size:17px;letter-spacing:3px;color:#fff;opacity:{{ ljetoOpacity }};transition:opacity .3s">LJETO</span>
+      <button onClick="{{ toggleSeason }}" aria-label="Promijeni sezonu" style="position:relative;width:66px;height:34px;border-radius:34px;border:none;cursor:pointer;background:var(--accent, #00B9F2);box-shadow:inset 0 1px 4px rgba(0,0,0,.25);padding:0">
+        <span style="position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:transform .32s cubic-bezier(.2,.7,.2,1);transform:translateX({{ knobX }})"></span>
+      </button>
+      <span style="font-family:'Archivo',sans-serif;font-weight:700;font-size:17px;letter-spacing:3px;color:#fff;opacity:{{ zimaOpacity }};transition:opacity .3s">ZIMA</span>
+    </div>
+
+    <!-- kicker -->
+    <div style="font-family:'Archivo',sans-serif;font-weight:600;font-size:clamp(11px,1vw,13px);letter-spacing:5px;color:rgba(255,255,255,.82);margin-bottom:clamp(8px,1.5vh,18px);text-transform:uppercase;animation:riseIn .8s cubic-bezier(.2,.7,.2,1) both;animation-delay:.2s">Olimpijski centar · 1916 m · Bosna i Hercegovina</div>
+
+    <!-- naslov -->
+    <h1 style="margin:0;font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(72px,13.5vw,240px);line-height:.92;letter-spacing:2px;color:#fff;text-shadow:0 6px 34px rgba(0,0,0,.35);animation:riseIn .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:.3s">JAHORINA</h1>
+
+    <!-- podnaslov -->
+    <p style="margin:clamp(10px,2vh,22px) 0 0;font-family:'Barlow',sans-serif;font-weight:300;font-size:clamp(22px,3vw,40px);color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.35);animation:riseIn .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:.42s">Hospitality is part of skiing</p>
+
+    <!-- dugmad -->
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:16px;margin-top:clamp(28px,5vh,52px);animation:riseIn .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:.54s">
+      <a href="#" style="display:inline-flex;align-items:center;justify-content:center;padding:17px 34px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;color:#fff;background:rgba(255,255,255,.10);border:1.5px solid rgba(255,255,255,.55);border-radius:4px;backdrop-filter:blur(6px);transition:background .2s,border-color .2s" style-hover="background:rgba(255,255,255,.22);border-color:#fff">Ski mapa</a>
+      <a href="#" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:17px 40px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;color:#fff;background:var(--accent, #00B9F2);border:1.5px solid var(--accent, #00B9F2);border-radius:4px;box-shadow:0 10px 28px -8px rgba(0,185,242,.65);transition:transform .2s,box-shadow .2s" style-hover="transform:translateY(-2px);box-shadow:0 16px 34px -8px rgba(0,185,242,.75)">Web shop <span style="font-size:17px">&#8594;</span></a>
+      <a href="#" style="display:inline-flex;align-items:center;justify-content:center;padding:17px 34px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;color:#fff;background:rgba(255,255,255,.10);border:1.5px solid rgba(255,255,255,.55);border-radius:4px;backdrop-filter:blur(6px);transition:background .2s,border-color .2s" style-hover="background:rgba(255,255,255,.22);border-color:#fff">Kalendar</a>
+    </div>
+  </div>
+
+  <!-- scroll cue -->
+  <sc-if value="{{ showScrollCue }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:4;display:flex;flex-direction:column;align-items:center;gap:8px">
+      <span style="font-family:'Archivo',sans-serif;font-size:10px;font-weight:600;letter-spacing:3px;color:rgba(255,255,255,.7)">SCROLL</span>
+      <svg width="16" height="22" viewBox="0 0 16 22" fill="none" style="animation:cueBob 1.8s ease-in-out infinite"><path d="M8 2 V16 M3 11 L8 16 L13 11" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 1440, &quot;height&quot;: 820 },
+  &quot;accentColor&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#00B9F2&quot;, &quot;tsType&quot;: &quot;string&quot; },
+  &quot;season&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;zima&quot;, &quot;ljeto&quot;], &quot;default&quot;: &quot;zima&quot;, &quot;tsType&quot;: &quot;string&quot; },
+  &quot;showScrollCue&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot; }
+}">
+class Component extends DCLogic {
+  state = { season: undefined };
+
+  currentSeason() {
+    return this.state.season ?? (this.props.season ?? 'zima');
+  }
+
+  renderVals() {
+    const isWinter = this.currentSeason() === 'zima';
+    return {
+      accent: this.props.accentColor ?? '#00B9F2',
+      showScrollCue: this.props.showScrollCue ?? true,
+      summerOpacity: isWinter ? 0 : 1,
+      knobX: isWinter ? '32px' : '0px',
+      ljetoOpacity: isWinter ? 0.5 : 1,
+      zimaOpacity: isWinter ? 1 : 0.5,
+      toggleSeason: () => this.setState({ season: isWinter ? 'ljeto' : 'zima' }),
+    };
+  }
+}
+</script>
+</body>
+</html>

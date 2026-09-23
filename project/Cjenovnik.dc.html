@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Barlow:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#0a1120}
+  a{color:#00B9F2;text-decoration:none}
+  a:hover{color:#fff}
+  @keyframes riseIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes lineGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+</style>
+</helmet>
+
+<div style="width:100%;min-height:100vh;background:#0a1120;font-family:'Barlow',sans-serif;padding:clamp(48px,6vw,96px) clamp(20px,4vw,64px)">
+  <div style="max-width:1180px;margin:0 auto">
+
+    <!-- header -->
+    <div style="animation:riseIn .8s cubic-bezier(.2,.7,.2,1) both">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+        <span style="width:40px;height:1px;background:#00B9F2;transform-origin:left;animation:lineGrow .9s cubic-bezier(.2,.7,.2,1) .2s both"></span>
+        <span style="font-family:'Archivo',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:6px;color:#00B9F2;text-transform:uppercase">SEZONA 2026/27</span>
+      </div>
+      <h1 style="margin:0 0 20px;font-family:'Archivo',sans-serif;font-weight:600;font-size:clamp(32px,3.6vw,54px);line-height:1.04;letter-spacing:-1.3px;color:#fff">Cjenovnik ski karata</h1>
+      <p style="margin:0 0 44px;font-size:clamp(15px,1.05vw,17px);line-height:1.75;font-weight:300;color:rgba(255,255,255,.55);max-width:520px;text-wrap:pretty">Izaberite tip karte i valutu — cijene se prikazuju u istoj tabeli. Zvanični PDF cjenovnici dostupni su za preuzimanje.</p>
+    </div>
+
+    <!-- controls -->
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:8px;animation:riseIn .8s cubic-bezier(.2,.7,.2,1) .1s both">
+
+      <div style="display:flex;flex-wrap:wrap;gap:32px">
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <span style="font-family:'Archivo',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:2.6px;text-transform:uppercase;color:rgba(255,255,255,.38)">Tip karte</span>
+          <div style="display:flex;gap:0;border:1px solid rgba(255,255,255,.14);border-radius:3px;overflow:hidden">
+            <button onClick="{{ pickIndividualni }}" style="{{ tabIndividualni }}">Individualni</button>
+            <button onClick="{{ pickPorodicni }}" style="{{ tabPorodicni }}">Porodični</button>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <span style="font-family:'Archivo',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:2.6px;text-transform:uppercase;color:rgba(255,255,255,.38)">Valuta</span>
+          <div style="display:flex;gap:0;border:1px solid rgba(255,255,255,.14);border-radius:3px;overflow:hidden">
+            <button onClick="{{ pickKM }}" style="{{ tabKM }}">KM</button>
+            <button onClick="{{ pickEUR }}" style="{{ tabEUR }}">EUR</button>
+          </div>
+        </div>
+      </div>
+
+      <a href="{{ pdfHref }}" style="display:inline-flex;align-items:center;gap:9px;padding:13px 24px;border:1px solid rgba(255,255,255,.22);border-radius:40px;font-size:13.5px;font-weight:400;letter-spacing:.3px;color:rgba(255,255,255,.7);text-decoration:none;transition:border-color .2s,color .2s,background .2s" style-hover="border-color:#fff;color:#fff;background:rgba(255,255,255,.06)">
+        Preuzmi PDF <span style="font-size:14px">↓</span>
+      </a>
+    </div>
+
+    <!-- table -->
+    <div style="margin-top:34px;animation:fadeIn .6s ease both">
+      <div style="display:grid;grid-template-columns:minmax(0,2.1fr) repeat(3,minmax(0,1fr));gap:clamp(10px,1.6vw,28px);padding:0 clamp(4px,1vw,14px) 16px;border-bottom:1px solid rgba(255,255,255,.16)">
+        <span style="font-family:'Archivo',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:rgba(255,255,255,.42)">Vrsta karte</span>
+        <span style="font-family:'Archivo',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:rgba(255,255,255,.42);text-align:right">{{ col1 }}</span>
+        <span style="font-family:'Archivo',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:rgba(255,255,255,.42);text-align:right">{{ col2 }}</span>
+        <span style="font-family:'Archivo',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:rgba(255,255,255,.42);text-align:right">{{ col3 }}</span>
+      </div>
+
+      <sc-for list="{{ rows }}" as="row" hint-placeholder-count="12">
+        <div style="{{ row.rowStyle }}">
+          <span style="font-size:15px;font-weight:300;letter-spacing:.2px;color:rgba(255,255,255,.82);text-wrap:pretty">{{ row.name }}</span>
+          <span style="font-family:'Archivo',sans-serif;font-size:15px;font-weight:500;letter-spacing:-.2px;color:{{ row.c1Color }};text-align:right">{{ row.c1 }}</span>
+          <span style="font-family:'Archivo',sans-serif;font-size:15px;font-weight:500;letter-spacing:-.2px;color:rgba(255,255,255,.9);text-align:right">{{ row.c2 }}</span>
+          <span style="font-family:'Archivo',sans-serif;font-size:15px;font-weight:500;letter-spacing:-.2px;color:rgba(255,255,255,.9);text-align:right">{{ row.c3 }}</span>
+        </div>
+      </sc-for>
+
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:20px clamp(4px,1vw,14px) 0;border-top:1px solid rgba(255,255,255,.16)">
+        <span style="font-size:13px;font-weight:300;color:rgba(255,255,255,.42)">Sve cijene su iskazane u {{ currencyLabel }}.</span>
+        <span style="font-family:'Archivo',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:rgba(255,255,255,.3)">{{ variantLabel }}</span>
+      </div>
+    </div>
+
+    <!-- notes -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:clamp(28px,3.5vw,56px);margin-top:clamp(56px,6vw,88px);padding-top:clamp(32px,3.5vw,48px);border-top:1px solid rgba(255,255,255,.1)">
+
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <span style="font-family:'Archivo',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:2.8px;text-transform:uppercase;color:#00B9F2">Napomene</span>
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:13.5px;line-height:1.7;font-weight:300;color:rgba(255,255,255,.55)">
+          <span>Karta za panoramsku (pojedinačnu) vožnju gondolom može se iskoristiti na Gondoli Poljice i Gondoli Partizan bez skijaške opreme.</span>
+          <span>Doplata za pratnju (bez skijaške opreme) iznosi 5 KM po osobi za ski vrtić.</span>
+          <span>Karta koja važi za skijalište ne može se koristiti u ski vrtiću.</span>
+          <span>Od 4-dnevne karte na više obavezna je fotografija. Karte od 2-dnevne do 7-dnevne koriste se u kontinuitetu.</span>
+          <span>Panoramska vožnja tabačem — 50 KM / 20 minuta.</span>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <span style="font-family:'Archivo',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:2.8px;text-transform:uppercase;color:#00B9F2">Kategorije korisnika</span>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-family:'Archivo',sans-serif;font-size:13px;font-weight:500;color:#fff">Djeca</span>
+            <span style="font-size:13.5px;line-height:1.65;font-weight:300;color:rgba(255,255,255,.55)">6 – 14 godina. Djeca do 6 godina skijaju besplatno u pratnji jedne odrasle osobe, osim u ski vrtiću.</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-family:'Archivo',sans-serif;font-size:13px;font-weight:500;color:#fff">Tinejdžeri</span>
+            <span style="font-size:13.5px;line-height:1.65;font-weight:300;color:rgba(255,255,255,.55)">14 – 19 godina.</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-family:'Archivo',sans-serif;font-size:13px;font-weight:500;color:#fff">Odrasli</span>
+            <span style="font-size:13.5px;line-height:1.65;font-weight:300;color:rgba(255,255,255,.55)">14 – 65 godina.</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-family:'Archivo',sans-serif;font-size:13px;font-weight:500;color:#fff">Seniori</span>
+            <span style="font-size:13.5px;line-height:1.65;font-weight:300;color:rgba(255,255,255,.55)">65 godina i više.</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <span style="font-family:'Archivo',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:2.8px;text-transform:uppercase;color:#00B9F2">Svi cjenovnici</span>
+        <div style="display:flex;flex-direction:column">
+          <sc-for list="{{ pdfList }}" as="pdf" hint-placeholder-count="4">
+            <a href="{{ pdf.href }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.09);font-size:13.5px;font-weight:300;color:rgba(255,255,255,.62);text-decoration:none;transition:color .2s" style-hover="color:#fff">
+              <span>{{ pdf.label }}</span>
+              <span style="font-family:'Archivo',sans-serif;font-size:10px;font-weight:600;letter-spacing:1.4px;color:rgba(255,255,255,.35)">PDF ↓</span>
+            </a>
+          </sc-for>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 1280, &quot;height&quot;: 1400 }
+}">
+const IND_KM = [
+  ['panoramska vožnja', '15', '30', '23'],
+  ['noćno skijanje', '67', '80', '73'],
+  ['ski vrtić dnevna', '40', '60', '45'],
+  ['4 sata dnevna', '67', '80', '73'],
+  ['dnevna', '83', '98', '90'],
+  ['dnevno noćna', '127', '150', '138'],
+  ['2-dnevna', '140', '166', '154'],
+  ['2-dnevna D+N', '237', '280', '258'],
+  ['3-dnevna', '203', '240', '221'],
+  ['3-dnevna D+N', '310', '365', '337'],
+  ['4-dnevna', '250', '295', '272'],
+  ['4-dnevna D+N', '380', '450', '415'],
+  ['5-dnevna', '292', '345', '318'],
+  ['5-dnevna D+N', '440', '520', '480'],
+  ['6-dnevna', '352', '415', '384'],
+  ['6-dnevna D+N', '529', '625', '577'],
+  ['7-dnevna', '364', '430', '397'],
+  ['7-dnevna D+N', '550', '650', '600'],
+  ['10 u sezoni D', '520', '750', '577'],
+  ['10 u sezoni D+N', '852', '1.100', '946'],
+  ['10 u sezoni D ili N', '520', '750', '577'],
+  ['10 u sezoni D+N korporativna', '1.500', '—', '—'],
+  ['sezonski pers. /pon–pet/ D', '683', '1.250', '1.126'],
+  ['sezonski pers. /pon–pet/ D+N', '930', '1.700', '1.531'],
+  ['sezonski personalizovani D', '1.093', '2.000', '1.800'],
+  ['sezonski personalizovani D+N', '1.337', '2.500', '2.210'],
+  ['sankalište — 1 vožnja (sanke + lift Poljice)', '20', '—', '—'],
+];
+
+const IND_EUR = [
+  ['panoramska vožnja', '8', '15,5', '12'],
+  ['noćno skijanje', '34,5', '41', '37,5'],
+  ['ski vrtić dnevna', '20,5', '31', '23'],
+  ['4 sata dnevna', '34,5', '41', '37,5'],
+  ['dnevna', '42,5', '50,5', '46'],
+  ['dnevno noćna', '65', '77', '70,5'],
+  ['2-dnevna', '71,5', '85', '79'],
+  ['2-dnevna D+N', '121,5', '143,5', '132'],
+  ['3-dnevna', '104', '123', '113'],
+  ['3-dnevna D+N', '158,5', '187', '172,5'],
+  ['4-dnevna', '128', '151', '139'],
+  ['4-dnevna D+N', '194,5', '230', '212,5'],
+  ['5-dnevna', '149,5', '176,5', '162,5'],
+  ['5-dnevna D+N', '225', '266', '245,5'],
+  ['6-dnevna', '180', '212,5', '196,5'],
+  ['6-dnevna D+N', '270,5', '319,5', '295'],
+  ['7-dnevna', '186,5', '220', '203'],
+  ['7-dnevna D+N', '281,5', '332,5', '307'],
+  ['10 u sezoni D', '266', '383,5', '295'],
+  ['10 u sezoni D+N', '436', '562,5', '484'],
+  ['10 u sezoni D ili N', '266', '383,5', '295'],
+  ['10 u sezoni D+N korporativna', '767', '—', '—'],
+  ['sezonski pers. /pon–pet/ D', '349,5', '639,5', '576'],
+  ['sezonski pers. /pon–pet/ D+N', '475,5', '869,5', '783'],
+  ['sezonski personalizovani D', '559', '1.022,5', '920,5'],
+  ['sezonski personalizovani D+N', '684', '1.278,5', '1.130'],
+  ['sankalište — 1 vožnja (sanke + lift Poljice)', '10,5', '—', '—'],
+];
+
+const POR_KM = [
+  ['4-dnevna', '225', '213', '281'],
+  ['4-dnevna D+N', '342', '323', '428'],
+  ['5-dnevna', '263', '248', '328'],
+  ['5-dnevna D+N', '396', '374', '494'],
+  ['6-dnevna', '317', '299', '394'],
+  ['6-dnevna D+N', '476', '450', '594'],
+  ['7-dnevna', '328', '309', '409'],
+  ['7-dnevna D+N', '495', '468', '618'],
+  ['10 u sezoni', '468', '442', '713'],
+  ['10 u sezoni D+N', '767', '724', '1.045'],
+  ['sezonski pers. /pon–pet/ D+N', '837', '791', '1.615'],
+  ['sezonski personalizovani', '984', '929', '1.900'],
+  ['sezonski personalizovani D+N', '1.203', '1.136', '2.375'],
+];
+
+const POR_EUR = [
+  ['4-dnevna', '115', '109', '144'],
+  ['4-dnevna D+N', '175', '165,5', '217,5'],
+  ['5-dnevna', '134,5', '127', '168'],
+  ['5-dnevna D+N', '202,5', '191,5', '252,5'],
+  ['6-dnevna', '162', '153', '201,5'],
+  ['6-dnevna D+N', '243,5', '230', '304'],
+  ['7-dnevna', '168', '158', '209,5'],
+  ['7-dnevna D+N', '253', '239,5', '316'],
+  ['10 u sezoni', '239,5', '226', '364,5'],
+  ['10 u sezoni D+N', '392,5', '370,5', '543,5'],
+  ['sezonski pers. /pon–pet/ D+N', '428', '404,5', '826'],
+  ['sezonski personalizovani', '503,5', '475', '971,5'],
+  ['sezonski personalizovani D+N', '615', '581', '1.214,5'],
+];
+
+const PDFS = {
+  'individualni|KM': 'uploads/Cjenovnik Zima 2026 Individualni KM.pdf',
+  'individualni|EUR': 'uploads/Cjenovnik Zima 2026 Individualni EUR.pdf',
+  'porodicni|KM': 'uploads/porodicni-km.pdf',
+  'porodicni|EUR': 'uploads/porodicni-eur.pdf',
+};
+
+class Component extends DCLogic {
+  state = { variant: 'individualni', currency: 'KM' };
+
+  tab(active) {
+    return {
+      padding: '13px 26px',
+      background: active ? '#00B9F2' : 'transparent',
+      border: 'none',
+      color: active ? '#fff' : 'rgba(255,255,255,.55)',
+      fontFamily: "'Barlow', sans-serif",
+      fontSize: '14px',
+      fontWeight: active ? 600 : 400,
+      letterSpacing: '.4px',
+      cursor: 'pointer',
+      transition: 'background .2s, color .2s',
+    };
+  }
+
+  renderVals() {
+    const { variant, currency } = this.state;
+    const ind = variant === 'individualni';
+    const data = ind
+      ? (currency === 'KM' ? IND_KM : IND_EUR)
+      : (currency === 'KM' ? POR_KM : POR_EUR);
+
+    const rows = data.map(([name, c1, c2, c3], i) => ({
+      name, c1, c2, c3,
+      c1Color: 'rgba(255,255,255,.9)',
+      rowStyle: {
+        display: 'grid',
+        gridTemplateColumns: 'minmax(0,2.1fr) repeat(3,minmax(0,1fr))',
+        gap: 'clamp(10px,1.6vw,28px)',
+        alignItems: 'baseline',
+        padding: '15px clamp(4px,1vw,14px)',
+        borderBottom: '1px solid rgba(255,255,255,.07)',
+        background: i % 2 === 1 ? 'rgba(255,255,255,.018)' : 'transparent',
+      },
+    }));
+
+    return {
+      rows,
+      col1: ind ? 'Djeca' : 'Prvo dijete',
+      col2: ind ? 'Odrasli' : 'Drugo i ostala djeca',
+      col3: ind ? 'Seniori i tinejdžeri' : 'Odrasli',
+      currencyLabel: currency === 'KM' ? 'konvertibilnim markama (KM)' : 'evrima (EUR)',
+      variantLabel: (ind ? 'Individualni' : 'Porodični') + ' · ' + currency + ' · Pik sezone',
+      pdfHref: PDFS[variant + '|' + currency],
+      pdfList: [
+        { label: 'Individualni — KM', href: PDFS['individualni|KM'] },
+        { label: 'Individualni — EUR', href: PDFS['individualni|EUR'] },
+        { label: 'Porodični — KM', href: PDFS['porodicni|KM'] },
+        { label: 'Porodični — EUR', href: PDFS['porodicni|EUR'] },
+      ],
+      tabIndividualni: this.tab(ind),
+      tabPorodicni: this.tab(!ind),
+      tabKM: this.tab(currency === 'KM'),
+      tabEUR: this.tab(currency === 'EUR'),
+      pickIndividualni: () => this.setState({ variant: 'individualni' }),
+      pickPorodicni: () => this.setState({ variant: 'porodicni' }),
+      pickKM: () => this.setState({ currency: 'KM' }),
+      pickEUR: () => this.setState({ currency: 'EUR' }),
+    };
+  }
+}
+
+</script>
+</body>
+</html>
