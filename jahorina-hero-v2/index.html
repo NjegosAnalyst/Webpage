@@ -36,20 +36,22 @@
   }
 
   /* ---------- pozadina + scrim slojevi ---------- */
-  .jh-photo{position:absolute;inset:0;background:url('assets/jahorina-zalazak.jpg') center 50%/cover no-repeat}
-
-  /* ---------- skijaš (isječak bez pozadine) ---------- */
-  .jh-skier{
-    position:absolute;z-index:4;pointer-events:none;
-    right:clamp(24px,7vw,130px);bottom:0;
-    height:80%;width:auto;
-    /* donjih 18% PNG-a je već providno — noge se utapaju u more oblaka */
-    animation:jhRiseIn 1s cubic-bezier(.2,.7,.2,1) .35s both;
+  .jh-photo{
+    position:absolute;inset:-3%;
+    background:url('assets/jahorina-hero.jpg') center 40%/cover no-repeat;
+    transform:translate3d(calc(var(--mx,0) * -14px),calc(var(--my,0) * -10px),0);
+    animation:jhZoom 2.6s cubic-bezier(.2,.7,.2,1) both;
+    will-change:transform;
   }
-  .jh-skier img{
-    display:block;height:100%;width:auto;
-    /* blago spušten ton da dnevna fotka legne na zalazak */
-    filter:brightness(.92) saturate(.95) drop-shadow(0 30px 50px rgba(6,11,22,.45));
+  @keyframes jhZoom{from{opacity:0;scale:1.08}to{opacity:1;scale:1}}
+
+  /* snijeg (canvas) + suptilni cyan sjaj i vinjeta za dubinu */
+  .jh-snow{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+  .jh-glow{
+    position:absolute;inset:0;pointer-events:none;z-index:1;
+    background:
+      radial-gradient(38% 46% at 82% 88%,rgba(0,185,242,.20),transparent 70%),
+      radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(4,8,18,.45) 100%);
   }
   .jh-scrim{position:absolute;inset:0;pointer-events:none}
   .jh-scrim--left{background:linear-gradient(100deg,rgba(6,11,22,.72) 0%,rgba(6,11,22,.40) 34%,rgba(6,11,22,0) 62%)}
@@ -103,13 +105,15 @@
   }
   .jh-btn--ghost{
     padding:12px 24px;font-weight:600;color:#fff;
-    background:rgba(255,255,255,.10);border:1.5px solid rgba(255,255,255,.5);
+    background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.06));border:1.5px solid rgba(255,255,255,.45);
+    box-shadow:inset 1px 1px 0 rgba(255,255,255,.25),0 10px 24px -12px rgba(0,0,0,.6);
     -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
     transition:background .2s,border-color .2s;
   }
   .jh-btn--ghost:hover{background:rgba(255,255,255,.2);border-color:#fff}
   .jh-btn--solid{
-    padding:13px 26px;font-weight:700;color:#0d1524;background:#fff;
+    padding:13px 26px;font-weight:700;color:#0d1524;background:linear-gradient(145deg,#fff,#E6EEF6);
+    box-shadow:inset -2px -2px 4px rgba(13,21,36,.08),inset 2px 2px 3px #fff,0 12px 28px -12px rgba(0,0,0,.65);
     transition:transform .2s,box-shadow .2s;
   }
   .jh-btn--solid:hover{transform:translateY(-2px);box-shadow:0 12px 26px -10px rgba(0,0,0,.6)}
@@ -120,8 +124,10 @@
   .jh-kicker{
     font-family:'Archivo',sans-serif;font-size:11px;font-weight:600;letter-spacing:5px;
     color:rgba(255,255,255,.75);text-transform:uppercase;margin-bottom:20px;
+    display:flex;align-items:center;gap:14px;
     animation:jhRiseIn .8s cubic-bezier(.2,.7,.2,1) .1s both;
   }
+  .jh-kicker::before{content:"";width:34px;height:1.5px;background:var(--jh-accent);box-shadow:0 0 10px rgba(0,185,242,.8)}
   .jh-title{
     margin:0;font-family:'Archivo',sans-serif;font-weight:800;
     font-size:clamp(52px,8.4vw,132px);line-height:.94;letter-spacing:-1px;
@@ -147,9 +153,9 @@
   .jh-quick{
     position:absolute;right:clamp(24px,3vw,52px);bottom:clamp(26px,3.4vw,46px);z-index:6;
     display:flex;border-radius:18px;overflow:hidden;
-    background:rgba(255,255,255,.10);border:1.5px solid rgba(255,255,255,.4);
-    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
-    box-shadow:0 20px 40px -18px rgba(0,0,0,.55);
+    background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.05));border:1.5px solid rgba(255,255,255,.35);
+    -webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);
+    box-shadow:inset 1px 1px 0 rgba(255,255,255,.28),inset -1px -1px 0 rgba(0,0,0,.15),0 24px 50px -20px rgba(0,0,0,.65);
     animation:jhCardIn .9s cubic-bezier(.2,.7,.2,1) .55s both;
   }
   .jh-quick__item{
@@ -160,7 +166,7 @@
   }
   .jh-quick__item:last-child{border-right:0}
   .jh-quick__item:hover{background:rgba(255,255,255,.14)}
-  .jh-quick__item--accent,.jh-quick__item--accent:hover{background:var(--jh-accent)}
+  .jh-quick__item--accent,.jh-quick__item--accent:hover{background:linear-gradient(145deg,#2CCBF8,#00A6DB);box-shadow:inset 1px 1px 0 rgba(255,255,255,.35),0 0 30px -4px rgba(0,185,242,.55)}
   .jh-quick__item--accent:hover{filter:brightness(1.1)}
   .jh-quick__label{font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;color:#fff}
   .jh-quick__label--word{font-size:9.5px;letter-spacing:.3px}
@@ -203,12 +209,12 @@
     .jh-btn--ghost{display:none}
     .jh-btn--solid{padding:11px 20px;font-size:14px}
     .jh-headline,.jh-intro,.jh-quick{position:relative;left:auto;right:auto;top:auto;bottom:auto}
-    .jh-skier{right:-6%;top:84px;bottom:auto;height:auto;width:96%}
-    .jh-skier img{width:100%;height:auto}
     .jh-headline{margin-top:auto;padding:150px 24px 0}
     .jh-intro{padding:24px 24px 0;max-width:none}
     .jh-quick{margin:24px;align-self:stretch}
     .jh-quick__item{flex:1;width:auto}
+    .jh-kicker{letter-spacing:2.6px;font-size:10px;gap:10px}
+    .jh-kicker::before{width:22px}
   }
 
   @media (prefers-reduced-motion:reduce){
@@ -221,15 +227,13 @@
 <section class="jh-hero" aria-label="Olimpijski centar Jahorina">
   <div class="jh-frame">
 
-    <div class="jh-photo" role="img" aria-label="Zalazak sunca iznad mora oblaka na Jahorini"></div>
+    <div class="jh-photo" role="img" aria-label="Noćno skijanje na Jahorini"></div>
     <div class="jh-scrim jh-scrim--left"></div>
     <div class="jh-scrim jh-scrim--bottom"></div>
     <div class="jh-scrim jh-scrim--top"></div>
 
-    <picture class="jh-skier">
-      <source srcset="assets/skijas.webp" type="image/webp">
-      <img src="assets/skijas.png" alt="" width="1135" height="947">
-    </picture>
+    <div class="jh-glow" aria-hidden="true"></div>
+    <canvas class="jh-snow" aria-hidden="true"></canvas>
 
     <!-- ===== HEADER ===== -->
     <header class="jh-header">
@@ -354,6 +358,58 @@
       burger.setAttribute('aria-expanded', 'false');
     }
   });
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  // Parallax — fotografija se blago pomjera za mišem
+  var tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
+  function tick() {
+    cx += (tx - cx) * 0.07; cy += (ty - cy) * 0.07;
+    hero.style.setProperty('--mx', cx.toFixed(3));
+    hero.style.setProperty('--my', cy.toFixed(3));
+    raf = (Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001) ? requestAnimationFrame(tick) : null;
+  }
+  hero.addEventListener('pointermove', function (e) {
+    if (e.pointerType !== 'mouse') return;
+    var r = hero.getBoundingClientRect();
+    tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+    ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+    if (!raf) raf = requestAnimationFrame(tick);
+  });
+  hero.addEventListener('pointerleave', function () { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(tick); });
+
+  // Snijeg — nježne pahulje preko noćne scene
+  var canvas = hero.querySelector('.jh-snow'), ctx = canvas.getContext('2d');
+  var dpr = Math.min(window.devicePixelRatio || 1, 2), w = 0, h = 0, flakes = [];
+  function resize() {
+    w = canvas.clientWidth; h = canvas.clientHeight;
+    canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function flake(anyY) {
+    var near = Math.random() < 0.15;
+    return { x: Math.random() * w, y: anyY ? Math.random() * h : -10,
+             r: near ? 2.5 + Math.random() * 2.5 : 0.8 + Math.random() * 1.6,
+             v: near ? 1 + Math.random() * 0.6 : 0.35 + Math.random() * 0.5,
+             a: near ? 0.55 : 0.4 + Math.random() * 0.4, t: Math.random() * 6.28 };
+  }
+  resize(); window.addEventListener('resize', resize);
+  for (var i = 0; i < 110; i++) flakes.push(flake(true));
+  var visible = true;
+  if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(hero);
+  (function loop() {
+    if (visible) {
+      ctx.clearRect(0, 0, w, h);
+      for (var i = 0; i < flakes.length; i++) {
+        var f = flakes[i];
+        f.t += 0.012; f.y += f.v; f.x += Math.sin(f.t) * 0.35 + 0.15;
+        if (f.y > h + 10 || f.x > w + 10) { flakes[i] = flake(false); continue; }
+        ctx.globalAlpha = f.a; ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, 6.2832); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+    requestAnimationFrame(loop);
+  })();
 })();
 </script>
 </body>
