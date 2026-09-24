@@ -48,7 +48,8 @@
   /* ---------- pozadina + scrim slojevi ---------- */
   .jh-photo{
     position:absolute;inset:-3%;
-    background:url('assets/jahorina-hero.jpg') center 40%/cover no-repeat;
+    background:url('assets/jahorina-noc.jpg') center 58%/cover no-repeat;
+    background-image:image-set(url('assets/jahorina-noc.webp') type('image/webp'),url('assets/jahorina-noc.jpg') type('image/jpeg'));
     transform:translate3d(calc(var(--mx,0) * -14px),calc(var(--my,0) * -10px),0);
     animation:jhZoom 2.2s cubic-bezier(.2,.7,.2,1) both;
     will-change:transform;
@@ -57,7 +58,7 @@
   @keyframes jhZoom{
     0%{opacity:0;scale:1.08;filter:brightness(.15) blur(14px)}
     35%{opacity:1}
-    100%{opacity:1;scale:1;filter:brightness(1) blur(0)}
+    100%{opacity:1;scale:1;filter:brightness(1) contrast(1.07) saturate(1.06) blur(0)}   /* blagi filmski kontrast */
   }
 
   /* snijeg (canvas) + suptilni cyan sjaj i vinjeta za dubinu */
@@ -65,7 +66,8 @@
   .jh-glow{
     position:absolute;inset:0;pointer-events:none;z-index:1;
     background:
-      radial-gradient(38% 46% at 82% 88%,rgba(0,185,242,.20),transparent 70%),
+      linear-gradient(180deg,rgba(6,18,42,.35) 0%,rgba(6,18,42,0) 38%),               /* hladnije, dublje nebo */
+      radial-gradient(40% 50% at 62% 40%,rgba(120,200,255,.08),transparent 70%),       /* hladni odsjaj staze */
       radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(4,8,18,.45) 100%);
   }
   .jh-scrim{position:absolute;inset:0;pointer-events:none}
@@ -140,8 +142,10 @@
     background:conic-gradient(from var(--jh-a),transparent 0deg,transparent 250deg,var(--jh-accent) 310deg,#fff 340deg,transparent 360deg);
     -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
     -webkit-mask-composite:xor;mask-composite:exclude;
-    animation:jhOrbit 3.2s linear infinite;
+    animation:jhOrbit 2.4s linear infinite;
+    opacity:0;transition:opacity .35s;
   }
+  .jh-btn--ghost:hover::before,.jh-btn--ghost:focus-visible::before,.jh-quick__item--accent:hover::before{opacity:1}
   .jh-btn--ghost:hover{color:var(--jh-accent)}
   .jh-btn--ghost:active{box-shadow:var(--nm-inset-sm)}
   .jh-btn--solid{
@@ -151,14 +155,16 @@
   }
   .jh-btn--solid{box-shadow:inset -2px -2px 4px rgba(13,21,36,.1),inset 2px 2px 3px #fff,4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16)}
   .jh-btn--solid{overflow:hidden}
-  /* odsjaj koji periodično prelazi preko dugmeta */
+  /* odsjaj koji jednom pređe preko dugmeta na hover */
   .jh-btn--solid::after{
     content:"";position:absolute;top:0;bottom:0;left:-60%;width:45%;pointer-events:none;
     background:linear-gradient(100deg,transparent,rgba(0,185,242,.35),rgba(255,255,255,.9),rgba(0,185,242,.35),transparent);
-    transform:skewX(-20deg);animation:jhShine 4.5s ease-in-out 2.2s infinite;
+    transform:skewX(-20deg);
   }
+  .jh-btn--solid:hover::after,.jh-btn--solid:focus-visible::after{animation:jhShine 1.6s ease-in-out}
   @keyframes jhShine{0%{left:-60%}35%,100%{left:130%}}
-  .jh-btn--solid span{display:inline-block;animation:jhNudge 2.2s ease-in-out infinite}
+  .jh-btn--solid span{display:inline-block;transition:transform .25s}
+  .jh-btn--solid:hover span{animation:jhNudge 1.1s ease-in-out infinite}
   @keyframes jhNudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
   .jh-btn--solid:hover{transform:translateY(-2px);box-shadow:inset -2px -2px 4px rgba(13,21,36,.1),inset 2px 2px 3px #fff,0 0 0 1px rgba(0,185,242,.5),0 0 26px rgba(0,185,242,.55)}
   .jh-btn--ghost:hover{box-shadow:var(--nm-raised),0 0 22px rgba(0,185,242,.4)}
@@ -179,7 +185,7 @@
     content:"";width:34px;height:1.5px;box-shadow:0 0 10px rgba(0,185,242,.8);flex-shrink:0;
     background:linear-gradient(90deg,var(--jh-accent),#fff,var(--jh-accent));background-size:200% 100%;
     transform-origin:left center;
-    animation:jhLineOn .55s cubic-bezier(.2,.7,.2,1) .4s both,jhFlow 2.4s linear 1s infinite;
+    animation:jhLineOn .55s cubic-bezier(.2,.7,.2,1) .4s both;
   }
   @keyframes jhLineOn{0%{transform:scaleX(0);opacity:0}60%{opacity:1}100%{transform:scaleX(1);opacity:1}}
   /* dok JS ne preuzme, elementi čekaju skriveni (bez JS-a se pojave sami) */
@@ -202,14 +208,14 @@
     60%{opacity:1;filter:blur(2px)}
     100%{opacity:1;transform:none;filter:blur(0)}
   }
-  /* pune riječi nakon ulaska: svjetlosni snop periodično prelazi preko slova */
+  /* pune riječi nakon ulaska: svjetlosni snop prelazi preko slova samo na hover */
   .jh-title.is-live > span:nth-child(-n+2){
     color:transparent;-webkit-background-clip:text;background-clip:text;
     background-image:linear-gradient(105deg,#fff 0%,#fff 42%,#9BE6FF 48%,#fff 50%,#9BE6FF 52%,#fff 58%,#fff 100%);
     background-size:300% 100%;background-position:100% 0;
-    animation:jhSweep 7s cubic-bezier(.6,0,.2,1) 1.5s infinite;
   }
-  .jh-title.is-live > span:nth-child(2){animation-delay:1.65s}
+  .jh-title.is-live:hover > span:nth-child(-n+2){animation:jhSweep 1.8s cubic-bezier(.6,0,.2,1)}
+  .jh-title.is-live:hover > span:nth-child(2){animation-delay:.12s}
 
   /* "Jahorine": obris; tokom ulaska ga crta SVG, zatim preuzima ovaj sloj */
   .jh-title > span.jh-ice{
@@ -345,7 +351,6 @@
     0%,100%{-webkit-text-stroke-color:rgba(255,255,255,.92);filter:drop-shadow(0 0 0 rgba(0,185,242,0)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
     50%{-webkit-text-stroke-color:#D6F6FF;filter:drop-shadow(0 0 8px rgba(0,185,242,.5)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
   }
-  @keyframes jhFlow{to{background-position:-200% 0}}
   /* rotirajući ugao za "svjetlosni prsten" oko dugmadi */
   @property --jh-a{syntax:'<angle>';inherits:false;initial-value:0deg}
   @keyframes jhOrbit{to{--jh-a:360deg}}
@@ -447,6 +452,9 @@
     .jh-intro{align-items:center}
     .jh-quick__item{flex:1;width:auto}
     .jh-kicker{letter-spacing:2.6px;font-size:10px;gap:10px}
+    /* telefon: kadar na stazu, jače zatamnjenje ispod teksta */
+    .jh-photo{background-position:64% 40%}
+    .jh-scrim--bottom{background:linear-gradient(0deg,rgba(6,11,22,.92) 0%,rgba(6,11,22,.75) 38%,rgba(6,11,22,0) 66%)}
     .jh-kicker::before{width:22px}
   }
 
@@ -970,7 +978,8 @@
              t: Math.random() * 6.28, sway: .3 + Math.random() * .5 };
   }
   resize(); window.addEventListener('resize', resize);
-  for (var i = 0; i < 90; i++) flakes.push(flake(true));
+  var flakeCount = w < 700 ? 40 : 75;   // mirniji snijeg, na telefonu još rjeđi
+  for (var i = 0; i < flakeCount; i++) flakes.push(flake(true));
   var visible = true;
   if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(hero);
   (function loop() {
