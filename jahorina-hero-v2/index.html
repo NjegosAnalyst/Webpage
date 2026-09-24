@@ -75,30 +75,6 @@
   .jh-scrim--bottom{background:linear-gradient(0deg,rgba(6,11,22,.70) 0%,rgba(6,11,22,0) 42%)}
   .jh-scrim--top{background:linear-gradient(180deg,rgba(6,11,22,.35) 0%,rgba(6,11,22,0) 22%)}
 
-  /* ---------- zaleđeni ugao (mraz na staklu, dole desno) ---------- */
-  .jh-frost{
-    --corner:radial-gradient(125% 125% at 100% 100%,#000 0%,rgba(0,0,0,.92) 26%,rgba(0,0,0,.4) 54%,transparent 76%);
-    --fx:-999px;--fy:-999px;--fr:0px;
-    position:absolute;right:0;bottom:0;z-index:3;pointer-events:none;
-    width:clamp(340px,40vw,640px);height:clamp(280px,48vh,500px);
-  }
-  .jh-frost__glass,.jh-frost__cv{position:absolute;inset:0;width:100%;height:100%}
-  /* matirano staklo ispod kristala; kursor u njemu "otopi" krug */
-  .jh-frost__glass{
-    background:linear-gradient(315deg,rgba(225,242,255,.20),rgba(225,242,255,.05) 60%);
-    -webkit-backdrop-filter:blur(6px) saturate(1.25) brightness(1.1);backdrop-filter:blur(6px) saturate(1.25) brightness(1.1);
-    -webkit-mask-image:var(--corner),radial-gradient(circle var(--fr) at var(--fx) var(--fy),transparent 55%,#000 100%);
-    -webkit-mask-composite:source-in;
-    mask-image:var(--corner),radial-gradient(circle var(--fr) at var(--fx) var(--fy),transparent 55%,#000 100%);
-    mask-composite:intersect;
-    opacity:0;transition:opacity 2.8s ease;
-  }
-  .jh-frost.is-on .jh-frost__glass{opacity:1}
-  .jh-frost__cv{
-    filter:drop-shadow(0 0 2px rgba(170,230,255,.85));
-    -webkit-mask-image:var(--corner);mask-image:var(--corner);
-  }
-
   /* ---------- header ---------- */
   .jh-header{
     position:absolute;top:0;left:0;right:0;z-index:6;
@@ -476,7 +452,6 @@
     .jh-intro{align-items:center}
     .jh-quick__item{flex:1;width:auto}
     .jh-kicker{letter-spacing:2.6px;font-size:10px;gap:10px}
-    .jh-frost{width:78vw;height:36vh}
     /* telefon: kadar na stazu, jače zatamnjenje ispod teksta */
     .jh-photo{background-position:64% 40%}
     .jh-scrim--bottom{background:linear-gradient(0deg,rgba(6,11,22,.92) 0%,rgba(6,11,22,.75) 38%,rgba(6,11,22,0) 66%)}
@@ -500,7 +475,6 @@
 
     <div class="jh-glow" aria-hidden="true"></div>
     <canvas class="jh-snow" aria-hidden="true"></canvas>
-    <div class="jh-frost" aria-hidden="true"><div class="jh-frost__glass"></div><canvas class="jh-frost__cv"></canvas></div>
 
     <!-- ===== HEADER ===== -->
     <header class="jh-header">
@@ -912,151 +886,6 @@
 
     // crta tek kad se font učita (da obris tačno legne na slova), najranije u 1.1 s
     fontsReady.then(function () { after(1.1, drawIce); });
-  })();
-
-  // ===== Zaleđeni ugao: mraz raste po staklu iz donjeg desnog ugla, kursor ga topi =====
-  (function frost() {
-    var wrap = hero.querySelector('.jh-frost'), cv = wrap.querySelector('.jh-frost__cv'), ctx = cv.getContext('2d');
-    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var dpr = Math.min(window.devicePixelRatio || 1, 2), W, H, segs, specks, tips;
-    var full = document.createElement('canvas'), fctx = full.getContext('2d');   // svi kristali (nikad se ne topi)
-    var melt = document.createElement('canvas'), mctx = melt.getContext('2d');  // mapa otopljenih mjesta
-    var drawn = 0, spk = 0, start = 0, GROW = 3200;
-
-    function rnd(a, b) { return a + Math.random() * (b - a); }
-    function setup() {
-      W = wrap.clientWidth; H = wrap.clientHeight;
-      [cv, full, melt].forEach(function (c) { c.width = W * dpr; c.height = H * dpr; });
-      [ctx, fctx, mctx].forEach(function (c) { c.setTransform(dpr, 0, 0, dpr, 0, 0); });
-      fctx.lineCap = 'round'; fctx.strokeStyle = '#E6F7FF'; fctx.fillStyle = '#EAF8FF';
-      generate(); drawn = 0; spk = 0;
-    }
-
-    // Kristali "ledena paprat": zakrivljena stabljika sa gustim perjem kratkih grančica pod ~60°,
-    // a na perju još sitnije grančice — kao mraz na prozoru
-    function generate() {
-      segs = []; tips = []; specks = [];
-      var Rmax = Math.hypot(W, H) * 0.8, v = 150, CAP = 7000;
-      function grow(x, y, ang, len, depth, t0, curl) {
-        var step = depth === 0 ? 4 : 3, n = Math.max(2, Math.round(len / step)), d = 0, bend = curl;
-        for (var i = 0; i < n && segs.length < CAP; i++) {
-          bend += rnd(-0.012, 0.012); ang += bend + rnd(-0.035, 0.035);
-          var nx = x + Math.cos(ang) * step, ny = y + Math.sin(ang) * step;
-          var dc = Math.hypot(W - nx, H - ny);
-          if (dc > Rmax || nx < 0 || ny < 0 || nx > W + 2 || ny > H + 2) break;
-          var fall = Math.pow(1 - dc / Rmax, 1.3), taper = 1 - i / n * 0.6;
-          segs.push({ x1: x, y1: y, x2: nx, y2: ny, t: t0 + d / v,
-                      a: fall * [0.95, 0.7, 0.5][depth] * (0.6 + 0.4 * taper),
-                      w: [1.5, 0.8, 0.5][depth] * (0.55 + 0.45 * taper) });
-          d += step; x = nx; y = ny;
-          if (depth < 2 && i > 1) {
-            var gap = depth === 0 ? 2 : 3;
-            if (i % gap === 0) {
-              var bl = len * (depth === 0 ? rnd(0.1, 0.2) : rnd(0.18, 0.32)) * (1 - i / n * 0.75);
-              var tt = t0 + d / v;
-              if (bl > 3) {
-                grow(x, y, ang - rnd(0.9, 1.15), bl, depth + 1, tt, 0);
-                grow(x, y, ang + rnd(0.9, 1.15), bl * rnd(0.75, 1), depth + 1, tt, 0);
-              }
-            }
-          }
-        }
-        if (depth === 0) tips.push({ x: x, y: y });
-      }
-      var L = Math.min(W, H);
-      // iz samog ugla: nekoliko dugih stabljika koje se lepezasto šire
-      for (var c = 0; c < 6; c++) {
-        var a0 = Math.PI * (1.02 + c * 0.09 + rnd(-0.03, 0.03));
-        grow(W - rnd(0, 8), H - rnd(0, 8), a0, L * rnd(0.65, 1.0), 0, rnd(0, 0.2), rnd(-0.01, 0.01));
-      }
-      // sa donje i desne ivice: kraće stabljike, sve kraće dalje od ugla
-      for (var b = 0; b < 7; b++) {
-        var f = rnd(0.12, 0.9), bx = W - f * W * 0.85;
-        grow(bx, H, Math.PI * rnd(1.3, 1.62), L * 0.55 * (1 - f) + 20, 0, f * 0.9, rnd(-0.008, 0.008));
-      }
-      for (var r = 0; r < 6; r++) {
-        var g = rnd(0.12, 0.9), ry = H - g * H * 0.85;
-        grow(W, ry, Math.PI * rnd(0.9, 1.2), L * 0.55 * (1 - g) + 20, 0, g * 0.9, rnd(-0.008, 0.008));
-      }
-      for (var k = 0; k < 700; k++) {                        // "inje": sitna zrnca leda, gušća u uglu
-        var rr = Math.pow(Math.random(), 1.7) * Rmax * 0.85, aa = rnd(Math.PI, Math.PI * 1.5);
-        specks.push({ x: W + Math.cos(aa) * rr, y: H + Math.sin(aa) * rr, r: rnd(0.35, 1.1), a: (1 - rr / Rmax) * rnd(0.2, 0.6), t: rr / v * 0.9 });
-      }
-      segs.sort(function (p, q) { return p.t - q.t; });
-      specks.sort(function (p, q) { return p.t - q.t; });
-    }
-
-    function paintUntil(sec) {                               // dopiši nove kristale na "full" platno
-      while (drawn < segs.length && segs[drawn].t <= sec) {
-        var g = segs[drawn++];
-        fctx.globalAlpha = g.a; fctx.lineWidth = g.w;
-        fctx.beginPath(); fctx.moveTo(g.x1, g.y1); fctx.lineTo(g.x2, g.y2); fctx.stroke();
-      }
-      while (spk < specks.length && specks[spk].t <= sec) {
-        var p = specks[spk++];
-        fctx.globalAlpha = p.a; fctx.beginPath(); fctx.arc(p.x, p.y, p.r, 0, 6.2832); fctx.fill();
-      }
-      fctx.globalAlpha = 1;
-    }
-    function compose() {                                     // vidljivo = kristali minus otopljeno
-      ctx.clearRect(0, 0, W, H);
-      ctx.drawImage(full, 0, 0, W, H);
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.drawImage(melt, 0, 0, W, H);
-      ctx.globalCompositeOperation = 'source-over';
-    }
-
-    setup();
-    if (reduce) { paintUntil(1e9); compose(); wrap.classList.add('is-on'); return; }
-
-    // topljenje: kursor (ili dodir) ostavlja otopljen trag koji se polako ponovo zaledi
-    var fr = 0, frT = 0, fx = -999, fy = -999, busyUntil = 0, running = false;
-    function meltAt(x, y, r) {
-      var g = mctx.createRadialGradient(x, y, 0, x, y, r);
-      g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(0.6, 'rgba(0,0,0,.85)'); g.addColorStop(1, 'rgba(0,0,0,0)');
-      mctx.fillStyle = g; mctx.beginPath(); mctx.arc(x, y, r, 0, 6.2832); mctx.fill();
-    }
-    function kick() { busyUntil = performance.now() + 4500; if (!running) { running = true; requestAnimationFrame(loop); } }
-    function loop(now) {
-      var sec = (now - start) / 1000, growing = drawn < segs.length || spk < specks.length;
-      if (start && growing) paintUntil(sec);
-      // led se vraća: otopljena mapa polako blijedi
-      mctx.globalCompositeOperation = 'destination-out';
-      mctx.fillStyle = 'rgba(0,0,0,.018)'; mctx.fillRect(0, 0, W, H);
-      mctx.globalCompositeOperation = 'source-over';
-      fr += (frT - fr) * 0.12;
-      wrap.style.setProperty('--fr', fr.toFixed(1) + 'px');
-      wrap.style.setProperty('--fx', fx + 'px'); wrap.style.setProperty('--fy', fy + 'px');
-      compose();
-      if ((start && growing) || now < busyUntil || fr > 0.5) requestAnimationFrame(loop); else running = false;
-    }
-    function pointer(e) {
-      var r = wrap.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
-      var inside = x > 0 && y > 0 && x < r.width && y < r.height && Math.hypot(r.width - x, r.height - y) < Math.hypot(r.width, r.height) * 0.7;
-      if (inside) { fx = x; fy = y; frT = e.pointerType === 'mouse' ? 80 : 60; meltAt(x, y, e.pointerType === 'mouse' ? 46 : 60); }
-      else frT = 0;
-      kick();
-    }
-    hero.addEventListener('pointermove', function (e) { if (e.pointerType === 'mouse') pointer(e); });
-    hero.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse') pointer(e); });
-    hero.addEventListener('pointerleave', function () { frT = 0; kick(); });
-
-    // mraz počinje da raste kad se završi glavni ulazak
-    setTimeout(function () { start = performance.now(); wrap.classList.add('is-on'); kick(); }, 2300);
-
-    // povremeni odsjaj reflektora na vrhovima kristala
-    setInterval(function () {
-      if (!start || document.hidden || !tips.length) return;
-      var t = tips[Math.floor(Math.random() * tips.length)], gl = document.createElement('span');
-      gl.className = 'jh-glint';
-      gl.style.cssText = 'left:' + t.x + 'px;top:' + t.y + 'px;--s:' + rnd(8, 14) + 'px;--d:0s';
-      wrap.appendChild(gl); setTimeout(gl.remove.bind(gl), 1100);
-    }, 1900);
-
-    var rz; window.addEventListener('resize', function () {
-      clearTimeout(rz);
-      rz = setTimeout(function () { setup(); paintUntil(1e9); compose(); }, 200);
-    });
   })();
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
