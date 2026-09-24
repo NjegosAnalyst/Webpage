@@ -61,6 +61,9 @@
     100%{opacity:1;scale:1;filter:brightness(1) contrast(1.07) saturate(1.06) blur(0)}   /* blagi filmski kontrast */
   }
 
+  /* svjetlosni bloom na stvarnim reflektorima (canvas unutar fotografije, pa prati parallax) */
+  .jh-lights{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;mix-blend-mode:screen}
+
   /* suptilni sjaj i vinjeta za dubinu */
   .jh-glow{
     position:absolute;inset:0;pointer-events:none;z-index:1;
@@ -467,7 +470,7 @@
 <section class="jh-hero" aria-label="Olimpijski centar Jahorina">
   <div class="jh-frame">
 
-    <div class="jh-photo" role="img" aria-label="Noćno skijanje na Jahorini"></div>
+    <div class="jh-photo" role="img" aria-label="Noćno skijanje na Jahorini"><canvas class="jh-lights" aria-hidden="true"></canvas></div>
     <div class="jh-scrim jh-scrim--left"></div>
     <div class="jh-scrim jh-scrim--bottom"></div>
     <div class="jh-scrim jh-scrim--top"></div>
@@ -597,6 +600,105 @@
       burger.setAttribute('aria-expanded', 'false');
     }
   });
+
+  // ===== Reflektori: pale se uz stazu, tiho dišu, povremeno bljesne filmski zrak =====
+  (function floodlights() {
+    var photo = hero.querySelector('.jh-photo'), cv = photo.querySelector('.jh-lights'), ctx = cv.getContext('2d');
+    // [x, y] u udjelu fotografije (2000×1334), veličina svjetla 0–1, 1 = toplo svjetlo — pronađeno analizom fotografije
+    var LIGHTS = [[0.9567,0.8873,0.55,1],[0.2898,0.6649,0.54,0],[0.0752,0.3858,0.22,0],[0.9388,0.8963,0.43,1],[0.8324,0.7261,1,0],[0.8899,0.9188,0.62,1],[0.2229,0.5661,0.12,0],[0.3608,0.8373,0.28,0],[0.8177,0.2039,0.38,1],[0.7823,0.3904,0.17,0],[0.8516,0.4789,0.38,0],[0.8834,0.8795,0.57,1],[0.6613,0.926,0.15,0],[0.3973,0.4085,0.41,0],[0.721,0.7011,0.17,1],[0.4063,0.7691,0.47,0],[0.3835,0.8242,0.2,0],[0.3997,0.8116,0.82,0],[0.3125,0.576,0.09,0],[0.7286,0.339,0.23,0],[0.1369,0.5104,0.11,1],[0.2109,0.7366,0.16,0],[0.4511,0.5993,0.42,0],[0.6991,0.6965,0.3,1],[0.7885,0.2044,0.12,0],[0.2196,0.795,0.95,0],[0.5336,0.5553,0.51,0],[0.9975,0.6177,0.4,0],[0.6798,0.9492,0.17,1],[0.4129,0.3991,0.19,0],[0.2077,0.9387,0.56,1],[0.6448,0.9046,0.15,1],[0.5782,0.5135,0.4,0],[0.4107,0.5122,0.84,0],[0.7485,0.3537,0.27,0],[0.372,0.8599,0.16,1],[0.6816,0.3728,0.33,0],[0.6608,0.8965,0.08,1],[0.5086,0.6036,0.47,0],[0.9314,0.4547,0.04,0],[0.4011,0.3848,0.15,0],[0.2002,0.797,0.71,1],[0.4337,0.4426,0.1,0],[0.4458,0.7357,0.29,0],[0.7998,0.2318,0.38,0],[0.6749,0.73,0.09,1],[0.6431,0.449,0.4,0],[0.4812,0.6772,0.55,0],[0.667,0.3907,0.19,0],[0.2411,0.6867,0.05,1],[0.7217,0.4975,0.41,0],[0.2301,0.7709,0.43,1],[0.6138,0.4791,0.46,0],[0.4167,0.5428,0.15,0],[0.6988,0.3607,0.23,0],[0.7185,0.744,0.05,1],[0.4283,0.5694,0.15,0],[0.5411,0.9323,0.43,0],[0.6559,0.5207,0.88,0],[0.9958,0.6533,0.05,0],[0.3136,0.851,0.06,1],[0.8185,0.721,0.11,0],[0.6637,0.4174,0.28,0],[0.0802,0.4375,0.03,1],[0.4879,0.8625,0.42,0],[0.2378,0.3828,0.03,1],[0.2692,0.6904,0.05,1],[0.4539,0.9119,1,0],[0.7523,0.731,0.05,0],[0.5855,0.8197,0.18,0]];
+    var IW = 2000, IH = 1334, dpr = Math.min(window.devicePixelRatio || 1, 2), W = 0, H = 0, pts = [], k = 1;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function rnd(a, b) { return a + Math.random() * (b - a); }
+    function sprite(r, g, b) {
+      var c = document.createElement('canvas'), x = c.getContext('2d'); c.width = c.height = 128;
+      var gr = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+      gr.addColorStop(0, 'rgba(255,255,255,1)');
+      gr.addColorStop(0.07, 'rgba(' + r + ',' + g + ',' + b + ',.9)');
+      gr.addColorStop(0.28, 'rgba(' + r + ',' + g + ',' + b + ',.26)');
+      gr.addColorStop(1, 'rgba(' + r + ',' + g + ',' + b + ',0)');
+      x.fillStyle = gr; x.fillRect(0, 0, 128, 128); return c;
+    }
+    var COLD = sprite(185, 226, 255), WARM = sprite(255, 176, 88);
+    // oštar horizontalni zrak (anamorfni flare): svijetlo jezgro u sredini, vrhovi se gube
+    var STREAK = (function () {
+      var c = document.createElement('canvas'), x = c.getContext('2d'); c.width = 512; c.height = 32;
+      var h = x.createLinearGradient(0, 0, 512, 0);
+      h.addColorStop(0, 'rgba(120,200,255,0)'); h.addColorStop(0.3, 'rgba(120,200,255,.35)');
+      h.addColorStop(0.47, 'rgba(210,240,255,.95)'); h.addColorStop(0.5, 'rgba(255,255,255,1)');
+      h.addColorStop(0.53, 'rgba(210,240,255,.95)'); h.addColorStop(0.7, 'rgba(120,200,255,.35)'); h.addColorStop(1, 'rgba(120,200,255,0)');
+      x.fillStyle = h; x.fillRect(0, 0, 512, 32);
+      x.globalCompositeOperation = 'destination-in';                // suzi prema gore i dolje
+      var v = x.createLinearGradient(0, 0, 0, 32);
+      v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(0.5, 'rgba(0,0,0,1)'); v.addColorStop(1, 'rgba(0,0,0,0)');
+      x.fillStyle = v; x.fillRect(0, 0, 512, 32);
+      return c;
+    })();
+
+    function layout() {
+      W = photo.clientWidth; H = photo.clientHeight;
+      cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var pos = getComputedStyle(photo).backgroundPosition.split(' ');
+      var px = parseFloat(pos[0]) / 100, py = parseFloat(pos[1] || '50%') / 100;
+      k = Math.max(W / IW, H / IH);
+      var ox = (W - IW * k) * px, oy = (H - IH * k) * py, old = pts;
+      pts = LIGHTS.map(function (l, i) {
+        var o = old[i] || {};
+        return {
+          x: ox + l[0] * IW * k, y: oy + l[1] * IH * k, s: l[2], warm: l[3],
+          ph: o.ph || rnd(0, 6.28), f1: o.f1 || rnd(0.25, 0.6), f2: o.f2 || rnd(0.7, 1.4),
+          on: 0.5 + (1 - l[1]) * 1.9 + rnd(0, 0.15)          // pale se od podnožja ka vrhu staze
+        };
+      });
+    }
+
+    var flares = [], t0 = performance.now(), nextFlare = 4.5;
+    function intensity(p, t) {
+      if (reduce) return 1;
+      var u = t - p.on;
+      if (u < 0) return 0;
+      if (u < 0.32) return [0.55, 0.1, 0.9, 0.35, 1][Math.floor(u / 0.065)] || 1;   // treptaj pri paljenju
+      return 0.84 + 0.09 * Math.sin(t * p.f1 * 6.28 + p.ph) + 0.07 * Math.sin(t * p.f2 * 14.4 + p.ph * 2);
+    }
+    function draw(now) {
+      var t = (now - t0) / 1000, sc = Math.sqrt(k);
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'lighter';
+      for (var i = 0; i < pts.length; i++) {
+        var p = pts[i], a = intensity(p, t); if (!a) continue;
+        var r = (12 + p.s * 26) * sc * 1.35;
+        ctx.globalAlpha = a * (p.warm ? 0.5 : 0.62);
+        ctx.drawImage(p.warm ? WARM : COLD, p.x - r, p.y - r, r * 2, r * 2);
+      }
+      // filmski zrak svjetla na nekom od velikih reflektora
+      if (!reduce && t > nextFlare) {
+        var big = pts.filter(function (p) { return !p.warm && p.s > 0.25; });
+        if (big.length) flares.push({ p: big[Math.floor(Math.random() * big.length)], t: t, d: 2.6 });
+        nextFlare = t + rnd(3.5, 6);
+      }
+      flares = flares.filter(function (f) { return t - f.t < f.d; });
+      flares.forEach(function (f) {
+        var u = (t - f.t) / f.d, e = Math.sin(Math.PI * u), R = (14 + f.p.s * 26) * sc;
+        var len = R * (9 + 5 * e);
+        ctx.globalAlpha = e * 0.35; ctx.drawImage(COLD, f.p.x - len * 0.55, f.p.y - R * 0.5, len * 1.1, R);          // meki sjaj oko zraka
+        ctx.globalAlpha = e * 0.95; ctx.drawImage(STREAK, f.p.x - len, f.p.y - R * 0.1, len * 2, R * 0.2);          // oštar horizontalni zrak
+        ctx.save(); ctx.translate(f.p.x, f.p.y); ctx.rotate(Math.PI / 2);
+        ctx.globalAlpha = e * 0.45; ctx.drawImage(STREAK, -R * 2.6, -R * 0.07, R * 5.2, R * 0.14);                 // kratki vertikalni zrak
+        ctx.restore();
+        ctx.globalAlpha = e * 0.7;  ctx.drawImage(COLD, f.p.x - R * 1.8, f.p.y - R * 1.8, R * 3.6, R * 3.6);          // jače jezgro
+      });
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+    }
+
+    layout();
+    if (reduce) { draw(performance.now()); return; }
+    var visible = true, last = 0;
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(hero);
+    (function loop(now) {
+      if (visible && !document.hidden && now - last > 32) { last = now; draw(now); }   // ~30 fps je dovoljno za svjetlo
+      requestAnimationFrame(loop);
+    })(performance.now());
+    var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(layout, 150); });
+  })();
 
   // ===== Ulazak teksta: kicker se "otkuca", naslov se kristališe, "Jahorine" se iscrta ledom =====
   (function intro() {
