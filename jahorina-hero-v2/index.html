@@ -227,35 +227,83 @@
   /* 5) na prelaz mišem: slova se razmaknu i zasvijetle */
   .jh-title > span.jh-ice.is-live:hover{animation:none;letter-spacing:4px;-webkit-text-stroke-color:#BFF1FF;filter:drop-shadow(0 0 16px rgba(0,185,242,.85)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
 
-  /* SVG sloj za iscrtavanje obrisa */
+  /* ===== "Ledeno iscrtavanje" — SVG sloj preko riječi "Jahorine" ===== */
   .jh-ice__svg{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
-  .jh-ice__svg text{
-    fill:rgba(190,240,255,0);stroke:#7FE0FF;stroke-width:2;stroke-linejoin:round;-webkit-text-stroke:0;
-    filter:drop-shadow(0 0 6px rgba(0,185,242,.95));
-    animation:jhDraw var(--dur,.85s) cubic-bezier(.45,0,.25,1) var(--delay,0s) both;
+  .jh-ice__svg text{-webkit-text-stroke:0;stroke-linejoin:round;stroke-linecap:round}
+  /* trag olovke: cyan linija koja ostaje iza vrha */
+  .jh-ice__svg .jh-trail{
+    fill:transparent;stroke:#6FDBFF;stroke-width:2;
+    filter:drop-shadow(0 0 5px rgba(0,185,242,.85));
+    animation:jhTrail var(--dur) cubic-bezier(.55,.05,.25,1) var(--delay) both;
   }
-  @keyframes jhDraw{
-    0%{stroke-dashoffset:var(--len);stroke:#7FE0FF;opacity:1}
-    85%{stroke:#BFF1FF}
-    100%{stroke-dashoffset:0;stroke:rgba(255,255,255,.92)}
+  @keyframes jhTrail{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
+  /* vrh olovke: kratka užarena bijela crtica koja putuje ispred traga */
+  .jh-ice__svg .jh-pen{
+    fill:transparent;stroke:#fff;stroke-width:3.2;
+    filter:drop-shadow(0 0 3px #fff) drop-shadow(0 0 10px rgba(0,185,242,1)) drop-shadow(0 0 22px rgba(0,185,242,.7));
+    animation:jhPen var(--dur) cubic-bezier(.55,.05,.25,1) var(--delay) both;
   }
-  /* zamrzavanje: slova se na trenutak ispune ledenim sjajem */
-  .jh-ice__svg.is-freeze text{animation:jhFreeze .9s ease-out both}
-  @keyframes jhFreeze{
-    0%{fill:rgba(190,240,255,0);stroke:rgba(255,255,255,.92);filter:drop-shadow(0 0 6px rgba(0,185,242,.9))}
-    30%{fill:rgba(205,245,255,.9);stroke:#fff;filter:drop-shadow(0 0 22px rgba(0,185,242,1))}
-    100%{fill:rgba(190,240,255,0);stroke:rgba(255,255,255,.92);filter:drop-shadow(0 0 0 rgba(0,185,242,0))}
+  @keyframes jhPen{
+    0%{stroke-dashoffset:var(--h);opacity:0}
+    6%{opacity:1}
+    88%{opacity:1}
+    100%{stroke-dashoffset:calc(var(--h) - var(--len));opacity:0}
   }
-  /* ledene iskre koje se rasprše iz slova */
+  /* talas mraza: ledeni gradijent prelazi preko slova */
+  .jh-ice__svg.is-frost .jh-trail{
+    fill:url(#jhFrostGrad);
+    animation:jhFrost 1.5s cubic-bezier(.3,.6,.2,1) both;
+  }
+  @keyframes jhFrost{
+    0%{stroke:#6FDBFF;filter:drop-shadow(0 0 5px rgba(0,185,242,.85))}
+    35%{stroke:#E8FBFF;filter:drop-shadow(0 0 16px rgba(0,185,242,.95)) drop-shadow(0 0 2px #fff)}
+    100%{stroke:rgba(255,255,255,.92);filter:drop-shadow(0 0 0 rgba(0,185,242,0))}
+  }
+  /* cijela riječ lagano "udahne" u trenutku zamrzavanja */
+  .jh-title > span.jh-ice.is-breath{animation:jhBreath 1.4s cubic-bezier(.3,.6,.2,1) both}
+  @keyframes jhBreath{0%{transform:none}30%{transform:scale(1.012)}100%{transform:none}}
+
+  /* anamorfni odsjaj: tanka horizontalna svjetlost preko riječi */
+  .jh-flare{
+    position:absolute;left:50%;height:2px;width:150%;pointer-events:none;border-radius:2px;
+    transform:translate(-50%,-50%) scaleX(0);
+    background:linear-gradient(90deg,transparent 0%,rgba(0,185,242,.0) 8%,rgba(0,185,242,.55) 32%,#fff 50%,rgba(0,185,242,.55) 68%,rgba(0,185,242,0) 92%,transparent 100%);
+    box-shadow:0 0 12px 2px rgba(0,185,242,.55),0 0 40px 6px rgba(0,185,242,.25);
+    animation:jhFlare 1.3s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  .jh-flare::after{ /* jezgro odsjaja */
+    content:"";position:absolute;left:50%;top:50%;width:18%;height:14px;transform:translate(-50%,-50%);
+    background:radial-gradient(ellipse,rgba(255,255,255,.9),rgba(0,185,242,.35) 45%,transparent 70%);
+    filter:blur(2px);
+  }
+  @keyframes jhFlare{
+    0%{opacity:0;transform:translate(-50%,-50%) scaleX(0)}
+    25%{opacity:1}
+    100%{opacity:0;transform:translate(-50%,-50%) scaleX(1)}
+  }
+
+  /* zvjezdasti odsjaj koji zatreperi na ivici slova */
+  .jh-glint{
+    position:absolute;width:var(--s);height:var(--s);margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);pointer-events:none;
+    background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-10 -10 20 20'%3E%3Cpath d='M0-10C.6-2 2-.6 10 0 2 .6.6 2 0 10-.6 2-2 .6-10 0-2-.6-.6-2 0-10Z' fill='%23fff'/%3E%3C/svg%3E");
+    filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 10px rgba(0,185,242,.9));
+    animation:jhGlint .9s cubic-bezier(.3,.6,.2,1) var(--d) both;
+  }
+  @keyframes jhGlint{
+    0%{opacity:0;transform:scale(0) rotate(0)}
+    40%{opacity:1;transform:scale(1) rotate(45deg)}
+    100%{opacity:0;transform:scale(.2) rotate(90deg)}
+  }
+  /* sitni kristali koji se polako dižu iz slova */
   .jh-spark{
     position:absolute;width:var(--s);height:var(--s);pointer-events:none;
-    background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg stroke='%23fff' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M0-10V10M-8.7-5 8.7 5M-8.7 5 8.7-5M0-6-2.5-8.5M0-6 2.5-8.5M0 6-2.5 8.5M0 6 2.5 8.5'/%3E%3C/g%3E%3C/svg%3E");
-    filter:drop-shadow(0 0 4px rgba(0,185,242,.9));
-    animation:jhSpark var(--t) cubic-bezier(.15,.7,.3,1) forwards;
+    background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg stroke='%23fff' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M0-10V10M-8.7-5 8.7 5M-8.7 5 8.7-5M0-6-2.5-8.5M0-6 2.5-8.5M0 6-2.5 8.5M0 6 2.5 8.5'/%3E%3C/g%3E%3C/svg%3E");
+    filter:drop-shadow(0 0 3px rgba(0,185,242,.9));
+    animation:jhRise var(--t) cubic-bezier(.2,.6,.3,1) var(--d) both;
   }
-  @keyframes jhSpark{
-    0%{opacity:0;transform:translate(0,0) scale(.3) rotate(0)}
-    15%{opacity:1}
+  @keyframes jhRise{
+    0%{opacity:0;transform:translate(0,0) scale(.4) rotate(0)}
+    20%{opacity:.95}
     100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--r))}
   }
 
@@ -576,42 +624,84 @@
       var NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
       svg.setAttribute('class', 'jh-ice__svg'); svg.setAttribute('aria-hidden', 'true');
       svg.setAttribute('width', box.width); svg.setAttribute('height', box.height);
-      var len = Math.round(fs * 6), range = document.createRange(), step = 0.09, dur = 0.85, count = 0;
+
+      // ledeni gradijent koji će preći preko slova (talas mraza)
+      var W = box.width;
+      svg.innerHTML =
+        '<defs><linearGradient id="jhFrostGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="' + W + '" y2="0">' +
+        '<stop offset="0" stop-color="#BFF1FF" stop-opacity="0"/>' +
+        '<stop offset=".42" stop-color="#BFF1FF" stop-opacity="0"/>' +
+        '<stop offset=".48" stop-color="#E8FBFF" stop-opacity=".95"/>' +
+        '<stop offset=".52" stop-color="#6FDBFF" stop-opacity=".55"/>' +
+        '<stop offset=".6" stop-color="#BFF1FF" stop-opacity="0"/>' +
+        '<stop offset="1" stop-color="#BFF1FF" stop-opacity="0"/>' +
+        '<animateTransform attributeName="gradientTransform" type="translate" from="' + (-W) + ' 0" to="' + W + ' 0" dur="1.3s" begin="indefinite" fill="freeze" calcMode="spline" keySplines=".3 .6 .2 1" keyTimes="0;1"/>' +
+        '</linearGradient></defs>';
+
+      var len = Math.round(fs * 6), head = Math.round(fs * 0.12), range = document.createRange();
+      var step = 0.085, dur = 0.95, count = 0, glyphs = [];
       for (var i = 0; i < text.length; i++) {
         if (!text[i].trim()) continue;
         range.setStart(node, i); range.setEnd(node, i + 1);
-        var r = range.getBoundingClientRect(), t = document.createElementNS(NS, 'text');
-        t.textContent = text[i];
-        t.setAttribute('x', r.left - box.left); t.setAttribute('y', baseY);
-        t.style.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
-        t.style.strokeDasharray = len;
-        t.style.setProperty('--len', len);
-        t.style.setProperty('--delay', (count++ * step) + 's');
-        t.style.setProperty('--dur', dur + 's');
-        svg.appendChild(t);
+        var r = range.getBoundingClientRect(), x = r.left - box.left;
+        glyphs.push({ x: x, w: r.width });
+        ['jh-trail', 'jh-pen'].forEach(function (cls) {
+          var t = document.createElementNS(NS, 'text');
+          t.textContent = text[i]; t.setAttribute('class', cls);
+          t.setAttribute('x', x); t.setAttribute('y', baseY);
+          t.style.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+          t.style.strokeDasharray = cls === 'jh-pen' ? head + ' ' + (len * 2) : len + ' ' + len;
+          t.style.setProperty('--len', len + 'px');
+          t.style.setProperty('--h', head + 'px');
+          t.style.setProperty('--delay', (count * step) + 's');
+          t.style.setProperty('--dur', dur + 's');
+          svg.appendChild(t);
+        });
+        count++;
       }
       ice.appendChild(svg);
 
+      function fx(cls, css, life) {
+        var el = document.createElement('span');
+        el.className = cls; el.style.cssText = css; ice.appendChild(el);
+        setTimeout(el.remove.bind(el), life);
+      }
+
       var drawn = ((count - 1) * step + dur) * 1000;
       setTimeout(function () {
-        [].forEach.call(svg.querySelectorAll('text'), function (t) { t.style.strokeDasharray = 'none'; });
-        svg.classList.add('is-freeze');
-        for (var k = 0; k < 16; k++) {
-          var sp = document.createElement('span'), ang = Math.random() * Math.PI * 2, dist = fs * (0.4 + Math.random() * 0.9);
-          var size = 6 + Math.random() * 10;
-          sp.className = 'jh-spark';
-          sp.style.cssText = 'left:' + (Math.random() * box.width - size / 2) + 'px;top:' + (baseY - Math.random() * fs * 0.7 - size / 2) + 'px;' +
-            '--s:' + size + 'px;--dx:' + (Math.cos(ang) * dist) + 'px;--dy:' + (Math.sin(ang) * dist - fs * 0.25) + 'px;' +
-            '--r:' + ((Math.random() - 0.5) * 360) + 'deg;--t:' + (0.9 + Math.random() * 0.8) + 's';
-          ice.appendChild(sp);
-          setTimeout(sp.remove.bind(sp), 1900);
+        // olovka nestaje, trag se puni mrazom
+        [].forEach.call(svg.querySelectorAll('.jh-pen'), function (t) { t.remove(); });
+        [].forEach.call(svg.querySelectorAll('.jh-trail'), function (t) { t.style.strokeDasharray = 'none'; });
+        svg.classList.add('is-frost');
+        var sweep = svg.querySelector('animateTransform');
+        if (sweep && sweep.beginElement) sweep.beginElement();
+        ice.classList.add('is-breath');
+
+        // anamorfni odsjaj preko sredine slova
+        fx('jh-flare', 'top:' + (baseY - fs * 0.36) + 'px', 1400);
+
+        // zvjezdasti odsjaji na gornjim ivicama slova, redom slijeva nadesno
+        glyphs.forEach(function (g, k) {
+          if (k % 2 && Math.random() < 0.5) return;
+          var gx = g.x + g.w * (0.25 + Math.random() * 0.5), gy = baseY - fs * (0.55 + Math.random() * 0.2);
+          fx('jh-glint', 'left:' + gx + 'px;top:' + gy + 'px;--s:' + (10 + Math.random() * 12) + 'px;--d:' + (0.08 + k * 0.07) + 's', 1800);
+        });
+
+        // nekoliko sitnih kristala polako se diže iz slova
+        for (var j = 0; j < 9; j++) {
+          var size = 5 + Math.random() * 7, sx = Math.random() * W, sy = baseY - Math.random() * fs * 0.6;
+          fx('jh-spark', 'left:' + (sx - size / 2) + 'px;top:' + (sy - size / 2) + 'px;--s:' + size + 'px;' +
+            '--dx:' + ((Math.random() - 0.5) * fs * 0.5) + 'px;--dy:' + (-fs * (0.5 + Math.random() * 0.7)) + 'px;' +
+            '--r:' + ((Math.random() - 0.5) * 180) + 'deg;--t:' + (1.6 + Math.random() * 0.9) + 's;--d:' + (0.1 + Math.random() * 0.5) + 's', 3200);
         }
       }, drawn);
+
+      // obris se smiri u bijelo, pa preuzima pravi tekst
       setTimeout(function () {
         svg.remove();
-        ice.classList.remove('is-drawing');
+        ice.classList.remove('is-drawing', 'is-breath');
         ice.classList.add('is-live');
-      }, drawn + 900);
+      }, drawn + 1550);
     }
     // crta tek kad se font učita (da obris tačno legne na slova), najranije u 1.1 s
     var fontsReady = new Promise(function (res) {
