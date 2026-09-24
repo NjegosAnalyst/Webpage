@@ -50,10 +50,15 @@
     position:absolute;inset:-3%;
     background:url('assets/jahorina-hero.jpg') center 40%/cover no-repeat;
     transform:translate3d(calc(var(--mx,0) * -14px),calc(var(--my,0) * -10px),0);
-    animation:jhZoom 2.6s cubic-bezier(.2,.7,.2,1) both;
+    animation:jhZoom 2.2s cubic-bezier(.2,.7,.2,1) both;
     will-change:transform;
   }
-  @keyframes jhZoom{from{opacity:0;scale:1.08}to{opacity:1;scale:1}}
+  /* 1) mrak se razilazi: fotografija kreće tamna i mutna, pa se izoštri */
+  @keyframes jhZoom{
+    0%{opacity:0;scale:1.08;filter:brightness(.15) blur(14px)}
+    35%{opacity:1}
+    100%{opacity:1;scale:1;filter:brightness(1) blur(0)}
+  }
 
   /* snijeg (canvas) + suptilni cyan sjaj i vinjeta za dubinu */
   .jh-snow{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
@@ -73,8 +78,9 @@
     position:absolute;top:0;left:0;right:0;z-index:6;
     display:flex;align-items:center;justify-content:space-between;gap:28px;
     padding:clamp(22px,2.4vw,34px) clamp(24px,3vw,46px);
-    animation:jhFadeIn 1s ease both;
+    animation:jhDropIn .9s cubic-bezier(.2,.7,.2,1) 1.6s both;
   }
+  @keyframes jhDropIn{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:none}}
   .jh-logo{display:block;flex-shrink:0}
   .jh-logo img{height:46px;width:auto;display:block}
 
@@ -166,40 +172,97 @@
     font-family:'Archivo',sans-serif;font-size:11px;font-weight:600;letter-spacing:5px;
     color:rgba(255,255,255,.75);text-transform:uppercase;margin-bottom:20px;
     display:flex;align-items:center;gap:14px;
-    animation:jhRiseIn .8s cubic-bezier(.2,.7,.2,1) .1s both;
+    animation:jhHold .45s step-end both;
   }
+  /* 2) cyan linija se "upali" slijeva nadesno, pa teče svjetlost kroz nju */
   .jh-kicker::before{
-    content:"";width:34px;height:1.5px;box-shadow:0 0 10px rgba(0,185,242,.8);
+    content:"";width:34px;height:1.5px;box-shadow:0 0 10px rgba(0,185,242,.8);flex-shrink:0;
     background:linear-gradient(90deg,var(--jh-accent),#fff,var(--jh-accent));background-size:200% 100%;
-    animation:jhFlow 2.4s linear infinite;
+    transform-origin:left center;
+    animation:jhLineOn .55s cubic-bezier(.2,.7,.2,1) .4s both,jhFlow 2.4s linear 1s infinite;
   }
+  @keyframes jhLineOn{0%{transform:scaleX(0);opacity:0}60%{opacity:1}100%{transform:scaleX(1);opacity:1}}
+  /* dok JS ne preuzme, elementi čekaju skriveni (bez JS-a se pojave sami) */
+  @keyframes jhHold{from{opacity:0}to{opacity:1}}
+  /* slova koja se "otkucaju" uz blago treperenje */
+  .jh-type{display:inline-block;white-space:pre;animation:jhFlick .35s steps(2,end) both}
+  @keyframes jhFlick{0%{opacity:0}40%{opacity:.9}60%{opacity:.3}100%{opacity:1}}
+
   .jh-title{
     margin:0;font-family:'Archivo',sans-serif;font-weight:800;
     font-size:clamp(52px,8.4vw,132px);line-height:.94;letter-spacing:-1px;
     color:#fff;
   }
-  .jh-title span{display:block;filter:drop-shadow(0 6px 30px rgba(0,0,0,.4))}
-  /* pune riječi: bijela sa svjetlosnim snopom koji periodično prelazi preko slova */
-  .jh-title span:nth-child(-n+2){
+  .jh-title > span{display:block;filter:drop-shadow(0 6px 30px rgba(0,0,0,.4))}
+  .jh-title > span:nth-child(-n+2){animation:jhHold .7s step-end both}
+  /* 3) slova se "kristališu": izranjaju odozdo iz zamućenja */
+  .jh-ch{display:inline-block;white-space:pre;animation:jhCrystal .75s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes jhCrystal{
+    0%{opacity:0;transform:translateY(.35em) scale(.96);filter:blur(12px)}
+    60%{opacity:1;filter:blur(2px)}
+    100%{opacity:1;transform:none;filter:blur(0)}
+  }
+  /* pune riječi nakon ulaska: svjetlosni snop periodično prelazi preko slova */
+  .jh-title.is-live > span:nth-child(-n+2){
     color:transparent;-webkit-background-clip:text;background-clip:text;
     background-image:linear-gradient(105deg,#fff 0%,#fff 42%,#9BE6FF 48%,#fff 50%,#9BE6FF 52%,#fff 58%,#fff 100%);
     background-size:300% 100%;background-position:100% 0;
-    animation:jhRiseIn .85s cubic-bezier(.2,.7,.2,1) both,jhSweep 7s cubic-bezier(.6,0,.2,1) 1.6s infinite;
+    animation:jhSweep 7s cubic-bezier(.6,0,.2,1) 1.5s infinite;
   }
-  .jh-title span:nth-child(1){animation-delay:.2s,1.6s}
-  .jh-title span:nth-child(2){animation-delay:.32s,1.75s}
-  /* obris "Jahorine": neonski puls + cyan snop kroz slova */
-  .jh-title span:nth-child(3){
+  .jh-title.is-live > span:nth-child(2){animation-delay:1.65s}
+
+  /* "Jahorine": obris; tokom ulaska ga crta SVG, zatim preuzima ovaj sloj */
+  .jh-title > span.jh-ice{
+    position:relative;width:max-content;
     color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.92);
     -webkit-background-clip:text;background-clip:text;
-    background-image:linear-gradient(105deg,transparent 40%,rgba(0,185,242,.55) 50%,transparent 60%);
+    background-image:linear-gradient(105deg,transparent 40%,rgba(0,185,242,.5) 50%,transparent 60%);
     background-size:300% 100%;background-position:100% 0;
-    animation:jhRiseIn .85s cubic-bezier(.2,.7,.2,1) .44s both,jhSweep 7s cubic-bezier(.6,0,.2,1) 1.9s infinite,jhNeon 3.5s ease-in-out 1.2s infinite;
+    transition:letter-spacing .45s cubic-bezier(.2,.7,.2,1),-webkit-text-stroke-color .3s;
+    animation:jhHold 1.1s step-end both;
   }
+  .jh-title > span.jh-ice.is-drawing{animation:none;-webkit-text-stroke-color:transparent}
+  /* 4) stalni efekat poslije ulaska: mirniji neonski puls + ledeni odsjaj */
+  .jh-title > span.jh-ice.is-live{animation:jhSweep 9s cubic-bezier(.6,0,.2,1) 2s infinite,jhNeon 4.5s ease-in-out infinite}
+  /* 5) na prelaz mišem: slova se razmaknu i zasvijetle */
+  .jh-title > span.jh-ice.is-live:hover{animation:none;letter-spacing:4px;-webkit-text-stroke-color:#BFF1FF;filter:drop-shadow(0 0 16px rgba(0,185,242,.85)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
+
+  /* SVG sloj za iscrtavanje obrisa */
+  .jh-ice__svg{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+  .jh-ice__svg text{
+    fill:rgba(190,240,255,0);stroke:#7FE0FF;stroke-width:2;stroke-linejoin:round;-webkit-text-stroke:0;
+    filter:drop-shadow(0 0 6px rgba(0,185,242,.95));
+    animation:jhDraw var(--dur,.85s) cubic-bezier(.45,0,.25,1) var(--delay,0s) both;
+  }
+  @keyframes jhDraw{
+    0%{stroke-dashoffset:var(--len);stroke:#7FE0FF;opacity:1}
+    85%{stroke:#BFF1FF}
+    100%{stroke-dashoffset:0;stroke:rgba(255,255,255,.92)}
+  }
+  /* zamrzavanje: slova se na trenutak ispune ledenim sjajem */
+  .jh-ice__svg.is-freeze text{animation:jhFreeze .9s ease-out both}
+  @keyframes jhFreeze{
+    0%{fill:rgba(190,240,255,0);stroke:rgba(255,255,255,.92);filter:drop-shadow(0 0 6px rgba(0,185,242,.9))}
+    30%{fill:rgba(205,245,255,.9);stroke:#fff;filter:drop-shadow(0 0 22px rgba(0,185,242,1))}
+    100%{fill:rgba(190,240,255,0);stroke:rgba(255,255,255,.92);filter:drop-shadow(0 0 0 rgba(0,185,242,0))}
+  }
+  /* ledene iskre koje se rasprše iz slova */
+  .jh-spark{
+    position:absolute;width:var(--s);height:var(--s);pointer-events:none;
+    background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg stroke='%23fff' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M0-10V10M-8.7-5 8.7 5M-8.7 5 8.7-5M0-6-2.5-8.5M0-6 2.5-8.5M0 6-2.5 8.5M0 6 2.5 8.5'/%3E%3C/g%3E%3C/svg%3E");
+    filter:drop-shadow(0 0 4px rgba(0,185,242,.9));
+    animation:jhSpark var(--t) cubic-bezier(.15,.7,.3,1) forwards;
+  }
+  @keyframes jhSpark{
+    0%{opacity:0;transform:translate(0,0) scale(.3) rotate(0)}
+    15%{opacity:1}
+    100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--r))}
+  }
+
   @keyframes jhSweep{0%{background-position:100% 0}45%,100%{background-position:0 0}}
   @keyframes jhNeon{
     0%,100%{-webkit-text-stroke-color:rgba(255,255,255,.92);filter:drop-shadow(0 0 0 rgba(0,185,242,0)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
-    50%{-webkit-text-stroke-color:#BFF1FF;filter:drop-shadow(0 0 12px rgba(0,185,242,.75)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
+    50%{-webkit-text-stroke-color:#D6F6FF;filter:drop-shadow(0 0 8px rgba(0,185,242,.5)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
   }
   @keyframes jhFlow{to{background-position:-200% 0}}
   /* rotirajući ugao za "svjetlosni prsten" oko dugmadi */
@@ -210,8 +273,9 @@
   .jh-intro{
     position:absolute;left:clamp(24px,3vw,52px);bottom:clamp(26px,3.4vw,46px);z-index:5;
     max-width:400px;display:flex;align-items:flex-end;gap:26px;
-    animation:jhFadeIn 1.1s ease .6s both;
+    animation:jhSoftIn 1s cubic-bezier(.2,.7,.2,1) 1.4s both;
   }
+  @keyframes jhSoftIn{from{opacity:0;transform:translateY(12px);filter:blur(6px)}to{opacity:1;transform:none;filter:blur(0)}}
   .jh-intro p{margin:0;font-size:clamp(14px,1.05vw,16px);line-height:1.55;color:rgba(255,255,255,.82)}
   .jh-rating{
     display:flex;align-items:center;gap:8px;white-space:nowrap;
@@ -220,7 +284,7 @@
     box-shadow:var(--nm-raised);
   }
   .jh-rating__star{color:#f5b638;font-size:20px;line-height:1}
-  .jh-rating__value{font-family:'Archivo',sans-serif;font-weight:700;font-size:22px;color:#fff}
+  .jh-rating__value{font-family:'Archivo',sans-serif;font-weight:700;font-size:22px;color:#fff;font-variant-numeric:tabular-nums}
 
   /* ---------- dole desno: spojena traka brzih linkova ---------- */
   .jh-quick{
@@ -229,7 +293,18 @@
     background:var(--nm-surface);
     -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
     box-shadow:var(--nm-inset),5px 5px 0 -5px transparent;
-    animation:jhCardIn .9s cubic-bezier(.2,.7,.2,1) .55s both;
+    animation:jhCardIn .8s cubic-bezier(.2,.7,.2,1) 1.6s both;
+  }
+  .jh-quick__item{animation:jhTileOn .6s cubic-bezier(.2,.7,.2,1) backwards}
+  .jh-quick__item:nth-child(1){animation-delay:1.8s}
+  .jh-quick__item:nth-child(2){animation-delay:1.88s}
+  .jh-quick__item:nth-child(3){animation-delay:1.96s}
+  .jh-quick__item:nth-child(4){animation-delay:2.04s}
+  .jh-quick__item:nth-child(5){animation-delay:2.12s}
+  @keyframes jhTileOn{
+    0%{opacity:0;transform:translateY(10px) scale(.9);filter:brightness(2.2)}
+    60%{opacity:1;filter:brightness(1.4)}
+    100%{opacity:1;transform:none;filter:brightness(1)}
   }
   .jh-quick__item{
     position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
@@ -350,10 +425,10 @@
     <!-- ===== NASLOV ===== -->
     <div class="jh-headline">
       <div class="jh-kicker">Olimpijski centar Jahorina</div>
-      <h1 class="jh-title">
+      <h1 class="jh-title" aria-label="Otkrij čaroliju Jahorine">
         <span>Otkrij</span>
         <span>čaroliju</span>
-        <span>Jahorine</span>
+        <span class="jh-ice">Jahorine</span>
       </h1>
     </div>
 
@@ -435,6 +510,117 @@
       burger.setAttribute('aria-expanded', 'false');
     }
   });
+
+  // ===== Ulazak teksta: kicker se "otkuca", naslov se kristališe, "Jahorine" se iscrta ledom =====
+  (function intro() {
+    var title = hero.querySelector('.jh-title');
+    var ice = hero.querySelector('.jh-ice');
+    var rating = hero.querySelector('.jh-rating__value');
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      title.classList.add('is-live'); ice.classList.add('is-live'); return;
+    }
+    var t0 = performance.now();
+    function after(sec, fn) { setTimeout(fn, Math.max(0, sec * 1000 - (performance.now() - t0))); }
+
+    // kicker: slovo po slovo, uz blago treperenje
+    var kick = hero.querySelector('.jh-kicker'), ktxt = kick.textContent;
+    kick.setAttribute('aria-label', ktxt); kick.textContent = '';
+    var kwrap = document.createElement('span'); kick.appendChild(kwrap);
+    ktxt.split('').forEach(function (c, i) {
+      var sp = document.createElement('span');
+      sp.className = 'jh-type'; sp.setAttribute('aria-hidden', 'true'); sp.textContent = c;
+      sp.style.animationDelay = (0.55 + i * 0.022) + 's';
+      kwrap.appendChild(sp);
+    });
+
+    // "Otkrij čaroliju": svako slovo se kristališe iz zamućenja
+    var lines = [].slice.call(title.children).filter(function (el) { return el !== ice; });
+    var n = 0, last = 0;
+    lines.forEach(function (line) {
+      var t = line.textContent; line.dataset.text = t; line.textContent = '';
+      t.split('').forEach(function (c) {
+        var ch = document.createElement('span');
+        ch.className = 'jh-ch'; ch.textContent = c;
+        last = 0.7 + n++ * 0.038; ch.style.animationDelay = last + 's';
+        line.appendChild(ch);
+      });
+    });
+    after(last + 0.8, function () {
+      lines.forEach(function (line) { line.textContent = line.dataset.text; });
+      title.classList.add('is-live');
+    });
+
+    // ocjena broji od 0.0 do 4.8
+    var target = parseFloat(rating.textContent) || 0;
+    rating.textContent = '0.0';
+    after(1.5, function () {
+      var s0 = performance.now();
+      (function tick() {
+        var p = Math.min(1, (performance.now() - s0) / 1000), e = 1 - Math.pow(1 - p, 3);
+        rating.textContent = (target * e).toFixed(1);
+        if (p < 1) requestAnimationFrame(tick);
+      })();
+    });
+
+    // "Jahorine": svjetlosna olovka iscrta obris, slova se zalede, iz njih se rasprše ledene iskre
+    ice.classList.add('is-drawing');
+    function drawIce() {
+      var cs = getComputedStyle(ice), box = ice.getBoundingClientRect();
+      var node = ice.firstChild, text = node.textContent, fs = parseFloat(cs.fontSize);
+      var probe = document.createElement('i');
+      probe.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline';
+      ice.appendChild(probe);
+      var baseY = probe.getBoundingClientRect().top - box.top;
+      ice.removeChild(probe);
+
+      var NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
+      svg.setAttribute('class', 'jh-ice__svg'); svg.setAttribute('aria-hidden', 'true');
+      svg.setAttribute('width', box.width); svg.setAttribute('height', box.height);
+      var len = Math.round(fs * 6), range = document.createRange(), step = 0.09, dur = 0.85, count = 0;
+      for (var i = 0; i < text.length; i++) {
+        if (!text[i].trim()) continue;
+        range.setStart(node, i); range.setEnd(node, i + 1);
+        var r = range.getBoundingClientRect(), t = document.createElementNS(NS, 'text');
+        t.textContent = text[i];
+        t.setAttribute('x', r.left - box.left); t.setAttribute('y', baseY);
+        t.style.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+        t.style.strokeDasharray = len;
+        t.style.setProperty('--len', len);
+        t.style.setProperty('--delay', (count++ * step) + 's');
+        t.style.setProperty('--dur', dur + 's');
+        svg.appendChild(t);
+      }
+      ice.appendChild(svg);
+
+      var drawn = ((count - 1) * step + dur) * 1000;
+      setTimeout(function () {
+        [].forEach.call(svg.querySelectorAll('text'), function (t) { t.style.strokeDasharray = 'none'; });
+        svg.classList.add('is-freeze');
+        for (var k = 0; k < 16; k++) {
+          var sp = document.createElement('span'), ang = Math.random() * Math.PI * 2, dist = fs * (0.4 + Math.random() * 0.9);
+          var size = 6 + Math.random() * 10;
+          sp.className = 'jh-spark';
+          sp.style.cssText = 'left:' + (Math.random() * box.width - size / 2) + 'px;top:' + (baseY - Math.random() * fs * 0.7 - size / 2) + 'px;' +
+            '--s:' + size + 'px;--dx:' + (Math.cos(ang) * dist) + 'px;--dy:' + (Math.sin(ang) * dist - fs * 0.25) + 'px;' +
+            '--r:' + ((Math.random() - 0.5) * 360) + 'deg;--t:' + (0.9 + Math.random() * 0.8) + 's';
+          ice.appendChild(sp);
+          setTimeout(sp.remove.bind(sp), 1900);
+        }
+      }, drawn);
+      setTimeout(function () {
+        svg.remove();
+        ice.classList.remove('is-drawing');
+        ice.classList.add('is-live');
+      }, drawn + 900);
+    }
+    // crta tek kad se font učita (da obris tačno legne na slova), najranije u 1.1 s
+    var fontsReady = new Promise(function (res) {
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(res);
+      else res();
+      setTimeout(res, 2500);
+    });
+    fontsReady.then(function () { after(1.1, drawIce); });
+  })();
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
