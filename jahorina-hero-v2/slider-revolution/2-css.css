@@ -1,0 +1,465 @@
+/* =====================================================================
+   JAHORINA HERO — DIO 2: CSS  (Slider Revolution → Module Settings → Custom CSS)
+   Zamijeni:  ZAMIJENI-URL-jahorina-noc.webp  i  ZAMIJENI-URL-jahorina-noc.jpg (2x)
+   ===================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap');
+
+/* Slider Revolution sloju daje svoje stilove teksta (nowrap, line-height, veličina) — ovdje ih poništavamo */
+.jh-hero{white-space:normal!important;line-height:normal;letter-spacing:normal;text-align:left;font-size:16px;font-weight:400;color:#fff;width:100%}
+.jh-hero *{white-space:inherit}
+.jh-hero .jh-btn,.jh-hero .jh-rating{white-space:nowrap}
+.jh-hero .jh-ch,.jh-hero .jh-type{white-space:pre}
+/* ============================================================
+     Jahorina Hero v2 — samostalna verzija (bez DC/Tweaks omotača)
+     Sve klase imaju prefiks "jh-" da se ne sudaraju sa WP temom.
+     Akcenat se mijenja preko --jh-accent.
+     ============================================================ */
+
+  .jh-hero{
+    --jh-accent:#00B9F2;
+    --jh-bg:#0a1120;
+    /* tamni neumorphism — mekane dvostruke sjene (tamna dole-desno, svjetlija gore-lijevo) */
+    --nm-surface:rgba(20,30,49,.82);
+    --nm-surface-2:#172238;
+    --nm-dark:rgba(0,0,0,.42);
+    --nm-light:rgba(78,104,150,.16);
+    --nm-raised:4px 4px 10px var(--nm-dark),-3px -3px 9px var(--nm-light),inset 1px 1px 0 rgba(255,255,255,.05);
+    --nm-raised-sm:3px 3px 7px var(--nm-dark),-2px -2px 6px var(--nm-light),inset 1px 1px 0 rgba(255,255,255,.05);
+    --nm-inset:inset 3px 3px 8px rgba(0,0,0,.42),inset -3px -3px 7px rgba(78,104,150,.14);
+    --nm-inset-sm:inset 2px 2px 5px rgba(0,0,0,.4),inset -2px -2px 5px rgba(78,104,150,.13);
+    position:relative;width:100%;min-height:100vh;
+    padding:clamp(14px,1.6vw,22px);
+    background:#0c1424;
+    font-family:'Barlow',sans-serif;
+  }
+  .jh-hero,.jh-hero *,.jh-hero *::before,.jh-hero *::after{box-sizing:border-box}
+
+  @keyframes jhRiseIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+  @keyframes jhFadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes jhCardIn{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
+
+  .jh-frame{
+    position:relative;width:100%;
+    height:calc(100vh - clamp(28px,3.2vw,44px));min-height:660px;
+    border-radius:26px;overflow:hidden;background:var(--jh-bg);
+    box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22);
+  }
+
+  /* ---------- pozadina + scrim slojevi ---------- */
+  .jh-photo{
+    position:absolute;inset:-3%;
+    background:url('ZAMIJENI-URL-jahorina-noc.jpg') center 58%/cover no-repeat;
+    background-image:image-set(url('ZAMIJENI-URL-jahorina-noc.webp') type('image/webp'),url('ZAMIJENI-URL-jahorina-noc.jpg') type('image/jpeg'));
+    transform:translate3d(calc(var(--mx,0) * -14px),calc(var(--my,0) * -10px),0);
+    animation:jhZoom 2.2s cubic-bezier(.2,.7,.2,1) both;
+    will-change:transform;
+  }
+  /* 1) mrak se razilazi: fotografija kreće tamna i mutna, pa se izoštri */
+  @keyframes jhZoom{
+    0%{opacity:0;scale:1.08;filter:brightness(.15) blur(14px)}
+    35%{opacity:1}
+    100%{opacity:1;scale:1;filter:brightness(1) contrast(1.07) saturate(1.06) blur(0)}   /* blagi filmski kontrast */
+  }
+
+  /* svjetlosni bloom na stvarnim reflektorima (canvas unutar fotografije, pa prati parallax) */
+  .jh-lights{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;mix-blend-mode:screen}
+
+  /* suptilni sjaj i vinjeta za dubinu */
+  .jh-glow{
+    position:absolute;inset:0;pointer-events:none;z-index:1;
+    background:
+      linear-gradient(180deg,rgba(6,18,42,.35) 0%,rgba(6,18,42,0) 38%),               /* hladnije, dublje nebo */
+      radial-gradient(40% 50% at 62% 40%,rgba(120,200,255,.08),transparent 70%),       /* hladni odsjaj staze */
+      radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(4,8,18,.45) 100%);
+  }
+  .jh-scrim{position:absolute;inset:0;pointer-events:none}
+  .jh-scrim--left{background:linear-gradient(100deg,rgba(6,11,22,.72) 0%,rgba(6,11,22,.40) 34%,rgba(6,11,22,0) 62%)}
+  .jh-scrim--bottom{background:linear-gradient(0deg,rgba(6,11,22,.70) 0%,rgba(6,11,22,0) 42%)}
+  .jh-scrim--top{background:linear-gradient(180deg,rgba(6,11,22,.35) 0%,rgba(6,11,22,0) 22%)}
+
+  /* ---------- header ---------- */
+  .jh-header{
+    position:absolute;top:0;left:0;right:0;z-index:6;
+    display:flex;align-items:center;justify-content:space-between;gap:28px;
+    padding:clamp(22px,2.4vw,34px) clamp(24px,3vw,46px);
+    animation:jhDropIn .9s cubic-bezier(.2,.7,.2,1) 1.6s both;
+  }
+  @keyframes jhDropIn{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:none}}
+  .jh-logo{display:block;flex-shrink:0}
+  .jh-logo img{height:46px;width:auto;display:block}
+
+  .jh-nav{display:flex;align-items:center;gap:clamp(20px,2.4vw,40px)}
+  .jh-nav__link{
+    display:inline-flex;align-items:center;gap:6px;
+    font-family:inherit;font-size:16px;font-weight:500;color:rgba(255,255,255,.9);
+    text-decoration:none;transition:color .2s,box-shadow .25s;cursor:pointer;
+    background:none;border:0;padding:6px 0;position:relative;
+  }
+  /* futuristička linija koja se razvuče iz sredine */
+  .jh-nav__link::after{
+    content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;border-radius:2px;
+    background:linear-gradient(90deg,transparent,var(--jh-accent),#fff,var(--jh-accent),transparent);
+    box-shadow:0 0 10px rgba(0,185,242,.8);
+    transform:scaleX(0);transition:transform .35s cubic-bezier(.2,.7,.2,1);
+  }
+  .jh-nav__link:hover,.jh-dropdown.is-open > .jh-nav__link{color:#fff;text-shadow:0 0 14px rgba(0,185,242,.55)}
+  .jh-nav__link:hover::after,.jh-dropdown.is-open > .jh-nav__link::after{transform:scaleX(1)}
+  .jh-nav__chevron{transition:transform .2s}
+
+  .jh-dropdown{position:relative}
+  .jh-dropdown__menu{
+    position:absolute;top:calc(100% + 16px);left:0;min-width:200px;z-index:20;
+    padding:8px;border-radius:20px;
+    background:var(--nm-surface-2);
+    box-shadow:var(--nm-raised),0 30px 50px -20px rgba(0,0,0,.7);
+    display:none;
+  }
+  .jh-dropdown.is-open .jh-dropdown__menu{display:block;animation:jhCardIn .25s cubic-bezier(.2,.7,.2,1) both}
+  .jh-dropdown.is-open .jh-nav__chevron{transform:rotate(180deg)}
+  .jh-dropdown__menu a{
+    display:block;padding:12px 16px;border-radius:12px;
+    font-size:14.5px;font-weight:500;color:rgba(255,255,255,.82);text-decoration:none;
+    transition:box-shadow .2s,color .15s;
+  }
+  .jh-dropdown__menu a:hover{color:#fff;box-shadow:var(--nm-inset-sm)}
+
+  .jh-actions{display:flex;align-items:center;gap:12px}
+  .jh-btn{
+    position:relative;isolation:isolate;
+    display:inline-flex;align-items:center;gap:9px;
+    font-family:'Barlow',sans-serif;font-size:15px;letter-spacing:.3px;
+    text-decoration:none;border-radius:40px;white-space:nowrap;
+  }
+  .jh-btn--ghost{
+    padding:12px 24px;font-weight:600;color:#fff;
+    background:var(--nm-surface);border:0;
+    box-shadow:var(--nm-raised);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    transition:color .2s,box-shadow .25s;
+  }
+  .jh-btn--ghost svg *{stroke:currentColor}
+  /* svjetlosni snop koji kruži po ivici dugmeta */
+  .jh-btn--ghost::before,.jh-quick__item--accent::before{
+    content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;
+    background:conic-gradient(from var(--jh-a),transparent 0deg,transparent 250deg,var(--jh-accent) 310deg,#fff 340deg,transparent 360deg);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;
+    animation:jhOrbit 2.4s linear infinite;
+    opacity:0;transition:opacity .35s;
+  }
+  .jh-btn--ghost:hover::before,.jh-btn--ghost:focus-visible::before,.jh-quick__item--accent:hover::before{opacity:1}
+  .jh-btn--ghost:hover{color:var(--jh-accent)}
+  .jh-btn--ghost:active{box-shadow:var(--nm-inset-sm)}
+  .jh-btn--solid{
+    padding:13px 26px;font-weight:700;color:#0d1524;background:linear-gradient(145deg,#fff,#E6EEF6);
+    box-shadow:inset -2px -2px 4px rgba(13,21,36,.08),inset 2px 2px 3px #fff,0 12px 28px -12px rgba(0,0,0,.65);
+    transition:transform .2s,box-shadow .2s;
+  }
+  .jh-btn--solid{box-shadow:inset -2px -2px 4px rgba(13,21,36,.1),inset 2px 2px 3px #fff,4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16)}
+  .jh-btn--solid{overflow:hidden}
+  /* odsjaj koji jednom pređe preko dugmeta na hover */
+  .jh-btn--solid::after{
+    content:"";position:absolute;top:0;bottom:0;left:-60%;width:45%;pointer-events:none;
+    background:linear-gradient(100deg,transparent,rgba(0,185,242,.35),rgba(255,255,255,.9),rgba(0,185,242,.35),transparent);
+    transform:skewX(-20deg);
+  }
+  .jh-btn--solid:hover::after,.jh-btn--solid:focus-visible::after{animation:jhShine 1.6s ease-in-out}
+  @keyframes jhShine{0%{left:-60%}35%,100%{left:130%}}
+  .jh-btn--solid span{display:inline-block;transition:transform .25s}
+  .jh-btn--solid:hover span{animation:jhNudge 1.1s ease-in-out infinite}
+  @keyframes jhNudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+  .jh-btn--solid:hover{transform:translateY(-2px);box-shadow:inset -2px -2px 4px rgba(13,21,36,.1),inset 2px 2px 3px #fff,0 0 0 1px rgba(0,185,242,.5),0 0 26px rgba(0,185,242,.55)}
+  .jh-btn--ghost:hover{box-shadow:var(--nm-raised),0 0 22px rgba(0,185,242,.4)}
+  .jh-btn--solid:active{transform:none;box-shadow:inset 3px 3px 7px rgba(13,21,36,.25),inset -3px -3px 6px #fff}
+  .jh-btn--solid span{font-size:16px}
+  .jh-quick__item:hover{box-shadow:var(--nm-raised-sm),0 0 16px rgba(0,185,242,.3)}
+
+  /* ---------- naslov ---------- */
+  .jh-headline{position:absolute;left:clamp(24px,3vw,52px);top:clamp(150px,25%,240px);z-index:5}
+  .jh-kicker{
+    font-family:'Archivo',sans-serif;font-size:11px;font-weight:600;letter-spacing:5px;
+    color:rgba(255,255,255,.75);text-transform:uppercase;margin-bottom:20px;
+    display:flex;align-items:center;gap:14px;
+    animation:jhHold .45s step-end both;
+  }
+  /* 2) cyan linija se "upali" slijeva nadesno, pa teče svjetlost kroz nju */
+  .jh-kicker::before{
+    content:"";width:34px;height:1.5px;box-shadow:0 0 10px rgba(0,185,242,.8);flex-shrink:0;
+    background:linear-gradient(90deg,var(--jh-accent),#fff,var(--jh-accent));background-size:200% 100%;
+    transform-origin:left center;
+    animation:jhLineOn .55s cubic-bezier(.2,.7,.2,1) .4s both;
+  }
+  @keyframes jhLineOn{0%{transform:scaleX(0);opacity:0}60%{opacity:1}100%{transform:scaleX(1);opacity:1}}
+  /* dok JS ne preuzme, elementi čekaju skriveni (bez JS-a se pojave sami) */
+  @keyframes jhHold{from{opacity:0}to{opacity:1}}
+  /* slova koja se "otkucaju" uz blago treperenje */
+  .jh-type{display:inline-block;white-space:pre;animation:jhFlick .35s steps(2,end) both}
+  @keyframes jhFlick{0%{opacity:0}40%{opacity:.9}60%{opacity:.3}100%{opacity:1}}
+
+  .jh-title{
+    margin:0;font-family:'Archivo',sans-serif;font-weight:800;
+    font-size:clamp(52px,8.4vw,132px);line-height:.94;letter-spacing:-1px;
+    color:#fff;
+  }
+  .jh-title > span{display:block;filter:drop-shadow(0 6px 30px rgba(0,0,0,.4))}
+  .jh-title > span:nth-child(-n+2){animation:jhHold .7s step-end both}
+  /* 3) slova se "kristališu": izranjaju odozdo iz zamućenja */
+  .jh-ch{display:inline-block;white-space:pre;animation:jhCrystal .75s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes jhCrystal{
+    0%{opacity:0;transform:translateY(.35em) scale(.96);filter:blur(12px)}
+    60%{opacity:1;filter:blur(2px)}
+    100%{opacity:1;transform:none;filter:blur(0)}
+  }
+  /* pune riječi nakon ulaska: svjetlosni snop prelazi preko slova samo na hover */
+  .jh-title.is-live > span:nth-child(-n+2){
+    color:transparent;-webkit-background-clip:text;background-clip:text;
+    background-image:linear-gradient(105deg,#fff 0%,#fff 42%,#9BE6FF 48%,#fff 50%,#9BE6FF 52%,#fff 58%,#fff 100%);
+    background-size:300% 100%;background-position:100% 0;
+  }
+  .jh-title.is-live:hover > span:nth-child(-n+2){animation:jhSweep 1.8s cubic-bezier(.6,0,.2,1)}
+  .jh-title.is-live:hover > span:nth-child(2){animation-delay:.12s}
+
+  /* "Jahorine": obris; tokom ulaska ga crta SVG, zatim preuzima ovaj sloj */
+  .jh-title > span.jh-ice{
+    position:relative;width:max-content;
+    color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.92);
+    -webkit-background-clip:text;background-clip:text;
+    background-image:linear-gradient(105deg,transparent 40%,rgba(0,185,242,.5) 50%,transparent 60%);
+    background-size:300% 100%;background-position:100% 0;
+    transition:letter-spacing .45s cubic-bezier(.2,.7,.2,1),-webkit-text-stroke-color .3s;
+    animation:jhHold 1.1s step-end both;
+  }
+  .jh-title > span.jh-ice.is-drawing{animation:none;-webkit-text-stroke-color:transparent}
+  /* 4) stalni efekat poslije ulaska: mirniji neonski puls + ledeni odsjaj */
+  .jh-title > span.jh-ice.is-live{animation:jhSweep 9s cubic-bezier(.6,0,.2,1) 2s infinite,jhNeon 4.5s ease-in-out infinite}
+  /* 5) na prelaz mišem: slova se razmaknu i zasvijetle */
+  .jh-title > span.jh-ice.is-live:hover{animation:none;letter-spacing:4px;-webkit-text-stroke-color:#BFF1FF;filter:drop-shadow(0 0 16px rgba(0,185,242,.85)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
+
+  /* ===== Tačka na "i": zaseban element (skače kao skijaš pri ulasku) ===== */
+  .jh-i{position:relative}
+  .jh-dot{
+    position:absolute;left:.06em;top:.02em;width:.2em;height:.2em;   /* gruba pozicija; JS je precizno namjesti */
+    box-sizing:border-box;border:2px solid rgba(255,255,255,.92);border-radius:22%;
+    -webkit-text-stroke:0;pointer-events:none;
+    transition:background-color .6s ease,box-shadow .6s ease,border-color .6s ease;
+  }
+  .jh-dot.is-waiting{opacity:0}
+  /* u letu: puna užarena tačka */
+  .jh-dot.is-flying{
+    background-color:#fff;border-color:#fff;transition:none;
+    box-shadow:0 0 8px #fff,0 0 18px rgba(0,185,242,.95),0 0 36px rgba(0,185,242,.6);
+  }
+  /* poslije ulaska: obris kao ostala slova + tihi puls */
+  .jh-dot.is-set{animation:jhDotBreath 4.5s ease-in-out infinite}
+  @keyframes jhDotBreath{
+    0%,100%{border-color:rgba(255,255,255,.92);box-shadow:0 0 0 rgba(0,185,242,0)}
+    50%{border-color:#D6F6FF;box-shadow:0 0 10px rgba(0,185,242,.6)}
+  }
+  /* na prelaz mišem tačka blago poskoči */
+  .jh-title > span.jh-ice.is-live:hover .jh-dot{animation:jhHop .55s cubic-bezier(.3,.6,.2,1);border-color:#BFF1FF;box-shadow:0 0 14px rgba(0,185,242,.85)}
+  @keyframes jhHop{0%,100%{transform:none}35%{transform:translateY(-.14em) rotate(-12deg)}70%{transform:translateY(0) scale(1.15,.85)}}
+  /* prsten pri doskoku */
+  .jh-ring{
+    position:absolute;width:var(--s);height:var(--s);margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
+    border-radius:50%;border:2px solid rgba(0,185,242,.9);pointer-events:none;
+    box-shadow:0 0 12px rgba(0,185,242,.8),inset 0 0 8px rgba(0,185,242,.6);
+    animation:jhRing .8s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  @keyframes jhRing{from{opacity:1;transform:scale(.3)}to{opacity:0;transform:scale(3.2)}}
+  .jh-trailsvg{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+
+  /* ===== "Ledeno iscrtavanje" — SVG sloj preko riječi "Jahorine" ===== */
+  .jh-ice__svg{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+  .jh-ice__svg text{-webkit-text-stroke:0;stroke-linejoin:round;stroke-linecap:round}
+  /* trag olovke: cyan linija koja ostaje iza vrha */
+  .jh-ice__svg .jh-trail{
+    fill:transparent;stroke:#6FDBFF;stroke-width:2;
+    filter:drop-shadow(0 0 5px rgba(0,185,242,.85));
+    animation:jhTrail var(--dur) cubic-bezier(.55,.05,.25,1) var(--delay) both;
+  }
+  @keyframes jhTrail{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
+  /* vrh olovke: kratka užarena bijela crtica koja putuje ispred traga */
+  .jh-ice__svg .jh-pen{
+    fill:transparent;stroke:#fff;stroke-width:3.2;
+    filter:drop-shadow(0 0 3px #fff) drop-shadow(0 0 10px rgba(0,185,242,1)) drop-shadow(0 0 22px rgba(0,185,242,.7));
+    animation:jhPen var(--dur) cubic-bezier(.55,.05,.25,1) var(--delay) both;
+  }
+  @keyframes jhPen{
+    0%{stroke-dashoffset:var(--h);opacity:0}
+    6%{opacity:1}
+    88%{opacity:1}
+    100%{stroke-dashoffset:calc(var(--h) - var(--len));opacity:0}
+  }
+  /* talas mraza: ledeni gradijent prelazi preko slova */
+  .jh-ice__svg.is-frost .jh-trail{
+    fill:url(#jhFrostGrad);
+    animation:jhFrost 1.5s cubic-bezier(.3,.6,.2,1) both;
+  }
+  @keyframes jhFrost{
+    0%{stroke:#6FDBFF;filter:drop-shadow(0 0 5px rgba(0,185,242,.85))}
+    35%{stroke:#E8FBFF;filter:drop-shadow(0 0 16px rgba(0,185,242,.95)) drop-shadow(0 0 2px #fff)}
+    100%{stroke:rgba(255,255,255,.92);filter:drop-shadow(0 0 0 rgba(0,185,242,0))}
+  }
+  /* cijela riječ lagano "udahne" u trenutku zamrzavanja */
+  .jh-title > span.jh-ice.is-breath{animation:jhBreath 1.4s cubic-bezier(.3,.6,.2,1) both}
+  @keyframes jhBreath{0%{transform:none}30%{transform:scale(1.012)}100%{transform:none}}
+
+  /* anamorfni odsjaj: tanka horizontalna svjetlost preko riječi */
+  .jh-flare{
+    position:absolute;left:50%;height:2px;width:150%;pointer-events:none;border-radius:2px;
+    transform:translate(-50%,-50%) scaleX(0);
+    background:linear-gradient(90deg,transparent 0%,rgba(0,185,242,.0) 8%,rgba(0,185,242,.55) 32%,#fff 50%,rgba(0,185,242,.55) 68%,rgba(0,185,242,0) 92%,transparent 100%);
+    box-shadow:0 0 12px 2px rgba(0,185,242,.55),0 0 40px 6px rgba(0,185,242,.25);
+    animation:jhFlare 1.3s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  .jh-flare::after{ /* jezgro odsjaja */
+    content:"";position:absolute;left:50%;top:50%;width:18%;height:14px;transform:translate(-50%,-50%);
+    background:radial-gradient(ellipse,rgba(255,255,255,.9),rgba(0,185,242,.35) 45%,transparent 70%);
+    filter:blur(2px);
+  }
+  @keyframes jhFlare{
+    0%{opacity:0;transform:translate(-50%,-50%) scaleX(0)}
+    25%{opacity:1}
+    100%{opacity:0;transform:translate(-50%,-50%) scaleX(1)}
+  }
+
+  /* zvjezdasti odsjaj koji zatreperi na ivici slova */
+  .jh-glint{
+    position:absolute;width:var(--s);height:var(--s);margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);pointer-events:none;
+    background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-10 -10 20 20'%3E%3Cpath d='M0-10C.6-2 2-.6 10 0 2 .6.6 2 0 10-.6 2-2 .6-10 0-2-.6-.6-2 0-10Z' fill='%23fff'/%3E%3C/svg%3E");
+    filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 10px rgba(0,185,242,.9));
+    animation:jhGlint .9s cubic-bezier(.3,.6,.2,1) var(--d) both;
+  }
+  @keyframes jhGlint{
+    0%{opacity:0;transform:scale(0) rotate(0)}
+    40%{opacity:1;transform:scale(1) rotate(45deg)}
+    100%{opacity:0;transform:scale(.2) rotate(90deg)}
+  }
+  /* sitni kristali koji se polako dižu iz slova */
+  .jh-spark{
+    position:absolute;width:var(--s);height:var(--s);pointer-events:none;
+    background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg stroke='%23fff' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M0-10V10M-8.7-5 8.7 5M-8.7 5 8.7-5M0-6-2.5-8.5M0-6 2.5-8.5M0 6-2.5 8.5M0 6 2.5 8.5'/%3E%3C/g%3E%3C/svg%3E");
+    filter:drop-shadow(0 0 3px rgba(0,185,242,.9));
+    animation:jhRise var(--t) cubic-bezier(.2,.6,.3,1) var(--d) both;
+  }
+  @keyframes jhRise{
+    0%{opacity:0;transform:translate(0,0) scale(.4) rotate(0)}
+    20%{opacity:.95}
+    100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--r))}
+  }
+
+  @keyframes jhSweep{0%{background-position:100% 0}45%,100%{background-position:0 0}}
+  @keyframes jhNeon{
+    0%,100%{-webkit-text-stroke-color:rgba(255,255,255,.92);filter:drop-shadow(0 0 0 rgba(0,185,242,0)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
+    50%{-webkit-text-stroke-color:#D6F6FF;filter:drop-shadow(0 0 8px rgba(0,185,242,.5)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
+  }
+  /* rotirajući ugao za "svjetlosni prsten" oko dugmadi */
+  @property --jh-a{syntax:'<angle>';inherits:false;initial-value:0deg}
+  @keyframes jhOrbit{to{--jh-a:360deg}}
+
+  /* ---------- dole lijevo: opis + ocjena ---------- */
+  .jh-intro{
+    position:absolute;left:clamp(24px,3vw,52px);bottom:clamp(26px,3.4vw,46px);z-index:5;
+    max-width:400px;display:flex;align-items:flex-end;gap:26px;
+    animation:jhSoftIn 1s cubic-bezier(.2,.7,.2,1) 1.4s both;
+  }
+  @keyframes jhSoftIn{from{opacity:0;transform:translateY(12px);filter:blur(6px)}to{opacity:1;transform:none;filter:blur(0)}}
+  .jh-intro p{margin:0;font-size:clamp(14px,1.05vw,16px);line-height:1.55;color:rgba(255,255,255,.82)}
+  .jh-rating{
+    display:flex;align-items:center;gap:8px;white-space:nowrap;
+    padding:12px 18px;border-radius:18px;
+    background:var(--nm-surface);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+    box-shadow:var(--nm-raised);
+  }
+  .jh-rating__star{color:#f5b638;font-size:20px;line-height:1}
+  .jh-rating__value{font-family:'Archivo',sans-serif;font-weight:700;font-size:22px;color:#fff;font-variant-numeric:tabular-nums}
+
+  /* ---------- dole desno: spojena traka brzih linkova ---------- */
+  .jh-quick{
+    position:absolute;right:clamp(24px,3vw,52px);bottom:clamp(26px,3.4vw,46px);z-index:6;
+    display:flex;gap:8px;padding:8px;border-radius:24px;
+    background:var(--nm-surface);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    box-shadow:var(--nm-inset),5px 5px 0 -5px transparent;
+    animation:jhCardIn .8s cubic-bezier(.2,.7,.2,1) 1.6s both;
+  }
+  .jh-quick__item{animation:jhTileOn .6s cubic-bezier(.2,.7,.2,1) backwards}
+  .jh-quick__item:nth-child(1){animation-delay:1.8s}
+  .jh-quick__item:nth-child(2){animation-delay:1.88s}
+  .jh-quick__item:nth-child(3){animation-delay:1.96s}
+  .jh-quick__item:nth-child(4){animation-delay:2.04s}
+  .jh-quick__item:nth-child(5){animation-delay:2.12s}
+  @keyframes jhTileOn{
+    0%{opacity:0;transform:translateY(10px) scale(.9);filter:brightness(2.2)}
+    60%{opacity:1;filter:brightness(1.4)}
+    100%{opacity:1;transform:none;filter:brightness(1)}
+  }
+  .jh-quick__item{
+    position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+    width:clamp(64px,5.4vw,76px);height:clamp(68px,5.6vw,80px);border-radius:16px;
+    text-decoration:none;background:var(--nm-surface-2);
+    box-shadow:var(--nm-raised-sm);transition:box-shadow .25s,transform .2s,filter .2s;
+  }
+  .jh-quick__item:hover{transform:translateY(-2px)}
+  .jh-quick__item:active{transform:none;box-shadow:var(--nm-inset-sm)}
+  .jh-quick__item--accent{
+    background:linear-gradient(145deg,#2CCBF8,#00A6DB);isolation:isolate;
+    box-shadow:3px 3px 7px rgba(0,0,0,.4),-2px -2px 6px rgba(78,104,150,.16),inset 1px 1px 0 rgba(255,255,255,.35),0 0 20px -6px rgba(0,185,242,.5);
+  }
+  .jh-quick__item--accent:hover{filter:brightness(1.08)}
+  .jh-quick__item--accent:active{box-shadow:inset 3px 3px 8px rgba(0,80,120,.55),inset -2px -2px 6px rgba(255,255,255,.25)}
+  .jh-quick__label{font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;color:#fff}
+  .jh-quick__label--word{font-size:9.5px;letter-spacing:.3px}
+  .jh-quick__live{
+    position:absolute;top:10px;right:11px;width:7px;height:7px;border-radius:50%;
+    background:#ff4d4d;box-shadow:0 0 0 3px rgba(255,77,77,.25);
+  }
+
+  /* ---------- mobilni meni (hamburger) ---------- */
+  .jh-burger{
+    display:none;width:44px;height:44px;border-radius:50%;
+    background:var(--nm-surface);border:0;box-shadow:var(--nm-raised-sm);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    align-items:center;justify-content:center;cursor:pointer;padding:0;
+  }
+
+  /* ============================================================
+     Responsive — dizajn je rađen za 1440×820; ispod su prilagodbe
+     da se na manjim ekranima ništa ne preklapa.
+     ============================================================ */
+  @media (max-width:1100px){
+    .jh-header{flex-wrap:wrap}
+    .jh-burger{display:inline-flex}
+    .jh-nav{
+      display:none;order:3;width:100%;flex-direction:column;align-items:stretch;gap:2px;
+      background:var(--nm-surface-2);border-radius:22px;padding:8px;
+    }
+    .jh-header.is-menu-open .jh-nav{display:flex;animation:jhCardIn .25s cubic-bezier(.2,.7,.2,1) both}
+    .jh-nav > a,.jh-dropdown > .jh-nav__link{width:100%;padding:13px 18px}
+    .jh-nav__link::after{left:18px;right:auto;width:40px}
+    .jh-dropdown__menu{position:static;min-width:0;margin:4px 0;box-shadow:var(--nm-inset-sm)}
+    .jh-dropdown__menu a{padding-left:34px}
+  }
+  @media (max-width:760px){
+    .jh-frame{height:auto;min-height:calc(100svh - 28px);display:flex;flex-direction:column}
+    .jh-header{gap:12px;padding:20px}
+    .jh-actions{gap:8px}
+    .jh-logo img{height:34px}
+    .jh-btn--ghost{display:none}
+    .jh-btn--solid{padding:11px 20px;font-size:14px}
+    .jh-headline,.jh-intro,.jh-quick{position:relative;left:auto;right:auto;top:auto;bottom:auto}
+    .jh-headline{margin-top:auto;padding:150px 24px 0}
+    .jh-intro{padding:24px 24px 0;max-width:none}
+    .jh-quick{margin:24px;align-self:stretch;justify-content:space-between}
+    .jh-intro{align-items:center}
+    .jh-quick__item{flex:1;width:auto}
+    .jh-kicker{letter-spacing:2.6px;font-size:10px;gap:10px}
+    /* telefon: kadar na stazu, jače zatamnjenje ispod teksta */
+    .jh-photo{background-position:64% 40%}
+    .jh-scrim--bottom{background:linear-gradient(0deg,rgba(6,11,22,.92) 0%,rgba(6,11,22,.75) 38%,rgba(6,11,22,0) 66%)}
+    .jh-kicker::before{width:22px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .jh-hero *{animation:none !important;transition:none !important}
+  }
