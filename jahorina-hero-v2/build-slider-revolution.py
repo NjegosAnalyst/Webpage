@@ -25,8 +25,8 @@ js = body[body.index('<script>') + 8:body.rindex('</script>')].strip()
 # --- HTML: ukloni gornji red, dugmad premjesti ispod opisa -----------------
 header = re.search(r'\s*<!-- ===== HEADER ===== -->\s*<header class="jh-header">.*?</header>', html, re.S)
 assert header, 'header nije pronađen'
-ski = re.search(r'<a href="#" class="jh-btn jh-btn--ghost">.*?</a>', header.group(0), re.S).group(0)
-shop = re.search(r'<a href="#" class="jh-btn jh-btn--solid">.*?</a>', header.group(0), re.S).group(0)
+ski = re.search(r'<a href="[^"]*" class="jh-btn jh-btn--ghost">.*?</a>', header.group(0), re.S).group(0)
+shop = re.search(r'<a href="[^"]*" class="jh-btn jh-btn--solid">.*?</a>', header.group(0), re.S).group(0)
 html = html.replace(header.group(0), '')
 
 intro = re.search(r'<div class="jh-intro">(.*?)\n    </div>', html, re.S)
