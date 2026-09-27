@@ -273,8 +273,11 @@ HEADER_JS = r"""
     if (!touch) { node.addEventListener('mouseenter', open); node.addEventListener('mouseleave', later); }
     node.addEventListener('focusin', open);
     node.addEventListener('focusout', function (e) { if (!node.contains(e.relatedTarget)) later(); });
+    var wasOpen = null;   // stanje prije dodira (fokus pri dodiru već otvori meni)
+    top.addEventListener('pointerdown', function () { wasOpen = node.classList.contains('is-open'); });
     top.addEventListener('click', function (e) {
-      if (touch && !node.classList.contains('is-open')) { e.preventDefault(); open(); return; }   // tablet: 1. dodir otvara
+      var was = wasOpen === null ? node.classList.contains('is-open') : wasOpen; wasOpen = null;
+      if (touch && !was) { e.preventDefault(); open(); return; }   // tablet: 1. dodir otvara, 2. vodi na stranicu
       if (isDead(top.getAttribute('href'))) e.preventDefault();                                   // "#" ne vodi nigdje
     });
   }
