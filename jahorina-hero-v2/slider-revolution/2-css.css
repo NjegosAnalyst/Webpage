@@ -11,6 +11,7 @@
 .jh-hero .jh-ch,.jh-hero .jh-type{white-space:pre}
 
 /* --- zaštita od Slider Revolution stilova: SVG ikonice i razmak redova --- */
+.jh-hero br{display:none!important}   /* SR pretvara nove redove u <br> */
 .jh-hero svg{overflow:visible}
 .jh-hero svg [stroke]:not([stroke="none"]){stroke:currentColor!important}
 .jh-hero svg [fill]:not([fill="none"]){fill:currentColor!important}
