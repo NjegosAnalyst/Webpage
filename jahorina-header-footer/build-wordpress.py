@@ -185,8 +185,95 @@ header_css = """/* =============================================================
 #Side_slide #menu ul li a:hover{color:#00B9F2!important}
 """
 
+
+# --- header: NAŠ header (stari Betheme header se sakriva) --------------------
+header_css_src = css[css.index('  /* ================= HEADER ================= */'):css.index('  /* ================= DEMO')]
+header_html = body[body.index('  <header class="jf-header">'):body.index('</nav>', body.index('<nav class="jf-mnav"')) + 6]
+header_html = header_html.replace('assets/logo-white-lockup.png', MEDIA + 'logo-white-lockup.png')
+
+HEADER_JS = r"""
+(function () {
+  var root = document.querySelector('.jh-wp');
+  if (!root) return;
+  // header uvijek ide na sam početak stranice, bez obzira gdje ga WPCode ubaci
+  function toTop() { if (document.body && document.body.firstChild !== root) document.body.insertBefore(root, document.body.firstChild); }
+  toTop(); document.addEventListener('DOMContentLoaded', toTop);
+
+  var header = root.querySelector('.jf-header');
+  function onScroll() { header.classList.toggle('is-scrolled', window.scrollY > 40 || root.classList.contains('is-search-open')); }
+  onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+  var burger = root.querySelector('.jf-burger'), shade = root.querySelector('.jf-shade');
+  function setMenu(open) { root.classList.toggle('is-menu-open', open); burger.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+  burger.addEventListener('click', function () { setMenu(!root.classList.contains('is-menu-open')); });
+  shade.addEventListener('click', function () { setMenu(false); });
+
+  var sBtn = root.querySelector('.jf-search-btn'), sInput = root.querySelector('.jf-search input');
+  function setSearch(open) {
+    root.classList.toggle('is-search-open', open); sBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    onScroll(); if (open) setTimeout(function () { sInput.focus(); }, 60);
+  }
+  sBtn.addEventListener('click', function (e) { e.stopPropagation(); setSearch(!root.classList.contains('is-search-open')); });
+  document.addEventListener('click', function (e) { if (!e.target.closest || !e.target.closest('.jf-header')) setSearch(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { setSearch(false); setMenu(false); } });
+
+  // jezik: na srpskoj strani dugme "EN" vodi na istu stranicu na engleskom, i obrnuto
+  var path = location.pathname, isEN = /^\/en(\/|$)/.test(path);
+  var lang = root.querySelector('.jf-lang');
+  lang.href = location.origin + (isEN ? (path.replace(/^\/en/, '') || '/') : '/en' + path);
+  lang.textContent = isEN ? 'SR' : 'EN';
+  lang.setAttribute('aria-label', isEN ? 'Srpski' : 'English');
+  if (!isEN) return;
+  var T = { 'O nama': 'About us', 'Cjenovnik': 'Pricelist', 'Vijesti': 'News', 'Foto galerija': 'Photo gallery', 'Video galerija': 'Video gallery' };
+  root.querySelectorAll('.jf-nav a, .jf-mnav a').forEach(function (a) {
+    var t = a.textContent.trim(); if (T[t]) a.textContent = T[t];
+  });
+  root.querySelectorAll('a[href^="https://www.oc-jahorina.com/"]').forEach(function (a) {
+    if (a !== lang && !/oc-jahorina\.com\/en\//.test(a.href)) a.href = a.href.replace('oc-jahorina.com/', 'oc-jahorina.com/en/');
+  });
+  var f = root.querySelector('.jf-search form');
+  f.action = 'https://www.oc-jahorina.com/en/';
+  sInput.placeholder = 'Search the site…';
+  f.querySelector('button').textContent = 'Search';
+  sBtn.setAttribute('aria-label', 'Search');
+})();
+"""
+
+header_snippet = (
+    "<!-- =====================================================================\n"
+    "     JAHORINA HEADER — WPCode: HTML Snippet → Auto Insert → Site Wide Body\n"
+    "     Sakriva stari Betheme header i prikazuje novi. Isključi snippet = vraća stari.\n"
+    "     ===================================================================== -->\n"
+    "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n"
+    "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n"
+    "<link href=\"https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap\" rel=\"stylesheet\">\n"
+    "<style>\n"
+    "  /* sakrij stari Betheme header i njegov bočni meni */\n"
+    "  #Top_bar, #Action_bar, .mfn-header-tmpl, #Side_slide, #body_overlay{display:none!important}\n"
+    "  .jh-wp, .jh-wp *, .jh-wp *::before, .jh-wp *::after{box-sizing:border-box}\n"
+    "  .jh-wp{line-height:normal;text-align:left}\n"
+    "  .jh-wp a{text-decoration:none!important}\n"
+    "  /* tema mijenja stil dugmadi i ikonica — zadrži naš izgled */\n"
+    "  .jh-wp button{font-family:inherit;letter-spacing:normal;text-transform:none;min-width:0;margin:0}\n"
+    "  .jh-wp .jf-round{padding:0!important;border:0!important;line-height:1!important;color:#fff!important}\n"
+    "  .jh-wp svg[fill=\"none\"],.jh-wp svg[fill=\"none\"] *:not([fill]){fill:none!important}\n"
+    "  .jh-wp svg [stroke=\"currentColor\"]{stroke:currentColor!important}\n"
+    "  .jh-wp .jf-search button{padding:12px 22px!important;border:0!important;border-radius:40px!important;line-height:1!important}\n"
+    "  .jh-wp .jf-search input{height:44px;box-shadow:none!important;border:0!important;margin:0!important}\n"
+    + tokens.replace('  .jf{', '  .jh-wp{')
+    + "  .jh-wp a{color:inherit}\n"
+    + header_css_src.replace('.jf.is-menu-open', '.jh-wp.is-menu-open').replace('.jf.is-search-open', '.jh-wp.is-search-open')
+    + "  body.admin-bar .jf-header{top:32px}\n"
+    "  @media (max-width:782px){ body.admin-bar .jf-header{top:46px} }\n"
+    "  @media (prefers-reduced-motion:reduce){.jh-wp *{transition:none!important}}\n"
+    "</style>\n"
+    "<div class=\"jf jh-wp\">\n" + header_html + "\n</div>\n"
+    "<script>" + HEADER_JS + "</script>\n"
+)
+
 out = HERE / 'wordpress'
 out.mkdir(exist_ok=True)
 (out / '1-footer-snippet.html').write_text(footer_snippet)
 (out / '2-header-style.css').write_text(header_css)
-print('Gotovo: wordpress/1-footer-snippet.html i wordpress/2-header-style.css')
+(out / '3-header-snippet.html').write_text(header_snippet)
+print('Gotovo: wordpress/1-footer-snippet.html, 2-header-style.css (staro) i 3-header-snippet.html')
