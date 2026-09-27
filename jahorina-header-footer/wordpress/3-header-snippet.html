@@ -115,6 +115,17 @@
     .jh-wp.is-menu-open .jf-shade{opacity:1;pointer-events:auto}
   }
 
+  /* podmeni iz WordPressa (npr. O nama) */
+  .jh-wp .jf-dd{position:relative;display:flex;align-items:center}
+  .jh-wp .jf-dd__top::before{content:'';position:absolute;right:-14px;top:50%;width:6px;height:6px;margin-top:-5px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(45deg);opacity:.8}
+  .jh-wp .jf-dd__top{margin-right:12px}
+  .jh-wp .jf-dd__menu{position:absolute;top:calc(100% + 14px);left:-16px;min-width:220px;padding:8px;border-radius:18px;background:rgba(14,20,34,.96);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.1);box-shadow:0 24px 48px -16px rgba(0,0,0,.7);opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity .2s,transform .2s}
+  .jh-wp .jf-dd:hover .jf-dd__menu,.jh-wp .jf-dd:focus-within .jf-dd__menu{opacity:1;transform:none;pointer-events:auto}
+  .jh-wp .jf-dd__menu::before{content:'';position:absolute;left:0;right:0;top:-16px;height:16px}
+  .jh-wp .jf-dd__menu a{display:block;padding:11px 14px;border-radius:12px;font-size:14.5px;color:rgba(255,255,255,.86)}
+  .jh-wp .jf-dd__menu a::after{display:none}
+  .jh-wp .jf-dd__menu a:hover{color:#fff;background:rgba(255,255,255,.07)}
+  .jh-wp .jf-mnav a.jf-mnav__sub{padding:10px 16px 10px 32px;font-size:15px;color:rgba(255,255,255,.7)}
   body.admin-bar .jf-header{top:32px}
   @media (max-width:782px){ body.admin-bar .jf-header{top:46px} }
   @media (prefers-reduced-motion:reduce){.jh-wp *{transition:none!important}}
@@ -158,7 +169,7 @@
   </nav>
 </div>
 <script>
-(function () {
+function jhInit() {
   var root = document.querySelector('.jh-wp');
   if (!root) return;
   // header uvijek ide na sam početak stranice, bez obzira gdje ga WPCode ubaci
@@ -183,13 +194,56 @@
   document.addEventListener('click', function (e) { if (!e.target.closest || !e.target.closest('.jf-header')) setSearch(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { setSearch(false); setMenu(false); } });
 
+  // ===== MENI IZ WORDPRESSA: stavke se čitaju iz postojećeg Betheme menija =====
+  // (Izgled → Izbornici ostaje jedino mjesto gdje se meni uređuje)
+  var srcUl = document.querySelector('#Top_bar #menu > ul, #Top_bar .menu_wrapper ul.menu, .mfn-header-tmpl nav ul, #menu-main-menu');
+  var fromWP = false;
+  if (srcUl) {
+    var items = [].filter.call(srcUl.children, function (li) { return li.tagName === 'LI' && li.querySelector('a'); });
+    if (items.length) {
+      fromWP = true;
+      var nav = root.querySelector('.jf-nav'), mnav = root.querySelector('.jf-mnav');
+      nav.innerHTML = ''; mnav.innerHTML = '';
+      items.forEach(function (li) {
+        var a0 = li.querySelector('a'), label = (a0.textContent || '').replace(/\s+/g, ' ').trim();
+        if (!label) return;
+        var sub = li.querySelector(':scope > ul');
+        var link = document.createElement('a'); link.href = a0.href; link.textContent = label;
+        if (a0.target) link.target = a0.target;
+        if (/current-menu-(item|ancestor|parent)/.test(li.className)) link.setAttribute('aria-current', 'page');
+        var mlink = link.cloneNode(true); mnav.appendChild(mlink);
+        if (sub) {
+          var wrap = document.createElement('div'); wrap.className = 'jf-dd';
+          var box = document.createElement('div'); box.className = 'jf-dd__menu';
+          [].forEach.call(sub.querySelectorAll(':scope > li > a'), function (sa) {
+            var x = document.createElement('a'); x.href = sa.href; x.textContent = sa.textContent.replace(/\s+/g, ' ').trim();
+            if (sa.target) x.target = sa.target;
+            box.appendChild(x);
+            var mx = x.cloneNode(true); mx.className = 'jf-mnav__sub'; mnav.appendChild(mx);
+          });
+          link.classList.add('jf-dd__top');
+          wrap.appendChild(link); wrap.appendChild(box); nav.appendChild(wrap);
+        } else nav.appendChild(link);
+      });
+    }
+  }
+  root.classList.add('is-ready');   // tek sada pokaži meni (bez treptaja pogrešnih stavki)
+  // jezik iz WordPressa (WPML / Polylang), ako postoji
+  var wpLang = document.querySelector('#Top_bar .wpml-languages a:not(.active), #Top_bar a[hreflang], .lang-item:not(.current-lang) a');
+
   // jezik: na srpskoj strani dugme "EN" vodi na istu stranicu na engleskom, i obrnuto
   var path = location.pathname, isEN = /^\/en(\/|$)/.test(path);
   var lang = root.querySelector('.jf-lang');
-  lang.href = location.origin + (isEN ? (path.replace(/^\/en/, '') || '/') : '/en' + path);
+  lang.href = wpLang ? wpLang.href : location.origin + (isEN ? (path.replace(/^\/en/, '') || '/') : '/en' + path);
   lang.textContent = isEN ? 'SR' : 'EN';
   lang.setAttribute('aria-label', isEN ? 'Srpski' : 'English');
   if (!isEN) return;
+  if (fromWP) {   // meni je već na pravom jeziku iz WordPressa — prevedi samo pretragu
+    var f0 = root.querySelector('.jf-search form');
+    f0.action = 'https://www.oc-jahorina.com/en/'; sInput.placeholder = 'Search the site…';
+    f0.querySelector('button').textContent = 'Search'; sBtn.setAttribute('aria-label', 'Search');
+    return;
+  }
   var T = { 'O nama': 'About us', 'Cjenovnik': 'Pricelist', 'Vijesti': 'News', 'Foto galerija': 'Photo gallery', 'Video galerija': 'Video gallery' };
   root.querySelectorAll('.jf-nav a, .jf-mnav a').forEach(function (a) {
     var t = a.textContent.trim(); if (T[t]) a.textContent = T[t];
@@ -202,5 +256,6 @@
   sInput.placeholder = 'Search the site…';
   f.querySelector('button').textContent = 'Search';
   sBtn.setAttribute('aria-label', 'Search');
-})();
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', jhInit); else jhInit();
 </script>
