@@ -44,6 +44,39 @@
 #Top_bar.is-sticky #logo img.logo-sticky,#Top_bar.is-sticky #logo img.logo-mobile-sticky{display:none!important}
 #Top_bar.is-sticky #logo img.logo-main{display:inline-block!important}
 
+/* --- logo: manji, i još manji kad se skroluje --- */
+#Top_bar #logo img{max-height:52px!important;height:52px!important;width:auto!important;transition:height .3s ease,max-height .3s ease}
+#Top_bar.is-sticky #logo img{max-height:38px!important;height:38px!important}
+@media (max-width:767px){
+  #Top_bar #logo img{max-height:40px!important;height:40px!important}
+  #Top_bar.is-sticky #logo img{max-height:34px!important;height:34px!important}
+}
+
+/* --- lupa, EN i hamburger: okrugla neumorphic dugmad kao na hero-u --- */
+#Top_bar .top_bar_right,#Top_bar .top_bar_right:before{background:transparent!important}
+#Top_bar .top_bar_right_wrapper{display:flex!important;align-items:center;gap:10px}
+#Top_bar a#header_search_button,
+#Top_bar .top_bar_right .wpml-languages > a,
+#Top_bar .top_bar_right .wpml-languages a.active,
+#Top_bar .top_bar_right .language-switcher > a,
+#Top_bar .top_bar_right .pll-parent-menu-item > a,
+#Top_bar a.responsive-menu-toggle{
+  width:42px!important;height:42px!important;min-width:0!important;padding:0!important;margin:0!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  border-radius:50%!important;border:0!important;line-height:1!important;
+  background:rgba(23,34,56,.75)!important;color:#fff!important;
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  box-shadow:4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16),inset 1px 1px 0 rgba(255,255,255,.06)!important;
+  font:700 12.5px/1 'Barlow',sans-serif!important;letter-spacing:.6px;text-transform:uppercase;
+  transition:color .2s,box-shadow .25s;
+}
+#Top_bar a#header_search_button i,#Top_bar a.responsive-menu-toggle i{font-size:17px!important;line-height:1!important;margin:0!important;color:inherit!important}
+#Top_bar a#header_search_button:hover,#Top_bar .wpml-languages > a:hover,#Top_bar a.responsive-menu-toggle:hover{color:#00B9F2!important}
+#Top_bar a#header_search_button:active,#Top_bar .wpml-languages > a:active,#Top_bar a.responsive-menu-toggle:active{
+  box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 6px rgba(78,104,150,.18)!important}
+#Top_bar .wpml-languages{border:0!important;background:transparent!important}
+#Top_bar .wpml-languages > a img{display:none!important}   /* samo "EN", bez zastavice */
+
 /* --- meni na telefonu (Betheme bočni meni): tamna pozadina --- */
 #Side_slide{background:#111a2c!important}
 #Side_slide #menu ul li a,#Side_slide .extras a{color:rgba(255,255,255,.88)!important;font-family:'Barlow',sans-serif!important}
