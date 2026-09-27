@@ -301,7 +301,7 @@ HEADER_JS = r"""
       var sub = subOf(li);
       if (!kids(sub).length) { box.appendChild(a); return; }
       var acc = el('div', 'jf-macc'), row = el('div', 'jf-macc__row'), tg = el('button', 'jf-macc__btn'), list = el('div', 'jf-macc__list');
-      tg.type = 'button'; tg.setAttribute('aria-label', a.textContent); tg.setAttribute('aria-expanded', 'false');
+      tg.type = 'button'; tg.appendChild(el('span', 'jf-chev')); tg.setAttribute('aria-label', a.textContent); tg.setAttribute('aria-expanded', 'false');
       row.appendChild(a); row.appendChild(tg); acc.appendChild(row); acc.appendChild(list); box.appendChild(acc);
       function flip(e) { e.preventDefault(); var o = !acc.classList.contains('is-open'); acc.classList.toggle('is-open', o); tg.setAttribute('aria-expanded', o ? 'true' : 'false'); }
       tg.addEventListener('click', flip);
@@ -455,20 +455,21 @@ header_snippet = (
     "  .jh-wp:not(.is-menu-open) .jf-mnav{box-shadow:none!important;visibility:hidden;transition:transform .35s cubic-bezier(.2,.7,.2,1),visibility 0s .35s}\n"
     "  .jh-wp .jf-macc__row{display:flex;align-items:center}\n"
     "  .jh-wp .jf-macc__row > a{flex:1}\n"
-    "  .jh-wp .jf-macc__btn{flex:0 0 30px;width:30px;height:30px;margin:0 6px 0 8px;border:1px solid rgba(255,255,255,.14)!important;padding:0!important;border-radius:50%;background:transparent!important;position:relative;cursor:pointer;box-shadow:none!important;transition:background .25s,border-color .25s}\n"
-    "  .jh-wp .jf-macc__btn::after{content:'';position:absolute;inset:-8px}   /* veća površina za prst */\n"
-    "  .jh-wp .jf-macc__btn::before{content:'';position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-4.5px 0 0 -3px;border-right:1.6px solid rgba(255,255,255,.8);border-bottom:1.6px solid rgba(255,255,255,.8);transform:rotate(45deg);transition:transform .3s cubic-bezier(.2,.7,.2,1),margin .3s,border-color .25s}\n"
-    "  .jh-wp .jf-macc.is-open > .jf-macc__row > .jf-macc__btn{background:rgba(0,185,242,.12)!important;border-color:rgba(0,185,242,.55)!important}\n"
-    "  .jh-wp .jf-macc.is-open > .jf-macc__row > .jf-macc__btn::before{transform:rotate(-135deg);margin-top:-1.5px;border-color:#00B9F2}\n"
+    "  .jh-wp .jf-macc__btn{all:unset;box-sizing:border-box!important;flex:0 0 40px!important;width:40px!important;height:40px!important;margin:0 2px 0 6px!important;display:flex!important;align-items:center!important;justify-content:center!important;cursor:pointer!important;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important}\n"
+    "  .jh-wp .jf-macc__btn::before,.jh-wp .jf-macc__btn::after{content:none!important;display:none!important}\n"
+    "  .jh-wp .jf-macc__btn .jf-chev{display:block!important;position:relative!important;box-sizing:border-box!important;width:30px!important;height:30px!important;border-radius:50%!important;border:1px solid rgba(255,255,255,.22)!important;background:rgba(255,255,255,.04)!important;transition:background .25s,border-color .25s}\n"
+    "  .jh-wp .jf-macc__btn .jf-chev::before{content:''!important;display:block!important;position:absolute!important;left:50%;top:50%;width:6px!important;height:6px!important;margin:-4.5px 0 0 -3px;border:0!important;border-right:1.6px solid #fff!important;border-bottom:1.6px solid #fff!important;transform:rotate(45deg);transition:transform .3s cubic-bezier(.2,.7,.2,1),margin .3s}\n"
+    "  .jh-wp .jf-macc.is-open > .jf-macc__row > .jf-macc__btn .jf-chev{background:rgba(0,185,242,.14)!important;border-color:rgba(0,185,242,.6)!important}\n"
+    "  .jh-wp .jf-macc.is-open > .jf-macc__row > .jf-macc__btn .jf-chev::before{transform:rotate(-135deg);margin-top:-1.5px;border-color:#00B9F2!important}\n"
+    "  .jh-wp .jf-macc__list .jf-macc__btn .jf-chev{width:26px!important;height:26px!important}\n"
+    "  .jh-wp .jf-macc__list .jf-macc__btn .jf-chev::before{width:5px!important;height:5px!important;margin:-3.5px 0 0 -2.5px}\n"
+    "  .jh-wp .jf-macc__list .jf-macc.is-open > .jf-macc__row > .jf-macc__btn .jf-chev::before{margin-top:-1px}\n"
     "  .jh-wp .jf-macc__list{display:none;padding:2px 0 8px}\n"
     "  .jh-wp .jf-macc.is-open > .jf-macc__list{display:block}\n"
     "  .jh-wp .jf-macc.is-open > .jf-macc__row > a{color:#00B9F2!important}\n"
     "  .jh-wp .jf-mnav a.jf-mnav__sub{color:rgba(255,255,255,.75)!important}\n"
     "  .jh-wp .jf-macc__list .jf-macc__list{margin:0 0 4px 22px;padding:0 0 4px;border-left:1px solid rgba(255,255,255,.1)}\n"
     "  .jh-wp .jf-macc__list .jf-macc__list a.jf-mnav__sub{padding-left:18px}\n"
-    "  .jh-wp .jf-macc__list .jf-macc__btn{flex-basis:26px;width:26px;height:26px}\n"
-    "  .jh-wp .jf-macc__list .jf-macc__btn::before{width:5px;height:5px;margin:-3.5px 0 0 -2.5px}\n"
-    "  .jh-wp .jf-macc__list .jf-macc.is-open > .jf-macc__row > .jf-macc__btn::before{margin-top:-1px}\n"
     "  @media (max-width:782px){ body.admin-bar .jf-header{top:46px} }\n"
     "  @media (prefers-reduced-motion:reduce){.jh-wp *{transition:none!important}}\n"
     "</style>\n"
