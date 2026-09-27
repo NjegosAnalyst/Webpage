@@ -65,9 +65,6 @@ SR_LAYOUT = """
 
 /* ===== Opcija A: meni je iz teme; Web shop i Ski mapa su pločice u traci ===== */
 .jh-hero .jh-quick__label{white-space:nowrap!important;text-align:center}
-/* naslov se prilagođava i visini ekrana, da ne udari u dugmad na nižim ekranima */
-.jh-hero .jh-title{font-size:clamp(46px,min(8.4vw,13vh),132px)}
-.jh-hero .jh-headline{top:clamp(140px,22%,220px)}
 @media (max-width:760px){
   .jh-hero .jh-headline{padding-top:130px}
   .jh-hero .jh-quick{gap:5px;padding:6px}

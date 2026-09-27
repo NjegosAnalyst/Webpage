@@ -462,6 +462,15 @@
     .jh-kicker::before{width:22px}
   }
 
+  /* ===== Raspored D: veći naslov, spušten nisko lijevo; traka ostaje dole desno ===== */
+  @media (min-width:761px){
+    .jh-headline{top:auto;bottom:calc(clamp(26px,3.4vw,46px) + clamp(84px,7vw,104px) + clamp(18px,3vh,34px))}
+    .jh-title{font-size:clamp(64px,min(11vw,18.5vh),190px);letter-spacing:-.02em}
+  }
+  @media (max-width:760px){
+    .jh-title{font-size:clamp(44px,12.5vw,64px)}
+  }
+
   @media (prefers-reduced-motion:reduce){
     .jh-hero *{animation:none !important;transition:none !important}
   }
