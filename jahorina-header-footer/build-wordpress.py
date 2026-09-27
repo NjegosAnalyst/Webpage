@@ -305,7 +305,11 @@ HEADER_JS = r"""
       row.appendChild(a); row.appendChild(tg); acc.appendChild(row); acc.appendChild(list); box.appendChild(acc);
       function flip(e) { e.preventDefault(); var o = !acc.classList.contains('is-open'); acc.classList.toggle('is-open', o); tg.setAttribute('aria-expanded', o ? 'true' : 'false'); }
       tg.addEventListener('click', flip);
-      if (isDead(a.getAttribute('href'))) a.addEventListener('click', flip);
+      a.addEventListener('click', flip);   // dodir na naziv uvijek otvara podstavke
+      // ako stavka ima i svoju stranicu (npr. Cjenovnik), ona je prvi link u podstavkama
+      var own = a.getAttribute('href');
+      var dup = kids(sub).some(function (x) { var xa = x.querySelector(':scope > a') || x.querySelector('a'); return xa && xa.getAttribute('href') === own; });
+      if (!isDead(own) && !dup) { var self = a.cloneNode(true); self.className = 'jf-mnav__sub jf-mnav__self'; list.appendChild(self); }
       mobList(sub, list, depth + 1);
     });
   }
