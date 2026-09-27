@@ -331,6 +331,24 @@ header_snippet = (
     "<script>" + HEADER_JS_BOOT + "</script>\n"
 )
 
+
+# WPCode editor (CSSLint) ne poznaje CSS varijable i označava ih kao greške —
+# zato ih u WordPress verzijama zamjenjujemo stvarnim vrijednostima.
+def inline_vars(html):
+    import re as _re
+    vals = dict(_re.findall(r'--([a-z0-9-]+):([^;]+);', tokens))
+    def repl_var(m):
+        return vals[m.group(1)].strip()
+    for _ in range(3):
+        html = _re.sub(r'var\(--([a-z0-9-]+)\)', repl_var, html)
+    # ukloni blokove sa deklaracijama varijabli
+    html = _re.sub(r'\n\s*--[a-z0-9-]+:[^;]+;', '', html)
+    assert 'var(--' not in html, 'ostala varijabla'
+    return html
+
+footer_snippet = inline_vars(footer_snippet)
+header_snippet = inline_vars(header_snippet)
+
 out = HERE / 'wordpress'
 out.mkdir(exist_ok=True)
 (out / '1-footer-snippet.html').write_text(footer_snippet)

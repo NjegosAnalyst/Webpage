@@ -23,20 +23,10 @@
   .jf-wp svg[fill="currentColor"],.jf-wp svg [fill="currentColor"]{fill:currentColor!important}
   .jf-wp svg [stroke="currentColor"]{stroke:currentColor!important}
   .jf-wp{
-    --accent:#00B9F2;
-    --bg:#0a1120;
-    --surface:#111a2c;
-    --surface-2:#172238;
-    --line:rgba(255,255,255,.08);
-    --text:#fff;
-    --text-2:rgba(255,255,255,.62);
-    --text-3:rgba(255,255,255,.42);
-    --nm-raised:4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16),inset 1px 1px 0 rgba(255,255,255,.05);
-    --nm-inset:inset 3px 3px 8px rgba(0,0,0,.42),inset -3px -3px 7px rgba(78,104,150,.14);
-    font-family:'Barlow',system-ui,sans-serif;color:var(--text);
+    font-family:'Barlow',system-ui,sans-serif;color:#fff;
   }
   .jf-wp a{color:inherit;text-decoration:none}
-  .jf-wp a:focus-visible,.jf-wp button:focus-visible,.jf-wp input:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:8px}
+  .jf-wp a:focus-visible,.jf-wp button:focus-visible,.jf-wp input:focus-visible{outline:2px solid #00B9F2;outline-offset:3px;border-radius:8px}
   /* ================= FOOTER ================= */
   .jf-wp .jf-footer{position:relative;margin-top:40px;padding:0 clamp(16px,3vw,44px) 28px;overflow:hidden}
   .jf-wp .jf-footer::before{ /* tanka cyan linija svjetla na vrhu */
@@ -55,39 +45,39 @@
   /* kontakt kolone */
   .jf-cols{
     display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:start;gap:clamp(20px,3vw,44px);
-    padding:clamp(56px,6vw,80px) 0 clamp(36px,4vw,52px);border-bottom:1px solid var(--line);
+    padding:clamp(56px,6vw,80px) 0 clamp(36px,4vw,52px);border-bottom:1px solid rgba(255,255,255,.08);
   }
-  .jf-col h4{margin:0 0 18px;font:600 11px/1.3 'Archivo',sans-serif;letter-spacing:2.6px;text-transform:uppercase;color:var(--text-3)}
+  .jf-col h4{margin:0 0 18px;font:600 11px/1.3 'Archivo',sans-serif;letter-spacing:2.6px;text-transform:uppercase;color:rgba(255,255,255,.42)}
   .jf-col ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}
   .jf-col li a,.jf-col li span{display:inline-flex;align-items:flex-start;gap:10px;font-size:15px;line-height:1.45;color:rgba(255,255,255,.86);transition:color .2s}
-  .jf-col li a:hover{color:var(--accent)}
-  .jf-col svg{flex-shrink:0;margin-top:2px;color:var(--accent)}
+  .jf-col li a:hover{color:#00B9F2}
+  .jf-col svg{flex-shrink:0;margin-top:2px;color:#00B9F2}
   /* hitni broj Gorske službe — istaknut */
   .jf-sos{
     display:flex;align-items:center;gap:14px;margin-top:4px;padding:14px 16px;border-radius:16px;
-    background:var(--surface);box-shadow:var(--nm-raised);
+    background:#111a2c;box-shadow:4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16),inset 1px 1px 0 rgba(255,255,255,.05);
   }
   .jf-sos__dot{width:10px;height:10px;border-radius:50%;background:#ff4d4d;box-shadow:0 0 0 4px rgba(255,77,77,.18);flex-shrink:0;animation:jfPulse 2.2s ease-in-out infinite}
   @keyframes jfPulse{50%{box-shadow:0 0 0 7px rgba(255,77,77,.06)}}
   .jf-sos b{display:block;font:700 18px/1.2 'Archivo',sans-serif;color:#fff;font-variant-numeric:tabular-nums}
-  .jf-sos small{font-size:12.5px;color:var(--text-3)}
+  .jf-sos small{font-size:12.5px;color:rgba(255,255,255,.42)}
 
   /* donji red */
   .jf-bottom{
     display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
     padding-top:26px;
   }
-  .jf-legal{display:flex;align-items:center;gap:6px 20px;flex-wrap:wrap;font-size:13.5px;color:var(--text-3)}
+  .jf-legal{display:flex;align-items:center;gap:6px 20px;flex-wrap:wrap;font-size:13.5px;color:rgba(255,255,255,.42)}
   .jf-legal a{color:rgba(255,255,255,.7);transition:color .2s}
   .jf-legal a:hover{color:#fff}
   .jf-social{display:flex;align-items:center;gap:10px}
   .jf-social a{
     width:44px;height:44px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;
-    background:var(--surface-2);box-shadow:var(--nm-raised);color:rgba(255,255,255,.85);
+    background:#172238;box-shadow:4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16),inset 1px 1px 0 rgba(255,255,255,.05);color:rgba(255,255,255,.85);
     transition:color .2s,transform .2s,box-shadow .25s;
   }
-  .jf-social a:hover{color:var(--accent);transform:translateY(-2px);box-shadow:var(--nm-raised),0 0 18px rgba(0,185,242,.3)}
-  .jf-social a:active{box-shadow:var(--nm-inset);transform:none}
+  .jf-social a:hover{color:#00B9F2;transform:translateY(-2px);box-shadow:4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16),inset 1px 1px 0 rgba(255,255,255,.05),0 0 18px rgba(0,185,242,.3)}
+  .jf-social a:active{box-shadow:inset 3px 3px 8px rgba(0,0,0,.42),inset -3px -3px 7px rgba(78,104,150,.14);transform:none}
   .jf-top-btn{
     width:48px;height:48px;border-radius:50%;border:0;cursor:pointer;margin-left:8px;
     display:inline-flex;align-items:center;justify-content:center;color:#fff;
