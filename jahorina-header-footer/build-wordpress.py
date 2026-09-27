@@ -235,69 +235,92 @@ HEADER_JS = r"""
   // (Izgled → Izbornici ostaje jedino mjesto gdje se meni uređuje)
   var srcUl = document.querySelector('#Top_bar #menu > ul, #Top_bar .menu_wrapper ul.menu, .mfn-header-tmpl nav ul, #menu-main-menu');
   var fromWP = false;
-  if (srcUl) {
-    var items = [].filter.call(srcUl.children, function (li) { return li.tagName === 'LI' && li.querySelector('a'); });
-    if (items.length) {
-      fromWP = true;
-      var nav = root.querySelector('.jf-nav'), mnav = root.querySelector('.jf-mnav');
-      nav.innerHTML = ''; mnav.innerHTML = '';
-      items.forEach(function (li) {
-        var a0 = li.querySelector('a'), label = (a0.textContent || '').replace(/\s+/g, ' ').trim();
-        if (!label) return;
-        var sub = li.querySelector(':scope > ul');
-        var link = document.createElement('a'); link.href = a0.href; link.textContent = label;
-        if (a0.target) link.target = a0.target;
-        if (/current-menu-(item|ancestor|parent)/.test(li.className)) link.setAttribute('aria-current', 'page');
-        var mlink = link.cloneNode(true), mlist = null;
-        if (sub) {   // telefon: stavka + strelica, podstavke se otvaraju na dodir (harmonika)
-          var acc = document.createElement('div'); acc.className = 'jf-macc';
-          var row = document.createElement('div'); row.className = 'jf-macc__row';
-          var tg = document.createElement('button'); tg.type = 'button'; tg.className = 'jf-macc__btn'; tg.setAttribute('aria-label', label); tg.setAttribute('aria-expanded', 'false');
-          mlist = document.createElement('div'); mlist.className = 'jf-macc__list';
-          row.appendChild(mlink); row.appendChild(tg); acc.appendChild(row); acc.appendChild(mlist); mnav.appendChild(acc);
-          (function (acc, tg, mlink) {
-            function flip(e) { e.preventDefault(); var o = !acc.classList.contains('is-open'); acc.classList.toggle('is-open', o); tg.setAttribute('aria-expanded', o ? 'true' : 'false'); }
-            tg.addEventListener('click', flip);
-            var h = mlink.getAttribute('href') || '';
-            if (!h || h === '#' || /#$/.test(h)) mlink.addEventListener('click', flip);
-          })(acc, tg, mlink);
-        } else mnav.appendChild(mlink);
-        if (sub) {
-          var wrap = document.createElement('div'); wrap.className = 'jf-dd';
-          var box = document.createElement('div'); box.className = 'jf-dd__menu';
-          // svi nivoi podmenija (i Betheme mega meni) — dublji nivoi su uvučeni
-          [].forEach.call(sub.querySelectorAll('a'), function (sa) {
-            var txt = (sa.textContent || '').replace(/\s+/g, ' ').trim(); if (!txt) return;
-            var depth = 0; for (var n = sa.parentElement; n && n !== sub; n = n.parentElement) if (n.tagName === 'UL') depth++;
-            var x = document.createElement('a'); x.href = sa.href; x.textContent = txt;
-            if (sa.target) x.target = sa.target;
-            if (depth) x.className = 'jf-dd__deep';
-            box.appendChild(x);
-            var mx = x.cloneNode(true); mx.className = 'jf-mnav__sub' + (depth ? ' jf-mnav__deep' : ''); mlist.appendChild(mx);
-          });
-          link.classList.add('jf-dd__top');
-          wrap.appendChild(link); wrap.appendChild(box); nav.appendChild(wrap);
-        } else nav.appendChild(link);
-      });
-      // podmeniji: hover na računaru, dodir/klik na tabletu i telefonu; ne izlaze van ekrana
-      var touch = window.matchMedia && window.matchMedia('(hover: none)').matches;
-      function closeDD(except) { [].forEach.call(nav.querySelectorAll('.jf-dd.is-open'), function (d) { if (d !== except) d.classList.remove('is-open'); }); }
-      function fit(dd) {
-        var m = dd.querySelector('.jf-dd__menu'); m.style.left = ''; m.style.right = '';
-        var r = m.getBoundingClientRect(); if (r.right > window.innerWidth - 12) { m.style.left = 'auto'; m.style.right = '-16px'; }
-      }
-      [].forEach.call(nav.querySelectorAll('.jf-dd'), function (dd) {
-        var top = dd.querySelector('.jf-dd__top');
-        dd.addEventListener('mouseenter', function () { fit(dd); });
-        top.addEventListener('click', function (e) {
-          var h = top.getAttribute('href') || '';
-          var dead = !h || h === '#' || /#$/.test(h) || top.href === location.href + '#';
-          if ((touch || dead) && !dd.classList.contains('is-open')) { e.preventDefault(); closeDD(dd); fit(dd); dd.classList.add('is-open'); }
-          else if (dead) { e.preventDefault(); dd.classList.remove('is-open'); }
-        });
-      });
-      document.addEventListener('click', function (e) { if (!e.target.closest || !e.target.closest('.jf-dd')) closeDD(); });
+  function kids(ul) { return ul ? [].filter.call(ul.children, function (li) { return li.tagName === 'LI' && li.querySelector('a'); }) : []; }
+  function subOf(li) { return li.querySelector(':scope > ul, :scope > div > ul'); }
+  function isDead(h) { return !h || h === '#' || /#$/.test(h); }
+  function mk(li) {   // kopija linka iz WordPress menija (isti tekst, ista adresa)
+    var a0 = li.querySelector(':scope > a') || li.querySelector('a');
+    var label = (a0.textContent || '').replace(/\s+/g, ' ').trim(); if (!label) return null;
+    var a = document.createElement('a'); a.setAttribute('href', a0.getAttribute('href') || '#'); a.textContent = label;
+    if (a0.target) a.target = a0.target;
+    if (/current-menu-(item|ancestor|parent)/.test(li.className)) a.setAttribute('aria-current', 'page');
+    return a;
+  }
+  function el(tag, cls) { var n = document.createElement(tag); n.className = cls; return n; }
+  var touch = window.matchMedia && window.matchMedia('(hover: none)').matches;
+
+  // računar: podmeni se otvara prelaskom miša; dublji nivo se otvara sa strane tek kad miš stane na svoju stavku
+  function place(node, menu, down) {
+    menu.style.left = ''; menu.style.right = ''; menu.style.top = ''; node.classList.remove('jf-fly--left');
+    var r = menu.getBoundingClientRect();
+    if (down) { if (r.right > window.innerWidth - 12) { menu.style.left = 'auto'; menu.style.right = '-16px'; } return; }
+    if (r.right > window.innerWidth - 12) node.classList.add('jf-fly--left');
+    var over = r.bottom - (window.innerHeight - 12); if (over > 0) menu.style.top = (-8 - over) + 'px';
+  }
+  function hoverable(node, menu, down) {
+    var timer, pend, top = node.firstElementChild;
+    function doOpen() {
+      [].forEach.call(node.parentElement.children, function (s) { if (s !== node && s.classList.contains('is-open')) shut(s); });
+      if (!node.classList.contains('is-open')) { node.classList.add('is-open'); place(node, menu, down); }
     }
+    function open(e) {
+      clearTimeout(timer); clearTimeout(pend);
+      // miš ide dijagonalno ka otvorenom podmeniju preko susjedne stavke — ne zatvaraj ga odmah
+      var busy = !down && [].some.call(node.parentElement.children, function (s) { return s !== node && s.classList.contains('is-open'); });
+      if (busy && e && e.type === 'mouseenter') pend = setTimeout(doOpen, 200); else doOpen();
+    }
+    function later() { clearTimeout(timer); clearTimeout(pend); timer = setTimeout(function () { shut(node); }, 300); }
+    if (!touch) { node.addEventListener('mouseenter', open); node.addEventListener('mouseleave', later); }
+    node.addEventListener('focusin', open);
+    node.addEventListener('focusout', function (e) { if (!node.contains(e.relatedTarget)) later(); });
+    top.addEventListener('click', function (e) {
+      if (touch && !node.classList.contains('is-open')) { e.preventDefault(); open(); return; }   // tablet: 1. dodir otvara
+      if (isDead(top.getAttribute('href'))) e.preventDefault();                                   // "#" ne vodi nigdje
+    });
+  }
+  function shut(n) { n.classList.remove('is-open'); [].forEach.call(n.querySelectorAll('.is-open'), function (x) { x.classList.remove('is-open'); }); }
+  function deskList(ul, box) {
+    kids(ul).forEach(function (li) {
+      var a = mk(li); if (!a) return;
+      var sub = subOf(li);
+      if (kids(sub).length) {
+        var fly = el('div', 'jf-fly'), m = el('div', 'jf-fly__menu');
+        a.classList.add('jf-fly__top'); fly.appendChild(a); fly.appendChild(m); box.appendChild(fly);
+        deskList(sub, m); hoverable(fly, m, false);
+      } else box.appendChild(a);
+    });
+  }
+  // telefon: harmonika po nivoima — strelica otvara podstavke, naziv vodi na stranicu ("#" stavka otvara podstavke)
+  function mobList(ul, box, depth) {
+    kids(ul).forEach(function (li) {
+      var a = mk(li); if (!a) return;
+      if (depth) a.className = 'jf-mnav__sub';
+      var sub = subOf(li);
+      if (!kids(sub).length) { box.appendChild(a); return; }
+      var acc = el('div', 'jf-macc'), row = el('div', 'jf-macc__row'), tg = el('button', 'jf-macc__btn'), list = el('div', 'jf-macc__list');
+      tg.type = 'button'; tg.setAttribute('aria-label', a.textContent); tg.setAttribute('aria-expanded', 'false');
+      row.appendChild(a); row.appendChild(tg); acc.appendChild(row); acc.appendChild(list); box.appendChild(acc);
+      function flip(e) { e.preventDefault(); var o = !acc.classList.contains('is-open'); acc.classList.toggle('is-open', o); tg.setAttribute('aria-expanded', o ? 'true' : 'false'); }
+      tg.addEventListener('click', flip);
+      if (isDead(a.getAttribute('href'))) a.addEventListener('click', flip);
+      mobList(sub, list, depth + 1);
+    });
+  }
+  if (srcUl && kids(srcUl).length) {
+    fromWP = true;
+    var nav = root.querySelector('.jf-nav'), mnav = root.querySelector('.jf-mnav');
+    nav.innerHTML = ''; mnav.innerHTML = '';
+    kids(srcUl).forEach(function (li) {
+      var a = mk(li); if (!a) return;
+      var sub = subOf(li);
+      if (kids(sub).length) {
+        var wrap = el('div', 'jf-dd'), box = el('div', 'jf-dd__menu');
+        a.classList.add('jf-dd__top'); wrap.appendChild(a); wrap.appendChild(box); nav.appendChild(wrap);
+        deskList(sub, box); hoverable(wrap, box, true);
+      } else nav.appendChild(a);
+    });
+    mobList(srcUl, mnav, 0);
+    document.addEventListener('click', function (e) { if (!e.target.closest || !e.target.closest('.jf-nav')) [].forEach.call(nav.querySelectorAll('.is-open'), shut); });
   }
   function clearHeader() {
     if (document.querySelector('rs-module, .rev_slider, rs-module-wrap, .rev_slider_wrapper')) return;   // hero stranica: header ide preko slike
@@ -393,8 +416,20 @@ header_snippet = (
     "  .jh-wp .jf-dd__top::before{content:'';position:absolute;right:-14px;top:50%;width:6px;height:6px;margin-top:-5px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(45deg);opacity:.8}\n"
     "  .jh-wp .jf-dd__top{margin-right:12px}\n"
     "  .jh-wp .jf-dd__menu{position:absolute;top:calc(100% + 14px);left:-16px;min-width:220px;padding:8px;border-radius:18px;background:rgba(14,20,34,.96);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.1);box-shadow:0 24px 48px -16px rgba(0,0,0,.7);opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity .2s,transform .2s}\n"
-    "  .jh-wp .jf-dd:hover .jf-dd__menu,.jh-wp .jf-dd:focus-within .jf-dd__menu,.jh-wp .jf-dd.is-open .jf-dd__menu{opacity:1;transform:none;pointer-events:auto}\n"
-    "  .jh-wp .jf-dd__menu{max-height:calc(100vh - 130px);overflow-y:auto;z-index:5}\n"
+    "  .jh-wp .jf-dd.is-open > .jf-dd__menu{opacity:1;transform:none;pointer-events:auto}\n"
+    "  .jh-wp .jf-dd__menu{z-index:5;width:max-content;max-width:300px}\n"
+    "  .jh-wp .jf-dd__menu a{line-height:1.35!important}\n"
+    "  /* dublji nivo: otvara se sa strane kad miš stane na stavku */\n"
+    "  .jh-wp .jf-fly{position:relative}\n"
+    "  .jh-wp .jf-dd__menu a.jf-fly__top{display:flex;align-items:center;justify-content:space-between;gap:14px}\n"
+    "  .jh-wp .jf-dd__menu a.jf-fly__top::before{content:'';order:2;flex-shrink:0;width:6px;height:6px;border-right:1.6px solid currentColor;border-top:1.6px solid currentColor;transform:rotate(45deg);opacity:.7}\n"
+    "  .jh-wp .jf-fly.is-open > a.jf-fly__top{color:#fff;background:rgba(255,255,255,.07)}\n"
+    "  .jh-wp .jf-fly__menu{position:absolute;left:100%;top:-8px;margin-left:10px;min-width:220px;width:max-content;max-width:300px;padding:8px;border-radius:18px;background:rgba(14,20,34,.97);border:1px solid rgba(255,255,255,.1);box-shadow:0 24px 48px -16px rgba(0,0,0,.7);opacity:0;transform:translateX(-6px);pointer-events:none;transition:opacity .2s,transform .2s}\n"
+    "  .jh-wp .jf-fly.is-open > .jf-fly__menu{opacity:1;transform:none;pointer-events:auto}\n"
+    "  .jh-wp .jf-fly__menu::before{content:'';position:absolute;top:0;bottom:0;left:-12px;width:12px}\n"
+    "  .jh-wp .jf-fly--left > .jf-fly__menu{left:auto;right:100%;margin-left:0;margin-right:10px;transform:translateX(6px)}\n"
+    "  .jh-wp .jf-fly--left > .jf-fly__menu::before{left:auto;right:-12px}\n"
+    "  .jh-wp .jf-fly--left.is-open > .jf-fly__menu{transform:none}\n"
     "  .jh-wp .jf-dd__menu a.jf-dd__deep{padding-left:28px;font-size:13.5px;color:rgba(255,255,255,.66)}\n"
     "  .jh-wp .jf-mnav a.jf-mnav__deep{padding-left:48px;font-size:14px}\n"
     "  .jh-wp .jf-dd__menu::before{content:'';position:absolute;left:0;right:0;top:-16px;height:16px}\n"
@@ -415,11 +450,14 @@ header_snippet = (
     "  .jh-wp .jf-macc__row > a{flex:1}\n"
     "  .jh-wp .jf-macc__btn{flex:0 0 44px;width:44px;height:44px;border:0!important;padding:0!important;border-radius:12px;background:rgba(255,255,255,.05)!important;position:relative;cursor:pointer;box-shadow:none!important}\n"
     "  .jh-wp .jf-macc__btn::before{content:'';position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-6px 0 0 -4px;border-right:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(45deg);transition:transform .25s}\n"
-    "  .jh-wp .jf-macc.is-open .jf-macc__btn::before{transform:rotate(-135deg);margin-top:-2px}\n"
+    "  .jh-wp .jf-macc.is-open > .jf-macc__row > .jf-macc__btn::before{transform:rotate(-135deg);margin-top:-2px}\n"
     "  .jh-wp .jf-macc__list{display:none;padding:2px 0 8px}\n"
-    "  .jh-wp .jf-macc.is-open .jf-macc__list{display:block}\n"
-    "  .jh-wp .jf-macc.is-open .jf-macc__row > a{color:#00B9F2!important}\n"
+    "  .jh-wp .jf-macc.is-open > .jf-macc__list{display:block}\n"
+    "  .jh-wp .jf-macc.is-open > .jf-macc__row > a{color:#00B9F2!important}\n"
     "  .jh-wp .jf-mnav a.jf-mnav__sub{color:rgba(255,255,255,.75)!important}\n"
+    "  .jh-wp .jf-macc__list .jf-macc__list{margin:0 0 4px 22px;padding:0 0 4px;border-left:1px solid rgba(255,255,255,.1)}\n"
+    "  .jh-wp .jf-macc__list .jf-macc__list a.jf-mnav__sub{padding-left:18px}\n"
+    "  .jh-wp .jf-macc__list .jf-macc__btn{flex-basis:38px;width:38px;height:38px}\n"
     "  @media (max-width:782px){ body.admin-bar .jf-header{top:46px} }\n"
     "  @media (prefers-reduced-motion:reduce){.jh-wp *{transition:none!important}}\n"
     "</style>\n"
