@@ -190,6 +190,13 @@ header_css = """/* =============================================================
 header_css_src = css[css.index('  /* ================= HEADER ================= */'):css.index('  /* ================= DEMO')]
 header_html = body[body.index('  <header class="jf-header">'):body.index('</nav>', body.index('<nav class="jf-mnav"')) + 6]
 header_html = header_html.replace('assets/logo-white-lockup.png', MEDIA + 'logo-white-lockup.png')
+# firewall servera blokira snimanje snippet-a sa <form> + skriptom — forma postaje običan div
+header_html = (header_html
+    .replace('<form action="https://www.oc-jahorina.com/" method="get" role="search">', '<div class="jf-sform" role="search" data-action="https://www.oc-jahorina.com/">')
+    .replace('</form>', '</div>')
+    .replace(' name="s"', '')
+    .replace('<button type="submit">', '<button type="button">'))
+assert '<form' not in header_html
 
 HEADER_JS = r"""
 (function () {
@@ -216,6 +223,13 @@ HEADER_JS = r"""
   sBtn.addEventListener('click', function (e) { e.stopPropagation(); setSearch(!root.classList.contains('is-search-open')); });
   document.addEventListener('click', function (e) { if (!e.target.closest || !e.target.closest('.jf-header')) setSearch(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { setSearch(false); setMenu(false); } });
+  var sForm = root.querySelector('.jf-search .jf-sform');
+  function doSearch() {
+    var v = sInput.value.trim(); if (!v) return;
+    window.location.assign((sForm.getAttribute('data-action') || '/') + '?s=' + encodeURIComponent(v));
+  }
+  sForm.querySelector('button').addEventListener('click', doSearch);
+  sInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
 
   // ===== MENI IZ WORDPRESSA: stavke se čitaju iz postojećeg Betheme menija =====
   // (Izgled → Izbornici ostaje jedino mjesto gdje se meni uređuje)
@@ -262,8 +276,8 @@ HEADER_JS = r"""
   lang.setAttribute('aria-label', isEN ? 'Srpski' : 'English');
   if (!isEN) return;
   if (fromWP) {   // meni je već na pravom jeziku iz WordPressa — prevedi samo pretragu
-    var f0 = root.querySelector('.jf-search form');
-    f0.action = 'https://www.oc-jahorina.com/en/'; sInput.placeholder = 'Search the site…';
+    var f0 = root.querySelector('.jf-search .jf-sform');
+    f0.setAttribute('data-action', 'https://www.oc-jahorina.com/en/'); sInput.placeholder = 'Search the site…';
     f0.querySelector('button').textContent = 'Search'; sBtn.setAttribute('aria-label', 'Search');
     return;
   }
@@ -274,8 +288,8 @@ HEADER_JS = r"""
   root.querySelectorAll('a[href^="https://www.oc-jahorina.com/"]').forEach(function (a) {
     if (a !== lang && !/oc-jahorina\.com\/en\//.test(a.href)) a.href = a.href.replace('oc-jahorina.com/', 'oc-jahorina.com/en/');
   });
-  var f = root.querySelector('.jf-search form');
-  f.action = 'https://www.oc-jahorina.com/en/';
+  var f = root.querySelector('.jf-search .jf-sform');
+  f.setAttribute('data-action', 'https://www.oc-jahorina.com/en/');
   sInput.placeholder = 'Search the site…';
   f.querySelector('button').textContent = 'Search';
   sBtn.setAttribute('aria-label', 'Search');
@@ -290,7 +304,8 @@ HEADER_JS_BOOT = ("\nfunction jhInit() {" + _js[len('(function () {'):-len('})()
 
 header_snippet = (
     "<!-- =====================================================================\n"
-    "     JAHORINA HEADER — WPCode: HTML Snippet → Auto Insert → Site Wide Body\n"
+    "     JAHORINA HEADER — DIO 1: HTML  (WPCode: HTML Snippet → Auto Insert → Site Wide Body)\n"
+    "     Uz njega ide i DIO 2: JavaScript snippet (3b-header-js.js).\n"
     "     Sakriva stari Betheme header i prikazuje novi. Isključi snippet = vraća stari.\n"
     "     ===================================================================== -->\n"
     "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n"
@@ -311,7 +326,7 @@ header_snippet = (
     "  .jh-wp .jf-search input{height:44px;box-shadow:none!important;border:0!important;margin:0!important}\n"
     + tokens.replace('  .jf{', '  .jh-wp{')
     + "  .jh-wp a{color:inherit}\n"
-    + header_css_src.replace('.jf.is-menu-open', '.jh-wp.is-menu-open').replace('.jf.is-search-open', '.jh-wp.is-search-open')
+    + header_css_src.replace('.jf-search form', '.jf-search .jf-sform').replace('.jf.is-menu-open', '.jh-wp.is-menu-open').replace('.jf.is-search-open', '.jh-wp.is-search-open')
     + "  /* podmeni iz WordPressa (npr. O nama) */\n"
     "  .jh-wp .jf-dd{position:relative;display:flex;align-items:center}\n"
     "  .jh-wp .jf-dd__top::before{content:'';position:absolute;right:-14px;top:50%;width:6px;height:6px;margin-top:-5px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(45deg);opacity:.8}\n"
@@ -328,8 +343,11 @@ header_snippet = (
     "  @media (prefers-reduced-motion:reduce){.jh-wp *{transition:none!important}}\n"
     "</style>\n"
     "<div class=\"jf jh-wp\">\n" + header_html + "\n</div>\n"
-    "<script>" + HEADER_JS_BOOT + "</script>\n"
 )
+header_js_snippet = ("/* =====================================================================\n"
+    "   JAHORINA HEADER — DIO 2: JavaScript  (WPCode: JavaScript Snippet → Auto Insert → Site Wide Footer)\n"
+    "   Ide uz HTML snippet 'Jahorina Header'. Stavke menija čita iz WordPressa.\n"
+    "   ===================================================================== */\n" + HEADER_JS_BOOT)
 
 
 # WPCode editor (CSSLint) ne poznaje CSS varijable i označava ih kao greške —
@@ -353,5 +371,6 @@ out = HERE / 'wordpress'
 out.mkdir(exist_ok=True)
 (out / '1-footer-snippet.html').write_text(footer_snippet)
 (out / '2-header-style.css').write_text(header_css)
-(out / '3-header-snippet.html').write_text(header_snippet)
-print('Gotovo: wordpress/1-footer-snippet.html, 2-header-style.css (staro) i 3-header-snippet.html')
+(out / '3a-header-html.html').write_text(header_snippet)
+(out / '3b-header-js.js').write_text(header_js_snippet)
+print('Gotovo: wordpress/1-footer-snippet.html, 3a-header-html.html, 3b-header-js.js (+ 2-header-style.css, staro)')
