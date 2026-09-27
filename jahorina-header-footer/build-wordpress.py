@@ -252,26 +252,62 @@ HEADER_JS = r"""
         if (sub) {
           var wrap = document.createElement('div'); wrap.className = 'jf-dd';
           var box = document.createElement('div'); box.className = 'jf-dd__menu';
-          [].forEach.call(sub.querySelectorAll(':scope > li > a'), function (sa) {
-            var x = document.createElement('a'); x.href = sa.href; x.textContent = sa.textContent.replace(/\s+/g, ' ').trim();
+          // svi nivoi podmenija (i Betheme mega meni) — dublji nivoi su uvučeni
+          [].forEach.call(sub.querySelectorAll('a'), function (sa) {
+            var txt = (sa.textContent || '').replace(/\s+/g, ' ').trim(); if (!txt) return;
+            var depth = 0; for (var n = sa.parentElement; n && n !== sub; n = n.parentElement) if (n.tagName === 'UL') depth++;
+            var x = document.createElement('a'); x.href = sa.href; x.textContent = txt;
             if (sa.target) x.target = sa.target;
+            if (depth) x.className = 'jf-dd__deep';
             box.appendChild(x);
-            var mx = x.cloneNode(true); mx.className = 'jf-mnav__sub'; mnav.appendChild(mx);
+            var mx = x.cloneNode(true); mx.className = 'jf-mnav__sub' + (depth ? ' jf-mnav__deep' : ''); mnav.appendChild(mx);
           });
           link.classList.add('jf-dd__top');
           wrap.appendChild(link); wrap.appendChild(box); nav.appendChild(wrap);
         } else nav.appendChild(link);
       });
+      // podmeniji: hover na računaru, dodir/klik na tabletu i telefonu; ne izlaze van ekrana
+      var touch = window.matchMedia && window.matchMedia('(hover: none)').matches;
+      function closeDD(except) { [].forEach.call(nav.querySelectorAll('.jf-dd.is-open'), function (d) { if (d !== except) d.classList.remove('is-open'); }); }
+      function fit(dd) {
+        var m = dd.querySelector('.jf-dd__menu'); m.style.left = ''; m.style.right = '';
+        var r = m.getBoundingClientRect(); if (r.right > window.innerWidth - 12) { m.style.left = 'auto'; m.style.right = '-16px'; }
+      }
+      [].forEach.call(nav.querySelectorAll('.jf-dd'), function (dd) {
+        var top = dd.querySelector('.jf-dd__top');
+        dd.addEventListener('mouseenter', function () { fit(dd); });
+        top.addEventListener('click', function (e) {
+          var h = top.getAttribute('href') || '';
+          var dead = !h || h === '#' || /#$/.test(h) || top.href === location.href + '#';
+          if ((touch || dead) && !dd.classList.contains('is-open')) { e.preventDefault(); closeDD(dd); fit(dd); dd.classList.add('is-open'); }
+          else if (dead) { e.preventDefault(); dd.classList.remove('is-open'); }
+        });
+      });
+      document.addEventListener('click', function (e) { if (!e.target.closest || !e.target.closest('.jf-dd')) closeDD(); });
     }
   }
   root.classList.add('is-ready');   // tek sada pokaži meni (bez treptaja pogrešnih stavki)
-  // jezik iz WordPressa (WPML / Polylang), ako postoji
-  var wpLang = document.querySelector('#Top_bar .wpml-languages a:not(.active), #Top_bar a[hreflang], .lang-item:not(.current-lang) a');
-
   // jezik: na srpskoj strani dugme "EN" vodi na istu stranicu na engleskom, i obrnuto
   var path = location.pathname, isEN = /^\/en(\/|$)/.test(path);
+  // WPML u <head> upisuje adrese iste stranice na svim jezicima (hreflang) — to je najpouzdanije
+  var wpLang = null;
+  [].some.call(document.querySelectorAll('link[rel="alternate"][hreflang]'), function (l) {
+    var hl = (l.getAttribute('hreflang') || '').toLowerCase();
+    if (hl === 'x-default' || !l.href) return false;
+    var linkEN = hl.indexOf('en') === 0;
+    if (linkEN !== isEN) { wpLang = l.href; return true; }
+    return false;
+  });
+  if (!wpLang) {   // rezerva: link za jezik iz Betheme/WPML menija, ali samo onaj koji vodi na DRUGI jezik
+    [].some.call(document.querySelectorAll('.wpml-languages a, .wpml-ls a, a[hreflang], .lang-item a'), function (a) {
+      if (!a.href || a.href.split('#')[0] === location.href.split('#')[0]) return false;
+      var p = a.pathname || '', toEN = /^\/en(\/|$)/.test(p);
+      if (toEN !== isEN) { wpLang = a.href; return true; }
+      return false;
+    });
+  }
   var lang = root.querySelector('.jf-lang');
-  lang.href = wpLang ? wpLang.href : location.origin + (isEN ? (path.replace(/^\/en/, '') || '/') : '/en' + path);
+  lang.href = wpLang || location.origin + (isEN ? (path.replace(/^\/en/, '') || '/') : '/en' + path);
   lang.textContent = isEN ? 'SR' : 'EN';
   lang.setAttribute('aria-label', isEN ? 'Srpski' : 'English');
   if (!isEN) return;
@@ -332,7 +368,10 @@ header_snippet = (
     "  .jh-wp .jf-dd__top::before{content:'';position:absolute;right:-14px;top:50%;width:6px;height:6px;margin-top:-5px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(45deg);opacity:.8}\n"
     "  .jh-wp .jf-dd__top{margin-right:12px}\n"
     "  .jh-wp .jf-dd__menu{position:absolute;top:calc(100% + 14px);left:-16px;min-width:220px;padding:8px;border-radius:18px;background:rgba(14,20,34,.96);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.1);box-shadow:0 24px 48px -16px rgba(0,0,0,.7);opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity .2s,transform .2s}\n"
-    "  .jh-wp .jf-dd:hover .jf-dd__menu,.jh-wp .jf-dd:focus-within .jf-dd__menu{opacity:1;transform:none;pointer-events:auto}\n"
+    "  .jh-wp .jf-dd:hover .jf-dd__menu,.jh-wp .jf-dd:focus-within .jf-dd__menu,.jh-wp .jf-dd.is-open .jf-dd__menu{opacity:1;transform:none;pointer-events:auto}\n"
+    "  .jh-wp .jf-dd__menu{max-height:calc(100vh - 130px);overflow-y:auto;z-index:5}\n"
+    "  .jh-wp .jf-dd__menu a.jf-dd__deep{padding-left:28px;font-size:13.5px;color:rgba(255,255,255,.66)}\n"
+    "  .jh-wp .jf-mnav a.jf-mnav__deep{padding-left:48px;font-size:14px}\n"
     "  .jh-wp .jf-dd__menu::before{content:'';position:absolute;left:0;right:0;top:-16px;height:16px}\n"
     "  .jh-wp .jf-dd__menu a{display:block;padding:11px 14px;border-radius:12px;font-size:14.5px;color:rgba(255,255,255,.86)}\n"
     "  .jh-wp .jf-dd__menu a::after{display:none}\n"
