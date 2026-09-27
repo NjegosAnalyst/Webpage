@@ -28,6 +28,11 @@ FOOTER_JS = r"""
 (function () {
   var root = document.querySelector('.jf-wp');
   if (!root) return;
+  // footer uvijek ide na sam kraj stranice, bez obzira gdje ga WPCode ubaci
+  function toBottom() { document.body.appendChild(root); }
+  if (document.body) toBottom();
+  document.addEventListener('DOMContentLoaded', toBottom);
+  window.addEventListener('load', toBottom);
   root.querySelector('.jf-year').textContent = new Date().getFullYear();
   root.querySelector('.jf-top-btn').addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
@@ -69,6 +74,14 @@ footer_snippet = (
     "  .jf-wp{background:#0a1120;line-height:normal;text-align:left}\n"
     "  .jf-wp ul{margin:0;padding:0;list-style:none}\n  .jf-wp li{margin:0;padding:0}\n  .jf-wp p{margin:0}\n"
     "  .jf-wp h4{border:0;text-transform:uppercase}\n"
+    "  /* tema mijenja stil dugmadi — vrati okruglo dugme sa strelicom */\n"
+    "  .jf-wp .jf-top-btn{width:48px!important;height:48px!important;min-width:0!important;padding:0!important;margin:0 0 0 8px!important;border:0!important;border-radius:50%!important;line-height:0!important;color:#fff!important;flex-shrink:0}\n"
+    "  .jf-wp .jf-top-btn svg{display:block!important;width:20px;height:20px;stroke:#fff}\n"
+    "  .jf-wp .jf-top-btn svg path{stroke:#fff!important;fill:none!important}\n"
+    "  /* zaštita ikonica od stilova teme */\n"
+    "  .jf-wp svg[fill=\"none\"],.jf-wp svg[fill=\"none\"] *:not([fill]){fill:none!important}\n"
+    "  .jf-wp svg[fill=\"currentColor\"],.jf-wp svg [fill=\"currentColor\"]{fill:currentColor!important}\n"
+    "  .jf-wp svg [stroke=\"currentColor\"]{stroke:currentColor!important}\n"
     + tokens.replace('  .jf{', '  .jf-wp{').replace('  .jf,', '  .jf-wp,')
     + base.replace('.jf ', '.jf-wp ')
     + footer_css.replace('.jf-footer', '.jf-wp .jf-footer').replace('.jf-footer{margin-top:40px;', '.jf-footer{margin-top:0;')

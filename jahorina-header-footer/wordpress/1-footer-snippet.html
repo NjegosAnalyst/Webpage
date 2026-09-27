@@ -14,6 +14,14 @@
   .jf-wp li{margin:0;padding:0}
   .jf-wp p{margin:0}
   .jf-wp h4{border:0;text-transform:uppercase}
+  /* tema mijenja stil dugmadi — vrati okruglo dugme sa strelicom */
+  .jf-wp .jf-top-btn{width:48px!important;height:48px!important;min-width:0!important;padding:0!important;margin:0 0 0 8px!important;border:0!important;border-radius:50%!important;line-height:0!important;color:#fff!important;flex-shrink:0}
+  .jf-wp .jf-top-btn svg{display:block!important;width:20px;height:20px;stroke:#fff}
+  .jf-wp .jf-top-btn svg path{stroke:#fff!important;fill:none!important}
+  /* zaštita ikonica od stilova teme */
+  .jf-wp svg[fill="none"],.jf-wp svg[fill="none"] *:not([fill]){fill:none!important}
+  .jf-wp svg[fill="currentColor"],.jf-wp svg [fill="currentColor"]{fill:currentColor!important}
+  .jf-wp svg [stroke="currentColor"]{stroke:currentColor!important}
   .jf-wp{
     --accent:#00B9F2;
     --bg:#0a1120;
@@ -161,6 +169,11 @@
 (function () {
   var root = document.querySelector('.jf-wp');
   if (!root) return;
+  // footer uvijek ide na sam kraj stranice, bez obzira gdje ga WPCode ubaci
+  function toBottom() { document.body.appendChild(root); }
+  if (document.body) toBottom();
+  document.addEventListener('DOMContentLoaded', toBottom);
+  window.addEventListener('load', toBottom);
   root.querySelector('.jf-year').textContent = new Date().getFullYear();
   root.querySelector('.jf-top-btn').addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
