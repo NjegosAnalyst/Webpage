@@ -60,6 +60,9 @@ SR_RESET = """
 """
 
 SR_LAYOUT = """
+/* animacije čekaju dok Slider Revolution ne prikaže slajd (JS tada doda .jh-go) */
+.jh-hero:not(.jh-go),.jh-hero:not(.jh-go) *{animation-play-state:paused!important}
+
 /* ===== Opcija A: meni je iz teme; Web shop i Ski mapa su pločice u traci ===== */
 .jh-hero .jh-quick__label{white-space:nowrap!important;text-align:center}
 /* naslov se prilagođava i visini ekrana, da ne udari u dugmad na nižim ekranima */
@@ -83,13 +86,27 @@ js_out = ("/* ==================================================================
           "   Ne treba ništa mijenjati.\n"
           "   ===================================================================== */\n"
           "(function waitForHero(tries) {\n"
-          "  // Slider Revolution ubacuje slojeve malo kasnije — sačekaj da hero postoji, pa pokreni (samo jednom)\n"
-          "  if (!document.querySelector('.jh-hero')) {\n"
-          "    if ((tries || 0) < 200) setTimeout(function () { waitForHero((tries || 0) + 1); }, 50);\n"
-          "    return;\n"
+          "  // Slider Revolution ubaci sloj, ali ga prikaže tek kad učita slajd.\n"
+          "  // Čekamo da hero bude STVARNO vidljiv, pa tek onda pokrećemo sve animacije (samo jednom).\n"
+          "  tries = tries || 0;\n"
+          "  var el = document.querySelector('.jh-hero');\n"
+          "  function visible(node) {\n"
+          "    var r = node.getBoundingClientRect();\n"
+          "    if (r.width < 50 || r.height < 50) return false;\n"
+          "    for (var n = node; n && n.nodeType === 1; n = n.parentElement) {\n"
+          "      var cs = getComputedStyle(n);\n"
+          "      if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) < 0.9) return false;\n"
+          "    }\n"
+          "    return true;\n"
           "  }\n"
-          "  if (window.__jahorinaHeroStarted) return;\n"
-          "  window.__jahorinaHeroStarted = true;\n\n"
+          "  if (!el || !visible(el)) {\n"
+          "    if (tries < 400) setTimeout(function () { waitForHero(tries + 1); }, 50);\n"
+          "    else if (el) el.classList.add('jh-go');\n"
+          "    if (tries < 400) return;\n"
+          "  }\n"
+          "  if (!el || window.__jahorinaHeroStarted) return;\n"
+          "  window.__jahorinaHeroStarted = true;\n"
+          "  el.classList.add('jh-go');   // pušta CSS animacije koje su do sada bile pauzirane\n\n"
           + js + "\n})();\n")
 
 

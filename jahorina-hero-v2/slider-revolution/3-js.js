@@ -3,13 +3,27 @@
    Ne treba ništa mijenjati.
    ===================================================================== */
 (function waitForHero(tries) {
-  // Slider Revolution ubacuje slojeve malo kasnije — sačekaj da hero postoji, pa pokreni (samo jednom)
-  if (!document.querySelector('.jh-hero')) {
-    if ((tries || 0) < 200) setTimeout(function () { waitForHero((tries || 0) + 1); }, 50);
-    return;
+  // Slider Revolution ubaci sloj, ali ga prikaže tek kad učita slajd.
+  // Čekamo da hero bude STVARNO vidljiv, pa tek onda pokrećemo sve animacije (samo jednom).
+  tries = tries || 0;
+  var el = document.querySelector('.jh-hero');
+  function visible(node) {
+    var r = node.getBoundingClientRect();
+    if (r.width < 50 || r.height < 50) return false;
+    for (var n = node; n && n.nodeType === 1; n = n.parentElement) {
+      var cs = getComputedStyle(n);
+      if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) < 0.9) return false;
+    }
+    return true;
   }
-  if (window.__jahorinaHeroStarted) return;
+  if (!el || !visible(el)) {
+    if (tries < 400) setTimeout(function () { waitForHero(tries + 1); }, 50);
+    else if (el) el.classList.add('jh-go');
+    if (tries < 400) return;
+  }
+  if (!el || window.__jahorinaHeroStarted) return;
   window.__jahorinaHeroStarted = true;
+  el.classList.add('jh-go');   // pušta CSS animacije koje su do sada bile pauzirane
 
 (function () {
   var hero = document.querySelector('.jh-hero');

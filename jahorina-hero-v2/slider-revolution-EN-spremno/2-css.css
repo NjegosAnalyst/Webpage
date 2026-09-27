@@ -483,6 +483,9 @@
     .jh-hero *{animation:none !important;transition:none !important}
   }
 
+/* animacije čekaju dok Slider Revolution ne prikaže slajd (JS tada doda .jh-go) */
+.jh-hero:not(.jh-go),.jh-hero:not(.jh-go) *{animation-play-state:paused!important}
+
 /* ===== Opcija A: meni je iz teme; Web shop i Ski mapa su pločice u traci ===== */
 .jh-hero .jh-quick__label{white-space:nowrap!important;text-align:center}
 /* naslov se prilagođava i visini ekrana, da ne udari u dugmad na nižim ekranima */
