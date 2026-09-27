@@ -110,12 +110,43 @@ def with_urls(text, prefix):
     return text
 
 
-for folder, prefix in (('slider-revolution', 'ZAMIJENI-URL-'), ('slider-revolution-spremno', MEDIA)):
+# --- engleska verzija: isti hero, prevedeni tekstovi i engleski linkovi ------
+EN = [
+    ('aria-label="Olimpijski centar Jahorina"', 'aria-label="Olympic Centre Jahorina"'),
+    ('aria-label="Noćno skijanje na Jahorini"', 'aria-label="Night skiing on Jahorina"'),
+    ('>Olimpijski centar Jahorina<', '>Olympic Centre Jahorina<'),
+    ('aria-label="Otkrij čaroliju Jahorine"', 'aria-label="Discover the magic of Jahorina"'),
+    ('<span>Otkrij</span>', '<span>Discover</span>'),
+    ('<span>čaroliju</span>', '<span>the magic of</span>'),
+    ('<span class="jh-dot"></span></span>ne</span>', '<span class="jh-dot"></span></span>na</span>'),
+    ('Olimpijske staze, noćno skijanje i vrhunsko gostoprimstvo — doživi zimu na najpoznatijoj planini regije.',
+     'Olympic slopes, night skiing and first-class hospitality — experience winter on the most famous mountain in the region.'),
+    ('aria-label="Ocjena 4.8"', 'aria-label="Rating 4.8"'),
+    ('https://www.oc-jahorina.com/ski-mapa/', 'https://www.oc-jahorina.com/en/ski-mapa/'),
+    ('Ski mapa', 'Ski map'),
+    ('https://www.oc-jahorina.com/ski-info/', 'https://www.oc-jahorina.com/en/ski-info/'),
+    ('aria-label="Dnevno skijanje" title="Dnevno skijanje"', 'aria-label="Day skiing" title="Day skiing"'),
+    ('>DNEVNO<', '>DAY<'),
+    ('https://www.oc-jahorina.com/nocno-skijanje-info/', 'https://www.oc-jahorina.com/en/nocno-skijanje-info/'),
+    ('aria-label="Noćno skijanje" title="Noćno skijanje"', 'aria-label="Night skiing" title="Night skiing"'),
+    ('>NOĆNO<', '>NIGHT<'),
+    ('aria-label="Virtuelna tura 360°" title="Virtuelna tura 360°"', 'aria-label="360° virtual tour" title="360° virtual tour"'),
+    ('aria-label="Kamere uživo" title="Kamere uživo"', 'aria-label="Live cameras" title="Live cameras"'),
+    ('>UŽIVO<', '>LIVE<'),
+]
+html_en = html
+for a, b_ in EN:
+    assert a in html_en, 'EN: nije pronađeno ' + a
+    html_en = html_en.replace(a, b_)
+
+for folder, prefix, h in (('slider-revolution', 'ZAMIJENI-URL-', html),
+                          ('slider-revolution-spremno', MEDIA, html),
+                          ('slider-revolution-EN-spremno', MEDIA, html_en)):
     out = HERE / folder
     out.mkdir(exist_ok=True)
-    (out / '1-html.html').write_text(with_urls(html, prefix) + '\n')
+    (out / '1-html.html').write_text(with_urls(h, prefix) + '\n')
     (out / '2-css.css').write_text(with_urls(css_out, prefix))
     (out / '3-js.js').write_text(js_out)
     for f in ('1-html.html', '2-css.css', '3-js.js'):
         assert 'assets/' not in (out / f).read_text(), f
-print('Gotovo: slider-revolution/ i slider-revolution-spremno/')
+print('Gotovo: slider-revolution/, slider-revolution-spremno/ i slider-revolution-EN-spremno/')
