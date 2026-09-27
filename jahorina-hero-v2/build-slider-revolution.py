@@ -22,18 +22,10 @@ body = src[src.index('<body>') + 6:src.index('</body>')]
 html = body[:body.index('<script>')]
 js = body[body.index('<script>') + 8:body.rindex('</script>')].strip()
 
-# --- HTML: ukloni gornji red, dugmad premjesti ispod opisa -----------------
+# --- HTML: ukloni gornji red (meni dolazi iz Betheme teme) -------------------
 header = re.search(r'\s*<!-- ===== HEADER ===== -->\s*<header class="jh-header">.*?</header>', html, re.S)
 assert header, 'header nije pronađen'
-ski = re.search(r'<a href="[^"]*" class="jh-btn jh-btn--ghost">.*?</a>', header.group(0), re.S).group(0)
-shop = re.search(r'<a href="[^"]*" class="jh-btn jh-btn--solid">.*?</a>', header.group(0), re.S).group(0)
 html = html.replace(header.group(0), '')
-
-intro = re.search(r'<div class="jh-intro">(.*?)\n    </div>', html, re.S)
-assert intro, 'jh-intro nije pronađen'
-html = html.replace(intro.group(0),
-    '<div class="jh-intro"><div class="jh-intro__row">' + intro.group(1) + '</div>'
-    '<div class="jh-ctas">' + shop + ski + '</div>\n    </div>')
 
 # SR svaki novi red u sloju pretvara u <br> — sve u jedan red, bez komentara
 html = re.sub(r'<!--.*?-->', '', html, flags=re.S)
@@ -68,18 +60,15 @@ SR_RESET = """
 """
 
 SR_LAYOUT = """
-/* ===== Opcija A: meni je iz teme; Web shop i Ski mapa su ispod opisa ===== */
-.jh-hero .jh-intro{flex-direction:column;align-items:flex-start;gap:22px;max-width:none}
-.jh-intro__row{display:flex;align-items:flex-end;gap:26px;max-width:420px}
-.jh-ctas{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+/* ===== Opcija A: meni je iz teme; Web shop i Ski mapa su pločice u traci ===== */
+.jh-hero .jh-quick__label{white-space:nowrap!important;text-align:center}
 /* naslov se prilagođava i visini ekrana, da ne udari u dugmad na nižim ekranima */
 .jh-hero .jh-title{font-size:clamp(46px,min(8.4vw,13vh),132px)}
 .jh-hero .jh-headline{top:clamp(140px,22%,220px)}
 @media (max-width:760px){
   .jh-hero .jh-headline{padding-top:130px}
-  .jh-hero .jh-ctas{padding:0}
-  .jh-hero .jh-ctas .jh-btn--ghost{display:inline-flex}
-  .jh-hero .jh-ctas .jh-btn{padding:12px 20px;font-size:14px}
+  .jh-hero .jh-quick{gap:5px;padding:6px}
+  .jh-hero .jh-quick__label--word{font-size:8.5px;letter-spacing:0}
 }
 """
 
@@ -119,11 +108,9 @@ EN = [
     ('<span>Otkrij</span>', '<span>Discover</span>'),
     ('<span>čaroliju</span>', '<span>the magic of</span>'),
     ('<span class="jh-dot"></span></span>ne</span>', '<span class="jh-dot"></span></span>na</span>'),
-    ('Olimpijske staze, noćno skijanje i vrhunsko gostoprimstvo — doživi zimu na najpoznatijoj planini regije.',
-     'Olympic slopes, night skiing and first-class hospitality — experience winter on the most famous mountain in the region.'),
-    ('aria-label="Ocjena 4.8"', 'aria-label="Rating 4.8"'),
     ('https://www.oc-jahorina.com/ski-mapa/', 'https://www.oc-jahorina.com/en/ski-mapa/'),
-    ('Ski mapa', 'Ski map'),
+    ('aria-label="Ski mapa" title="Ski mapa"', 'aria-label="Ski map" title="Ski map"'),
+    ('>SKI MAPA<', '>SKI MAP<'),
     ('https://www.oc-jahorina.com/ski-info/', 'https://www.oc-jahorina.com/en/ski-info/'),
     ('aria-label="Dnevno skijanje" title="Dnevno skijanje"', 'aria-label="Day skiing" title="Day skiing"'),
     ('>DNEVNO<', '>DAY<'),

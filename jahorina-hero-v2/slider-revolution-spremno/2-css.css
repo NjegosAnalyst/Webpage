@@ -406,6 +406,7 @@
   .jh-quick__item:nth-child(3){animation-delay:1.96s}
   .jh-quick__item:nth-child(4){animation-delay:2.04s}
   .jh-quick__item:nth-child(5){animation-delay:2.12s}
+  .jh-quick__item:nth-child(6){animation-delay:2.2s}
   @keyframes jhTileOn{
     0%{opacity:0;transform:translateY(10px) scale(.9);filter:brightness(2.2)}
     60%{opacity:1;filter:brightness(1.4)}
@@ -427,6 +428,7 @@
   .jh-quick__item--accent:active{box-shadow:inset 3px 3px 8px rgba(0,80,120,.55),inset -2px -2px 6px rgba(255,255,255,.25)}
   .jh-quick__label{font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;color:#fff}
   .jh-quick__label--word{font-size:9.5px;letter-spacing:.3px}
+  .jh-quick__label{white-space:nowrap;text-align:center}
   .jh-quick__live{
     position:absolute;top:10px;right:11px;width:7px;height:7px;border-radius:50%;
     background:#ff4d4d;box-shadow:0 0 0 3px rgba(255,77,77,.25);
@@ -481,16 +483,13 @@
     .jh-hero *{animation:none !important;transition:none !important}
   }
 
-/* ===== Opcija A: meni je iz teme; Web shop i Ski mapa su ispod opisa ===== */
-.jh-hero .jh-intro{flex-direction:column;align-items:flex-start;gap:22px;max-width:none}
-.jh-intro__row{display:flex;align-items:flex-end;gap:26px;max-width:420px}
-.jh-ctas{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+/* ===== Opcija A: meni je iz teme; Web shop i Ski mapa su pločice u traci ===== */
+.jh-hero .jh-quick__label{white-space:nowrap!important;text-align:center}
 /* naslov se prilagođava i visini ekrana, da ne udari u dugmad na nižim ekranima */
 .jh-hero .jh-title{font-size:clamp(46px,min(8.4vw,13vh),132px)}
 .jh-hero .jh-headline{top:clamp(140px,22%,220px)}
 @media (max-width:760px){
   .jh-hero .jh-headline{padding-top:130px}
-  .jh-hero .jh-ctas{padding:0}
-  .jh-hero .jh-ctas .jh-btn--ghost{display:inline-flex}
-  .jh-hero .jh-ctas .jh-btn{padding:12px 20px;font-size:14px}
+  .jh-hero .jh-quick{gap:5px;padding:6px}
+  .jh-hero .jh-quick__label--word{font-size:8.5px;letter-spacing:0}
 }

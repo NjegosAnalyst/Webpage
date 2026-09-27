@@ -263,6 +263,7 @@
     });
 
     // ocjena broji od 0.0 do 4.8
+    if (rating) {
     var target = parseFloat(rating.textContent) || 0;
     rating.textContent = '0.0';
     after(1.5, function () {
@@ -273,6 +274,7 @@
         if (p < 1) requestAnimationFrame(tick);
       })();
     });
+    }
 
     // "Jahorine": svjetlosna olovka iscrta obris, tačka na "i" skače kao skijaš, slova se zalede
     ice.classList.add('is-drawing');
