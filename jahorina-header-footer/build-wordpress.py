@@ -248,7 +248,20 @@ HEADER_JS = r"""
         var link = document.createElement('a'); link.href = a0.href; link.textContent = label;
         if (a0.target) link.target = a0.target;
         if (/current-menu-(item|ancestor|parent)/.test(li.className)) link.setAttribute('aria-current', 'page');
-        var mlink = link.cloneNode(true); mnav.appendChild(mlink);
+        var mlink = link.cloneNode(true), mlist = null;
+        if (sub) {   // telefon: stavka + strelica, podstavke se otvaraju na dodir (harmonika)
+          var acc = document.createElement('div'); acc.className = 'jf-macc';
+          var row = document.createElement('div'); row.className = 'jf-macc__row';
+          var tg = document.createElement('button'); tg.type = 'button'; tg.className = 'jf-macc__btn'; tg.setAttribute('aria-label', label); tg.setAttribute('aria-expanded', 'false');
+          mlist = document.createElement('div'); mlist.className = 'jf-macc__list';
+          row.appendChild(mlink); row.appendChild(tg); acc.appendChild(row); acc.appendChild(mlist); mnav.appendChild(acc);
+          (function (acc, tg, mlink) {
+            function flip(e) { e.preventDefault(); var o = !acc.classList.contains('is-open'); acc.classList.toggle('is-open', o); tg.setAttribute('aria-expanded', o ? 'true' : 'false'); }
+            tg.addEventListener('click', flip);
+            var h = mlink.getAttribute('href') || '';
+            if (!h || h === '#' || /#$/.test(h)) mlink.addEventListener('click', flip);
+          })(acc, tg, mlink);
+        } else mnav.appendChild(mlink);
         if (sub) {
           var wrap = document.createElement('div'); wrap.className = 'jf-dd';
           var box = document.createElement('div'); box.className = 'jf-dd__menu';
@@ -260,7 +273,7 @@ HEADER_JS = r"""
             if (sa.target) x.target = sa.target;
             if (depth) x.className = 'jf-dd__deep';
             box.appendChild(x);
-            var mx = x.cloneNode(true); mx.className = 'jf-mnav__sub' + (depth ? ' jf-mnav__deep' : ''); mnav.appendChild(mx);
+            var mx = x.cloneNode(true); mx.className = 'jf-mnav__sub' + (depth ? ' jf-mnav__deep' : ''); mlist.appendChild(mx);
           });
           link.classList.add('jf-dd__top');
           wrap.appendChild(link); wrap.appendChild(box); nav.appendChild(wrap);
@@ -286,6 +299,18 @@ HEADER_JS = r"""
       document.addEventListener('click', function (e) { if (!e.target.closest || !e.target.closest('.jf-dd')) closeDD(); });
     }
   }
+  function clearHeader() {
+    if (document.querySelector('rs-module, .rev_slider, rs-module-wrap, .rev_slider_wrapper')) return;   // hero stranica: header ide preko slike
+    var hh = header.offsetHeight, y = window.scrollY || 0;
+    var sh = document.querySelector('#Subheader'), box = sh || document.querySelector('#Content');
+    if (!box) return;
+    box.style.paddingTop = '';
+    var ref = (sh && sh.querySelector('.title, h1, h2')) || box.firstElementChild || box;
+    var topY = ref.getBoundingClientRect().top + y, need = hh + 14 - topY;
+    if (need > 0) box.style.paddingTop = (parseFloat(getComputedStyle(box).paddingTop) + need) + 'px';
+  }
+  clearHeader(); window.addEventListener('load', clearHeader);
+  var rT; window.addEventListener('resize', function () { clearTimeout(rT); rT = setTimeout(clearHeader, 150); });
   root.classList.add('is-ready');   // tek sada pokaži meni (bez treptaja pogrešnih stavki)
   // jezik: na srpskoj strani dugme "EN" vodi na istu stranicu na engleskom, i obrnuto
   var path = location.pathname, isEN = /^\/en(\/|$)/.test(path);
@@ -378,6 +403,23 @@ header_snippet = (
     "  .jh-wp .jf-dd__menu a:hover{color:#fff;background:rgba(255,255,255,.07)}\n"
     "  .jh-wp .jf-mnav a.jf-mnav__sub{padding:10px 16px 10px 32px;font-size:15px;color:rgba(255,255,255,.7)}\n"
     "  body.admin-bar .jf-header{top:32px}\n"
+    "  /* uvijek iznad elemenata teme (slajderi, kolačići, Betheme slojevi) */\n"
+    "  .jh-wp .jf-header{z-index:99990!important}\n"
+    "  .jh-wp .jf-shade{z-index:99991!important}\n"
+    "  .jh-wp .jf-mnav{z-index:99992!important;overflow-y:auto;-webkit-overflow-scrolling:touch}\n"
+    "  .jh-wp.is-menu-open .jf-header{z-index:99993!important}\n"
+    "  .jh-wp button,.jh-wp a{touch-action:manipulation;-webkit-tap-highlight-color:transparent}\n"
+    "  .jh-wp .jf-mnav a{display:block;color:#fff!important}\n"
+    "  .jh-wp:not(.is-menu-open) .jf-mnav{box-shadow:none!important;visibility:hidden;transition:transform .35s cubic-bezier(.2,.7,.2,1),visibility 0s .35s}\n"
+    "  .jh-wp .jf-macc__row{display:flex;align-items:center}\n"
+    "  .jh-wp .jf-macc__row > a{flex:1}\n"
+    "  .jh-wp .jf-macc__btn{flex:0 0 44px;width:44px;height:44px;border:0!important;padding:0!important;border-radius:12px;background:rgba(255,255,255,.05)!important;position:relative;cursor:pointer;box-shadow:none!important}\n"
+    "  .jh-wp .jf-macc__btn::before{content:'';position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-6px 0 0 -4px;border-right:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(45deg);transition:transform .25s}\n"
+    "  .jh-wp .jf-macc.is-open .jf-macc__btn::before{transform:rotate(-135deg);margin-top:-2px}\n"
+    "  .jh-wp .jf-macc__list{display:none;padding:2px 0 8px}\n"
+    "  .jh-wp .jf-macc.is-open .jf-macc__list{display:block}\n"
+    "  .jh-wp .jf-macc.is-open .jf-macc__row > a{color:#00B9F2!important}\n"
+    "  .jh-wp .jf-mnav a.jf-mnav__sub{color:rgba(255,255,255,.75)!important}\n"
     "  @media (max-width:782px){ body.admin-bar .jf-header{top:46px} }\n"
     "  @media (prefers-reduced-motion:reduce){.jh-wp *{transition:none!important}}\n"
     "</style>\n"
