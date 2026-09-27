@@ -564,42 +564,43 @@
   var hero = document.querySelector('.jh-hero');
   if (!hero) return;
 
-  // "O nama" dropdown — otvara se na klik, zatvara klikom van ili Esc
+  // "O nama" dropdown i hamburger — samo ako hero ima svoj meni
+  // (u Slider Revolution verziji meni dolazi iz teme, pa ovog dijela nema)
   var dd = hero.querySelector('.jh-dropdown');
-  var ddBtn = dd.querySelector('button');
-  function setDropdown(open) {
-    dd.classList.toggle('is-open', open);
-    ddBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-  }
-  ddBtn.addEventListener('click', function (e) {
-    e.stopPropagation();
-    setDropdown(!dd.classList.contains('is-open'));
-  });
-
-  // Hamburger (samo na užim ekranima)
   var header = hero.querySelector('.jh-header');
   var burger = hero.querySelector('.jh-burger');
-  burger.addEventListener('click', function (e) {
-    e.stopPropagation();
-    var open = !header.classList.contains('is-menu-open');
-    header.classList.toggle('is-menu-open', open);
-    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
-  });
-
-  document.addEventListener('click', function (e) {
-    if (!dd.contains(e.target)) setDropdown(false);
-    if (!header.contains(e.target)) {
-      header.classList.remove('is-menu-open');
-      burger.setAttribute('aria-expanded', 'false');
-    }
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') {
-      setDropdown(false);
-      header.classList.remove('is-menu-open');
-      burger.setAttribute('aria-expanded', 'false');
-    }
-  });
+  if (dd && header && burger) {
+    var ddBtn = dd.querySelector('button');
+    var setDropdown = function (open) {
+      dd.classList.toggle('is-open', open);
+      ddBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+    ddBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setDropdown(!dd.classList.contains('is-open'));
+    });
+    // Hamburger (samo na užim ekranima)
+    burger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = !header.classList.contains('is-menu-open');
+      header.classList.toggle('is-menu-open', open);
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.addEventListener('click', function (e) {
+      if (!dd.contains(e.target)) setDropdown(false);
+      if (!header.contains(e.target)) {
+        header.classList.remove('is-menu-open');
+        burger.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        setDropdown(false);
+        header.classList.remove('is-menu-open');
+        burger.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
 
   // ===== Reflektori: pale se uz stazu, tiho dišu, povremeno bljesne filmski zrak =====
   (function floodlights() {

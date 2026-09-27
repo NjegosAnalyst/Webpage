@@ -1,6 +1,5 @@
 /* =====================================================================
-   JAHORINA HERO — DIO 2: CSS  (Slider Revolution → Module Settings → Custom CSS)
-   Zamijeni:  https://oc-jahorina.com/wp-content/uploads/2026/09/jahorina-noc.webp  i  https://oc-jahorina.com/wp-content/uploads/2026/09/jahorina-noc.jpg (2x)
+   JAHORINA HERO — DIO 2: CSS  (Slider Revolution → ⚙ → CSS/jQuery → CUSTOM CSS)
    ===================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap');
 
@@ -481,3 +480,17 @@
   @media (prefers-reduced-motion:reduce){
     .jh-hero *{animation:none !important;transition:none !important}
   }
+
+/* ===== Opcija A: meni je iz teme; Web shop i Ski mapa su ispod opisa ===== */
+.jh-hero .jh-intro{flex-direction:column;align-items:flex-start;gap:22px;max-width:none}
+.jh-intro__row{display:flex;align-items:flex-end;gap:26px;max-width:420px}
+.jh-ctas{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+/* naslov se prilagođava i visini ekrana, da ne udari u dugmad na nižim ekranima */
+.jh-hero .jh-title{font-size:clamp(46px,min(8.4vw,13vh),132px)}
+.jh-hero .jh-headline{top:clamp(140px,22%,220px)}
+@media (max-width:760px){
+  .jh-hero .jh-headline{padding-top:130px}
+  .jh-hero .jh-ctas{padding:0}
+  .jh-hero .jh-ctas .jh-btn--ghost{display:inline-flex}
+  .jh-hero .jh-ctas .jh-btn{padding:12px 20px;font-size:14px}
+}
