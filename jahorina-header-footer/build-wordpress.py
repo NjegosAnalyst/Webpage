@@ -148,30 +148,36 @@ header_css = """/* =============================================================
   #Top_bar.is-sticky #logo img{max-height:34px!important;height:34px!important}
 }
 
-/* --- lupa, EN i hamburger: okrugla neumorphic dugmad kao na hero-u --- */
+/* --- lupa i EN: okrugla neumorphic dugmad kao na hero-u --- */
+/* (sve veze u desnom dijelu headera — radi bez obzira kako se tačno zovu) */
 #Top_bar .top_bar_right,#Top_bar .top_bar_right:before{background:transparent!important}
-#Top_bar .top_bar_right_wrapper{display:flex!important;align-items:center;gap:10px}
-#Top_bar a#header_search_button,
-#Top_bar .top_bar_right .wpml-languages > a,
-#Top_bar .top_bar_right .wpml-languages a.active,
-#Top_bar .top_bar_right .language-switcher > a,
-#Top_bar .top_bar_right .pll-parent-menu-item > a,
-#Top_bar a.responsive-menu-toggle{
-  width:42px!important;height:42px!important;min-width:0!important;padding:0!important;margin:0!important;
+#Top_bar .top_bar_right_wrapper a:not(.button):not(.action_button){
+  width:42px!important;height:42px!important;min-width:0!important;padding:0!important;
   display:inline-flex!important;align-items:center!important;justify-content:center!important;
-  border-radius:50%!important;border:0!important;line-height:1!important;
+  border-radius:50%!important;border:0!important;line-height:1!important;vertical-align:middle;
   background:rgba(23,34,56,.75)!important;color:#fff!important;
   -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
   box-shadow:4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16),inset 1px 1px 0 rgba(255,255,255,.06)!important;
   font:700 12.5px/1 'Barlow',sans-serif!important;letter-spacing:.6px;text-transform:uppercase;
   transition:color .2s,box-shadow .25s;
 }
-#Top_bar a#header_search_button i,#Top_bar a.responsive-menu-toggle i{font-size:17px!important;line-height:1!important;margin:0!important;color:inherit!important}
-#Top_bar a#header_search_button:hover,#Top_bar .wpml-languages > a:hover,#Top_bar a.responsive-menu-toggle:hover{color:#00B9F2!important}
-#Top_bar a#header_search_button:active,#Top_bar .wpml-languages > a:active,#Top_bar a.responsive-menu-toggle:active{
+#Top_bar .top_bar_right_wrapper a:not(.button):not(.action_button) i{font-size:17px!important;line-height:1!important;margin:0!important;color:inherit!important}
+#Top_bar .top_bar_right_wrapper a:not(.button):not(.action_button) img{display:none!important}   /* samo "EN", bez zastavice */
+#Top_bar .top_bar_right_wrapper a:not(.button):not(.action_button):hover{color:#00B9F2!important}
+#Top_bar .top_bar_right_wrapper a:not(.button):not(.action_button):active{
   box-shadow:inset 3px 3px 7px rgba(0,0,0,.5),inset -2px -2px 6px rgba(78,104,150,.18)!important}
-#Top_bar .wpml-languages{border:0!important;background:transparent!important}
-#Top_bar .wpml-languages > a img{display:none!important}   /* samo "EN", bez zastavice */
+#Top_bar .top_bar_right_wrapper a:not(.button):not(.action_button) + a,
+#Top_bar .top_bar_right_wrapper > * + *{margin-left:10px!important}
+#Top_bar .top_bar_right_wrapper .wpml-languages,#Top_bar .top_bar_right_wrapper .wpml-languages ul{border:0!important;background:transparent!important}
+
+/* --- hamburger (uži ekrani): samo izgled, Betheme pozicija ostaje --- */
+#Top_bar a.responsive-menu-toggle{
+  width:42px!important;height:42px!important;margin-top:-21px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  border-radius:50%!important;background:rgba(23,34,56,.75)!important;color:#fff!important;
+  box-shadow:4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16),inset 1px 1px 0 rgba(255,255,255,.06)!important;
+}
+#Top_bar a.responsive-menu-toggle i{font-size:18px!important;line-height:1!important;margin:0!important;color:inherit!important}
 
 /* --- meni na telefonu (Betheme bočni meni): tamna pozadina --- */
 #Side_slide{background:#111a2c!important}
