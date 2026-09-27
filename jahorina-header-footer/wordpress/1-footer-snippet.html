@@ -1,0 +1,188 @@
+<!-- =====================================================================
+     JAHORINA FOOTER — WPCode: HTML Snippet → Auto Insert → Site Wide Footer
+     Sakriva stari Betheme footer i prikazuje novi. Isključi snippet = vraća stari.
+     ===================================================================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* sakrij stari Betheme footer i njegovo dugme za vrh */
+  #Footer, .mfn-footer-tmpl, #back_to_top{display:none!important}
+  .jf-wp, .jf-wp *, .jf-wp *::before, .jf-wp *::after{box-sizing:border-box}
+  .jf-wp{background:#0a1120;line-height:normal;text-align:left}
+  .jf-wp ul{margin:0;padding:0;list-style:none}
+  .jf-wp li{margin:0;padding:0}
+  .jf-wp p{margin:0}
+  .jf-wp h4{border:0;text-transform:uppercase}
+  .jf-wp{
+    --accent:#00B9F2;
+    --bg:#0a1120;
+    --surface:#111a2c;
+    --surface-2:#172238;
+    --line:rgba(255,255,255,.08);
+    --text:#fff;
+    --text-2:rgba(255,255,255,.62);
+    --text-3:rgba(255,255,255,.42);
+    --nm-raised:4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16),inset 1px 1px 0 rgba(255,255,255,.05);
+    --nm-inset:inset 3px 3px 8px rgba(0,0,0,.42),inset -3px -3px 7px rgba(78,104,150,.14);
+    font-family:'Barlow',system-ui,sans-serif;color:var(--text);
+  }
+  .jf-wp a{color:inherit;text-decoration:none}
+  .jf-wp a:focus-visible,.jf-wp button:focus-visible,.jf-wp input:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:8px}
+  /* ================= FOOTER ================= */
+  .jf-wp .jf-footer{position:relative;margin-top:40px;padding:0 clamp(16px,3vw,44px) 28px;overflow:hidden}
+  .jf-wp .jf-footer::before{ /* tanka cyan linija svjetla na vrhu */
+    content:"";position:absolute;left:0;right:0;top:0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(0,185,242,.7),transparent);
+  }
+  .jf-wp .jf-footer::after{ /* planinski obris u pozadini */
+    content:"";position:absolute;left:0;right:0;bottom:0;height:260px;pointer-events:none;opacity:.5;
+    background:no-repeat bottom/100% 100% url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 260' preserveAspectRatio='none'%3E%3Cpath d='M0 170 L120 120 L210 150 L330 70 L420 120 L520 90 L640 150 L760 60 L860 120 L980 95 L1100 150 L1220 80 L1330 130 L1440 100 V260 H0Z' fill='%23111a2c'/%3E%3Cpath d='M0 215 L160 180 L300 205 L460 160 L620 200 L800 170 L960 210 L1120 175 L1300 205 L1440 185 V260 H0Z' fill='%230d1524'/%3E%3C/svg%3E");
+  }
+  .jf-wp .jf-footer__inner{position:relative;z-index:1;max-width:1320px;margin:0 auto}
+
+  .jf-flogo{display:inline-block;margin:-6px 0 22px}
+  .jf-flogo img{height:52px;width:auto;display:block}
+
+  /* kontakt kolone */
+  .jf-cols{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:start;gap:clamp(20px,3vw,44px);
+    padding:clamp(56px,6vw,80px) 0 clamp(36px,4vw,52px);border-bottom:1px solid var(--line);
+  }
+  .jf-col h4{margin:0 0 18px;font:600 11px/1.3 'Archivo',sans-serif;letter-spacing:2.6px;text-transform:uppercase;color:var(--text-3)}
+  .jf-col ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+  .jf-col li a,.jf-col li span{display:inline-flex;align-items:flex-start;gap:10px;font-size:15px;line-height:1.45;color:rgba(255,255,255,.86);transition:color .2s}
+  .jf-col li a:hover{color:var(--accent)}
+  .jf-col svg{flex-shrink:0;margin-top:2px;color:var(--accent)}
+  /* hitni broj Gorske službe — istaknut */
+  .jf-sos{
+    display:flex;align-items:center;gap:14px;margin-top:4px;padding:14px 16px;border-radius:16px;
+    background:var(--surface);box-shadow:var(--nm-raised);
+  }
+  .jf-sos__dot{width:10px;height:10px;border-radius:50%;background:#ff4d4d;box-shadow:0 0 0 4px rgba(255,77,77,.18);flex-shrink:0;animation:jfPulse 2.2s ease-in-out infinite}
+  @keyframes jfPulse{50%{box-shadow:0 0 0 7px rgba(255,77,77,.06)}}
+  .jf-sos b{display:block;font:700 18px/1.2 'Archivo',sans-serif;color:#fff;font-variant-numeric:tabular-nums}
+  .jf-sos small{font-size:12.5px;color:var(--text-3)}
+
+  /* donji red */
+  .jf-bottom{
+    display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+    padding-top:26px;
+  }
+  .jf-legal{display:flex;align-items:center;gap:6px 20px;flex-wrap:wrap;font-size:13.5px;color:var(--text-3)}
+  .jf-legal a{color:rgba(255,255,255,.7);transition:color .2s}
+  .jf-legal a:hover{color:#fff}
+  .jf-social{display:flex;align-items:center;gap:10px}
+  .jf-social a{
+    width:44px;height:44px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;
+    background:var(--surface-2);box-shadow:var(--nm-raised);color:rgba(255,255,255,.85);
+    transition:color .2s,transform .2s,box-shadow .25s;
+  }
+  .jf-social a:hover{color:var(--accent);transform:translateY(-2px);box-shadow:var(--nm-raised),0 0 18px rgba(0,185,242,.3)}
+  .jf-social a:active{box-shadow:var(--nm-inset);transform:none}
+  .jf-top-btn{
+    width:48px;height:48px;border-radius:50%;border:0;cursor:pointer;margin-left:8px;
+    display:inline-flex;align-items:center;justify-content:center;color:#fff;
+    background:linear-gradient(145deg,#2CCBF8,#00A6DB);box-shadow:0 10px 24px -10px rgba(0,185,242,.8),inset 1px 1px 0 rgba(255,255,255,.35);
+    transition:transform .2s;
+  }
+  .jf-top-btn:hover{transform:translateY(-3px)}
+
+  @media (max-width:980px){
+    .jf-cols{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media (max-width:560px){
+    .jf-cols{grid-template-columns:1fr}
+    .jf-bottom{flex-direction:column-reverse;align-items:flex-start}
+  }
+  @media (prefers-reduced-motion:reduce){.jf-wp *{animation:none!important;transition:none!important}}
+</style>
+<div class="jf jf-wp">
+  <footer class="jf-footer">
+    <div class="jf-footer__inner">
+
+      <div class="jf-cols">
+        <div class="jf-col">
+          <a href="https://www.oc-jahorina.com/" class="jf-flogo"><img src="https://oc-jahorina.com/wp-content/uploads/2026/09/logo-white-lockup.png" alt="Jahorina — Olimpijski centar"></a>
+          <ul>
+            <li><a href="https://www.google.com/maps/search/?api=1&query=Olimpijski+centar+Jahorina" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9.5" r="2.4" stroke="currentColor" stroke-width="1.8"/></svg>
+              <span style="padding:0;display:block">AD Olimpijski centar Jahorina<br>Olimpijska bb<br>71423 Jahorina, RS / BiH</span></a></li>
+          </ul>
+        </div>
+        <div class="jf-col">
+          <h4>Direkcija</h4>
+          <ul>
+            <li><a href="mailto:direkcija@oc-jahorina.com"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M4 7 L12 13 L20 7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>direkcija@oc-jahorina.com</a></li>
+            <li><a href="tel:+38757270090"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>+387 57 270 090</a></li>
+            <li><span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="6" y="3" width="12" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="10" width="18" height="9" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M7 15h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Fax: +387 57 270 090</span></li>
+          </ul>
+        </div>
+        <div class="jf-col">
+          <h4>Marketing i prodaja</h4>
+          <ul>
+            <li><a href="mailto:marketing@oc-jahorina.com"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M4 7 L12 13 L20 7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>marketing@oc-jahorina.com</a></li>
+            <li><a href="mailto:skipass@oc-jahorina.com"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M4 7 L12 13 L20 7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>skipass@oc-jahorina.com</a></li>
+            <li><a href="mailto:pr@oc-jahorina.com"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M4 7 L12 13 L20 7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>pr@oc-jahorina.com</a></li>
+            <li><a href="tel:+38757270003"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>+387 57 270 003</a></li>
+          </ul>
+        </div>
+        <div class="jf-col">
+          <h4>Gorska služba spašavanja</h4>
+          <a href="tel:+38766636636" class="jf-sos">
+            <span class="jf-sos__dot" aria-hidden="true"></span>
+            <span><b>+387 66 636 636</b><small>Hitni slučajevi na stazi · 24/7</small></span>
+          </a>
+        </div>
+      </div>
+
+      <div class="jf-bottom">
+        <div class="jf-legal">
+          <span>© <span class="jf-year">2026</span> Olimpijski centar Jahorina. Sva prava zadržana.</span>
+          <a href="https://www.oc-jahorina.com/olimpijski-centar-jahorina/">Impressum</a>
+          <a href="https://www.oc-jahorina.com/lokacija/">Lokacija</a>
+          <a href="https://www.oc-jahorina.com/kontakt/">Kontakt</a>
+        </div>
+        <div class="jf-social">
+          <a href="https://www.facebook.com/JahorinaOC/" target="_blank" rel="noopener" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 8.5V6.8c0-.8.2-1.3 1.4-1.3H17V2.3c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2H7.6v3.4h2.7V22H14v-10.1h2.7l.4-3.4H14Z"/></svg></a>
+          <a href="https://www.youtube.com/@jahorinaoc" target="_blank" rel="noopener" aria-label="YouTube"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 8.2a3 3 0 0 0-2.1-2.1C18 5.6 12 5.6 12 5.6s-6 0-7.9.5A3 3 0 0 0 2 8.2 31 31 0 0 0 1.6 12 31 31 0 0 0 2 15.8a3 3 0 0 0 2.1 2.1c1.9.5 7.9.5 7.9.5s6 0 7.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .4-3.8 31 31 0 0 0-.4-3.8ZM10 15V9l5.2 3Z"/></svg></a>
+          <a href="https://www.instagram.com/jahorina/" target="_blank" rel="noopener" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.9"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.9"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor"/></svg></a>
+          <a href="https://www.tiktok.com/@jahorinaoc" target="_blank" rel="noopener" aria-label="TikTok"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.6 2h-3.3v13.2a2.9 2.9 0 1 1-2.1-2.8V9a6.3 6.3 0 1 0 5.4 6.2V8.6a7.9 7.9 0 0 0 4.6 1.5V6.8a4.6 4.6 0 0 1-4.6-4.8Z"/></svg></a>
+          <button type="button" class="jf-top-btn" aria-label="Nazad na vrh">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 15 L12 9 L18 15" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+</div>
+<script>
+(function () {
+  var root = document.querySelector('.jf-wp');
+  if (!root) return;
+  root.querySelector('.jf-year').textContent = new Date().getFullYear();
+  root.querySelector('.jf-top-btn').addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+  // Engleska verzija sajta (/en/...): prevedi natpise i uputi interne linkove na /en/
+  if (!/^\/en(\/|$)/.test(location.pathname)) return;
+  var T = {
+    'Direkcija': 'Management',
+    'Marketing i prodaja': 'Marketing & Sales',
+    'Gorska služba spašavanja': 'Mountain Rescue Service',
+    'Hitni slučajevi na stazi · 24/7': 'Emergencies on the slopes · 24/7',
+    'Lokacija': 'Location',
+    'Kontakt': 'Contact'
+  };
+  root.querySelectorAll('h4, small, .jf-legal a').forEach(function (el) {
+    var t = el.textContent.trim(); if (T[t]) el.textContent = T[t];
+  });
+  root.querySelectorAll('.jf-legal > span').forEach(function (el) {
+    el.innerHTML = el.innerHTML.replace('Sva prava zadržana.', 'All rights reserved.');
+  });
+  root.querySelector('.jf-top-btn').setAttribute('aria-label', 'Back to top');
+  root.querySelectorAll('a[href^="https://www.oc-jahorina.com/"]').forEach(function (a) {
+    if (!/oc-jahorina\.com\/en\//.test(a.href)) a.href = a.href.replace('oc-jahorina.com/', 'oc-jahorina.com/en/');
+  });
+})();
+</script>
