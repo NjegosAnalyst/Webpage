@@ -233,7 +233,16 @@ HEADER_JS = r"""
 
   // ===== MENI IZ WORDPRESSA: stavke se čitaju iz postojećeg Betheme menija =====
   // (Izgled → Izbornici ostaje jedino mjesto gdje se meni uređuje)
-  var srcUl = document.querySelector('#Top_bar #menu > ul, #Top_bar .menu_wrapper ul.menu, .mfn-header-tmpl nav ul, #menu-main-menu');
+  // Betheme na telefonu premješta meni (npr. u #Side_slide) — tražimo ga na svim mjestima i biramo najpotpuniji
+  function findMenu() {
+    var best = null, bestN = 0;
+    [].forEach.call(document.querySelectorAll('#Top_bar #menu > ul, #Top_bar .menu_wrapper ul.menu, .mfn-header-tmpl nav ul, #Side_slide #menu > ul, #Side_slide .menu_wrapper ul.menu, #Side_slide ul.menu, #menu-main-menu, ul[id^="menu-main"]'), function (u) {
+      if (u.closest('.jh-wp')) return;
+      var n = u.querySelectorAll('a').length; if (n > bestN) { best = u; bestN = n; }
+    });
+    return best;
+  }
+  var srcUl = findMenu();
   var fromWP = false;
   function kids(ul) { return ul ? [].filter.call(ul.children, function (li) { return li.tagName === 'LI' && li.querySelector('a'); }) : []; }
   function subOf(li) { return li.querySelector(':scope > ul, :scope > div > ul'); }
@@ -313,9 +322,9 @@ HEADER_JS = r"""
       mobList(sub, list, depth + 1);
     });
   }
-  if (srcUl && kids(srcUl).length) {
+  function buildMenu() {
+    if (!srcUl || !kids(srcUl).length) return false;
     fromWP = true;
-    var nav = root.querySelector('.jf-nav'), mnav = root.querySelector('.jf-mnav');
     nav.innerHTML = ''; mnav.innerHTML = '';
     kids(srcUl).forEach(function (li) {
       var a = mk(li); if (!a) return;
@@ -327,7 +336,17 @@ HEADER_JS = r"""
       } else nav.appendChild(a);
     });
     mobList(srcUl, mnav, 0);
-    document.addEventListener('click', function (e) { if (!e.target.closest || !e.target.closest('.jf-nav')) [].forEach.call(nav.querySelectorAll('.is-open'), shut); });
+    return true;
+  }
+  var nav = root.querySelector('.jf-nav'), mnav = root.querySelector('.jf-mnav');
+  document.addEventListener('click', function (e) { if (!e.target.closest || !e.target.closest('.jf-nav')) [].forEach.call(nav.querySelectorAll('.is-open'), shut); });
+  if (!buildMenu()) {   // meni još nije na stranici — pokušavaj još 6 sekundi
+    var tries = 0, again = function () {
+      srcUl = findMenu();
+      if (buildMenu()) { if (typeof afterMenu === 'function') afterMenu(); return; }
+      if (++tries < 30) setTimeout(again, 200);
+    };
+    setTimeout(again, 200); window.addEventListener('load', function () { if (!fromWP) again(); });
   }
   function clearHeader() {
     if (document.querySelector('rs-module, .rev_slider, rs-module-wrap, .rev_slider_wrapper')) return;   // hero stranica: header ide preko slike
