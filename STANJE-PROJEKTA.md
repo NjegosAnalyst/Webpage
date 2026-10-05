@@ -3,7 +3,9 @@
 Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavica; kratko i jasno.
 
 ## Sajt i alati
-- WordPress + tema **Betheme** (BeBuilder), Elementor, **Slider Revolution 6**, **WPCode Lite**, WP Fastest Cache, UpdraftPlus, WPML (`/en/` stranice).
+- WordPress + tema **Betheme** (BeBuilder), Elementor, **Slider Revolution 6**, **WPCode Lite**, WP Fastest Cache, UpdraftPlus. Dodaci za Elementor: HappyAddons, UAE, Prime Slider; The Events Calendar (Događaji).
+- Jezici: **qTranslate-XT** (ne WPML) — ista stranica/objava nosi oba jezika u oznakama `[:SH]…[:en]…[:]`, EN je na `/en/...`.
+- Elementor je **besplatna verzija** (Posts, Loop Grid i ostali Pro widgeti su zaključani).
 - Početna stranica: **Početna zima** (`/pocetna-zima/`, EN `/en/pocetna-zima/`).
 - **Firewall hostinga (ModSecurity)** vraća "Forbidden" kad se u WPCode snima veći kod (HTML sa formom/SVG, veći JS). Zato se veći kod drži na GitHubu i učitava preko jsDelivr (vidi Header).
 - Iz cloud okruženja **ne možemo otvoriti oc-jahorina.com** (mreža blokirana) — sve se testira na simulacijama (Playwright), a korisnik šalje screenshotove.
@@ -30,7 +32,9 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 ## Sljedeće: sekcije početne ispod hero-a
 - Prijedlog izgleda: `jahorina-home-sections/index.src.html` (artifact "Jahorina početna — ispod hero-a"). Redoslijed: Danas na Jahorini → Obavještenja i vijesti → Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu.
 - **Na redu: Vijesti.** Vijesti moraju ostati vezane za WordPress (objave se dodaju kao i do sada) — restilizovati postojeći blok/kategorije, ne praviti ručno.
-- Kategorije: Vijesti `/category/vijesti/`, Odluke društva `/category/odluke-drustva/`, Javne nabavke `/category/javne-nabavke/`.
+- Kategorije: Vijesti `/category/vijesti/` (743 objave), Odluke društva `/category/odluke-drustva/`, Javne nabavke `/category/javne-nabavke/`. Postoji i Ski info (411).
+- Sada na sajtu: blok je u **Elementoru** — slajder iz dodatka (jedna objava: slika lijevo sa strelicama, naslov/izvod/datum desno), bijela pozadina; ispod njega Events Loop ("Trenutno nema događaja...").
+- Plan: slajder zamijeniti Elementor HTML widgetom sa jednim redom (loader sa jsDelivr, kao header) koji čita objave preko WP REST API-ja (`/wp-json/wp/v2/posts`) i crta raspored iz prijedloga; oznake qTranslate razdvaja sam kod. Čeka se: ime widgeta i njegov upit, vrh liste kategorija, provjera REST API-ja (SR i `/en/`).
 
 ## Linkovi
 - Repo: https://github.com/NjegosAnalyst/Webpage (grana `main`, javan)
