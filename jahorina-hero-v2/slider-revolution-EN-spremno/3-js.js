@@ -150,7 +150,7 @@
         if (!fade) continue;
         var tw = reduce ? 0.85 : 0.62 + 0.38 * Math.sin(t * z.f * 6.28 + z.ph) * Math.sin(t * z.f * 2.1 + z.ph * 1.7);
         var sr = (2.6 + z.b * 5) * Math.max(0.8, Math.sqrt(k));
-        ctx.globalAlpha = Math.min(1, fade * tw * (0.6 + 0.6 * z.b));
+        ctx.globalAlpha = Math.min(1, fade * tw * (0.6 + 0.6 * z.b) * 1.1);
         ctx.drawImage(STAR, z.x - sr, z.y - sr, sr * 2, sr * 2);
       }
       for (var i = 0; i < pts.length; i++) {
