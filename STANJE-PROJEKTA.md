@@ -32,9 +32,11 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 ## Sljedeće: sekcije početne ispod hero-a
 - Prijedlog izgleda: `jahorina-home-sections/index.src.html` (artifact "Jahorina početna — ispod hero-a"). Redoslijed: Danas na Jahorini → Obavještenja i vijesti → Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu.
 - **Vijesti — urađeno, čeka postavljanje na sajt.** `jahorina-home-sections/vijesti/`
-  - Čita **samo kategoriju Vijesti** (`/category/vijesti/`) preko WP REST API-ja: najnovija objava velika lijevo, sljedeće 3 desno. Objave se dodaju u WordPressu kao i do sada.
+  - Čita **samo kategoriju Vijesti** (`/category/vijesti/`) preko WP REST API-ja. Objave se dodaju u WordPressu kao i do sada.
+  - Izgled (korisnik tražio): **slajder sa 5 najnovijih vijesti**, jedna u kadru preko cijele kartice (fotografija + tamni prelaz, oznaka, datum, naslov, izvod, dugme „Pročitaj više“). Gore desno broj „01 / 05“ iscrtan linijom; dole brojevi sa cyan linijom napretka, pauza i strelice. Smjena na 7 s, staje na mišu/fokusu/van ekrana; prevlačenje prstom. Naslov sekcije: „Obavještenja *i vijesti*“ (drugi dio iscrtan linijom kao „Jahorine“ u hero-u).
+  - Pregled za korisnika: artifact „Jahorina vijesti“ (samo sekcija, probne objave).
   - Oznaka „Obavještenje“ (narandžasta) kad naslov ili tekst počinje sa Obavještenje/Notice, inače „Vijest“ (cyan). Ako je naslov samo „Obavještenje“, kao naslov se prikazuje početak teksta.
-  - qTranslate oznake (`[:SH]…[:en]…[:]`) razdvaja sam kod; na `/en/` prvo pita `/en/wp-json/`, pa `/wp-json/`, pa `/?rest_route=`. Bez slike → noćna fotografija (velika) ili ikonica (mala).
+  - qTranslate oznake (`[:SH]…[:en]…[:]`) razdvaja sam kod; na `/en/` prvo pita `/en/wp-json/`, pa `/wp-json/`, pa `/?rest_route=`. Bez slike → noćna fotografija iz hero-a.
   - Na sajtu: Elementor HTML widget sa redom iz `elementor-html-widget.html` (div + skripta sa jsDelivr-a, zaključana na commit + SRI). Ide iznad starog slajdera; stari se sakrije/obriše tek kad novi radi.
   - Sekcija u Elementoru: puna širina, padding 0 (u užem kontejneru blok sam dobija zaobljene ivice).
   - Ako ne učita: posjetioci vide poruku i dugme „Sve vijesti“; prijavljeni admin vidi i tehnički razlog (npr. `HTTP 403 · categories`).
