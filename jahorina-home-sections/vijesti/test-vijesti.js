@@ -108,7 +108,7 @@ async function run(name, { url, viewport, boxed = false, rest = 'ok', fullPage =
     return route.fulfill({ contentType: 'text/html', body: page(boxed) });
   });
   await p.goto(url);
-  await p.waitForSelector('#jv-vijesti .jv-feat:not(.jv-sk), #jv-vijesti .jv-note', { timeout: 8000 });
+  await p.waitForSelector('#jv-vijesti .jv-slide, #jv-vijesti .jv-note', { timeout: 8000 });
   await p.evaluate(() => document.fonts.ready);
   await p.locator('#jv-vijesti').scrollIntoViewIfNeeded();
   await p.waitForTimeout(1200);   // ulazna animacija kartica
@@ -120,7 +120,8 @@ async function run(name, { url, viewport, boxed = false, rest = 'ok', fullPage =
       chips: [...r.querySelectorAll('.jv-chip')].map((c) => c.textContent),
       dates: [...r.querySelectorAll('time')].map((t) => t.textContent),
       links: [...r.querySelectorAll('a')].map((a) => a.getAttribute('href')),
-      excerpt: (r.querySelector('.jv-feat p') || {}).textContent,
+      excerpt: (r.querySelector('.jv-slide.is-on p') || {}).textContent,
+      active: (r.querySelector('.jv-slide.is-on h3') || {}).textContent,
       note: (r.querySelector('.jv-note') || {}).textContent,
       overflowX: document.documentElement.scrollWidth > document.documentElement.clientWidth,
       h2: getComputedStyle(r.querySelector('h2')).fontFamily + ' ' + getComputedStyle(r.querySelector('h2')).color,
