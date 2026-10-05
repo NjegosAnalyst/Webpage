@@ -31,10 +31,15 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 
 ## Sljedeće: sekcije početne ispod hero-a
 - Prijedlog izgleda: `jahorina-home-sections/index.src.html` (artifact "Jahorina početna — ispod hero-a"). Redoslijed: Danas na Jahorini → Obavještenja i vijesti → Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu.
-- **Na redu: Vijesti.** Vijesti moraju ostati vezane za WordPress (objave se dodaju kao i do sada) — restilizovati postojeći blok/kategorije, ne praviti ručno.
-- Kategorije: Vijesti `/category/vijesti/` (743 objave), Odluke društva `/category/odluke-drustva/`, Javne nabavke `/category/javne-nabavke/`. Postoji i Ski info (411).
-- Sada na sajtu: blok je u **Elementoru** — slajder iz dodatka (jedna objava: slika lijevo sa strelicama, naslov/izvod/datum desno), bijela pozadina; ispod njega Events Loop ("Trenutno nema događaja...").
-- Plan: slajder zamijeniti Elementor HTML widgetom sa jednim redom (loader sa jsDelivr, kao header) koji čita objave preko WP REST API-ja (`/wp-json/wp/v2/posts`) i crta raspored iz prijedloga; oznake qTranslate razdvaja sam kod. Čeka se: ime widgeta i njegov upit, vrh liste kategorija, provjera REST API-ja (SR i `/en/`).
+- **Vijesti — urađeno, čeka postavljanje na sajt.** `jahorina-home-sections/vijesti/`
+  - Čita **samo kategoriju Vijesti** (`/category/vijesti/`) preko WP REST API-ja: najnovija objava velika lijevo, sljedeće 3 desno. Objave se dodaju u WordPressu kao i do sada.
+  - Oznaka „Obavještenje“ (narandžasta) kad naslov ili tekst počinje sa Obavještenje/Notice, inače „Vijest“ (cyan). Ako je naslov samo „Obavještenje“, kao naslov se prikazuje početak teksta.
+  - qTranslate oznake (`[:SH]…[:en]…[:]`) razdvaja sam kod; na `/en/` prvo pita `/en/wp-json/`, pa `/wp-json/`, pa `/?rest_route=`. Bez slike → noćna fotografija (velika) ili ikonica (mala).
+  - Na sajtu: Elementor HTML widget sa redom iz `elementor-html-widget.html` (div + skripta sa jsDelivr-a, zaključana na commit + SRI). Ide iznad starog slajdera; stari se sakrije/obriše tek kad novi radi.
+  - Sekcija u Elementoru: puna širina, padding 0 (u užem kontejneru blok sam dobija zaobljene ivice).
+  - Ako ne učita: posjetioci vide poruku i dugme „Sve vijesti“; prijavljeni admin vidi i tehnički razlog (npr. `HTTP 403 · categories`).
+  - **Svaka izmjena:** izmijeni `vijesti.js` → `node test-vijesti.js <folder> <fontovi>` (Playwright simulacija) → commit + push → `python3 napravi-widget.py` → commit + push → korisniku novi red za HTML widget.
+- Sljedeće sekcije po prijedlogu: Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu (i Danas na Jahorini iznad vijesti).
 
 ## Linkovi
 - Repo: https://github.com/NjegosAnalyst/Webpage (grana `main`, javan)
