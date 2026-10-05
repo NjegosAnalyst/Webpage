@@ -47,11 +47,11 @@
 
   /* ---------- pozadina + scrim slojevi ---------- */
   .jh-photo{
-    position:absolute;inset:-3%;
+    position:absolute;inset:-12% -3% -3%;   /* gore više mjesta za paralaksu pri skrolu */
     background:url('assets/jahorina-noc.jpg') center 58%/cover no-repeat;
     background-image:image-set(url('assets/jahorina-noc.webp') type('image/webp'),url('assets/jahorina-noc.jpg') type('image/jpeg'));
-    transform:translate3d(calc(var(--mx,0) * -14px),calc(var(--my,0) * -10px),0);
-    animation:jhZoom 2.2s cubic-bezier(.2,.7,.2,1) both;
+    transform:translate3d(calc(var(--mx,0) * -8px),calc(var(--my,0) * -6px + var(--sy,0px)),0);
+    animation:jhZoom 2.2s cubic-bezier(.2,.7,.2,1) both, jhDrift 28s ease-in-out 2.2s infinite alternate;
     will-change:transform;
   }
   /* 1) mrak se razilazi: fotografija kreće tamna i mutna, pa se izoštri */
@@ -60,6 +60,15 @@
     35%{opacity:1}
     100%{opacity:1;scale:1;filter:brightness(1) contrast(1.07) saturate(1.06) blur(0)}   /* blagi filmski kontrast */
   }
+
+  /* A) "dah" kamere: fotografija se veoma sporo približava i klizi, kao dron koji lebdi */
+  @keyframes jhDrift{
+    from{scale:1;translate:0 0}
+    to{scale:1.07;translate:-1.4% -1.2%}
+  }
+  /* C) 3D dubina: WebGL crta fotografiju sa mapom dubine (dolje bliže, gore dalje) */
+  .jh-depth{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .5s}
+  .jh-photo.is-gl .jh-depth{opacity:1}
 
   /* svjetlosni bloom na stvarnim reflektorima (canvas unutar fotografije, pa prati parallax) */
   .jh-lights{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;mix-blend-mode:screen}
@@ -481,7 +490,7 @@
 <section class="jh-hero" aria-label="Olimpijski centar Jahorina">
   <div class="jh-frame">
 
-    <div class="jh-photo" role="img" aria-label="Noćno skijanje na Jahorini"><canvas class="jh-lights" aria-hidden="true"></canvas></div>
+    <div class="jh-photo" role="img" aria-label="Noćno skijanje na Jahorini" data-src="assets/jahorina-noc.webp"><canvas class="jh-depth" aria-hidden="true"></canvas><canvas class="jh-lights" aria-hidden="true"></canvas></div>
     <div class="jh-scrim jh-scrim--left"></div>
     <div class="jh-scrim jh-scrim--bottom"></div>
     <div class="jh-scrim jh-scrim--top"></div>
@@ -603,6 +612,16 @@
     });
   }
 
+  // ===== Dubina fotografije (dron snimak: dolje je bliže kameri, gore dalje) =====
+  // ista funkcija se koristi u WebGL shaderu i za reflektore, da svjetla ostanu na svojim stubovima
+  function jhDepthAt(u, v) {
+    var s1 = Math.min(1, Math.max(0, (v - 0.18) / 0.82)); s1 = s1 * s1 * (3 - 2 * s1);
+    var a = Math.min(1, Math.max(0, (v - 0.55) / 0.45)); a = a * a * (3 - 2 * a);
+    var b = Math.min(1, Math.max(0, (u - 0.55) / 0.40)); b = b * b * (3 - 2 * b);
+    return s1 + 0.35 * a * b;
+  }
+  var DS = { x: 0, y: 0 }, jhLightsRedraw = null;   // trenutni pomak (px) za dubinu 1
+
   // ===== Reflektori: pale se uz stazu, tiho dišu, povremeno bljesne filmski zrak =====
   (function floodlights() {
     var photo = hero.querySelector('.jh-photo'), cv = photo.querySelector('.jh-lights'), ctx = cv.getContext('2d');
@@ -646,7 +665,7 @@
       pts = LIGHTS.map(function (l, i) {
         var o = old[i] || {};
         return {
-          x: ox + l[0] * IW * k, y: oy + l[1] * IH * k, s: l[2], warm: l[3],
+          x: ox + l[0] * IW * k, y: oy + l[1] * IH * k, u: l[0], v: l[1], s: l[2], warm: l[3],
           ph: o.ph || rnd(0, 6.28), f1: o.f1 || rnd(0.25, 0.6), f2: o.f2 || rnd(0.7, 1.4),
           on: 0.5 + (1 - l[1]) * 1.9 + rnd(0, 0.15)          // pale se od podnožja ka vrhu staze
         };
@@ -667,9 +686,9 @@
       ctx.globalCompositeOperation = 'lighter';
       for (var i = 0; i < pts.length; i++) {
         var p = pts[i], a = intensity(p, t); if (!a) continue;
-        var r = (12 + p.s * 26) * sc * 1.35;
+        var r = (12 + p.s * 26) * sc * 1.35, dz = jhDepthAt(p.u, p.v), qx = p.x + DS.x * dz, qy = p.y + DS.y * dz;
         ctx.globalAlpha = a * (p.warm ? 0.5 : 0.62);
-        ctx.drawImage(p.warm ? WARM : COLD, p.x - r, p.y - r, r * 2, r * 2);
+        ctx.drawImage(p.warm ? WARM : COLD, qx - r, qy - r, r * 2, r * 2);
       }
       // filmski zrak svjetla na nekom od velikih reflektora
       if (!reduce && t > nextFlare) {
@@ -678,7 +697,8 @@
         nextFlare = t + rnd(3.5, 6);
       }
       flares = flares.filter(function (f) { return t - f.t < f.d; });
-      flares.forEach(function (f) {
+      flares.forEach(function (f0) {
+        var dz = jhDepthAt(f0.p.u, f0.p.v), f = { t: f0.t, d: f0.d, p: { x: f0.p.x + DS.x * dz, y: f0.p.y + DS.y * dz, s: f0.p.s } };
         var u = (t - f.t) / f.d, e = Math.sin(Math.PI * u), R = (14 + f.p.s * 26) * sc;
         var len = R * (9 + 5 * e);
         ctx.globalAlpha = e * 0.35; ctx.drawImage(COLD, f.p.x - len * 0.55, f.p.y - R * 0.5, len * 1.1, R);          // meki sjaj oko zraka
@@ -692,6 +712,7 @@
     }
 
     layout();
+    jhLightsRedraw = function () { draw(performance.now()); };
     if (reduce) { draw(performance.now()); return; }
     var visible = true, last = 0;
     if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(hero);
@@ -994,22 +1015,86 @@
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  // Parallax — fotografija se blago pomjera za mišem
-  var tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
-  function tick() {
-    cx += (tx - cx) * 0.07; cy += (ty - cy) * 0.07;
+  // ===== B + C: paralaksa (miš i skrol) i 3D dubina fotografije =====
+  var photo = hero.querySelector('.jh-photo'), depthCv = photo.querySelector('.jh-depth');
+  var tx = 0, ty = 0, cx = 0, cy = 0, sc = 0, raf = null;
+  var gl = null, prog = null, uScale, uOff, uM, IMW = 2000, IMH = 1334, glReady = false;
+
+  function scrollFrac() {
+    var r = hero.getBoundingClientRect();
+    return Math.min(1, Math.max(0, -r.top / Math.max(1, r.height)));
+  }
+  function render() {
+    var W = photo.clientWidth, H = photo.clientHeight;
+    // pomak za dubinu 1: miš (do 22 px) + skrol (bliži dio ide gore brže)
+    DS.x = -cx * 22;
+    DS.y = -cy * 15 - sc * 46;
     hero.style.setProperty('--mx', cx.toFixed(3));
     hero.style.setProperty('--my', cy.toFixed(3));
-    raf = (Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001) ? requestAnimationFrame(tick) : null;
+    hero.style.setProperty('--sy', (sc * H * 0.10).toFixed(1) + 'px');   // B: slika ide sporije od stranice
+    if (glReady) {
+      var dpr = Math.min(window.devicePixelRatio || 1, 2), w = Math.round(W * dpr), h = Math.round(H * dpr);
+      if (depthCv.width !== w || depthCv.height !== h) { depthCv.width = w; depthCv.height = h; gl.viewport(0, 0, w, h); }
+      var pos = getComputedStyle(photo).backgroundPosition.split(' ');
+      var px = parseFloat(pos[0]) / 100, py = parseFloat(pos[1] || '50%') / 100;
+      var k = Math.max(W / IMW, H / IMH), dw = IMW * k, dh = IMH * k, ox = (W - dw) * px, oy = (H - dh) * py;
+      gl.uniform2f(uScale, W / dw, H / dh);
+      gl.uniform2f(uOff, -ox / dw, -oy / dh);
+      gl.uniform2f(uM, DS.x / W, DS.y / H);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    } else { DS.x = 0; DS.y = 0; }
+    if (jhLightsRedraw) jhLightsRedraw();
   }
+  function tick() {
+    cx += (tx - cx) * 0.07; cy += (ty - cy) * 0.07;
+    var ts = scrollFrac(); sc += (ts - sc) * 0.18;
+    render();
+    raf = (Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001 || Math.abs(ts - sc) > 0.0005) ? requestAnimationFrame(tick) : null;
+  }
+  function kick() { if (!raf) raf = requestAnimationFrame(tick); }
   hero.addEventListener('pointermove', function (e) {
     if (e.pointerType !== 'mouse') return;
     var r = hero.getBoundingClientRect();
     tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
     ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
-    if (!raf) raf = requestAnimationFrame(tick);
+    kick();
   });
-  hero.addEventListener('pointerleave', function () { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(tick); });
+  hero.addEventListener('pointerleave', function () { tx = 0; ty = 0; kick(); });
+  window.addEventListener('scroll', kick, { passive: true });
+  window.addEventListener('resize', kick);
+
+  // C: WebGL — fotografija sa mapom dubine; ako WebGL nije dostupan, ostaje obična slika (A + B i dalje rade)
+  (function initDepth() {
+    try { gl = depthCv.getContext('webgl', { premultipliedAlpha: false, antialias: false }); } catch (e) { gl = null; }
+    if (!gl) return;
+    var VS = 'attribute vec2 p;varying vec2 v;void main(){v=vec2((p.x+1.)*.5,(1.-p.y)*.5);gl_Position=vec4(p,0.,1.);}';
+    var FS = 'precision mediump float;uniform sampler2D t;uniform vec2 s,o,m;varying vec2 v;' +
+      'float dep(vec2 q){float a=smoothstep(.18,1.,q.y);return a+.35*smoothstep(.55,1.,q.y)*smoothstep(.55,.95,q.x);}' +
+      'void main(){vec2 q=v*s+o;vec2 uv=q-m*dep(q)*s;gl_FragColor=texture2D(t,clamp(uv,.001,.999));}';
+    function sh(type, src) { var x = gl.createShader(type); gl.shaderSource(x, src); gl.compileShader(x); return x; }
+    prog = gl.createProgram();
+    gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { gl = null; return; }
+    gl.useProgram(prog);
+    var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    var loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    uScale = gl.getUniformLocation(prog, 's'); uOff = gl.getUniformLocation(prog, 'o'); uM = gl.getUniformLocation(prog, 'm');
+    var img = new Image();
+    img.onload = function () {
+      try {
+        IMW = img.naturalWidth; IMH = img.naturalHeight;
+        var tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        glReady = true; render(); photo.classList.add('is-gl');
+      } catch (e) { glReady = false; }   // npr. slika sa drugog domena — ostaje obična slika
+    };
+    img.src = photo.getAttribute('data-src');
+  })();
+  kick();
 
 
 })();

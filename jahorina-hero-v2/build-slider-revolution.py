@@ -145,7 +145,10 @@ for folder, prefix, h in (('slider-revolution', 'ZAMIJENI-URL-', html),
                           ('slider-revolution-EN-spremno', MEDIA, html_en)):
     out = HERE / folder
     out.mkdir(exist_ok=True)
-    (out / '1-html.html').write_text(with_urls(h, prefix) + '\n')
+    hh = with_urls(h, prefix)
+    # 3D dubina (WebGL) mora učitati sliku sa istog domena kao stranica (www ili bez www) — zato putanja bez domena
+    hh = hh.replace('data-src="https://oc-jahorina.com/wp-content/', 'data-src="/wp-content/')
+    (out / '1-html.html').write_text(hh + '\n')
     (out / '2-css.css').write_text(with_urls(css_out, prefix))
     (out / '3-js.js').write_text(js_out)
     for f in ('1-html.html', '2-css.css', '3-js.js'):
