@@ -64,11 +64,11 @@
 
   /* ---------- pozadina + scrim slojevi ---------- */
   .jh-photo{
-    position:absolute;inset:-12% -3% -3%;   /* gore više mjesta za paralaksu pri skrolu */
+    position:absolute;inset:-3%;
     background:url('ZAMIJENI-URL-jahorina-noc.jpg') center 58%/cover no-repeat;
     background-image:image-set(url('ZAMIJENI-URL-jahorina-noc.webp') type('image/webp'),url('ZAMIJENI-URL-jahorina-noc.jpg') type('image/jpeg'));
-    transform:translate3d(calc(var(--mx,0) * -8px),calc(var(--my,0) * -6px + var(--sy,0px)),0);
-    animation:jhZoom 2.2s cubic-bezier(.2,.7,.2,1) both, jhDrift 28s ease-in-out 2.2s infinite alternate;
+    transform:translate3d(calc(var(--mx,0) * -14px),calc(var(--my,0) * -10px),0);
+    animation:jhZoom 2.2s cubic-bezier(.2,.7,.2,1) both;
     will-change:transform;
   }
   /* 1) mrak se razilazi: fotografija kreće tamna i mutna, pa se izoštri */
@@ -77,15 +77,6 @@
     35%{opacity:1}
     100%{opacity:1;scale:1;filter:brightness(1) contrast(1.07) saturate(1.06) blur(0)}   /* blagi filmski kontrast */
   }
-
-  /* A) "dah" kamere: fotografija se veoma sporo približava i klizi, kao dron koji lebdi */
-  @keyframes jhDrift{
-    from{scale:1;translate:0 0}
-    to{scale:1.07;translate:-1.4% -1.2%}
-  }
-  /* C) 3D dubina: WebGL crta fotografiju sa mapom dubine (dolje bliže, gore dalje) */
-  .jh-depth{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .5s}
-  .jh-photo.is-gl .jh-depth{opacity:1}
 
   /* svjetlosni bloom na stvarnim reflektorima (canvas unutar fotografije, pa prati parallax) */
   .jh-lights{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;mix-blend-mode:screen}
