@@ -114,11 +114,11 @@ async function layout(p) {
   await p.click('#jr-ratrak .jr-gal');
   await p.waitForTimeout(400);
   let g = await p.evaluate(() => { const lb = document.getElementById('jr-lb'); return { shown: getComputedStyle(lb).display, op: getComputedStyle(lb).opacity, cap: lb.querySelector('figcaption').textContent, focus: document.activeElement.className, overflow: document.documentElement.style.overflow }; });
-  check('galerija se otvara (fokus na Zatvori, stranica ne skroluje)', g.shown === 'grid' && g.op === '1' && g.cap === '1 / 2' && g.focus === 'jr-lb-close' && g.overflow === 'hidden', g);
+  check('galerija se otvara (fokus na Zatvori, stranica ne skroluje)', g.shown === 'grid' && g.op === '1' && g.cap === '1 / 3' && g.focus === 'jr-lb-close' && g.overflow === 'hidden', g);
   await p.evaluate(() => document.querySelector('#jr-lb img').decode().catch(() => {}));
   await p.screenshot({ path: path.join(OUT, 'galerija-racunar.png') });
   await p.keyboard.press('ArrowRight');
-  check('strelica desno → 2 / 2', (await p.textContent('#jr-lb figcaption')) === '2 / 2');
+  check('strelica desno → 2 / 3', (await p.textContent('#jr-lb figcaption')) === '2 / 3');
   await p.keyboard.press('Tab'); await p.keyboard.press('Tab'); await p.keyboard.press('Tab'); await p.keyboard.press('Tab');
   check('Tab ostaje u galeriji', await p.evaluate(() => !!document.activeElement.closest('#jr-lb')));
   await p.keyboard.press('Escape');

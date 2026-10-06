@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
 """Pregled sekcije ratraka za korisnika (artifact "Jahorina ratrak"): samo sekcija.
 
-Pravi pregled/index.html + pregled/img/ (fotografije iz ../slike/).
+Pravi pregled/index.html + pregled/slike/ (iste putanje kao pored ratrak.js na jsDelivr-u,
+pa pregled koristi podrazumijevane fotografije, srcset i galeriju bez posebnih podešavanja).
 Pokretanje: python3 napravi-pregled.py → objavi pregled/index.html kao artifact
-(isti URL: https://claude.ai/artifact/L7sAdcd13XrkaA4mRZ9Z5N), sa fajlovima img/*.webp.
-Izlaz (index.html, img/) se ne čuva u gitu — uvijek se pravi iz ratrak.js.
+(isti URL: https://claude.ai/artifact/L7sAdcd13XrkaA4mRZ9Z5N), sa fajlovima slike/*.webp.
+Izlaz (index.html, slike/) se ne čuva u gitu — uvijek se pravi iz ratrak.js.
 """
 import pathlib, shutil
 HERE = pathlib.Path(__file__).resolve().parent
-IMG = HERE / 'img'
-if IMG.exists():
-    shutil.rmtree(IMG)
-IMG.mkdir()
-for f in ('ratrak-1.webp', 'ratrak-2.webp'):
-    shutil.copy(HERE.parent / 'slike' / f, IMG / f)
+OUT = HERE / 'slike'
+for old in (OUT, HERE / 'img'):
+    if old.exists():
+        shutil.rmtree(old)
+OUT.mkdir()
+FOTO = ('ratrak-glavna.webp', 'ratrak-glavna-960.webp', 'ratrak-1.webp', 'ratrak-2.webp')
+for f in FOTO:
+    shutil.copy(HERE.parent / 'slike' / f, OUT / f)
 
 SRC = (HERE.parent / 'ratrak.js').read_text(encoding='utf-8')
 assert '</script' not in SRC
@@ -28,13 +31,13 @@ body{margin:0;min-height:100%}
 .pv-replay button:hover{color:#00B9F2}
 .pv-replay button:focus-visible{outline:2px solid #00B9F2;outline-offset:3px}
 </style>
-<div id="jr-ratrak" data-slika="img/ratrak-1.webp" data-galerija="img/ratrak-1.webp, img/ratrak-2.webp"></div>
+<div id="jr-ratrak"></div>
 <div class="pv-replay"><button type="button" id="pv-replay">&#8635;&nbsp; Ponovi ulazak</button></div>
 <script>
 __SRC__
 </script>
 <script>
-// samo u pregledu: ponovi ulazak; mail i telefon se ne otvaraju
+// samo u pregledu: ponovi ulazak; mail, telefon i web shop se ne otvaraju
 document.getElementById('pv-replay').addEventListener('click', function () {
   var r = document.getElementById('jr-ratrak');
   if (!r.classList.contains('jr-anim')) return;

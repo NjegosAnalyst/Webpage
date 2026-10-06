@@ -1,7 +1,7 @@
 /* =====================================================================
    JAHORINA — PANORAMSKA VOŽNJA RATRAKOM (početna, ispod vijesti)
-   Jedan veliki uokvireni kadar kao hero: lijevo oštra fotografija ratraka, koja se meko utapa
-   u istu fotografiju zamućenu preko cijele kartice; desno naslov u tri reda (zadnja riječ
+   Jedan veliki uokvireni kadar kao hero: fotografija ratraka u zalasku preko lijeve dvije trećine
+   kadra, meko se utapa u istu fotografiju zamućenu preko cijele kartice; desno naslov u tri reda (zadnja riječ
    iscrtana, kao "Jahorine"), uvod, stakleni panel sa pločicama (trajanje, polazak, cijena)
    i rezervacija. Ulazak jednom, kad kadar dođe u vidno polje (kao u hero-u): kadar se podigne,
    fotografija uđe slijeva i izoštri se, tekst ulazi zdesna red po red, pločice se upale.
@@ -12,7 +12,8 @@
    Podešavanja na <div id="jr-ratrak"> (sva su neobavezna):
      data-trajanje="20 min"  data-polazak="16–18h"  data-polazak-en="4–6 pm"  data-cijena="50 KM"
      data-webshop="https://…"   (ako postoji: glavno dugme "Rezerviši online" vodi u web shop)
-     data-slika="…"  data-galerija="url1, url2, …"   (podrazumijevano fotografije iz slike/ pored ovog fajla)
+     data-slika="…"  data-galerija="url1, url2, …"   (podrazumijevano fotografije iz slike/ pored ovog fajla:
+     ratrak-glavna.webp 1600 px + ratrak-glavna-960.webp za telefone, u galeriji još ratrak-1 i ratrak-2)
    ===================================================================== */
 (function (w, d) {
   'use strict';
@@ -22,7 +23,9 @@
 
   var EN = /^\/en(\/|$)/i.test(location.pathname);
   var HERE = (d.currentScript && d.currentScript.src || '').replace(/[^\/]*$/, '');
-  var IMG = root.getAttribute('data-slika') || HERE + 'slike/ratrak-1.webp';
+  var IMG = root.getAttribute('data-slika') || HERE + 'slike/ratrak-glavna.webp';
+  var IMG_SM = root.getAttribute('data-slika') ? IMG : HERE + 'slike/ratrak-glavna-960.webp';
+  var SRCSET = root.getAttribute('data-slika') ? '' : IMG_SM + ' 960w, ' + IMG + ' 1600w';
   var MAIL = 'skipass@oc-jahorina.com', PHONE = '00387 57 270 003', TEL = '+38757270003';
   function opt(k, def) { var v = root.getAttribute('data-' + k); return v == null || !v.trim() ? def : v.trim(); }
   var CFG = {
@@ -31,12 +34,12 @@
     cijena: opt('cijena', '50 KM'),
     shop: /^https?:\/\//i.test(opt('webshop', '')) ? opt('webshop', '') : ''
   };
-  var GAL = opt('galerija', [IMG, HERE + 'slike/ratrak-2.webp'].join(',')).split(',')
+  var GAL = opt('galerija', [IMG, HERE + 'slike/ratrak-1.webp', HERE + 'slike/ratrak-2.webp'].join(',')).split(',')
     .map(function (x) { return x.trim(); }).filter(Boolean);
 
   // tekst je korisnikov, doslovno (EN je prevod)
   var T = EN ? {
-    kicker: 'Experience at Jahorina', t: ['Panoramic', 'snowcat'], o: 'ride', alt: 'Snowcat on a Jahorina slope at sunset',
+    kicker: 'Experience at Jahorina', t: ['Panoramic', 'snowcat'], o: 'ride', alt: 'Snowcat grooming a Jahorina slope at sunset',
     lead: 'For those who want to enjoy the view of the slopes and peaks of Jahorina a little longer, the 20-minute panoramic ride is the right choice.',
     tiles: [['time', CFG.trajanje, 'Duration'], ['pin', CFG.polazak, 'Poljice gondola'], ['ticket', CFG.cijena, 'Per person']],
     notes: ['Children under 6 ride free.', 'Payment at the Poljice ski ticket office.'],
@@ -44,7 +47,7 @@
     mail: 'Book by email', call: PHONE, shop: 'Book online', mail2: 'Email',
     gal: 'Gallery', galLabel: 'Panoramic snowcat ride gallery', galOpen: 'Open gallery', photo: 'Photo', close: 'Close', prev: 'Previous photo', next: 'Next photo'
   } : {
-    kicker: 'Doživljaj na Jahorini', t: ['Panoramska', 'vožnja'], o: 'ratrakom', alt: 'Ratrak na stazi Jahorine u zalasku sunca',
+    kicker: 'Doživljaj na Jahorini', t: ['Panoramska', 'vožnja'], o: 'ratrakom', alt: 'Ratrak uređuje stazu na Jahorini u zalasku sunca',
     lead: 'Za one koji žele duže uživati u pogledu na staze i vrhove Jahorine, panoramska vožnja u trajanju od 20 minuta pravi je izbor.',
     tiles: [['time', CFG.trajanje, 'Trajanje'], ['pin', CFG.polazak, 'Polaz gondole Poljice'], ['ticket', CFG.cijena, 'Po osobi']],
     notes: ['Za djecu do 6 godina vožnja je besplatna.', 'Plaćanje na ski kasi Poljice.'],
@@ -77,19 +80,19 @@
     '#R .jr-wrap{max-width:1240px;margin:0 auto;padding:clamp(56px,7vw,100px) clamp(16px,4vw,48px)}',
 
     /* okvir kao u hero-u */
-    '#R .jr-frame{position:relative;display:grid;grid-template-columns:minmax(0,48fr) minmax(0,52fr);border-radius:26px;overflow:hidden;isolation:isolate;background:#0B1324;',
+    '#R .jr-frame{position:relative;display:grid;grid-template-columns:minmax(0,48fr) minmax(0,52fr);min-height:clamp(560px,52vw,720px);border-radius:26px;overflow:hidden;isolation:isolate;background:#0B1324;',
     'box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22)}',
     '#R .jr-frame::after{content:"";position:absolute;inset:0;z-index:6;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.08)}',
     /* ista fotografija, jako zamućena i zatamnjena, preko cijelog kadra (topli odsjaj zalaska ide iza teksta) */
-    '#R .jr-amb{position:absolute;inset:-12%;width:124%;height:124%;object-fit:cover;object-position:70% 30%;z-index:-3;filter:blur(46px) saturate(.5) brightness(.46)}',
+    '#R .jr-amb{position:absolute;inset:-12%;width:124%;height:124%;object-fit:cover;object-position:60% 40%;z-index:-3;filter:blur(46px) saturate(.5) brightness(.46)}',
     '#R .jr-shade{position:absolute;inset:0;z-index:-2;pointer-events:none;',
     'background:linear-gradient(90deg,rgba(6,11,22,0) 30%,rgba(6,11,22,.42) 52%,rgba(6,11,22,.62) 100%),linear-gradient(rgba(10,24,56,.42),rgba(10,24,56,.42)),',
     'linear-gradient(180deg,rgba(6,18,42,.3) 0%,rgba(6,18,42,0) 40%),radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(4,8,18,.5) 100%)}',
-    /* oštra fotografija lijevo, desna ivica se meko utapa u zamućeni kadar */
-    '#R .jr-shot{position:relative;min-height:100%;z-index:-1;-webkit-mask-image:linear-gradient(90deg,#000 58%,transparent 100%);mask-image:linear-gradient(90deg,#000 58%,transparent 100%)}',
-    '#R .jr-shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:0% 62%;filter:saturate(.72) brightness(.86) contrast(1.07)}',
-    '#R .jr-shot::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(160deg,#1E4F96 0%,#0E2A55 100%);mix-blend-mode:soft-light;opacity:.6}',
-    '#R .jr-shot::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,rgba(6,11,22,.55) 0%,rgba(6,11,22,0) 30%),linear-gradient(180deg,rgba(6,11,22,.3) 0%,rgba(6,11,22,0) 18%)}',
+    /* oštra fotografija preko lijeve dvije trećine kadra, desna ivica se meko utapa u zamućeni kadar */
+    '#R .jr-shot{position:absolute;left:0;top:0;bottom:0;width:72%;z-index:-1;-webkit-mask-image:linear-gradient(90deg,#000 52%,transparent 100%);mask-image:linear-gradient(90deg,#000 52%,transparent 100%)}',
+    '#R .jr-shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 50%;filter:saturate(.9) brightness(.9) contrast(1.06)}',
+    '#R .jr-shot::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(160deg,#1E4F96 0%,#0E2A55 100%);mix-blend-mode:soft-light;opacity:.32}',
+    '#R .jr-shot::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(6,11,22,0) 56%,rgba(6,11,22,.5) 82%),linear-gradient(0deg,rgba(6,11,22,.5) 0%,rgba(6,11,22,0) 28%),linear-gradient(180deg,rgba(6,11,22,.3) 0%,rgba(6,11,22,0) 18%)}',
 
     /* galerija: staklena pilula na fotografiji (kao dugmad u hero-u) */
     '#R .jr-shot img{cursor:zoom-in}',
@@ -101,7 +104,7 @@
     '#R .jr-gal:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
 
     /* tekst preko kadra */
-    '#R .jr-body{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-width:0;padding:clamp(44px,4.4vw,64px) clamp(28px,4.4vw,68px) clamp(44px,4.4vw,64px) clamp(8px,1.2vw,18px)}',
+    '#R .jr-body{grid-column:2;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-width:0;padding:clamp(44px,4.4vw,64px) clamp(28px,4.4vw,68px) clamp(44px,4.4vw,64px) clamp(8px,1.2vw,18px)}',
     /* nadnaslov kao u hero-u: svijetla linija + razmaknuta slova */
     '#R .jr-kicker{display:flex;align-items:center;gap:14px;font:600 11px/1 var(--fd);letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:22px}',
     '#R .jr-kicker::before{content:"";width:34px;height:1.5px;flex-shrink:0;background:linear-gradient(90deg,var(--accent),#fff,var(--accent));box-shadow:0 0 10px rgba(0,185,242,.8)}',
@@ -166,15 +169,23 @@
     '#R.jr-anim.jr-on .jr-tile{animation:jrTileOn .6s cubic-bezier(.2,.7,.2,1) var(--d,0s) both}',
     '@keyframes jrTileOn{0%{opacity:0;transform:translateY(10px) scale(.9);filter:brightness(2.2)}60%{opacity:1;filter:brightness(1.4)}100%{opacity:1;transform:none;filter:brightness(1)}}',
 
-    /* tablet: uži tekst, fotografija ostaje lijevo */
-    '@media (max-width:1060px){#R .jr-frame{grid-template-columns:minmax(0,42fr) minmax(0,58fr)}#R h2{font-size:clamp(40px,5.4vw,58px)}}',
-    /* telefon: fotografija gore (utapa se nadolje), tekst ispod na zamućenom kadru */
-    '@media (max-width:760px){',
-    '#R .jr-frame{grid-template-columns:1fr;border-radius:24px}',
-    '#R .jr-shot{min-height:0;height:min(118vw,520px);-webkit-mask-image:linear-gradient(180deg,#000 66%,transparent 100%);mask-image:linear-gradient(180deg,#000 66%,transparent 100%)}',
-    '#R .jr-shot img{object-position:38% 64%}',
+    /* manji laptop: uža fotografija, šira kolona teksta */
+    '@media (max-width:1060px){#R .jr-frame{grid-template-columns:minmax(0,40fr) minmax(0,60fr)}#R .jr-shot{width:66%}#R h2{font-size:clamp(40px,5.4vw,58px)}}',
+    /* tablet i telefon: pejzažna fotografija preko cijele širine gore (utapa se nadolje), tekst ispod na zamućenom kadru */
+    '@media (max-width:980px){',
+    '#R .jr-frame{grid-template-columns:1fr;min-height:0}',
+    '#R .jr-shot{position:relative;width:auto;height:min(60vw,540px);-webkit-mask-image:linear-gradient(180deg,#000 66%,transparent 100%);mask-image:linear-gradient(180deg,#000 66%,transparent 100%)}',
+    '#R .jr-shot img{object-position:42% 50%}',
+    '#R .jr-shot::after{background:linear-gradient(0deg,rgba(6,11,22,.5) 0%,rgba(6,11,22,0) 30%),linear-gradient(180deg,rgba(6,11,22,.3) 0%,rgba(6,11,22,0) 18%)}',
     '#R .jr-amb{object-position:40% 70%}',
     '#R .jr-shade{background:linear-gradient(180deg,rgba(6,11,22,0) 30%,rgba(6,11,22,.5) 50%,rgba(6,11,22,.66) 100%),linear-gradient(rgba(10,24,56,.42),rgba(10,24,56,.42)),radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(4,8,18,.5) 100%)}',
+    '#R .jr-body{grid-column:1;margin-top:-110px;padding:0 clamp(22px,6vw,56px) clamp(30px,5vw,52px)}',
+    '#R h2{font-size:clamp(40px,7.4vw,64px)}',
+    '#R .jr-lead{max-width:56ch}}',
+    '@media (max-width:760px){',
+    '#R .jr-frame{border-radius:24px}',
+    '#R .jr-shot{height:min(96vw,460px)}',
+    '#R .jr-shot img{object-position:36% 50%}',
     '#R .jr-body{margin-top:-96px;padding:0 22px 30px}',
     '#R .jr-kicker{letter-spacing:2.6px;font-size:10px;gap:10px;margin-bottom:16px}',
     '#R .jr-kicker::before{width:22px}',
@@ -247,8 +258,9 @@
 
   root.innerHTML =
     '<section class="jr-wrap" aria-labelledby="jr-h"><div class="jr-frame">' +
-      '<img class="jr-amb" src="' + esc(IMG) + '" alt="" aria-hidden="true" decoding="async" loading="lazy"><span class="jr-shade"></span>' +
-      '<figure class="jr-shot"><img src="' + esc(IMG) + '" alt="' + esc(T.alt) + '" width="640" height="800" decoding="async" loading="lazy">' +
+      '<img class="jr-amb" src="' + esc(IMG_SM) + '" alt="" aria-hidden="true" decoding="async" loading="lazy"><span class="jr-shade"></span>' +
+      '<figure class="jr-shot"><img src="' + esc(IMG) + '"' + (SRCSET ? ' srcset="' + esc(SRCSET) + '" sizes="(max-width:760px) 100vw, 1240px"' : '') +
+        ' alt="' + esc(T.alt) + '" width="1600" height="1066" decoding="async" loading="lazy">' +
         (GAL.length ? '<button type="button" class="jr-gal" aria-haspopup="dialog" aria-label="' + esc(T.galOpen + ' (' + GAL.length + ')') + '">' + ICON.gallery + esc(T.gal) + ' <i>' + GAL.length + '</i></button>' : '') +
       '</figure>' +
       '<div class="jr-body">' +
