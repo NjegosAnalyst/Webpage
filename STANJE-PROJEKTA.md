@@ -48,13 +48,14 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - Posljednji red za widget je uvijek u `vijesti/elementor-html-widget.html`.
 - **Svaka izmjena:** izmijeni `vijesti.js` → `bash ../alati/preuzmi-fontove.sh <fontovi>` (jednom) → `node test-vijesti.js <screenshotovi> <fontovi>` → commit + push → `python3 napravi-widget.py` → commit + push → korisniku novi red za HTML widget. Pregled: `python3 pregled/napravi-pregled.py` → objaviti `pregled/index.html` (+ `img/*.jpg`) na isti artifact URL.
 
-### 2. Panoramska vožnja ratrakom — pregled v3 poslat, čeka komentare (ispod vijesti)
+### 2. Panoramska vožnja ratrakom — pregled v3 + efekti ulaska poslat, čeka komentare (ispod vijesti)
 - Kod: `jahorina-home-sections/ratrak/ratrak.js` (prefiks `jr-`, `#jr-ratrak`), pregled `pregled/napravi-pregled.py` → artifact https://claude.ai/artifact/L7sAdcd13XrkaA4mRZ9Z5N (sa `img/ratrak-1.webp`).
 - **Odbijeno:** v1 isječak ratraka + animirana scena („izuzetno loše“); v2 dvije fotografije lijevo + tekst desno na ravnoj pozadini („loše i jednostavno, mora biti premium, pogledaj hero“).
 - **v3 (sada), jezikom hero-a, bez animacije:** jedan veliki uokvireni kadar (radius 26px, sjenka kao hero). Lijevo oštra fotografija ratraka (`ratrak-1.webp`, noćna obrada), desna ivica se utapa u istu fotografiju jako zamućenu i zatamnjenu preko cijelog kadra (hladni teget). Desno nadnaslov kao u hero-u („Doživljaj na Jahorini“, svijetla linija), naslov u tri reda „Panoramska / vožnja / *ratrakom*“ (zadnja riječ obris kao „Jahorine“), uvod, stakleni panel sa pločicama kao brzi linkovi u hero-u (20 min Trajanje / 16–18h Polaz gondole Poljice / 50 KM Po osobi, cyan pločica), dvije napomene, dugmad kao u hero-u (bijelo „Rezerviši putem maila“ + stakleno sa brojem telefona) i rečenica o rezervaciji. Telefon: fotografija gore, tekst preko njenog donjeg dijela.
-- Tekst je korisnikov; EN je moj prevod.
+- **Ulazak (korisnik tražio „slajd in“), jednom kad kadar uđe u vidno polje:** kadar se podigne, fotografija uđe slijeva i izoštri se iz mraka (kao fotografija u hero-u), tekst ulazi zdesna red po red (nadnaslov sa linijom koja se upali, tri reda naslova, uvod, panel, napomene, dugmad), pločice se upale jedna za drugom (kao u hero-u). Ukupno ~2 s. Bez IntersectionObservera ili uz smanjeno kretanje sve je odmah vidljivo. U pregledu dugme „Ponovi ulazak“.
+- Tekst je korisnikov i ostaje u kodu (korisnik: „to je taj tekst“); EN je moj prevod.
 - Fotografija se na sajtu učitava sa jsDelivr iz istog commita kao `ratrak.js`. `ratrak-2.webp` i isječak (`napravi-isjecak.py`, `ratrak-cutout.*`) se trenutno ne koriste.
-- **Otvoreno:** fotografija je mala (640×800), pa treba original pune rezolucije. Nisu stigli screenshotovi kako je sekcija sada napravljena (da li tekst treba čitati iz WordPressa).
+- **Otvoreno:** fotografija je mala (640×800), pa treba original pune rezolucije. Predložene dopune (čekaju odgovor): GA4 događaji na klik „Rezerviši“/telefon, kupovina preko web shopa ako postoji, galerija na klik fotografije, schema.org za Google, cijena i termin kao podešavanja u redu za widget.
 
 ### Sljedeće sekcije
 - Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.

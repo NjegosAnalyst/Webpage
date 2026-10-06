@@ -3,7 +3,8 @@
    Jedan veliki uokvireni kadar kao hero: lijevo oštra fotografija ratraka, koja se meko utapa
    u istu fotografiju zamućenu preko cijele kartice; desno naslov u tri reda (zadnja riječ
    iscrtana, kao "Jahorine"), uvod, stakleni panel sa pločicama (trajanje, polazak, cijena)
-   i rezervacija. Bez animacije.
+   i rezervacija. Ulazak jednom, kad kadar dođe u vidno polje (kao u hero-u): kadar se podigne,
+   fotografija uđe slijeva i izoštri se, tekst ulazi zdesna red po red, pločice se upale.
    Ugradnja: Elementor HTML widget sa <div id="jr-ratrak"></div> + ovaj fajl sa jsDelivr-a.
    Fotografija se učitava iz istog commita (slike/ratrak-1.webp pored ovog fajla);
    druga fotografija: data-slika="…" na <div id="jr-ratrak">.
@@ -121,6 +122,25 @@
     '#R .jr-book a{color:var(--text-2)!important;border-bottom:1px solid rgba(0,185,242,.4);white-space:nowrap}',
     '#R .jr-book a:hover{color:var(--accent)!important}',
 
+    /* ulazak (jednom): klase jr-anim/jr-on dodaje skripta samo kad postoji IntersectionObserver i nije uključeno smanjeno kretanje */
+    '#R.jr-anim .jr-frame{opacity:0;transform:translateY(28px)}',
+    '#R.jr-anim.jr-on .jr-frame{opacity:1;transform:none;transition:opacity .8s ease,transform 1s cubic-bezier(.2,.7,.2,1)}',
+    /* fotografija: ulazi slijeva, mrak se razilazi i izoštri se (kao fotografija u hero-u) */
+    '#R.jr-anim .jr-shot{opacity:0;transform:translateX(-56px);filter:brightness(.3) blur(8px)}',
+    '#R.jr-anim.jr-on .jr-shot{opacity:1;transform:none;filter:none;transition:opacity 1s ease .1s,transform 1.3s cubic-bezier(.2,.7,.2,1) .1s,filter 1.4s cubic-bezier(.2,.7,.2,1) .1s}',
+    '#R.jr-anim .jr-amb{opacity:0}',
+    '#R.jr-anim.jr-on .jr-amb{opacity:1;transition:opacity 1.6s ease .2s}',
+    /* tekst: ulazi zdesna, red po red (kašnjenje u --d) */
+    '#R.jr-anim .jr-sl{opacity:0;transform:translateX(44px)}',
+    '#R.jr-anim.jr-on .jr-sl{opacity:1;transform:none;transition:opacity .7s ease var(--d,0s),transform .95s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
+    /* svijetla linija nadnaslova se upali slijeva nadesno */
+    '#R.jr-anim .jr-kicker::before{transform:scaleX(0);transform-origin:left center}',
+    '#R.jr-anim.jr-on .jr-kicker::before{transform:none;transition:transform .6s cubic-bezier(.2,.7,.2,1) .55s}',
+    /* pločice se upale jedna za drugom (kao brzi linkovi u hero-u) */
+    '#R.jr-anim .jr-tile{opacity:0}',
+    '#R.jr-anim.jr-on .jr-tile{animation:jrTileOn .6s cubic-bezier(.2,.7,.2,1) var(--d,0s) both}',
+    '@keyframes jrTileOn{0%{opacity:0;transform:translateY(10px) scale(.9);filter:brightness(2.2)}60%{opacity:1;filter:brightness(1.4)}100%{opacity:1;transform:none;filter:brightness(1)}}',
+
     /* tablet: uži tekst, fotografija ostaje lijevo */
     '@media (max-width:1060px){#R .jr-frame{grid-template-columns:minmax(0,42fr) minmax(0,58fr)}#R h2{font-size:clamp(40px,5.4vw,58px)}}',
     /* telefon: fotografija gore (utapa se nadolje), tekst ispod na zamućenom kadru */
@@ -176,18 +196,19 @@
       '<img class="jr-amb" src="' + esc(IMG) + '" alt="" aria-hidden="true" decoding="async" loading="lazy"><span class="jr-shade"></span>' +
       '<figure class="jr-shot"><img src="' + esc(IMG) + '" alt="' + esc(T.alt) + '" width="640" height="800" decoding="async" loading="lazy"></figure>' +
       '<div class="jr-body">' +
-        '<div class="jr-kicker">' + esc(T.kicker) + '</div>' +
-        '<h2 id="jr-h"><span>' + esc(T.t[0]) + '</span><span>' + esc(T.t[1]) + '</span><span class="jr-o">' + esc(T.o) + '</span></h2>' +
-        '<p class="jr-lead">' + esc(T.lead) + '</p>' +
-        '<ul class="jr-dock">' + T.tiles.map(function (t, k) {
-          return '<li class="jr-tile' + (k === 2 ? ' jr-tile--accent' : '') + '">' + ICON[t[0]] + '<b>' + esc(t[1]) + '</b><small>' + esc(t[2]) + '</small></li>';
+        '<div class="jr-kicker jr-sl" style="--d:.3s">' + esc(T.kicker) + '</div>' +
+        '<h2 id="jr-h"><span class="jr-sl" style="--d:.4s">' + esc(T.t[0]) + '</span><span class="jr-sl" style="--d:.5s">' + esc(T.t[1]) + '</span>' +
+          '<span class="jr-o jr-sl" style="--d:.6s">' + esc(T.o) + '</span></h2>' +
+        '<p class="jr-lead jr-sl" style="--d:.72s">' + esc(T.lead) + '</p>' +
+        '<ul class="jr-dock jr-sl" style="--d:.84s">' + T.tiles.map(function (t, k) {
+          return '<li class="jr-tile' + (k === 2 ? ' jr-tile--accent' : '') + '" style="--d:' + (1.08 + k * .09).toFixed(2) + 's">' + ICON[t[0]] + '<b>' + esc(t[1]) + '</b><small>' + esc(t[2]) + '</small></li>';
         }).join('') + '</ul>' +
-        '<ul class="jr-notes">' + T.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('') + '</ul>' +
-        '<div class="jr-acts">' +
+        '<ul class="jr-notes jr-sl" style="--d:1.02s">' + T.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('') + '</ul>' +
+        '<div class="jr-acts jr-sl" style="--d:1.14s">' +
           '<a class="jr-btn jr-btn--solid" href="mailto:' + MAIL + '">' + esc(T.mail) + ICON.mail + '</a>' +
           '<a class="jr-btn jr-btn--ghost" href="tel:' + TEL + '">' + ICON.phone + esc(T.call) + '</a>' +
         '</div>' +
-        '<p class="jr-book">' + linkify(T.book) + '</p>' +
+        '<p class="jr-book jr-sl" style="--d:1.24s">' + linkify(T.book) + '</p>' +
       '</div>' +
     '</div></section>';
 
@@ -207,4 +228,14 @@
   fit();
   w.addEventListener('resize', refit);
   if ('ResizeObserver' in w) new ResizeObserver(refit).observe(d.body);
+
+  // ulazak jednom, kad kadar dođe u vidno polje
+  var still = !('IntersectionObserver' in w) || (w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  if (!still) {
+    root.classList.add('jr-anim');
+    var io = new IntersectionObserver(function (es) {
+      if (es.some(function (e) { return e.isIntersecting; })) { root.classList.add('jr-on'); io.disconnect(); }
+    }, { threshold: .2, rootMargin: '0px 0px -8% 0px' });
+    io.observe(root.querySelector('.jr-frame'));
+  }
 })(window, document);
