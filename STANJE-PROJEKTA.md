@@ -48,6 +48,11 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - Posljednji red za widget je uvijek u `vijesti/elementor-html-widget.html`.
 - **Svaka izmjena:** izmijeni `vijesti.js` → `bash ../alati/preuzmi-fontove.sh <fontovi>` (jednom) → `node test-vijesti.js <screenshotovi> <fontovi>` → commit + push → `python3 napravi-widget.py` → commit + push → korisniku novi red za HTML widget. Pregled: `python3 pregled/napravi-pregled.py` → objaviti `pregled/index.html` (+ `img/*.jpg`) na isti artifact URL.
 
+### 2. Panoramska vožnja ratrakom — u radu (ispod vijesti)
+- Folder `jahorina-home-sections/ratrak/`. Korisnikov tekst je doslovan (naslov, uvod, polazak Poljice 16–18h, 50 KM, djeca do 6 g. besplatno, rezervacija mail/telefon). Prijedlog izgleda nije u `index.src.html`; stariji je u `project/Ratrak Sekcija.dc.html`.
+- Isječak ratraka: `napravi-isjecak.py` (rembg **birefnet-general** + čišćenje oreola) → `slike/ratrak-cutout.png` / `.webp`. Od tri fotografije u `slike/` uzeta je `ratrak-zalazak.jpg`.
+- **Otvoreno:** fotografije su male (640×800), a lijevi kraj pluga je odsječen u samom kadru. Ratrak gleda ulijevo, pa bi ulazak s lijeve strane izgledao kao vožnja unazad. Tražena je originalna fotografija pune rezolucije, po mogućnosti sa strane i sa cijelom mašinom. Korisnik još nije poslao screenshotove kako je sekcija sada napravljena (WordPress ili ručno).
+
 ### Sljedeće sekcije
 - Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.
 - Događaji: na sajtu je **The Events Calendar** (Elementor widget "Events Loop", sada „Trenutno nema događaja...“), pa podatke čitati iz njega (REST `/wp-json/tribe/events/v1/events`), ne ručno.
