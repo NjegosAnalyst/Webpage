@@ -48,14 +48,13 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - Posljednji red za widget je uvijek u `vijesti/elementor-html-widget.html`.
 - **Svaka izmjena:** izmijeni `vijesti.js` → `bash ../alati/preuzmi-fontove.sh <fontovi>` (jednom) → `node test-vijesti.js <screenshotovi> <fontovi>` → commit + push → `python3 napravi-widget.py` → commit + push → korisniku novi red za HTML widget. Pregled: `python3 pregled/napravi-pregled.py` → objaviti `pregled/index.html` (+ `img/*.jpg`) na isti artifact URL.
 
-### 2. Panoramska vožnja ratrakom — pregled poslat, čeka komentare (ispod vijesti)
-- Kod: `jahorina-home-sections/ratrak/ratrak.js` (prefiks `jr-`, `#jr-ratrak`), pregled `pregled/napravi-pregled.py` → artifact https://claude.ai/artifact/L7sAdcd13XrkaA4mRZ9Z5N (sa `img/*.webp`).
-- Tekst je korisnikov, doslovno (naslov, uvod, polazak Poljice 16–18h, 50 KM, djeca do 6 g. besplatno, rezervacija mail/telefon); EN je moj prevod. Nadnaslov „Doživljaj“ je dodat po obrascu iz TEMA.md. Prijedlog izgleda nije u `index.src.html` (stariji je u `project/Ratrak Sekcija.dc.html`).
-- Izgled: lijevo scena (noćna panorama iz hero-a, zamućena kao daljina + snježni brijeg sa manšester tragom), desno naslov „Panoramska vožnja *ratrakom*“, uvod, tri kartice (Trajanje / Polazak / Cijena) i Rezervacija sa dva dugmeta (mailto, tel). Telefon: scena gore, kartice u redovima.
-- Animacija (jednom, kad scena uđe u vidno polje): ratrak ulazi s lijeve strane (1,25 s, ease-out), blago se zaljulja kad stane, iza njega snježna prašina koja izblijedi, a trag staze se otkriva iza njega.
-- Isječak: `napravi-isjecak.py` (rembg **birefnet-general** + čišćenje oreola) → `slike/ratrak-cutout.png`/`.webp` (čist isječak) i `slike/ratrak-sekcija.webp` (isti, sa istopljenim mjestom gdje je plug odsječen u fotografiji). U sceni je ratrak okrenut kao u ogledalu (gleda nadesno), a snijeg ispred pluga pokriva rez.
-- **Otvoreno:** fotografije su male (640×800), pa treba original pune rezolucije, po mogućnosti sa strane i sa cijelom mašinom (novi isječak: jedna komanda). Nisu stigli screenshotovi kako je sekcija sada napravljena (da li tekst treba čitati iz WordPressa). Poruka korisnika o animacijama je bila prekinuta poslije prve stavke.
-- Slike na sajtu: ratrak se učitava sa jsDelivr iz istog commita kao `ratrak.js`, a pozadina je `/wp-content/uploads/2026/09/jahorina-noc.webp` (ista kao hero).
+### 2. Panoramska vožnja ratrakom — pregled v2 poslat, čeka komentare (ispod vijesti)
+- Kod: `jahorina-home-sections/ratrak/ratrak.js` (prefiks `jr-`, `#jr-ratrak`), pregled `pregled/napravi-pregled.py` → artifact https://claude.ai/artifact/L7sAdcd13XrkaA4mRZ9Z5N (sa `img/ratrak-1.webp`, `img/ratrak-2.webp`).
+- **Odbijeno (v1):** isječak ratraka bez pozadine + animirana scena (ratrak ulazi, prašina, tragovi). Korisnik: „izuzetno loše, mora biti premium, sa slikama, bez animacije“.
+- **v2 (sada):** bez animacije. Lijevo velika uspravna fotografija (ratrak u zalasku) + manja preko donjeg desnog ugla (tri ratraka), obje sa noćnom obradom kao vijesti. Desno nadnaslov „Doživljaj“, naslov „Panoramska vožnja *ratrakom*“, uvod, tihi udubljeni panel sa podacima (Trajanje 20 min / Polazak 16–18 h, polaz gondole Poljice / Cijena 50 KM po osobi, cyan), dvije napomene (djeca do 6 g. besplatno, plaćanje na ski kasi Poljice), Rezervacija (rečenica + „Rezerviši putem maila“ i „Pozovi“). Tablet: dvije kolone, podaci u redovima; telefon ispod 760px: fotografije gore.
+- Tekst je korisnikov, doslovno; EN je moj prevod.
+- Fotografije: `slike/ratrak-1.webp` i `ratrak-2.webp` (iz `ratrak-zalazak.jpg` i `ratraci-tri.jpg`), na sajtu se učitavaju sa jsDelivr iz istog commita kao `ratrak.js`. Isječak (`napravi-isjecak.py`, `ratrak-cutout.*`) se više ne koristi.
+- **Otvoreno:** fotografije su male (640×800 i 399×670), pa treba original pune rezolucije. Nisu stigli screenshotovi kako je sekcija sada napravljena (da li tekst treba čitati iz WordPressa).
 
 ### Sljedeće sekcije
 - Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.

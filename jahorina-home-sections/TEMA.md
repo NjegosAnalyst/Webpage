@@ -9,7 +9,8 @@ da sve sekcije izgledaju kao jedna cjelina.
 - **Premium, moderno, minimalistički.** Bez dupliranja informacija, po jedan istaknuti element po sekciji.
 - **Neumorfizam blag i suptilan** (korisnik je tražio da dugmad budu tiša). Ne pojačavati sjenke i sjaj.
 - Suptilni, realni detalji (npr. zvijezde u hero-u). Animacije kratke, jednom, bez pretjerivanja.
-- Odbijeno: neumorfni redizajn v3, mraz, pahulje, skijaš, pomjeranje/savijanje cijele fotografije (Ken Burns, 3D dubina).
+- Odbijeno: neumorfni redizajn v3, mraz, pahulje, skijaš, pomjeranje/savijanje cijele fotografije (Ken Burns, 3D dubina),
+  isječak vozila bez pozadine u nacrtanoj/animiranoj sceni (ratrak v1). Sekcije sa ponudom: prave fotografije, bez animacije.
 - Jezik: srpski, latinica, ijekavica. EN tekstovi idu za `/en/` stranice.
 
 ## Tokeni (iz `vijesti.js`)

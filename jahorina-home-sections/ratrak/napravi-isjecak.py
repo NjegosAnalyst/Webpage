@@ -41,17 +41,5 @@ cut = cut.crop(box)
 cut.save(os.path.join(out_dir, "ratrak-cutout.png"), optimize=True)
 cut.save(os.path.join(out_dir, "ratrak-cutout.webp"), "WEBP", quality=90, alpha_quality=100, method=6)
 print(model, "isječak", cut.size, "iz", photo.size, "okvir", tuple(int(v) for v in box))
-
-# Verzija za sekciju: kad je mašina odsječena lijevom/desnom ivicom fotografije, taj ravni rez
-# se blago istopi (u sceni ga pokriva snijeg koji plug gura), da se ne vidi oštra okomita linija.
-web = np.asarray(cut).astype(np.float64)
-fade = 26
-ramp = np.clip(np.arange(cut.width) / fade, 0, 1) ** 1.6
-if box[0] == 0:
-    print("Pažnja: mašina dodiruje lijevu ivicu fotografije, dio je odsječen u originalu (ivica istopljena u ratrak-sekcija.webp).")
-    web[:, :, 3] *= ramp[None, :]
-if box[2] == photo.width:
-    print("Pažnja: mašina dodiruje desnu ivicu fotografije (ivica istopljena u ratrak-sekcija.webp).")
-    web[:, :, 3] *= ramp[::-1][None, :]
-Image.fromarray((web + .5).astype(np.uint8), "RGBA").save(
-    os.path.join(out_dir, "ratrak-sekcija.webp"), "WEBP", quality=90, alpha_quality=100, method=6)
+if box[0] == 0 or box[1] == 0 or box[2] == photo.width or box[3] == photo.height:
+    print("Pažnja: mašina dodiruje ivicu fotografije, dio je odsječen u originalu.")
