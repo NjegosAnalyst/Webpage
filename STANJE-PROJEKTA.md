@@ -15,6 +15,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - Fontovi: **Archivo** (naslovi), **Barlow** (tekst). Pozadina ~#0A1120 / #0c1424.
 - Klase sa prefiksom (`jh-` hero, `jf-` header/footer) da se ne sudaraju sa temom.
 - Korisnik je odbacio: neumorfni redizajn v3, mraz, pahulje, skijaša, pomjeranje/savijanje cijele fotografije (Ken Burns + 3D dubina). Voli suptilne, realne detalje.
+- **Za sekcije početne: `jahorina-home-sections/TEMA.md`**: tokeni, obrasci (naslov sa iscrtanim dijelom, neumorfna dugmad, noćna obrada fotografija) i način gradnje. Svaka nova sekcija ide po tim pravilima.
 
 ## Završeno i na sajtu
 1. **Hero** — `jahorina-hero-v2/`
@@ -29,24 +30,35 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
    - **Svaka izmjena headera:** izmijeni `build-wordpress.py` → `python3 build-wordpress.py` → commit + push → u loaderu zamijeni hash commita **i** `integrity` (sha384 novog fajla: `openssl dgst -sha384 -binary 3-header-snippet.js | openssl base64 -A`) → korisniku daj novi red za WPCode.
    - Desktop: podmeniji na prelazak miša, dublji nivoi se otvaraju sa strane. Telefon: harmonika, dodir na stavku otvara podstavke, vlastita stranica stavke je prvi link.
 
-## Sljedeće: sekcije početne ispod hero-a
-- Prijedlog izgleda: `jahorina-home-sections/index.src.html` (artifact "Jahorina početna — ispod hero-a"). Redoslijed: Danas na Jahorini → Obavještenja i vijesti → Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu.
-- **Vijesti — urađeno, čeka postavljanje na sajt.** `jahorina-home-sections/vijesti/`
-  - Čita **samo kategoriju Vijesti** (`/category/vijesti/`) preko WP REST API-ja. Objave se dodaju u WordPressu kao i do sada.
-  - Izgled (korisnik tražio): **slajder sa 5 najnovijih vijesti**, jedna u kadru preko cijele kartice (fotografija + tamni prelaz, datum, naslov, izvod, blago neumorfno cyan dugme „Pročitaj više“ sa strelicom u plitkom udubljenom krugu). Dole desno tihi neumorfni panel: brojevi 01–05 u plitkom žlijebu (aktivni utisnut, cyan broj + tanka cyan linija napretka), pauza i okrugle strelice. Smjena na 7 s, staje na mišu/fokusu/van ekrana; prevlačenje prstom. Naslov sekcije: „Obavještenja *i vijesti*“ (drugi dio iscrtan linijom kao „Jahorine“ u hero-u). Korisnik je tražio da dugmad budu **suptilna** — ne pojačavati sjenke/sjaj.
-  - Sve fotografije imaju istu blagu **noćnu obradu** (manje boje, hladan plavi ton), da dnevne slike ne iskaču iz tona hero-a.
-  - Iznad naslova samo datum (bez ikonice); oznaka postoji **samo za Obavještenje** (narandžasta). Nema velikog broja „01 / 05“ (brojevi su samo dole).
-  - Telefon: fotografija gore (54% kartice), tekst ispod na tamnoj površini; brojevi postaju tačkice; „Sve vijesti“ ide ispod slajdera.
-  - Pregled za korisnika: artifact „Jahorina vijesti“ (samo sekcija, probne objave).
-  - Oznaka „Obavještenje“ kad naslov ili tekst počinje sa Obavještenje/Notice. Ako je naslov samo „Obavještenje“, kao naslov se prikazuje početak teksta.
-  - qTranslate oznake (`[:SH]…[:en]…[:]`) razdvaja sam kod; na `/en/` prvo pita `/en/wp-json/`, pa `/wp-json/`, pa `/?rest_route=`. Bez slike → noćna fotografija iz hero-a.
-  - Na sajtu: Elementor HTML widget sa redom iz `elementor-html-widget.html` (div + skripta sa jsDelivr-a, zaključana na commit + SRI). Ide iznad starog slajdera; stari se sakrije/obriše tek kad novi radi.
-  - **Postavljeno na HERO TEST (6. 10. 2026)** — radi: čita prave vijesti i slike. Nađeno i popravljeno: bijele trake sa strane (kontejner teme uži) → blok se sada sam širi preko cijelog ekrana (`fit()`: širina = clientWidth, negativna lijeva margina); Betheme nameće tamnu boju naslova sa `!important` → boje naslova zaključane sa `!important`.
-  - Sekcija u Elementoru: padding 0 (gore/dole), da nema bijele trake iznad/ispod.
-  - Ako ne učita: posjetioci vide poruku i dugme „Sve vijesti“; prijavljeni admin vidi i tehnički razlog (npr. `HTTP 403 · categories`).
-  - **Svaka izmjena:** izmijeni `vijesti.js` → `node test-vijesti.js <folder> <fontovi>` (Playwright simulacija) → commit + push → `python3 napravi-widget.py` → commit + push → korisniku novi red za HTML widget.
-- Sljedeće sekcije po prijedlogu: Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu (i Danas na Jahorini iznad vijesti).
+## Sekcije početne ispod hero-a
+- Prijedlog izgleda svih sekcija: `jahorina-home-sections/index.src.html` (artifact "Jahorina početna — ispod hero-a"). Redoslijed: Danas na Jahorini → Obavještenja i vijesti → Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu. Prijedlog je polazna tačka; konačan izgled je po `TEMA.md` (premium, minimalistički, blag neumorfizam).
+
+### 1. Obavještenja i vijesti — urađeno, radi na HERO TEST
+- Kod: `jahorina-home-sections/vijesti/` (`vijesti.js`, test `test-vijesti.js`, red za widget `elementor-html-widget.html` iz `napravi-widget.py`, pregled `pregled/napravi-pregled.py`).
+- Čita **samo kategoriju Vijesti** (`/category/vijesti/`) preko WP REST API-ja. Objave se dodaju u WordPressu kao i do sada.
+- Izgled (korisnik tražio): **slajder sa 5 najnovijih vijesti**, jedna u kadru preko cijele kartice: fotografija sa tamnim prelazom, datum, naslov, izvod i blago neumorfno cyan dugme „Pročitaj više“ sa strelicom u plitkom udubljenom krugu. Dole desno je tihi neumorfni panel: brojevi 01–05 u plitkom žlijebu (aktivni utisnut, cyan broj + tanka cyan linija napretka), pauza i okrugle strelice. Smjena na 7 s, staje na mišu/fokusu/van ekrana; prevlačenje prstom. Naslov sekcije: „Obavještenja *i vijesti*“ (drugi dio iscrtan linijom).
+- Korisnik je tražio da dugmad budu **suptilna**: ne pojačavati sjenke/sjaj.
+- Sve fotografije imaju istu blagu **noćnu obradu**, da dnevne slike ne iskaču iz tona hero-a. Bez slike → noćna fotografija iz hero-a.
+- Iznad naslova je samo datum. Oznaka postoji **samo za Obavještenje** (narandžasta): kad naslov ili tekst počinje sa Obavještenje/Notice. Ako je naslov samo „Obavještenje“, kao naslov se prikazuje početak teksta.
+- Telefon: fotografija gore (54% kartice), tekst ispod; brojevi postaju tačkice; „Sve vijesti“ ide ispod slajdera.
+- qTranslate oznake razdvaja sam kod; na `/en/` prvo pita `/en/wp-json/`, pa `/wp-json/`, pa `/?rest_route=`.
+- Ako ne učita: posjetioci vide poruku i dugme „Sve vijesti“; prijavljeni admin vidi i tehnički razlog (npr. `HTTP 403 · categories`).
+- **HERO TEST (6. 10. 2026):** radi, čita prave vijesti i slike. Popravljeno: bijele trake sa strane (blok se sam širi, `fit()`) i tamni naslov (Betheme `!important`). Korisnik uklanja razmak između Elementor sekcija (padding/margin/gap 0).
+- **Ostaje:** postaviti na Početna zima (HTML widget iznad starog slajdera vijesti, pa stari sakriti/obrisati) i provjeriti telefon.
+- Posljednji red za widget je uvijek u `vijesti/elementor-html-widget.html`.
+- **Svaka izmjena:** izmijeni `vijesti.js` → `bash ../alati/preuzmi-fontove.sh <fontovi>` (jednom) → `node test-vijesti.js <screenshotovi> <fontovi>` → commit + push → `python3 napravi-widget.py` → commit + push → korisniku novi red za HTML widget. Pregled: `python3 pregled/napravi-pregled.py` → objaviti `pregled/index.html` (+ `img/*.jpg`) na isti artifact URL.
+
+### Sljedeće sekcije
+- Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.
+- Događaji: na sajtu je **The Events Calendar** (Elementor widget "Events Loop", sada „Trenutno nema događaja...“), pa podatke čitati iz njega (REST `/wp-json/tribe/events/v1/events`), ne ručno.
+
+### Kako započeti novu sekciju (nova sesija)
+1. Pročitati `STANJE-PROJEKTA.md` i `jahorina-home-sections/TEMA.md`.
+2. Pogledati izgled te sekcije u `jahorina-home-sections/index.src.html`.
+3. Od korisnika tražiti screenshotove kako je sekcija sada napravljena (Elementor/BeBuilder/widget, kategorija/izvor podataka).
+4. Prvo pregled (artifact samo sa sekcijom), pa doterivanje po korisnikovim komentarima, pa tek onda red za Elementor i postavljanje na HERO TEST.
 
 ## Linkovi
 - Repo: https://github.com/NjegosAnalyst/Webpage (grana `main`, javan)
+- Pregled vijesti (artifact): https://claude.ai/artifact/YVHQy2joUTm9avVS1mP3Wv
 - Društvene mreže: FB https://www.facebook.com/JahorinaOC/?locale=sr_RS · YT https://www.youtube.com/@jahorinaoc · IG https://www.instagram.com/jahorina/ · TikTok https://www.tiktok.com/@jahorinaoc
