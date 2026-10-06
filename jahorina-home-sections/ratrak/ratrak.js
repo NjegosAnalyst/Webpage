@@ -1,7 +1,7 @@
 /* =====================================================================
    JAHORINA — PANORAMSKA VOŽNJA RATRAKOM (početna, ispod vijesti)
-   Jedan veliki uokvireni kadar kao hero: fotografija ratraka u zalasku preko lijeve dvije trećine
-   kadra, meko se utapa u istu fotografiju zamućenu preko cijele kartice; desno naslov u tri reda (zadnja riječ
+   Jedan veliki uokvireni kadar kao hero: fotografija ratraka u zalasku je pozadina cijelog kadra,
+   a tekst stoji desno preko nje, na tamnom prelazu (kao naslov u hero-u); desno naslov u tri reda (zadnja riječ
    iscrtana, kao "Jahorine"), uvod, stakleni panel sa pločicama (trajanje, polazak, cijena)
    i rezervacija. Ulazak jednom, kad kadar dođe u vidno polje (kao u hero-u): kadar se podigne,
    fotografija uđe slijeva i izoštri se, tekst ulazi zdesna red po red, pločice se upale.
@@ -80,19 +80,22 @@
     '#R .jr-wrap{max-width:1240px;margin:0 auto;padding:clamp(56px,7vw,100px) clamp(16px,4vw,48px)}',
 
     /* okvir kao u hero-u */
-    '#R .jr-frame{position:relative;display:grid;grid-template-columns:minmax(0,48fr) minmax(0,52fr);min-height:clamp(560px,52vw,720px);border-radius:26px;overflow:hidden;isolation:isolate;background:#0B1324;',
+    '#R .jr-frame{position:relative;display:grid;grid-template-columns:minmax(0,46fr) minmax(0,54fr);min-height:clamp(560px,52vw,720px);border-radius:26px;overflow:hidden;isolation:isolate;background:#0B1324;',
     'box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22)}',
     '#R .jr-frame::after{content:"";position:absolute;inset:0;z-index:6;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.08)}',
     /* ista fotografija, jako zamućena i zatamnjena, preko cijelog kadra (topli odsjaj zalaska ide iza teksta) */
-    '#R .jr-amb{position:absolute;inset:-12%;width:124%;height:124%;object-fit:cover;object-position:60% 40%;z-index:-3;filter:blur(46px) saturate(.5) brightness(.46)}',
+    '#R .jr-amb{position:absolute;inset:-12%;width:124%;height:124%;object-fit:cover;object-position:60% 80%;z-index:-3;filter:blur(46px) saturate(.6) brightness(.5)}',
     '#R .jr-shade{position:absolute;inset:0;z-index:-2;pointer-events:none;',
     'background:linear-gradient(90deg,rgba(6,11,22,0) 30%,rgba(6,11,22,.42) 52%,rgba(6,11,22,.62) 100%),linear-gradient(rgba(10,24,56,.42),rgba(10,24,56,.42)),',
     'linear-gradient(180deg,rgba(6,18,42,.3) 0%,rgba(6,18,42,0) 40%),radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(4,8,18,.5) 100%)}',
-    /* oštra fotografija preko lijeve dvije trećine kadra, desna ivica se meko utapa u zamućeni kadar */
-    '#R .jr-shot{position:absolute;left:0;top:0;bottom:0;width:72%;z-index:-1;-webkit-mask-image:linear-gradient(90deg,#000 52%,transparent 100%);mask-image:linear-gradient(90deg,#000 52%,transparent 100%)}',
-    '#R .jr-shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 50%;filter:saturate(.9) brightness(.9) contrast(1.06)}',
+    /* fotografija je pozadina cijelog kadra (kao u hero-u); malo uvećana i pomjerena ulijevo da ratrak i sunce budu lijevo od teksta */
+    '#R .jr-shot{position:absolute;inset:0;z-index:-1}',
+    '#R .jr-shot img{position:absolute;top:0;left:-24%;width:124%;height:100%;object-fit:cover;object-position:50% 58%;filter:saturate(.9) brightness(.97) contrast(1.06)}',
     '#R .jr-shot::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(160deg,#1E4F96 0%,#0E2A55 100%);mix-blend-mode:soft-light;opacity:.32}',
-    '#R .jr-shot::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(6,11,22,0) 56%,rgba(6,11,22,.5) 82%),linear-gradient(0deg,rgba(6,11,22,.5) 0%,rgba(6,11,22,0) 28%),linear-gradient(180deg,rgba(6,11,22,.3) 0%,rgba(6,11,22,0) 18%)}',
+    '#R .jr-shot::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;',
+    'background:linear-gradient(270deg,rgba(6,11,22,.86) 0%,rgba(6,11,22,.74) 30%,rgba(6,11,22,.4) 48%,rgba(6,11,22,.08) 57%,rgba(6,11,22,0) 62%),',
+    'linear-gradient(0deg,rgba(6,11,22,.55) 0%,rgba(6,11,22,0) 32%),linear-gradient(180deg,rgba(6,18,42,.32) 0%,rgba(6,18,42,0) 22%),',
+    'radial-gradient(120% 90% at 50% 50%,transparent 58%,rgba(4,8,18,.42) 100%)}',
 
     /* galerija: staklena pilula na fotografiji (kao dugmad u hero-u) */
     '#R .jr-shot img{cursor:zoom-in}',
@@ -170,13 +173,13 @@
     '@keyframes jrTileOn{0%{opacity:0;transform:translateY(10px) scale(.9);filter:brightness(2.2)}60%{opacity:1;filter:brightness(1.4)}100%{opacity:1;transform:none;filter:brightness(1)}}',
 
     /* manji laptop: uža fotografija, šira kolona teksta */
-    '@media (max-width:1060px){#R .jr-frame{grid-template-columns:minmax(0,40fr) minmax(0,60fr)}#R .jr-shot{width:66%}#R h2{font-size:clamp(40px,5.4vw,58px)}}',
+    '@media (max-width:1060px){#R .jr-frame{grid-template-columns:minmax(0,42fr) minmax(0,58fr)}#R .jr-shot img{left:-30%;width:130%}#R h2{font-size:clamp(40px,5.2vw,56px)}}',
     /* tablet i telefon: pejzažna fotografija preko cijele širine gore (utapa se nadolje), tekst ispod na zamućenom kadru */
     '@media (max-width:980px){',
     '#R .jr-frame{grid-template-columns:1fr;min-height:0}',
-    '#R .jr-shot{position:relative;width:auto;height:min(60vw,540px);-webkit-mask-image:linear-gradient(180deg,#000 66%,transparent 100%);mask-image:linear-gradient(180deg,#000 66%,transparent 100%)}',
-    '#R .jr-shot img{object-position:42% 50%}',
-    '#R .jr-shot::after{background:linear-gradient(0deg,rgba(6,11,22,.5) 0%,rgba(6,11,22,0) 30%),linear-gradient(180deg,rgba(6,11,22,.3) 0%,rgba(6,11,22,0) 18%)}',
+    '#R .jr-shot{position:relative;inset:auto;height:min(60vw,540px);-webkit-mask-image:linear-gradient(180deg,#000 58%,transparent 100%);mask-image:linear-gradient(180deg,#000 58%,transparent 100%)}',
+    '#R .jr-shot img{left:0;width:100%;object-position:42% 50%}',
+    '#R .jr-shot::after{background:linear-gradient(0deg,rgba(6,11,22,.55) 0%,rgba(6,11,22,0) 40%),linear-gradient(180deg,rgba(6,18,42,.3) 0%,rgba(6,18,42,0) 18%)}',
     '#R .jr-amb{object-position:40% 70%}',
     '#R .jr-shade{background:linear-gradient(180deg,rgba(6,11,22,0) 30%,rgba(6,11,22,.5) 50%,rgba(6,11,22,.66) 100%),linear-gradient(rgba(10,24,56,.42),rgba(10,24,56,.42)),radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(4,8,18,.5) 100%)}',
     '#R .jr-body{grid-column:1;margin-top:-110px;padding:0 clamp(22px,6vw,56px) clamp(30px,5vw,52px)}',
