@@ -77,10 +77,11 @@
     '#R svg[fill="none"],#R svg[fill="none"] *:not([fill]){fill:none!important}',
     '#R svg [stroke="currentColor"]{stroke:currentColor!important}',
     '#R a:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
-    '#R .jr-wrap{max-width:1240px;margin:0 auto;padding:clamp(56px,7vw,100px) clamp(16px,4vw,48px)}',
+    /* puna širina ekrana, sa istim malim rubom kao kadar hero-a */
+    '#R .jr-wrap{padding:clamp(56px,7vw,100px) clamp(14px,1.6vw,22px)}',
 
     /* okvir kao u hero-u */
-    '#R .jr-frame{position:relative;display:grid;grid-template-columns:minmax(0,46fr) minmax(0,54fr);min-height:clamp(560px,52vw,720px);border-radius:26px;overflow:hidden;isolation:isolate;background:#0B1324;',
+    '#R .jr-frame{position:relative;display:grid;grid-template-columns:minmax(0,46fr) minmax(0,54fr);min-height:clamp(600px,46vw,880px);border-radius:26px;overflow:hidden;isolation:isolate;background:#0B1324;',
     'box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22)}',
     '#R .jr-frame::after{content:"";position:absolute;inset:0;z-index:6;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.08)}',
     /* ista fotografija, jako zamućena i zatamnjena, preko cijelog kadra (topli odsjaj zalaska ide iza teksta) */
@@ -90,11 +91,11 @@
     'linear-gradient(180deg,rgba(6,18,42,.3) 0%,rgba(6,18,42,0) 40%),radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(4,8,18,.5) 100%)}',
     /* fotografija je pozadina cijelog kadra (kao u hero-u); malo uvećana i pomjerena ulijevo da ratrak i sunce budu lijevo od teksta */
     '#R .jr-shot{position:absolute;inset:0;z-index:-1}',
-    '#R .jr-shot img{position:absolute;top:0;left:-24%;width:124%;height:100%;object-fit:cover;object-position:50% 58%;filter:saturate(.9) brightness(.97) contrast(1.06)}',
+    '#R .jr-shot img{position:absolute;top:0;left:-24%;width:124%;height:100%;object-fit:cover;object-position:50% 40%;filter:saturate(.9) brightness(.97) contrast(1.06)}',
     '#R .jr-shot::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(160deg,#1E4F96 0%,#0E2A55 100%);mix-blend-mode:soft-light;opacity:.32}',
     '#R .jr-shot::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;',
     'background:linear-gradient(270deg,rgba(6,11,22,.86) 0%,rgba(6,11,22,.74) 30%,rgba(6,11,22,.4) 48%,rgba(6,11,22,.08) 57%,rgba(6,11,22,0) 62%),',
-    'linear-gradient(0deg,rgba(6,11,22,.55) 0%,rgba(6,11,22,0) 32%),linear-gradient(180deg,rgba(6,18,42,.32) 0%,rgba(6,18,42,0) 22%),',
+    'linear-gradient(0deg,rgba(6,11,22,.55) 0%,rgba(6,11,22,0) 32%),linear-gradient(180deg,rgba(6,18,42,.16) 0%,rgba(6,18,42,0) 12%),',
     'radial-gradient(120% 90% at 50% 50%,transparent 58%,rgba(4,8,18,.42) 100%)}',
 
     /* galerija: staklena pilula na fotografiji (kao dugmad u hero-u) */
@@ -107,7 +108,7 @@
     '#R .jr-gal:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
 
     /* tekst preko kadra */
-    '#R .jr-body{grid-column:2;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-width:0;padding:clamp(44px,4.4vw,64px) clamp(28px,4.4vw,68px) clamp(44px,4.4vw,64px) clamp(8px,1.2vw,18px)}',
+    '#R .jr-body{grid-column:2;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-width:0;padding:clamp(44px,4.4vw,64px) max(clamp(28px,4.4vw,68px),calc((100vw - 1240px) / 2)) clamp(44px,4.4vw,64px) clamp(8px,1.2vw,18px)}',
     /* nadnaslov kao u hero-u: svijetla linija + razmaknuta slova */
     '#R .jr-kicker{display:flex;align-items:center;gap:14px;font:600 11px/1 var(--fd);letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:22px}',
     '#R .jr-kicker::before{content:"";width:34px;height:1.5px;flex-shrink:0;background:linear-gradient(90deg,var(--accent),#fff,var(--accent));box-shadow:0 0 10px rgba(0,185,242,.8)}',
@@ -172,6 +173,7 @@
     '#R.jr-anim.jr-on .jr-tile{animation:jrTileOn .6s cubic-bezier(.2,.7,.2,1) var(--d,0s) both}',
     '@keyframes jrTileOn{0%{opacity:0;transform:translateY(10px) scale(.9);filter:brightness(2.2)}60%{opacity:1;filter:brightness(1.4)}100%{opacity:1;transform:none;filter:brightness(1)}}',
 
+    '@media (min-width:1500px){#R .jr-shot img{left:-16%;width:116%;object-position:50% 42%}}',
     /* manji laptop: uža fotografija, šira kolona teksta */
     '@media (max-width:1060px){#R .jr-frame{grid-template-columns:minmax(0,42fr) minmax(0,58fr)}#R .jr-shot img{left:-30%;width:130%}#R h2{font-size:clamp(40px,5.2vw,56px)}}',
     /* tablet i telefon: pejzažna fotografija preko cijele širine gore (utapa se nadolje), tekst ispod na zamućenom kadru */
@@ -262,7 +264,7 @@
   root.innerHTML =
     '<section class="jr-wrap" aria-labelledby="jr-h"><div class="jr-frame">' +
       '<img class="jr-amb" src="' + esc(IMG_SM) + '" alt="" aria-hidden="true" decoding="async" loading="lazy"><span class="jr-shade"></span>' +
-      '<figure class="jr-shot"><img src="' + esc(IMG) + '"' + (SRCSET ? ' srcset="' + esc(SRCSET) + '" sizes="(max-width:760px) 100vw, 1240px"' : '') +
+      '<figure class="jr-shot"><img src="' + esc(IMG) + '"' + (SRCSET ? ' srcset="' + esc(SRCSET) + '" sizes="100vw"' : '') +
         ' alt="' + esc(T.alt) + '" width="1600" height="1066" decoding="async" loading="lazy">' +
         (GAL.length ? '<button type="button" class="jr-gal" aria-haspopup="dialog" aria-label="' + esc(T.galOpen + ' (' + GAL.length + ')') + '">' + ICON.gallery + esc(T.gal) + ' <i>' + GAL.length + '</i></button>' : '') +
       '</figure>' +
