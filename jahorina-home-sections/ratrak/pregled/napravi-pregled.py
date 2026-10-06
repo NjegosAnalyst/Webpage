@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Pregled sekcije ratraka za korisnika (artifact "Jahorina ratrak"): samo sekcija.
 
-Pravi pregled/index.html + pregled/img/ratrak-1.webp (fotografija iz ../slike/).
+Pravi pregled/index.html + pregled/img/ (fotografije iz ../slike/).
 Pokretanje: python3 napravi-pregled.py → objavi pregled/index.html kao artifact
-(isti URL: https://claude.ai/artifact/L7sAdcd13XrkaA4mRZ9Z5N), sa fajlom img/ratrak-1.webp.
+(isti URL: https://claude.ai/artifact/L7sAdcd13XrkaA4mRZ9Z5N), sa fajlovima img/*.webp.
 Izlaz (index.html, img/) se ne čuva u gitu — uvijek se pravi iz ratrak.js.
 """
 import pathlib, shutil
@@ -12,7 +12,7 @@ IMG = HERE / 'img'
 if IMG.exists():
     shutil.rmtree(IMG)
 IMG.mkdir()
-for f in ('ratrak-1.webp',):
+for f in ('ratrak-1.webp', 'ratrak-2.webp'):
     shutil.copy(HERE.parent / 'slike' / f, IMG / f)
 
 SRC = (HERE.parent / 'ratrak.js').read_text(encoding='utf-8')
@@ -28,7 +28,7 @@ body{margin:0;min-height:100%}
 .pv-replay button:hover{color:#00B9F2}
 .pv-replay button:focus-visible{outline:2px solid #00B9F2;outline-offset:3px}
 </style>
-<div id="jr-ratrak" data-slika="img/ratrak-1.webp"></div>
+<div id="jr-ratrak" data-slika="img/ratrak-1.webp" data-galerija="img/ratrak-1.webp, img/ratrak-2.webp"></div>
 <div class="pv-replay"><button type="button" id="pv-replay">&#8635;&nbsp; Ponovi ulazak</button></div>
 <script>
 __SRC__
