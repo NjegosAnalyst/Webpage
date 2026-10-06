@@ -51,7 +51,7 @@ const noticeFirst = [Object.assign({}, posts[0], { date: '2026-10-02T09:12:00' }
 const theme = `
   /* grubo oponašanje Betheme/Elementor stilova koji bi mogli smetati */
   body{margin:0;font-family:Arial,sans-serif;color:#626262;background:#fff}
-  h2{font-size:30px;line-height:40px;font-weight:400;color:#161922;margin-bottom:15px}
+  h2{font-size:30px;line-height:40px;font-weight:400;color:#161922!important;margin-bottom:15px}   /* Betheme na pravom sajtu nameće boju naslova */
   h3{font-size:25px;line-height:29px;color:#161922;margin-bottom:15px;text-transform:uppercase}
   a{color:#0095eb;text-decoration:underline} a:hover{color:#007cc3}
   p{margin:0 0 15px} img{max-width:100%;height:auto}
@@ -125,6 +125,7 @@ async function run(name, { url, viewport, boxed = false, rest = 'ok', fullPage =
       note: (r.querySelector('.jv-note') || {}).textContent,
       overflowX: document.documentElement.scrollWidth > document.documentElement.clientWidth,
       h2: getComputedStyle(r.querySelector('h2')).fontFamily + ' ' + getComputedStyle(r.querySelector('h2')).color,
+      bleed: (() => { const b = r.getBoundingClientRect(); return Math.round(b.left) + '/' + Math.round(b.width) + ' od ' + document.documentElement.clientWidth; })(),
     };
   });
   const file = path.join(OUT, name + '.png');

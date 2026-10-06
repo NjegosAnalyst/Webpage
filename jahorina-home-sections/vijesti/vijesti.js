@@ -46,7 +46,8 @@
     '#V.jv--boxed{border-radius:28px;overflow:hidden}',
     '#V *,#V *::before,#V *::after{box-sizing:border-box}',
     '#V a{color:inherit;text-decoration:none;box-shadow:none}',
-    '#V h2,#V h3{font-family:var(--fd);color:var(--text);margin:0;padding:0;text-transform:none;text-wrap:balance;border:0}',
+    '#V h2,#V h3{font-family:var(--fd)!important;color:var(--text)!important;-webkit-text-fill-color:currentColor!important;opacity:1!important;background:none!important;text-shadow:none!important;margin:0;padding:0;text-transform:none!important;text-wrap:balance;border:0}',
+    '#V h3 a{color:inherit!important;-webkit-text-fill-color:currentColor!important}',
     '#V p{margin:0;padding:0}',
     '#V img{display:block;max-width:none;border:0;border-radius:0;box-shadow:none}',
     '#V svg{display:block;flex-shrink:0}',
@@ -62,7 +63,7 @@
     '#V .jv-eyebrow::before{content:"";width:28px;height:2px;border-radius:2px;background:var(--accent);box-shadow:0 0 10px rgba(0,185,242,.8)}',
     '#V h2{font-size:clamp(34px,4.4vw,58px);font-weight:800;line-height:.98;letter-spacing:-.022em}',
     '#V h2 span{display:inline-block}',
-    '@supports (-webkit-text-stroke:1px #fff){#V h2 span{color:transparent;-webkit-text-stroke:1.3px rgba(255,255,255,.82)}}',
+    '@supports (-webkit-text-stroke:1px #fff){#V h2 span{color:transparent!important;-webkit-text-fill-color:transparent!important;-webkit-text-stroke:1.3px rgba(255,255,255,.82)!important}}',
     '#V .jv-more{display:inline-flex;align-items:center;gap:10px;padding:13px 20px;border-radius:40px;font:600 14px/1 var(--fd);letter-spacing:.2px;color:var(--text-2);background:var(--surface);box-shadow:var(--raised);transition:color .2s}',
     '#V .jv-more:hover{color:var(--accent)}',
     '#V .jv-more svg{transition:transform .2s}',
@@ -92,7 +93,7 @@
     '#V .jv-slide h3{font-size:clamp(30px,3.3vw,46px);font-weight:800;line-height:1.04;letter-spacing:-.018em;margin:22px 0 16px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden}',
     '#V .jv-slide h3.jv-long{font-size:clamp(23px,2.3vw,32px);line-height:1.14}',
     '#V .jv-slide h3 a::after{content:"";position:absolute;inset:0;z-index:1}',   // cijela kartica je link
-    '#V .jv-slide p{font-size:17px;line-height:1.6;color:var(--text-2);max-width:54ch;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}',
+    '#V .jv-slide p{font-size:17px;line-height:1.6;color:var(--text-2)!important;max-width:54ch;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}',
     /* dugme: blago ispupčeno (neumorfno) u cyan boji, strelica u plitkom udubljenom krugu */
     '#V .jv-cta{margin-top:28px;display:inline-flex;align-items:center;gap:12px;padding:5px 5px 5px 20px;border-radius:40px;font:600 13.5px/1 var(--fd);letter-spacing:.3px;color:#fff;',
     'background:linear-gradient(145deg,#27C4F2 0%,#0AAEE6 60%,#03A2D9 100%);',
@@ -300,7 +301,7 @@
   }
   function frame(inner) {
     root.innerHTML = '<section class="jv-wrap" aria-labelledby="jv-h">' + head() + inner + '</section>';
-    boxed();
+    fit();
   }
   function skeleton() { frame('<div class="jv-stage jv-sk" aria-busy="true"></div>'); }
   function note(msg, why) {
@@ -400,9 +401,23 @@
     setPause(userPaused);
   }
 
-  // tamni blok u uskom (boxed) Elementor kontejneru dobija zaobljene ivice
-  function boxed() { root.classList.toggle('jv--boxed', root.getBoundingClientRect().width < d.documentElement.clientWidth - 24); }
-  w.addEventListener('resize', function () { clearTimeout(boxed.t); boxed.t = setTimeout(boxed, 150); });
+  // blok uvijek ide preko cijele širine ekrana, i kad je kontejner teme/Elementora uži (bez bijelih traka sa strane);
+  // širina = clientWidth (bez trake za skrol), pa nema vodoravnog skrola
+  function fit() {
+    var st = root.style;
+    st.removeProperty('width'); st.removeProperty('max-width'); st.removeProperty('margin-left');
+    var cw = d.documentElement.clientWidth, r = root.getBoundingClientRect();
+    if (r.width < cw - 1) {
+      st.setProperty('width', cw + 'px', 'important');
+      st.setProperty('max-width', 'none', 'important');
+      st.setProperty('margin-left', -r.left + 'px', 'important');
+    }
+    // ako se ipak ne može raširiti — tamni blok dobija zaobljene ivice
+    root.classList.toggle('jv--boxed', root.getBoundingClientRect().width < cw - 24);
+  }
+  function refit() { clearTimeout(fit.t); fit.t = setTimeout(fit, 120); }
+  w.addEventListener('resize', refit);
+  if ('ResizeObserver' in w) new ResizeObserver(refit).observe(d.body);   // traka za skrol se pojavi/nestane
   function reveal() {
     if (!('IntersectionObserver' in w) || (w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
     root.classList.add('jv-anim');
