@@ -41,7 +41,8 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
   - Oznaka „Obavještenje“ kad naslov ili tekst počinje sa Obavještenje/Notice. Ako je naslov samo „Obavještenje“, kao naslov se prikazuje početak teksta.
   - qTranslate oznake (`[:SH]…[:en]…[:]`) razdvaja sam kod; na `/en/` prvo pita `/en/wp-json/`, pa `/wp-json/`, pa `/?rest_route=`. Bez slike → noćna fotografija iz hero-a.
   - Na sajtu: Elementor HTML widget sa redom iz `elementor-html-widget.html` (div + skripta sa jsDelivr-a, zaključana na commit + SRI). Ide iznad starog slajdera; stari se sakrije/obriše tek kad novi radi.
-  - Sekcija u Elementoru: puna širina, padding 0 (u užem kontejneru blok sam dobija zaobljene ivice).
+  - **Postavljeno na HERO TEST (6. 10. 2026)** — radi: čita prave vijesti i slike. Nađeno i popravljeno: bijele trake sa strane (kontejner teme uži) → blok se sada sam širi preko cijelog ekrana (`fit()`: širina = clientWidth, negativna lijeva margina); Betheme nameće tamnu boju naslova sa `!important` → boje naslova zaključane sa `!important`.
+  - Sekcija u Elementoru: padding 0 (gore/dole), da nema bijele trake iznad/ispod.
   - Ako ne učita: posjetioci vide poruku i dugme „Sve vijesti“; prijavljeni admin vidi i tehnički razlog (npr. `HTTP 403 · categories`).
   - **Svaka izmjena:** izmijeni `vijesti.js` → `node test-vijesti.js <folder> <fontovi>` (Playwright simulacija) → commit + push → `python3 napravi-widget.py` → commit + push → korisniku novi red za HTML widget.
 - Sljedeće sekcije po prijedlogu: Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu (i Danas na Jahorini iznad vijesti).
