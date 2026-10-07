@@ -25,6 +25,8 @@ da sve sekcije izgledaju kao jedna cjelina.
 --fd: 'Archivo' (naslovi, 600–800)   --fb: 'Barlow' (tekst, 300–600)
 ```
 - Širina sadržaja max 1240px, bočni razmak `clamp(16px,4vw,48px)`, razmak sekcije gore/dole `clamp(56px,7vw,100px)`.
+- **Kadar preko cijele širine (od vijesti i ratraka):** rub `--g:clamp(14px,1.6vw,22px)` kao kadar hero-a, sadržaj uvučen `--in` na mrežu 1240px (računa se iz `100cqw`, rezerva `100vw`).
+- **Ritam između blokova:** `--gap:clamp(56px,7vw,100px)`. Blok ispod ima gore `--gap/2 + --g`, blok iznad dole `--gap/2`, pa je razmak kadar→kadar isti kao hero→vijesti (`--g + --gap`).
 - Zaobljenja: kartice 28–30px, dugmad pilule 40px, pločice 11–13px.
 
 ## Obrasci (gotovi u `vijesti.js`)
@@ -36,6 +38,10 @@ da sve sekcije izgledaju kao jedna cjelina.
 - **Fotografije:** uvijek ista blaga noćna obrada: `filter: saturate(.7) brightness(.84) contrast(1.06)` + plavi sloj `mix-blend-mode: soft-light` (`.jv-tint`), plus tamni prelaz ispod teksta.
 - **Oznaka (chip):** mala pilula, velika slova. Koristiti samo kad nosi informaciju (npr. samo „Obavještenje“).
 - **Telefon:** fotografija gore, tekst ispod na tamnoj površini, sporedni link ispod sadržaja.
+- **Prelaz između blokova (bez linija, talasa i dijagonala):**
+  - *Svjetlo iz fotografije* (`.jv-glow`, `.jr-glow`): fotografija kadra smanjena na 12×7 px (prosječne boje, korak po korak preko canvas-a) pa razvučena iza kadra, sa istom obradom kao kadar; meka maska gore/dole i slabije uz bočne ivice. Vijesti: plavo, mijenja se sa slajdom. Ratrak: toplo, i kad su vijesti odmah iznad (`.jr--join`) prelije se u razmak ispod njih → plavo prelazi u zlatno.
+  - *Dubina pri skrolu* (`sink()`): dok kadar odlazi gore, blago se smanji (`scale` do .965, telefon .98) i potamni (`.jv-dim`/`.jr-dim` do .5); bez toga za smanjeno kretanje.
+  - Ne koristiti: „lijepljenje“ kartica (sticky), jer su blokovi u odvojenim Elementor kontejnerima; jak parallax; CSS `animation-timeline` (Betheme/Elementor omotači sa overflow:hidden ga mogu zaglaviti).
 
 ## Kako se sekcija gradi i ugrađuje
 1. Folder `jahorina-home-sections/<sekcija>/` sa jednim JS fajlom (kao `vijesti/vijesti.js`): sam ubacuje CSS, crta HTML i čita podatke.

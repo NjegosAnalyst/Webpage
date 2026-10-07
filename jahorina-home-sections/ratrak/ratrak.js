@@ -77,12 +77,21 @@
     '#R svg[fill="none"],#R svg[fill="none"] *:not([fill]){fill:none!important}',
     '#R svg [stroke="currentColor"]{stroke:currentColor!important}',
     '#R a:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
-    /* puna širina ekrana, sa istim malim rubom kao kadar hero-a (isto kao vijesti); --in poravnava tekst sa mrežom stranice od 1240px */
-    '#R .jr-wrap{--g:clamp(14px,1.6vw,22px);--in:max(0px,calc((100vw - 1240px) / 2 + 48px - var(--g)));padding:var(--g) var(--g) clamp(56px,7vw,100px)}',
+    /* puna širina ekrana, sa istim malim rubom kao kadar hero-a (isto kao vijesti); --in poravnava tekst sa mrežom stranice od 1240px;
+       --gap = razmak između blokova (isti ritam kao hero → vijesti): iznad kadra pola razmaka + rub, drugu polovinu daju vijesti iznad */
+    '#R .jr-wrap{--g:clamp(14px,1.6vw,22px);--gap:clamp(56px,7vw,100px);--pt:calc(var(--gap) / 2 + var(--g));--in:max(0px,calc((100vw - 1240px) / 2 + 48px - var(--g)));position:relative;padding:var(--pt) var(--g) var(--gap)}',
     /* uvlačenje se računa od širine samog bloka (i kad ga tema ne pusti preko cijelog ekrana); vw ostaje samo za stare pregledače */
     '#R{container-type:inline-size}',
     '@supports (width:1cqw){#R .jr-wrap{--in:max(0px,calc((100cqw - 1240px) / 2 + 48px - var(--g)))}}',
 
+    /* svjetlo iz fotografije iza kadra (fotografija smanjena na par desetina piksela i razvučena), meki prelaz gore i dole;
+       kad su vijesti odmah iznad (.jr--join), toplo svjetlo zalaska se prelije i u razmak ispod vijesti (plavo → zlatno) */
+    '#R .jr-glow{--ext:0px;position:absolute;left:0;right:0;top:calc(var(--ext) * -1);bottom:0;pointer-events:none;',
+    '--ms:.45;--mx:linear-gradient(90deg,rgba(0,0,0,var(--ms)),#000 calc(var(--g) * 3),#000 calc(100% - var(--g) * 3),rgba(0,0,0,var(--ms)));-webkit-mask-image:var(--m),var(--mx);mask-image:var(--m),var(--mx);-webkit-mask-composite:source-in;mask-composite:intersect;--m:linear-gradient(180deg,transparent calc(var(--ext) * .55),rgba(0,0,0,.3) calc(var(--ext) + var(--pt) * .45),#000 calc(var(--ext) + var(--pt)),#000 calc(100% - var(--gap)),rgba(0,0,0,.3) calc(100% - var(--gap) * .55),transparent)}',
+    '#R.jr--join .jr-glow{--ext:calc(var(--gap) / 2)}',
+    '#R .jr-glow canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 1.2s ease;filter:saturate(1.45)}',
+    '#R .jr-glow canvas.is-on{opacity:.62}',
+    '#R .jr-dim{position:absolute;inset:0;z-index:7;border-radius:inherit;pointer-events:none;background:#050A15;opacity:0}',
     /* okvir kao u hero-u */
     '#R .jr-frame{position:relative;display:grid;grid-template-columns:minmax(0,46fr) minmax(0,54fr);min-height:clamp(600px,46vw,880px);border-radius:26px;overflow:hidden;isolation:isolate;background:#0B1324;',
     'box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22)}',
@@ -163,7 +172,8 @@
     /* fotografija: ulazi slijeva, mrak se razilazi i izoštri se (kao fotografija u hero-u) */
     '#R.jr-anim .jr-shot{opacity:0;transform:translateX(-56px);filter:brightness(.3) blur(8px)}',
     '#R.jr-anim.jr-on .jr-shot{opacity:1;transform:none;filter:none;transition:opacity 1s ease .1s,transform 1.3s cubic-bezier(.2,.7,.2,1) .1s,filter 1.4s cubic-bezier(.2,.7,.2,1) .1s}',
-    '#R.jr-anim .jr-amb{opacity:0}',
+    '#R.jr-anim .jr-amb,#R.jr-anim .jr-glow{opacity:0}',
+    '#R.jr-anim.jr-on .jr-glow{opacity:1;transition:opacity 1.6s ease .2s}',
     '#R.jr-anim.jr-on .jr-amb{opacity:1;transition:opacity 1.6s ease .2s}',
     /* tekst: ulazi zdesna, red po red (kašnjenje u --d) */
     '#R.jr-anim .jr-sl{opacity:0;transform:translateX(44px)}',
@@ -182,6 +192,7 @@
     /* tablet i telefon: pejzažna fotografija preko cijele širine gore (utapa se nadolje), tekst ispod na zamućenom kadru */
     '@media (max-width:980px){',
     '#R .jr-frame{grid-template-columns:1fr;min-height:0}',
+    '#R .jr-glow{--ms:.25}',
     '#R .jr-shot{position:relative;inset:auto;height:min(60vw,540px);-webkit-mask-image:linear-gradient(180deg,#000 58%,transparent 100%);mask-image:linear-gradient(180deg,#000 58%,transparent 100%)}',
     '#R .jr-shot img{left:0;width:100%;object-position:42% 50%}',
     '#R .jr-shot::after{background:linear-gradient(0deg,rgba(6,11,22,.55) 0%,rgba(6,11,22,0) 40%),linear-gradient(180deg,rgba(6,18,42,.3) 0%,rgba(6,18,42,0) 18%)}',
@@ -265,7 +276,7 @@
   }
 
   root.innerHTML =
-    '<section class="jr-wrap" aria-labelledby="jr-h"><div class="jr-frame">' +
+    '<section class="jr-wrap" aria-labelledby="jr-h"><div class="jr-glow" aria-hidden="true"><canvas width="96" height="54"></canvas></div><div class="jr-frame">' +
       '<img class="jr-amb" src="' + esc(IMG_SM) + '" alt="" aria-hidden="true" decoding="async" loading="lazy"><span class="jr-shade"></span>' +
       '<figure class="jr-shot"><img src="' + esc(IMG) + '"' + (SRCSET ? ' srcset="' + esc(SRCSET) + '" sizes="100vw"' : '') +
         ' alt="' + esc(T.alt) + '" width="1600" height="1066" decoding="async" loading="lazy">' +
@@ -289,7 +300,7 @@
         '</div>' +
         '<p class="jr-book jr-sl" style="--d:1.24s">' + linkify(T.book) + '</p>' +
       '</div>' +
-    '</div></section>';
+    '<i class="jr-dim" aria-hidden="true"></i></div></section>';
 
   // blok uvijek ide preko cijele širine ekrana, i kad je kontejner teme/Elementora uži (isto kao vijesti)
   function fit() {
@@ -312,6 +323,11 @@
       if (up > .5 && up <= 40) st.setProperty('margin-top', -up + 'px', 'important');
       if (dn > .5 && dn <= 40) st.setProperty('margin-bottom', -dn + 'px', 'important');
     }
+    // vijesti su odmah iznad (bez razmaka) → svjetlo ratraka smije preći u razmak ispod njih
+    var vj = d.getElementById('jv-vijesti');
+    root.classList.toggle('jr--join', !boxed && !!vj && !vj.classList.contains('jv--boxed') &&
+      Math.abs(vj.getBoundingClientRect().bottom - root.getBoundingClientRect().top) < 3);
+    if (glow.st !== undefined && glow.st !== stacked()) glow();
   }
   // najviši Elementor element (kontejner ili sekcija) oko bloka, samo ako je blok jedini widget u njemu
   function shell() {
@@ -324,6 +340,66 @@
   fit();
   w.addEventListener('resize', refit);
   if ('ResizeObserver' in w) new ResizeObserver(refit).observe(d.body);
+
+  /* ---------- svjetlo iz fotografije i dubina pri skrolu (isto kao vijesti) ---------- */
+  // fotografija → nekoliko desetina piksela (korak po korak, da i Safari uzme prosjek, a ne poneki piksel)
+  function shrink(src, sx, sy, sw, sh, tw, th) {
+    var cur = src;
+    while (sw / 4 > tw) {
+      var c = d.createElement('canvas'); c.width = Math.ceil(sw / 4); c.height = Math.ceil(sh / 4);
+      c.getContext('2d').drawImage(cur, sx, sy, sw, sh, 0, 0, c.width, c.height);
+      cur = c; sx = sy = 0; sw = c.width; sh = c.height;
+    }
+    var o = d.createElement('canvas'); o.width = tw; o.height = th;
+    o.getContext('2d').drawImage(cur, sx, sy, sw, sh, 0, 0, tw, th);
+    return o;
+  }
+  function glow() {
+    var cv = root.querySelector('.jr-glow canvas'), img = root.querySelector('.jr-shot img');
+    if (!cv || !img) return;
+    if (!img.complete || !img.naturalWidth) { img.addEventListener('load', glow, { once: true }); return; }
+    try {
+      var W = img.naturalWidth, H = img.naturalHeight, x = cv.getContext('2d'), wd = cv.width, ht = cv.height;
+      glow.st = stacked();
+      // dio fotografije koji se vidi u kadru: na računaru pomjerena ulijevo (sunce lijevo od teksta), na telefonu gornji dio preko cijele širine
+      x.globalCompositeOperation = 'source-over'; x.clearRect(0, 0, wd, ht);
+      if (glow.st) x.drawImage(shrink(img, 0, H * .28, W, H * .5, 12, 7), 0, 0, wd, ht);   // pojas sa suncem (vrh neba je bljedi)
+      else x.drawImage(shrink(img, W * .19, H * .1, W * .81, H * .75, 12, 7), 0, 0, wd, ht);
+      // svjetlo zalaska malo toplije od fotografije (inače bež), a strana sa tekstom (desno, na računaru) tamna kao u kadru
+      x.globalCompositeOperation = 'soft-light'; x.fillStyle = 'rgba(255,128,48,.3)'; x.fillRect(0, 0, wd, ht);
+      x.globalCompositeOperation = 'source-over';
+      if (!glow.st) {
+        var g = x.createLinearGradient(wd, 0, 0, 0); g.addColorStop(0, 'rgba(6,11,22,.8)'); g.addColorStop(.45, 'rgba(6,11,22,.3)'); g.addColorStop(.65, 'rgba(6,11,22,0)');
+        x.fillStyle = g; x.fillRect(0, 0, wd, ht);
+      }
+      cv.classList.add('is-on');
+    } catch (e) {}
+  }
+  // tablet/telefon: fotografija iznad teksta (jedna kolona)
+  function stacked() {
+    var b = root.querySelector('.jr-body'), f = root.querySelector('.jr-frame');
+    return !!b && !!f && b.getBoundingClientRect().top - f.getBoundingClientRect().top > 60;
+  }
+  glow();
+  // dok kadar odlazi gore (a blok ispod ulazi), blago se smanji i potamni — osjećaj slojeva; bez toga za smanjeno kretanje
+  function sink(el, dim) {
+    if (!el || !dim || !('scale' in el.style) || (w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    var raf = 0, last = -1;
+    function upd() {
+      raf = 0;
+      var vh = w.innerHeight || d.documentElement.clientHeight, b = el.getBoundingClientRect().bottom;
+      var p = Math.min(1, Math.max(0, (vh * .85 - b) / (vh * .85))); p *= p;
+      if (Math.abs(p - last) < .003) return; last = p;
+      el.style.scale = p ? String(1 - (d.documentElement.clientWidth < 761 ? .02 : .035) * p) : '';
+      el.style.willChange = p > 0 && p < 1 ? 'scale' : '';
+      dim.style.opacity = p ? (.5 * p).toFixed(3) : '';
+    }
+    function req() { if (!raf) raf = w.requestAnimationFrame(upd); }
+    w.addEventListener('scroll', req, { passive: true });
+    w.addEventListener('resize', req);
+    req();
+  }
+  sink(root.querySelector('.jr-frame'), root.querySelector('.jr-dim'));
 
   /* ---------- Google Analytics: gtag (GA4) ili dataLayer (Google Tag Manager); bez njih ništa se ne šalje ---------- */
   function track(name, params) {
