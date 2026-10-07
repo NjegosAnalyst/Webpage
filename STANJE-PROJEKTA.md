@@ -44,6 +44,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - qTranslate oznake razdvaja sam kod; na `/en/` prvo pita `/en/wp-json/`, pa `/wp-json/`, pa `/?rest_route=`.
 - Ako ne učita: posjetioci vide poruku i dugme „Sve vijesti“; prijavljeni admin vidi i tehnički razlog (npr. `HTTP 403 · categories`).
 - **HERO TEST (6. 10. 2026):** radi, čita prave vijesti i slike. Popravljeno: bijele trake sa strane (blok se sam širi, `fit()`) i tamni naslov (Betheme `!important`). Korisnik uklanja razmak između Elementor sekcija (padding/margin/gap 0).
+- **Puna širina (7. 10. 2026, korisnik: „uskladi“ sa ratrakom):** kadar `.jv-stage` je preko cijele širine kao hero (rub `--g` clamp(14px,1.6vw,22px), radius 26px, sjenka kao hero), a naslov, tekst slajda i traka se na širokim ekranima poravnaju sa sadržajem 1240px (`--in`, računa iz `100cqw`, rezerva `100vw`). Isto pravilo koristi i ratrak. Novi red za widget (@93dc48d) treba zamijeniti na HERO TEST.
 - **Ostaje:** postaviti na Početna zima (HTML widget iznad starog slajdera vijesti, pa stari sakriti/obrisati) i provjeriti telefon.
 - Posljednji red za widget je uvijek u `vijesti/elementor-html-widget.html`.
 - **Svaka izmjena:** izmijeni `vijesti.js` → `bash ../alati/preuzmi-fontove.sh <fontovi>` (jednom) → `node test-vijesti.js <screenshotovi> <fontovi>` → commit + push → `python3 napravi-widget.py` → commit + push → korisniku novi red za HTML widget. Pregled: `python3 pregled/napravi-pregled.py` → objaviti `pregled/index.html` (+ `img/*.jpg`) na isti artifact URL.
