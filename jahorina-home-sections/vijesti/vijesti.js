@@ -55,10 +55,15 @@
     '#V svg [stroke="currentColor"]{stroke:currentColor!important}',
     '#V svg [fill="currentColor"]{fill:currentColor!important}',
     '#V a:focus-visible,#V button:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
-    '#V .jv-wrap{max-width:1240px;margin:0 auto;padding:clamp(56px,7vw,100px) clamp(16px,4vw,48px)}',
+    /* kadar preko cijele širine ekrana (rub kao kadar hero-a); sadržaj se poravnava sa mrežom stranice širine 1240px:
+       --g = rub sa strane, --in = koliko je sadržaj uvučen od ivice kadra (0 na užim ekranima) */
+    '#V .jv-wrap{--g:clamp(14px,1.6vw,22px);--in:max(0px,calc((100vw - 1240px) / 2 + 48px - var(--g)));padding:clamp(56px,7vw,100px) var(--g)}',
+    /* uvlačenje se računa od širine samog bloka (i kad ga tema ne pusti preko cijelog ekrana); vw ostaje samo za stare pregledače */
+    '#V{container-type:inline-size}',
+    '@supports (width:1cqw){#V .jv-wrap{--in:max(0px,calc((100cqw - 1240px) / 2 + 48px - var(--g)))}}',
 
     /* naslov sekcije — drugi dio naslova iscrtan linijom, kao "Jahorine" u hero-u */
-    '#V .jv-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px 32px;margin-bottom:clamp(28px,3.4vw,44px);flex-wrap:wrap}',
+    '#V .jv-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px 32px;margin-bottom:clamp(28px,3.4vw,44px);flex-wrap:wrap;padding:0 var(--in)}',
     '#V .jv-eyebrow{display:flex;align-items:center;gap:12px;font:600 12px/1 var(--fd);letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}',
     '#V .jv-eyebrow::before{content:"";width:28px;height:2px;border-radius:2px;background:var(--accent);box-shadow:0 0 10px rgba(0,185,242,.8)}',
     '#V h2{font-size:clamp(34px,4.4vw,58px);font-weight:800;line-height:.98;letter-spacing:-.022em}',
@@ -71,8 +76,8 @@
     '#V .jv-more--foot{display:none}',
 
     /* scena slajdera */
-    '#V .jv-stage{position:relative;height:clamp(500px,46vw,620px);border-radius:30px;overflow:hidden;background:var(--surface);isolation:isolate;touch-action:pan-y;',
-    'box-shadow:0 50px 90px -50px rgba(0,0,0,.95),var(--raised)}',
+    '#V .jv-stage{position:relative;height:clamp(500px,44vw,780px);border-radius:26px;overflow:hidden;background:var(--surface);isolation:isolate;touch-action:pan-y;',
+    'box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22)}',
     '#V .jv-stage::after{content:"";position:absolute;inset:0;z-index:5;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.09)}',
     '#V .jv-slide{position:absolute;inset:0;display:flex;align-items:center;opacity:0;visibility:hidden;z-index:1;transition:opacity .9s ease,visibility 0s linear .9s}',
     '#V .jv-slide.is-on{opacity:1;visibility:visible;z-index:2;transition:opacity .9s ease}',
@@ -81,7 +86,7 @@
     '#V .jv-tint{position:absolute;inset:0;z-index:-2;pointer-events:none;background:linear-gradient(160deg,#1E4F96 0%,#0E2A55 100%);mix-blend-mode:soft-light;opacity:.7}',
     '#V .jv-slide::before{content:"";position:absolute;inset:0;z-index:-1;',
     'background:linear-gradient(90deg,rgba(10,17,32,.97) 0%,rgba(10,17,32,.86) 30%,rgba(10,17,32,.4) 60%,rgba(10,17,32,.08) 100%),linear-gradient(0deg,rgba(10,17,32,.92) 0%,rgba(10,17,32,.4) 20%,rgba(10,17,32,0) 40%)}',
-    '#V .jv-body{display:flex;flex-direction:column;align-items:flex-start;width:min(660px,64%);padding:56px 56px 112px}',
+    '#V .jv-body{display:flex;flex-direction:column;align-items:flex-start;width:min(660px,64%);margin-left:var(--in);padding:56px 56px 112px}',
     '#V .jv-body > *{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .8s cubic-bezier(.2,.7,.2,1)}',
     '#V .is-on .jv-body > *{opacity:1;transform:none}',
     '#V .is-on .jv-body > :nth-child(1){transition-delay:.22s}',
@@ -108,7 +113,7 @@
 
     /* traka: brojevi sa linijom napretka + strelice */
     /* donja traka: tihi neumorfni panel — brojevi u plitkom žlijebu, aktivni utisnut sa cyan linijom napretka */
-    '#V .jv-bar{position:absolute;right:28px;bottom:28px;z-index:3;display:flex;align-items:center;gap:10px;padding:7px;border-radius:22px;',
+    '#V .jv-bar{position:absolute;right:max(28px,var(--in));bottom:28px;z-index:3;display:flex;align-items:center;gap:10px;padding:7px;border-radius:22px;',
     'background:rgba(13,20,36,.6);-webkit-backdrop-filter:blur(14px) saturate(130%);backdrop-filter:blur(14px) saturate(130%);',
     'box-shadow:0 18px 40px -26px rgba(0,0,0,.85),inset 0 0 0 1px rgba(255,255,255,.05)}',
     '#V .jv-steps{display:flex;gap:5px;padding:4px;border-radius:16px;background:rgba(9,15,28,.55);box-shadow:inset 2px 2px 5px rgba(0,0,0,.45),inset -2px -2px 5px rgba(70,96,142,.07)}',
@@ -293,7 +298,7 @@
   function slide(n, k, all) {
     var src = pickImg(n.img, 1200) || NIGHT, set = srcset(n.img);
     return '<article class="jv-slide' + (k ? '' : ' is-on') + '" role="group" aria-roledescription="' + T.srd + '" aria-label="' + (k + 1) + ' ' + T.of + ' ' + all + '"' + (k ? ' aria-hidden="true"' : '') + '>' +
-      '<img src="' + esc(src) + '"' + (set ? ' srcset="' + esc(set) + '" sizes="(max-width:760px) 100vw, (max-width:1340px) 92vw, 1240px"' : '') + ' alt="" decoding="async"' + (k ? ' loading="lazy"' : '') + '><span class="jv-tint"></span>' +
+      '<img src="' + esc(src) + '"' + (set ? ' srcset="' + esc(set) + '" sizes="100vw"' : '') + ' alt="" decoding="async"' + (k ? ' loading="lazy"' : '') + '><span class="jv-tint"></span>' +
       '<div class="jv-body"><div class="jv-meta">' + chip(n) + timeTag(n) + '</div>' +
       '<h3' + (n.title.length > 75 ? ' class="jv-long"' : '') + '><a href="' + esc(n.link) + '"' + (k ? ' tabindex="-1"' : '') + '>' + esc(clip(n.title, 130)) + '</a></h3>' +
       (n.excerpt ? '<p>' + esc(n.excerpt) + '</p>' : '') +

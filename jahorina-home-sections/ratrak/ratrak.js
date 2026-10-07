@@ -77,8 +77,11 @@
     '#R svg[fill="none"],#R svg[fill="none"] *:not([fill]){fill:none!important}',
     '#R svg [stroke="currentColor"]{stroke:currentColor!important}',
     '#R a:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
-    /* puna širina ekrana, sa istim malim rubom kao kadar hero-a */
-    '#R .jr-wrap{padding:clamp(56px,7vw,100px) clamp(14px,1.6vw,22px)}',
+    /* puna širina ekrana, sa istim malim rubom kao kadar hero-a (isto kao vijesti); --in poravnava tekst sa mrežom stranice od 1240px */
+    '#R .jr-wrap{--g:clamp(14px,1.6vw,22px);--in:max(0px,calc((100vw - 1240px) / 2 + 48px - var(--g)));padding:clamp(56px,7vw,100px) var(--g)}',
+    /* uvlačenje se računa od širine samog bloka (i kad ga tema ne pusti preko cijelog ekrana); vw ostaje samo za stare pregledače */
+    '#R{container-type:inline-size}',
+    '@supports (width:1cqw){#R .jr-wrap{--in:max(0px,calc((100cqw - 1240px) / 2 + 48px - var(--g)))}}',
 
     /* okvir kao u hero-u */
     '#R .jr-frame{position:relative;display:grid;grid-template-columns:minmax(0,46fr) minmax(0,54fr);min-height:clamp(600px,46vw,880px);border-radius:26px;overflow:hidden;isolation:isolate;background:#0B1324;',
@@ -108,7 +111,7 @@
     '#R .jr-gal:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
 
     /* tekst preko kadra */
-    '#R .jr-body{grid-column:2;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-width:0;padding:clamp(44px,4.4vw,64px) max(clamp(28px,4.4vw,68px),calc((100vw - 1240px) / 2)) clamp(44px,4.4vw,64px) clamp(8px,1.2vw,18px)}',
+    '#R .jr-body{grid-column:2;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-width:0;padding:clamp(44px,4.4vw,64px) max(clamp(28px,4.4vw,68px),var(--in)) clamp(44px,4.4vw,64px) clamp(8px,1.2vw,18px)}',
     /* nadnaslov kao u hero-u: svijetla linija + razmaknuta slova */
     '#R .jr-kicker{display:flex;align-items:center;gap:14px;font:600 11px/1 var(--fd);letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:22px}',
     '#R .jr-kicker::before{content:"";width:34px;height:1.5px;flex-shrink:0;background:linear-gradient(90deg,var(--accent),#fff,var(--accent));box-shadow:0 0 10px rgba(0,185,242,.8)}',
