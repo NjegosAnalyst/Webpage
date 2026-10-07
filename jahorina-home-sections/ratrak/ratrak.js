@@ -78,7 +78,7 @@
     '#R svg [stroke="currentColor"]{stroke:currentColor!important}',
     '#R a:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
     /* puna širina ekrana, sa istim malim rubom kao kadar hero-a (isto kao vijesti); --in poravnava tekst sa mrežom stranice od 1240px */
-    '#R .jr-wrap{--g:clamp(14px,1.6vw,22px);--in:max(0px,calc((100vw - 1240px) / 2 + 48px - var(--g)));padding:clamp(56px,7vw,100px) var(--g)}',
+    '#R .jr-wrap{--g:clamp(14px,1.6vw,22px);--in:max(0px,calc((100vw - 1240px) / 2 + 48px - var(--g)));padding:var(--g) var(--g) clamp(56px,7vw,100px)}',
     /* uvlačenje se računa od širine samog bloka (i kad ga tema ne pusti preko cijelog ekrana); vw ostaje samo za stare pregledače */
     '#R{container-type:inline-size}',
     '@supports (width:1cqw){#R .jr-wrap{--in:max(0px,calc((100cqw - 1240px) / 2 + 48px - var(--g)))}}',
