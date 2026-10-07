@@ -295,13 +295,30 @@
   function fit() {
     var st = root.style;
     st.removeProperty('width'); st.removeProperty('max-width'); st.removeProperty('margin-left');
+    st.removeProperty('margin-top'); st.removeProperty('margin-bottom');
     var cw = d.documentElement.clientWidth, r = root.getBoundingClientRect();
     if (r.width < cw - 1) {
       st.setProperty('width', cw + 'px', 'important');
       st.setProperty('max-width', 'none', 'important');
       st.setProperty('margin-left', -root.getBoundingClientRect().left + 'px', 'important');
     }
-    root.classList.toggle('jr--boxed', root.getBoundingClientRect().width < cw - 24);
+    var boxed = root.getBoundingClientRect().width < cw - 24;
+    root.classList.toggle('jr--boxed', boxed);
+    // Elementor kontejner/sekcija oko bloka ima svoj padding (podrazumijevano 10px) na bijeloj pozadini stranice → bijela traka
+    // iznad/ispod. Kad je blok jedini widget u njemu, blok prekrije taj padding, pa se sekcije spoje bez šava.
+    var sh = !boxed && shell();
+    if (sh) {
+      var a = sh.getBoundingClientRect(), b = root.getBoundingClientRect(), up = b.top - a.top, dn = a.bottom - b.bottom;
+      if (up > .5 && up <= 40) st.setProperty('margin-top', -up + 'px', 'important');
+      if (dn > .5 && dn <= 40) st.setProperty('margin-bottom', -dn + 'px', 'important');
+    }
+  }
+  // najviši Elementor element (kontejner ili sekcija) oko bloka, samo ako je blok jedini widget u njemu
+  function shell() {
+    for (var e = root; e.parentElement; e = e.parentElement)
+      if (e.parentElement.matches('.elementor, .elementor-section-wrap'))
+        return e !== root && e.querySelectorAll('.elementor-widget').length === 1 ? e : null;
+    return null;
   }
   function refit() { clearTimeout(fit.t); fit.t = setTimeout(fit, 120); }
   fit();
@@ -404,7 +421,7 @@
     root.classList.add('jr-anim');
     var io = new IntersectionObserver(function (es) {
       if (es.some(function (e) { return e.isIntersecting; })) { root.classList.add('jr-on'); io.disconnect(); }
-    }, { threshold: .2, rootMargin: '0px 0px -8% 0px' });
+    }, { rootMargin: '0px 0px -10% 0px' });   // čim vrh kadra uđe u ekran (ne čeka 20% visokog kadra)
     io.observe(root.querySelector('.jr-frame'));
   }
 })(window, document);

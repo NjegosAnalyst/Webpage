@@ -411,6 +411,7 @@
   function fit() {
     var st = root.style;
     st.removeProperty('width'); st.removeProperty('max-width'); st.removeProperty('margin-left');
+    st.removeProperty('margin-top'); st.removeProperty('margin-bottom');
     var cw = d.documentElement.clientWidth, r = root.getBoundingClientRect();
     if (r.width < cw - 1) {
       st.setProperty('width', cw + 'px', 'important');
@@ -418,7 +419,23 @@
       st.setProperty('margin-left', -root.getBoundingClientRect().left + 'px', 'important');
     }
     // ako se ipak ne može raširiti — tamni blok dobija zaobljene ivice
-    root.classList.toggle('jv--boxed', root.getBoundingClientRect().width < cw - 24);
+    var boxed = root.getBoundingClientRect().width < cw - 24;
+    root.classList.toggle('jv--boxed', boxed);
+    // Elementor kontejner/sekcija oko bloka ima svoj padding (podrazumijevano 10px) na bijeloj pozadini stranice → bijela traka
+    // iznad/ispod. Kad je blok jedini widget u njemu, blok prekrije taj padding, pa se sekcije spoje bez šava.
+    var sh = !boxed && shell();
+    if (sh) {
+      var a = sh.getBoundingClientRect(), b = root.getBoundingClientRect(), up = b.top - a.top, dn = a.bottom - b.bottom;
+      if (up > .5 && up <= 40) st.setProperty('margin-top', -up + 'px', 'important');
+      if (dn > .5 && dn <= 40) st.setProperty('margin-bottom', -dn + 'px', 'important');
+    }
+  }
+  // najviši Elementor element (kontejner ili sekcija) oko bloka, samo ako je blok jedini widget u njemu
+  function shell() {
+    for (var e = root; e.parentElement; e = e.parentElement)
+      if (e.parentElement.matches('.elementor, .elementor-section-wrap'))
+        return e !== root && e.querySelectorAll('.elementor-widget').length === 1 ? e : null;
+    return null;
   }
   function refit() { clearTimeout(fit.t); fit.t = setTimeout(fit, 120); }
   w.addEventListener('resize', refit);
