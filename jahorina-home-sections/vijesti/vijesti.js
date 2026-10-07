@@ -64,7 +64,7 @@
     '@supports (width:1cqw){#V .jv-wrap{--in:max(0px,calc((100cqw - 1240px) / 2 + 48px - var(--g)))}}',
 
     /* naslov sekcije — drugi dio naslova iscrtan linijom, kao "Jahorine" u hero-u */
-    '#V .jv-head{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:20px 32px;margin-bottom:clamp(28px,3.4vw,44px);flex-wrap:wrap;padding:0 var(--in)}',
+    '#V .jv-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px 32px;margin-bottom:clamp(28px,3.4vw,44px);flex-wrap:wrap;padding:0 var(--in)}',
     '#V .jv-eyebrow{display:flex;align-items:center;gap:12px;font:600 12px/1 var(--fd);letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}',
     '#V .jv-eyebrow::before{content:"";width:28px;height:2px;border-radius:2px;background:var(--accent);box-shadow:0 0 10px rgba(0,185,242,.8)}',
     '#V h2{font-size:clamp(34px,4.4vw,58px);font-weight:800;line-height:.98;letter-spacing:-.022em}',
@@ -74,16 +74,7 @@
     '#V .jv-more:hover{color:var(--accent)}',
     '#V .jv-more svg{transition:transform .2s}',
     '#V .jv-more:hover svg{transform:translateX(3px)}',
-    '#V .jv-more--foot{display:none;position:relative;z-index:1}',
-
-    /* svjetlo iz fotografije: aktivna vijest smanjena na par desetina piksela (prosječne boje) i razvučena iza kadra;
-       meki prelaz gore i dole (maska), mijenja se sa slajdom. Kad kadar odlazi gore, blago se povuče i potamni (.jv-dim, skripta) */
-    '#V .jv-car{position:relative}',
-    '#V .jv-glow{--gu:clamp(90px,10vw,160px);--gd:calc(var(--gap) / 2);position:absolute;left:calc(var(--g) * -1);right:calc(var(--g) * -1);top:calc(var(--gu) * -1);bottom:calc(var(--gd) * -1);pointer-events:none;',
-    '--ms:.45;--mx:linear-gradient(90deg,rgba(0,0,0,var(--ms)),#000 calc(var(--g) * 3),#000 calc(100% - var(--g) * 3),rgba(0,0,0,var(--ms)));-webkit-mask-image:var(--m),var(--mx);mask-image:var(--m),var(--mx);-webkit-mask-composite:source-in;mask-composite:intersect;--m:linear-gradient(180deg,transparent,rgba(0,0,0,.3) calc(var(--gu) * .55),#000 var(--gu),#000 calc(100% - var(--gd)),rgba(0,0,0,.3) calc(100% - var(--gd) * .45),transparent)}',
-    '#V .jv-glow canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 1.2s ease;filter:saturate(1.3)}',
-    '#V .jv-glow canvas.is-on{opacity:.62}',
-    '#V .jv-dim{position:absolute;inset:0;z-index:7;border-radius:inherit;pointer-events:none;background:#050A15;opacity:0}',
+    '#V .jv-more--foot{display:none}',
 
     /* scena slajdera */
     '#V .jv-stage{position:relative;height:clamp(500px,44vw,780px);border-radius:26px;overflow:hidden;background:var(--surface);isolation:isolate;touch-action:pan-y;',
@@ -168,7 +159,6 @@
     '#V .jv-head{margin-bottom:24px}',
     '#V .jv-head .jv-more{display:none}',
     '#V .jv-more--foot{display:inline-flex;margin-top:22px}',
-    '#V .jv-glow{--gu:96px;--gd:calc(var(--gap) / 2 + 66px);--ms:.25}',
     '#V .jv-stage{height:min(640px,max(560px,150vw));border-radius:24px}',
     '#V .jv-slide{align-items:flex-end}',
     '#V .jv-slide img,#V .jv-tint{bottom:auto;height:54%}',
@@ -329,7 +319,6 @@
     if (!items.length) return note(T.empty);
     var n = items.length;
     frame('<div class="jv-car' + (n < 2 ? ' is-one' : '') + '" role="region" aria-roledescription="' + T.rd + '" aria-label="' + esc(T.carousel) + '" style="--n:' + n + ';--dur:' + DUR + 'ms">' +
-      '<div class="jv-glow" aria-hidden="true"><canvas width="96" height="54"></canvas><canvas width="96" height="54"></canvas></div>' +
       '<div class="jv-stage" aria-live="off">' + items.map(function (it, k) { return slide(it, k, n); }).join('') +
       '<div class="jv-bar"><div class="jv-steps">' + items.map(function (it, k) {
         return '<button type="button" class="jv-step' + (k ? '' : ' is-on') + '" aria-label="' + esc(T.go + ' ' + (k + 1) + ': ' + clip(it.title, 80)) + '"' + (k ? '' : ' aria-current="true"') + '>' + pad(k) + '<i><s></s></i></button>';
@@ -337,65 +326,9 @@
       '<div class="jv-nav"><button type="button" class="jv-btn jv-btn--sm jv-pause" aria-label="' + esc(T.pause) + '">' + ICON.pause + '</button>' +
       '<button type="button" class="jv-btn jv-prev" aria-label="' + esc(T.prev) + '">' + ICON.prev + '</button>' +
       '<button type="button" class="jv-btn jv-next" aria-label="' + esc(T.next) + '">' + ICON.next + '</button></div></div>' +
-      '<i class="jv-dim" aria-hidden="true"></i></div></div><a class="jv-more jv-more--foot" href="' + esc(ALL) + '">' + esc(T.all) + ' ' + ICON.arrow + '</a>');
+      '</div></div><a class="jv-more jv-more--foot" href="' + esc(ALL) + '">' + esc(T.all) + ' ' + ICON.arrow + '</a>');
     reveal();
-    glow(0);
-    var car = root.querySelector('.jv-car');
-    sink(car.querySelector('.jv-stage'), car.querySelector('.jv-dim'));
     if (n > 1) slider(n);
-  }
-
-  /* ---------- svjetlo iz fotografije i dubina pri skrolu ---------- */
-  // fotografija → nekoliko desetina piksela (korak po korak, da i Safari uzme prosjek, a ne poneki piksel)
-  function shrink(src, sx, sy, sw, sh, tw, th) {
-    var cur = src;
-    while (sw / 4 > tw) {
-      var c = d.createElement('canvas'); c.width = Math.ceil(sw / 4); c.height = Math.ceil(sh / 4);
-      c.getContext('2d').drawImage(cur, sx, sy, sw, sh, 0, 0, c.width, c.height);
-      cur = c; sx = sy = 0; sw = c.width; sh = c.height;
-    }
-    var o = d.createElement('canvas'); o.width = tw; o.height = th;
-    o.getContext('2d').drawImage(cur, sx, sy, sw, sh, 0, 0, tw, th);
-    return o;
-  }
-  // svjetlo prati aktivnu vijest: crta se u skriveno platno pa se platna pretope (kao slajdovi)
-  var glowSide = 0;
-  function glow(k) {
-    var cvs = root.querySelectorAll('.jv-glow canvas'), img = root.querySelectorAll('.jv-slide img')[k];
-    if (cvs.length < 2 || !img) return;
-    if (!img.complete || !img.naturalWidth) { img.addEventListener('load', function () { if (root.querySelectorAll('.jv-slide')[k].classList.contains('is-on')) glow(k); }, { once: true }); return; }
-    try {
-      var W = img.naturalWidth, H = img.naturalHeight, a = (img.clientWidth || 16) / (img.clientHeight || 9);
-      // isti isječak kao object-fit:cover u kadru
-      var sw = W, sh = H; if (W / H > a) sw = H * a; else sh = W / a;
-      var cv = cvs[glowSide ^ 1], x = cv.getContext('2d'), wd = cv.width, ht = cv.height;
-      x.globalCompositeOperation = 'source-over'; x.clearRect(0, 0, wd, ht);
-      x.drawImage(shrink(img, (W - sw) / 2, (H - sh) / 2, sw, sh, 12, 7), 0, 0, wd, ht);
-      // ista obrada kao kadar: plavi noćni ton i tamna strana sa tekstom (lijevo)
-      x.globalCompositeOperation = 'soft-light'; x.fillStyle = '#1E4F96'; x.fillRect(0, 0, wd, ht);
-      x.globalCompositeOperation = 'source-over';
-      var g = x.createLinearGradient(0, 0, wd, 0); g.addColorStop(0, 'rgba(10,17,32,.72)'); g.addColorStop(.5, 'rgba(10,17,32,.2)'); g.addColorStop(1, 'rgba(10,17,32,0)');
-      x.fillStyle = g; x.fillRect(0, 0, wd, ht);
-      glowSide ^= 1; cvs[glowSide].classList.add('is-on'); cvs[glowSide ^ 1].classList.remove('is-on');
-    } catch (e) {}
-  }
-  // dok kadar odlazi gore (a blok ispod ulazi), blago se smanji i potamni — osjećaj slojeva; bez toga za smanjeno kretanje
-  function sink(el, dim) {
-    if (!el || !dim || !('scale' in el.style) || (w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
-    var raf = 0, last = -1;
-    function upd() {
-      raf = 0;
-      var vh = w.innerHeight || d.documentElement.clientHeight, b = el.getBoundingClientRect().bottom;
-      var p = Math.min(1, Math.max(0, (vh * .85 - b) / (vh * .85))); p *= p;
-      if (Math.abs(p - last) < .003) return; last = p;
-      el.style.scale = p ? String(1 - (d.documentElement.clientWidth < 761 ? .02 : .035) * p) : '';
-      el.style.willChange = p > 0 && p < 1 ? 'scale' : '';
-      dim.style.opacity = p ? (.5 * p).toFixed(3) : '';
-    }
-    function req() { if (!raf) raf = w.requestAnimationFrame(upd); }
-    w.addEventListener('scroll', req, { passive: true });
-    w.addEventListener('resize', req);
-    req();
   }
 
   /* ---------- slajder ---------- */
@@ -431,7 +364,6 @@
       });
       void car.offsetWidth;   // linija napretka kreće ispočetka
       steps[cur].classList.add('is-on');
-      glow(cur);
       var nx = slides[(cur + 1) % n].querySelector('img'); if (nx) nx.loading = 'eager';   // sljedeća slika se učita unaprijed
       left = DUR; schedule();
     }

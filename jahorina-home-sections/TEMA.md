@@ -38,10 +38,12 @@ da sve sekcije izgledaju kao jedna cjelina.
 - **Fotografije:** uvijek ista blaga noćna obrada: `filter: saturate(.7) brightness(.84) contrast(1.06)` + plavi sloj `mix-blend-mode: soft-light` (`.jv-tint`), plus tamni prelaz ispod teksta.
 - **Oznaka (chip):** mala pilula, velika slova. Koristiti samo kad nosi informaciju (npr. samo „Obavještenje“).
 - **Telefon:** fotografija gore, tekst ispod na tamnoj površini, sporedni link ispod sadržaja.
-- **Prelaz između blokova (bez linija, talasa i dijagonala):**
-  - *Svjetlo iz fotografije* (`.jv-glow`, `.jr-glow`): fotografija kadra smanjena na 12×7 px (prosječne boje, korak po korak preko canvas-a) pa razvučena iza kadra, sa istom obradom kao kadar; meka maska gore/dole i slabije uz bočne ivice. Vijesti: plavo, mijenja se sa slajdom. Ratrak: toplo, i kad su vijesti odmah iznad (`.jr--join`) prelije se u razmak ispod njih → plavo prelazi u zlatno.
-  - *Dubina pri skrolu* (`sink()`): dok kadar odlazi gore, blago se smanji (`scale` do .965, telefon .98) i potamni (`.jv-dim`/`.jr-dim` do .5); bez toga za smanjeno kretanje.
-  - Ne koristiti: „lijepljenje“ kartica (sticky), jer su blokovi u odvojenim Elementor kontejnerima; jak parallax; CSS `animation-timeline` (Betheme/Elementor omotači sa overflow:hidden ga mogu zaglaviti).
+- **Prelaz između blokova (bez linija, talasa i dijagonala):** čist tamni razmak (`--gap`), a događaj nosi blok koji ulazi:
+  - *Dolazak kadra* (`rise()` u `ratrak.js`): dok kadar ulazi u ekran, iz `scale(.94)` (telefon .97, `transform-origin` gore) „sjedne“ na svoje mjesto.
+  - *Meko svjetlo iz fotografije* samo tamo gdje je izvor svjetla (ratrak: zalazak iznad sunca, `.jr-bloom` radijalni prelaz) + tanak topli odsjaj na gornjoj ivici kadra; pali se tek kad se kadar pojavi i jača sa dolaskom.
+  - **Odbijeno (korisnik: „nije premium“):** svjetlo preko cijele širine iza kadrova (izgleda kao obojene trake: plava ispod vijesti, žuta iznad ratraka, smeđa ispod), tamnjenje kadra koji odlazi (izgleda prljavo). Ne koristiti ni „lijepljenje“ kartica (sticky), jak parallax, CSS `animation-timeline` (omotači sa overflow:hidden ga mogu zaglaviti).
+- **Pločice sa podacima:** sve iste (bez pune cyan pločice koja liči na dugme; istaknuta vrijednost samo cyan brojem i tankim cyan rubom); ikona 18px, vrijednost Archivo 700 17px, natpis 9px; natpis ima mjesto za dva reda da sve vrijednosti stoje na istoj liniji.
+- **Dugmad u paru:** ista visina (46px), isti font (Barlow 600 14px), ikona uvijek ispred teksta; bijelo glavno + stakleno sporedno sa tankim rubom; na telefonu oba preko cijele širine.
 
 ## Kako se sekcija gradi i ugrađuje
 1. Folder `jahorina-home-sections/<sekcija>/` sa jednim JS fajlom (kao `vijesti/vijesti.js`): sam ubacuje CSS, crta HTML i čita podatke.
