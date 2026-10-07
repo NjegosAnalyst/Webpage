@@ -43,7 +43,7 @@
     '--accent:#00B9F2;--accent-2:#2CCBF8;--warn:#FFB547;--raised:6px 6px 16px rgba(0,0,0,.55),-5px -5px 14px rgba(60,84,128,.14);--inset:inset 4px 4px 10px rgba(0,0,0,.5),inset -4px -4px 9px rgba(70,96,142,.13);',
     "--fd:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;--fb:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;",
     'display:block;background:var(--bg);color:var(--text);font:400 16px/1.55 var(--fb);text-align:left;color-scheme:dark}',
-    '#V.jv--boxed{border-radius:28px;overflow:hidden}',
+    '#V.jv--boxed{border-radius:28px;overflow:hidden;margin-bottom:clamp(14px,1.6vw,22px)}',
     '#V *,#V *::before,#V *::after{box-sizing:border-box}',
     '#V a{color:inherit;text-decoration:none;box-shadow:none}',
     '#V h2,#V h3{font-family:var(--fd)!important;color:var(--text)!important;-webkit-text-fill-color:currentColor!important;opacity:1!important;background:none!important;text-shadow:none!important;margin:0;padding:0;text-transform:none!important;text-wrap:balance;border:0}',
@@ -145,7 +145,7 @@
     '#V .jv-stage.jv-sk{box-shadow:var(--inset)}',
     '#V .jv-sk::before{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);animation:jvShine 1.6s infinite}',
     '@keyframes jvShine{to{transform:translateX(100%)}}',
-    '#V .jv-note{border-radius:28px;padding:clamp(28px,4vw,44px);background:var(--surface);box-shadow:var(--inset);color:var(--text-2);display:flex;flex-direction:column;align-items:flex-start;gap:16px}',
+    '#V .jv-note{border-radius:28px;padding:clamp(28px,4vw,44px) calc(clamp(28px,4vw,44px) + var(--in));background:var(--surface);box-shadow:var(--inset);color:var(--text-2);display:flex;flex-direction:column;align-items:flex-start;gap:16px}',
     '#V .jv-note small{color:var(--text-3);font-size:12px}',
 
     /* tihi ulazak kad sekcija dođe u vidno polje */
@@ -415,7 +415,7 @@
     if (r.width < cw - 1) {
       st.setProperty('width', cw + 'px', 'important');
       st.setProperty('max-width', 'none', 'important');
-      st.setProperty('margin-left', -r.left + 'px', 'important');
+      st.setProperty('margin-left', -root.getBoundingClientRect().left + 'px', 'important');
     }
     // ako se ipak ne može raširiti — tamni blok dobija zaobljene ivice
     root.classList.toggle('jv--boxed', root.getBoundingClientRect().width < cw - 24);

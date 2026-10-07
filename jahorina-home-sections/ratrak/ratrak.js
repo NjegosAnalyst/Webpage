@@ -299,7 +299,7 @@
     if (r.width < cw - 1) {
       st.setProperty('width', cw + 'px', 'important');
       st.setProperty('max-width', 'none', 'important');
-      st.setProperty('margin-left', -r.left + 'px', 'important');
+      st.setProperty('margin-left', -root.getBoundingClientRect().left + 'px', 'important');
     }
     root.classList.toggle('jr--boxed', root.getBoundingClientRect().width < cw - 24);
   }
