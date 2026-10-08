@@ -7,7 +7,6 @@
        meki prelaz iz zamućenog u oštro, bez zumiranja;
      · dolje desno TIHI IZBOR PROIZVODA direktno na fotografiji (bez ploče): tri tanke linije sa brojem i nazivom,
        aktivna se puni cyan bojom; klik bira proizvod, "Sve fotografije" otvara galeriju preko cijelog ekrana;
-     · gore desno OZNAKA LOKACIJE: mala šema gondole Poljice (kosa sajla, dvije stanice, kabina jednom pređe sajlom);
      · lijevo veliki naslov, uvod, vrste poklona, dugmad kao u vijestima (cyan sa strelicom u udubljenom krugu + pilula).
    Smjena svakih 6,5 s; staje na mišu, fokusu, van ekrana i uz smanjeno kretanje; na telefonu i prevlačenje prstom.
 
@@ -17,7 +16,7 @@
      (iz teksta stranice, a ako ih tamo nema, slike priložene uz stranicu). qTranslate oznake [:SH]…[:en]…[:] se razdvajaju.
      Dok WordPress ne odgovori (ili ako ne odgovori), stoji ugrađeni tekst — isti kao na stranici 8. 10. 2026,
      pa se ništa ne mijenja pred očima. Prijavljeni admin vidi tehnički razlog ako čitanje ne uspije.
-   Vrste poklona i stanice gondole su sažetak teksta stranice i stoje u kodu.
+   Vrste poklona su sažetak teksta stranice i stoje u kodu.
 
    Ugradnja: Elementor HTML widget sa <div id="jsu-suvenirnica"></div> + ovaj fajl sa jsDelivr-a.
    Podešavanja na <div id="jsu-suvenirnica"> (sva su neobavezna):
@@ -47,7 +46,6 @@
     kicker: 'Souvenir shop', head: 'Take a piece of Jahorina with you!',
     lead: 'Visit our souvenir shops at the lower and upper stations of the Poljice gondola and find gifts that warm the heart.',
     tags: ['Local artisans', 'Natural cosmetics', 'Warm textiles', 'For pets'],
-    gondola: 'Poljice gondola', stations: 'Lower and upper station',
     caps: ['Neck gaiters', 'Magnets', 'Accessories'], capsS: ['Textiles', 'Magnets', 'Accessories'],
     alts: ['Neck gaiter with the Olympic Centre Jahorina logo on a shop shelf', 'Jahorina magnets: ski boots, trees, gondola cabins, snowboards', 'Display case with Jahorina neck gaiters, gloves, goggles and ski socks'],
     pick: 'From the shop', show: 'Show', page: 'More about the shop', pageS: 'Learn more', map: 'How to find us', mapS: 'Directions',
@@ -57,7 +55,6 @@
     kicker: 'Suvenirnica', head: 'Ponesite dio Jahorine sa sobom!',
     lead: 'Svratite u naše suvenirnice na polaznoj i izlaznoj stanici gondole Poljice i pronađite poklone koji griju srce.',
     tags: ['Lokalni majstori', 'Prirodna kozmetika', 'Topli tekstil', 'Za ljubimce'],
-    gondola: 'Gondola Poljice', stations: 'Polazna i izlazna stanica',
     caps: ['Marame i tekstil', 'Magneti', 'Zimski dodaci'], capsS: ['Tekstil', 'Magneti', 'Zimski dodaci'],
     alts: ['Marama za vrat sa logom Olimpijskog centra Jahorina na polici suvenirnice', 'Magneti Jahorina: ski cipele, jelke, kabine gondole, daske', 'Vitrina sa maramama Jahorina, rukavicama, naočarama i ski čarapama'],
     pick: 'Iz ponude', show: 'Prikaži', page: 'Više o suvenirnici', pageS: 'Saznaj više', map: 'Kako do nas', mapS: 'Kako do nas',
@@ -157,16 +154,6 @@
     /* tehnički razlog kad WordPress ne odgovori — vidi ga samo prijavljeni admin */
     '#R .jsu-why{display:block;margin-top:14px;font:500 11.5px/1.4 var(--fb);color:#FFB547}',
 
-    /* oznaka lokacije gore desno: šema gondole Poljice (kosa sajla, dvije stanice, kabina) */
-    '#R .jsu-where{position:absolute;z-index:3;top:clamp(22px,2.4vw,34px);right:var(--side);display:flex;align-items:center;gap:13px;padding:10px 18px 10px 12px;border-radius:40px;',
-    'background:var(--nm-surface);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(255,255,255,.07)}',
-    '#R .jsu-where svg{width:52px;height:26px;overflow:visible}',
-    '#R .jsu-where .jsu-cable{stroke:rgba(255,255,255,.5);stroke-width:1.1}',
-    '#R .jsu-where .jsu-stn{fill:#00B9F2;filter:drop-shadow(0 0 3px rgba(0,185,242,.9))}',
-    '#R .jsu-where .jsu-cab{color:#fff;transform:translate(30px,-10px);transform-box:view-box}',
-    '#R .jsu-where b{display:block;font:600 9.5px/1 var(--fd);letter-spacing:2.2px;text-transform:uppercase;color:var(--text-3);margin-bottom:5px}',
-    '#R .jsu-where span{display:block;font:600 13px/1.1 var(--fb);color:#fff;white-space:nowrap}',
-
     /* izbor proizvoda dolje desno: tiha navigacija direktno na fotografiji (bez ploče, korisnik: "da se uklopi u pozadinu,
        a da se opet može kliknuti"): tanka linija, broj i naziv; aktivni je bijel i linija mu se puni cyan bojom; na kraju tihi link galerije */
     '#R .jsu-pick{position:absolute;z-index:3;right:var(--side);bottom:clamp(28px,3vw,46px);display:flex;align-items:flex-end;gap:24px}',
@@ -202,15 +189,11 @@
     '#R.jsu-anim.jsu-on .jsu-up{opacity:1;transform:none;transition:opacity .7s ease var(--d,0s),transform .95s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
     '#R.jsu-anim .jsu-kicker::before{transform:scaleX(0);transform-origin:left center}',
     '#R.jsu-anim.jsu-on .jsu-kicker::before{transform:none;transition:transform .6s cubic-bezier(.2,.7,.2,1) .5s}',
-    /* izbor i oznaka uplove (izbor odozdo, oznaka odozgo), linije izbora se iscrtaju jedna za drugom, kabina pređe sajlom */
+    /* izbor uplovi odozdo, linije izbora se iscrtaju jedna za drugom */
     '#R.jsu-anim .jsu-pick{opacity:0;transform:translateY(16px)}',
     '#R.jsu-anim.jsu-on .jsu-pick{opacity:1;transform:none;transition:opacity .8s ease .8s,transform 1s cubic-bezier(.2,.7,.2,1) .8s}',
     '#R.jsu-anim .jsu-seg i{transform:scaleX(0);transform-origin:left center}',
     '#R.jsu-anim.jsu-on .jsu-seg i{transform:none;transition:transform .8s cubic-bezier(.2,.7,.2,1) var(--d,0s),background .3s}',
-    '#R.jsu-anim .jsu-where{opacity:0;transform:translateY(-14px)}',
-    '#R.jsu-anim.jsu-on .jsu-where{opacity:1;transform:none;transition:opacity .7s ease .5s,transform .9s cubic-bezier(.2,.7,.2,1) .5s}',
-    '#R.jsu-anim .jsu-where .jsu-cab{transform:translate(8px,-1px)}',
-    '#R.jsu-anim.jsu-on .jsu-where .jsu-cab{transform:translate(30px,-10px);transition:transform 1.8s cubic-bezier(.45,0,.25,1) 1.1s}',
 
     /* manji laptop: šira kolona teksta */
     /* manji laptop: link galerije ide iznad linija, da izbor ne priđe dugmadi */
@@ -222,7 +205,6 @@
     '#R .jsu-bg--r{left:0;width:100%;-webkit-mask-image:none;mask-image:none}',
     '#R .jsu-scrim{background:linear-gradient(0deg,rgba(6,11,22,.5) 0%,rgba(6,11,22,0) 40%),linear-gradient(180deg,rgba(6,18,42,.36) 0%,rgba(6,18,42,0) 26%)}',
     '#R .jsu-light{background:radial-gradient(60% 60% at 60% 0%,rgba(255,222,184,.14),transparent 75%)}',
-    '#R .jsu-where{left:clamp(16px,4vw,28px);right:auto;top:clamp(16px,4vw,28px)}',
     '#R .jsu-pick{position:relative;right:auto;bottom:auto;flex-direction:row;align-items:flex-end;justify-content:space-between;gap:20px;margin:-88px clamp(22px,6vw,56px) 0}',
     '#R .jsu-segs{width:min(480px,72%)}',
     '#R .jsu-gal{height:34px;padding:0 0 0 20px!important;border-left:1px solid rgba(255,255,255,.16)!important}',
@@ -233,9 +215,6 @@
     '#R .jsu-frame{border-radius:24px}',
     '#R .jsu-bgs{height:min(108vw,480px)}',
     '#R .jsu-bg[data-k]{object-position:var(--mpos)!important}',
-    '#R .jsu-where{padding:8px 14px 8px 10px;gap:10px}',
-    '#R .jsu-where svg{width:42px;height:22px}',
-    '#R .jsu-where span{font-size:12px}',
     '#R .jsu-pick{position:static;margin:-74px 22px 0}',
     '#R .jsu-segs{flex:1;width:auto;gap:12px}',
     '#R .jsu-seg .jsu-n{font-size:12.5px}',
@@ -301,10 +280,6 @@
     pin: svg('<path d="M12 21 C12 21 5.5 14.6 5.5 10 A6.5 6.5 0 0 1 18.5 10 C18.5 14.6 12 21 12 21 Z" ' + S + '/><circle cx="12" cy="10" r="2.3" ' + S + '/>'),
     gallery: svg('<rect x="3.5" y="5.5" width="17" height="13" rx="2.5" ' + S + '/><path d="M3.8 15.5 L8.5 11 L12 14.2 L14.6 12 L20.2 16.8" ' + S + '/><circle cx="15.5" cy="9" r="1.4" ' + S + '/>'),
     arrow: svg('<path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
-    // šema gondole: kosa sajla od polazne (dolje lijevo) do izlazne stanice (gore desno), kabina visi na sajli
-    gondola: svg('<line class="jsu-cable" x1="4" y1="22" x2="48" y2="4"/><circle class="jsu-stn" cx="4" cy="22" r="2.6"/><circle class="jsu-stn" cx="48" cy="4" r="2.6"/>' +
-      '<g class="jsu-cab"><g transform="translate(0 20.4)"><path d="M0 0 V2.6" stroke="currentColor" stroke-width="1"/><rect x="-3.6" y="2.6" width="7.2" height="7" rx="1.8" stroke="currentColor" stroke-width="1" fill="#0E1828"/>' +
-      '<rect x="-2.4" y="3.9" width="4.8" height="2.2" rx=".6" fill="rgba(0,185,242,.85)"/></g></g>', '0 0 52 26'),
     prev: svg('<path d="M19 12 H5 M11 6 L5 12 L11 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
     next: svg('<path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
     close: svg('<path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>')
@@ -375,7 +350,6 @@
   root.innerHTML =
     '<section class="jsu-wrap" aria-labelledby="jsu-h"><div class="jsu-frame">' +
       '<div class="jsu-bgs">' + SHOW.map(bg).join('') + '<span class="jsu-tint"></span><span class="jsu-scrim"></span><span class="jsu-light"></span></div>' +
-      '<div class="jsu-where" role="img" aria-label="' + esc(T.gondola + ': ' + T.stations) + '">' + ICON.gondola + '<div><b>' + esc(T.gondola) + '</b><span>' + esc(T.stations) + '</span></div></div>' +
       '<nav class="jsu-pick" aria-label="' + esc(T.pick) + '"><div class="jsu-segs">' + SHOW.map(seg).join('') + '</div>' +
         '<button type="button" class="jsu-gal" aria-haspopup="dialog">' + ICON.gallery + '<b>' + esc(T.gal) + '</b> <i></i></button></nav>' +
       '<div class="jsu-body">' +
