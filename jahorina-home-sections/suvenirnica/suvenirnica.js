@@ -1,17 +1,19 @@
 /* =====================================================================
-   JAHORINA — SUVENIRNICA (početna, ispod ratraka) · v2 "vitrina"
+   JAHORINA — SUVENIRNICA (početna, ispod ratraka) · v3 "izlog"
    Tema hero-a, vijesti i ratraka (noćni ton, jedan cyan akcenat, Archivo/Barlow, kadar preko cijele širine,
-   naslov sa iscrtanim krajem, neumorfni detalji), ali sa svojim detaljima — korisnik: "tema da, detalji različiti":
-     · desno je VITRINA: fotografije proizvoda kao kartice različite visine na staklenoj polici (odsjaj u staklu,
-       toplo svjetlo vitrine odozgo); klik na karticu otvara galeriju preko cijelog ekrana;
-     · lijevo nadnaslov, naslov, uvod, vrste poklona i ŠEMA GONDOLE POLJICE: kosa sajla od polazne do izlazne
-       stanice, suvenirnica na obje, kabina jednom prođe sajlom;
-     · dugmad kao u vijestima (cyan sa strelicom u udubljenom krugu + tamna pilula);
-     · ulazak: kartice se jedna za drugom spuste na policu, tekst se podiže odozdo.
+   naslov sa iscrtanim krajem, staklo i blagi neumorfizam), sa svojim detaljima (korisnik: "tema da, detalji
+   različiti"; v2 bez fotografije u pozadini: "prejednostavno, nije premium, fotografiju koristi i u pozadini"):
+     · fotografija proizvoda je pozadina cijelog kadra, a proizvodi se SMJENJUJU (marama → magneti → vitrina):
+       meki prelaz iz zamućenog u oštro, bez zumiranja;
+     · dolje desno STAKLENI IZBOR PROIZVODA: tri sličice, brojač 01 / 03, natpis, tanka cyan linija napretka;
+       klik bira proizvod, "Sve fotografije" otvara galeriju preko cijelog ekrana;
+     · gore desno OZNAKA LOKACIJE: mala šema gondole Poljice (kosa sajla, dvije stanice, kabina jednom pređe sajlom);
+     · lijevo veliki naslov, uvod, vrste poklona, dugmad kao u vijestima (cyan sa strelicom u udubljenom krugu + pilula).
+   Smjena svakih 6,5 s; staje na mišu, fokusu, van ekrana i uz smanjeno kretanje; na telefonu i prevlačenje prstom.
 
    SADRŽAJ JE IZ WORDPRESSA: stranica "Suvenirnica" (slug suvenirnica) preko REST API-ja.
      nadnaslov = naslov stranice, naslov = prvi naslov (h1–h4) u tekstu stranice, uvod = prva rečenica prvog pasusa,
-     dugme "Više o suvenirnici" = link stranice, galerija = 3 fotografije iz vitrine + sve fotografije sa stranice
+     dugme "Više o suvenirnici" = link stranice, galerija = 3 fotografije izloga + sve fotografije sa stranice
      (iz teksta stranice, a ako ih tamo nema, slike priložene uz stranicu). qTranslate oznake [:SH]…[:en]…[:] se razdvajaju.
      Dok WordPress ne odgovori (ili ako ne odgovori), stoji ugrađeni tekst — isti kao na stranici 8. 10. 2026,
      pa se ništa ne mijenja pred očima. Prijavljeni admin vidi tehnički razlog ako čitanje ne uspije.
@@ -21,7 +23,7 @@
    Podešavanja na <div id="jsu-suvenirnica"> (sva su neobavezna):
      data-stranica="suvenirnica"   (slug WordPress stranice)
      data-mapa="https://…"          (dugme "Kako do nas"; podrazumijevano Google Maps: Gondola Poljice, Jahorina)
-     data-galerija="url1, url2, …"  (zamjena za fotografije vitrine iz slike/ pored ovog fajla; prve tri idu na policu)
+     data-galerija="url1, url2, …"  (zamjena za fotografije izloga iz slike/ pored ovog fajla; prve tri se smjenjuju)
    GA: klik na dugmad → suvenirnica_klik (cilj: stranica | mapa), otvaranje galerije → suvenirnica_galerija.
    ===================================================================== */
 (function (w, d) {
@@ -38,44 +40,49 @@
   var PAGE = O + (EN ? '/en/' : '/') + SLUG + '/';
   var MAPA = /^https?:\/\//i.test(opt('mapa', '')) ? opt('mapa', '')
     : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Gondola Poljice, Jahorina');
+  var DUR = 6500;   // smjena proizvoda (ms)
 
   // ugrađeni tekst = tekst sa stranice Suvenirnica (8. 10. 2026); EN je prevod. WordPress ga zamijeni kad odgovori.
   var T = EN ? {
     kicker: 'Souvenir shop', head: 'Take a piece of Jahorina with you!',
     lead: 'Visit our souvenir shops at the lower and upper stations of the Poljice gondola and find gifts that warm the heart.',
     tags: ['Local artisans', 'Natural cosmetics', 'Warm textiles', 'For pets'],
-    gondola: 'Poljice gondola', up: 'Upper station', down: 'Lower station', both: 'Souvenir shop at both stations',
+    gondola: 'Poljice gondola', stations: 'Lower and upper station',
     caps: ['Neck gaiters and textiles', 'Magnets', 'Winter accessories'],
-    page: 'More about the shop', pageS: 'Learn more', map: 'How to find us', mapS: 'Directions',
+    alts: ['Neck gaiter with the Olympic Centre Jahorina logo on a shop shelf', 'Jahorina magnets: ski boots, trees, gondola cabins, snowboards', 'Display case with Jahorina neck gaiters, gloves, goggles and ski socks'],
+    pick: 'From the shop', show: 'Show', page: 'More about the shop', pageS: 'Learn more', map: 'How to find us', mapS: 'Directions',
     gal: 'All photos', galLabel: 'Souvenir shop gallery', galOpen: 'Open gallery', photo: 'Photo', close: 'Close', prev: 'Previous photo', next: 'Next photo',
     why: 'WordPress', whyTail: 'showing built-in text'
   } : {
     kicker: 'Suvenirnica', head: 'Ponesite dio Jahorine sa sobom!',
     lead: 'Svratite u naše suvenirnice na polaznoj i izlaznoj stanici gondole Poljice i pronađite poklone koji griju srce.',
     tags: ['Lokalni majstori', 'Prirodna kozmetika', 'Topli tekstil', 'Za ljubimce'],
-    gondola: 'Gondola Poljice', up: 'Izlazna stanica', down: 'Polazna stanica', both: 'Suvenirnica na obje stanice',
+    gondola: 'Gondola Poljice', stations: 'Polazna i izlazna stanica',
     caps: ['Marame i tekstil', 'Magneti', 'Zimski dodaci'],
-    page: 'Više o suvenirnici', pageS: 'Saznaj više', map: 'Kako do nas', mapS: 'Kako do nas',
+    alts: ['Marama za vrat sa logom Olimpijskog centra Jahorina na polici suvenirnice', 'Magneti Jahorina: ski cipele, jelke, kabine gondole, daske', 'Vitrina sa maramama Jahorina, rukavicama, naočarama i ski čarapama'],
+    pick: 'Iz ponude', show: 'Prikaži', page: 'Više o suvenirnici', pageS: 'Saznaj više', map: 'Kako do nas', mapS: 'Kako do nas',
     gal: 'Sve fotografije', galLabel: 'Galerija: suvenirnica', galOpen: 'Otvori galeriju', photo: 'Fotografija', close: 'Zatvori', prev: 'Prethodna fotografija', next: 'Sljedeća fotografija',
     why: 'WordPress', whyTail: 'prikazan je ugrađeni tekst'
   };
 
-  // vitrina: 3 fotografije ovog bloka (prve tri idu na policu); fotografije sa WordPress stranice se dodaju u galeriju kad stignu
+  // izlog: 3 fotografije ovog bloka (smjenjuju se u pozadini); fotografije sa WordPress stranice se dodaju u galeriju kad stignu
   var FIXED = !!root.getAttribute('data-galerija');
   var BASE = FIXED
     ? opt('galerija', '').split(',').map(function (x) { x = x.trim(); return x && { full: x }; }).filter(Boolean)
     : ['suvenirnica-glavna', 'suvenirnica-1', 'suvenirnica-2'].map(function (f, k) {
-        return { full: HERE + 'slike/' + f + '.webp', cap: T.caps[k], pos: ['58% 50%', '50% 40%', '46% 50%'][k] };
+        var u = HERE + 'slike/' + f;
+        return { full: u + '.webp', md: u + '-1000.webp', mini: u + '-mini.webp', cap: T.caps[k], alt: T.alts[k],
+          w: k === 1 ? 1334 : 2000, pos: ['60% 50%', '50% 32%', '50% 56%'][k], r: !k, mpos: ['56% 50%', '50% 30%', '50% 50%'][k], lum: [.78, .8, .62][k] };
       });
+  var SHOW = BASE.slice(0, 3), N = SHOW.length;
   var GAL = BASE.slice();
 
   /* ---------- izgled (sve je pod #jsu-suvenirnica; tokeni iz hero-a, vijesti i ratraka) ---------- */
   var CSS = [
     '#R{--bg:#0A1120;--line:rgba(255,255,255,.1);--text:#fff;--text-2:rgba(255,255,255,.8);--text-3:rgba(255,255,255,.56);--accent:#00B9F2;--accent-2:#2CCBF8;',
-    '--surface:#111A2C;--nm-surface:rgba(20,30,49,.72);--nm-dark:rgba(0,0,0,.42);--nm-light:rgba(78,104,150,.16);',
+    '--surface:#111A2C;--nm-surface:rgba(16,25,42,.62);--nm-dark:rgba(0,0,0,.42);--nm-light:rgba(78,104,150,.16);',
     '--nm-raised:4px 4px 10px var(--nm-dark),-3px -3px 9px var(--nm-light),inset 1px 1px 0 rgba(255,255,255,.05);',
-    '--nm-inset:inset 3px 3px 8px rgba(0,0,0,.42),inset -3px -3px 7px rgba(78,104,150,.14);',
-    "--fd:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;--fb:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;",
+    "--fd:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;--fb:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;--dur:" + DUR + 'ms;',
     'display:block;background:var(--bg);color:var(--text);font:400 16px/1.55 var(--fb);text-align:left;color-scheme:dark}',
     '#R.jsu--boxed{border-radius:28px;overflow:hidden}',
     '#R *,#R *::before,#R *::after{box-sizing:border-box}',
@@ -88,149 +95,168 @@
     '#R svg{display:block;flex-shrink:0}',
     '#R svg[fill="none"],#R svg[fill="none"] *:not([fill]){fill:none!important}',
     '#R svg [stroke="currentColor"]{stroke:currentColor!important}',
-    '#R a:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
+    '#R a:focus-visible,#R button:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
     /* puna širina ekrana, isti rub kao kadar hero-a; --in poravnava sadržaj sa mrežom 1240px; --gap = ritam između blokova.
        Kad je ratrak odmah iznad (.jsu--join), on već daje cijeli razmak ispod sebe, pa ovdje ostaje samo rub (kao ratrak ispod vijesti) */
     '#R .jsu-wrap{--g:clamp(14px,1.6vw,22px);--gap:clamp(56px,7vw,100px);--pt:calc(var(--gap) / 2 + var(--g));--in:max(0px,calc((100vw - 1240px) / 2 + 48px - var(--g)));position:relative;padding:var(--pt) var(--g) var(--gap)}',
     '#R.jsu--join .jsu-wrap{--pt:var(--g)}',
     '#R{container-type:inline-size}',
     '@supports (width:1cqw){#R .jsu-wrap{--in:max(0px,calc((100cqw - 1240px) / 2 + 48px - var(--g)))}}',
+    '#R .jsu-wrap{--side:max(clamp(26px,3.2vw,52px),var(--in))}',
 
-    /* kadar (isti okvir kao hero, vijesti i ratrak); unutra tekst lijevo, vitrina desno, na tamnoj pozadini sa svjetlom vitrine */
-    '#R .jsu-frame{position:relative;transform-origin:50% 0;display:grid;grid-template-columns:minmax(0,41fr) minmax(0,59fr);align-items:center;column-gap:clamp(28px,3.4vw,64px);',
-    'padding:clamp(48px,5vw,80px) max(clamp(28px,4vw,60px),var(--in)) clamp(48px,5vw,80px) max(clamp(28px,4.4vw,68px),var(--in));border-radius:26px;overflow:hidden;isolation:isolate;',
-    'background:radial-gradient(70% 90% at 0% 100%,rgba(30,79,150,.16),transparent 60%),linear-gradient(180deg,#0F182B 0%,#0B1324 100%);',
+    /* kadar kao u hero-u; fotografija je pozadina cijelog kadra */
+    '#R .jsu-frame{position:relative;transform-origin:50% 0;display:flex;align-items:center;min-height:clamp(620px,48vw,860px);border-radius:26px;overflow:hidden;isolation:isolate;background:#0B1324;',
     'box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22)}',
     '#R .jsu-frame::after{content:"";position:absolute;inset:0;z-index:6;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.08)}',
-    /* toplo svjetlo vitrine odozgo (jedini topli ton) i tanak odsjaj na gornjoj ivici iznad njega */
-    '#R .jsu-light{position:absolute;z-index:-1;pointer-events:none;top:0;right:0;width:66%;height:100%;',
-    'background:radial-gradient(56% 62% at 50% 0%,rgba(255,226,190,.12),rgba(255,206,160,.04) 55%,transparent 80%)}',
-    '#R .jsu-frame::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;z-index:6;pointer-events:none;background:linear-gradient(90deg,transparent 46%,rgba(255,226,190,.42) 67%,transparent 88%)}',
+    /* tanak topli odsjaj na gornjoj ivici, iznad svjetla izloga */
+    '#R .jsu-frame::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;z-index:6;pointer-events:none;background:linear-gradient(90deg,transparent 44%,rgba(255,226,190,.4) 70%,transparent 94%)}',
+    '#R .jsu-bgs{position:absolute;inset:0;z-index:-1;overflow:hidden;touch-action:pan-y}',
+    /* fotografije izloga: aktivna je oštra, ostale čekaju zamućene i tamne (prelaz bez zumiranja) */
+    '#R .jsu-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;filter:saturate(.86) brightness(.5) contrast(1.1) blur(14px);',
+    'transition:opacity 1.2s ease,filter 1.5s cubic-bezier(.2,.7,.2,1)}',
+    /* proizvod (marama) stoji desno od teksta: fotografija počinje od 16% i lijevom ivicom se utapa u tamu */
+    '#R .jsu-bg--r{left:16%;width:84%;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 24%);mask-image:linear-gradient(90deg,transparent 0,#000 24%)}',
+    '#R .jsu-bg.is-on{opacity:1;filter:saturate(.88) brightness(var(--lum,.78)) contrast(1.1) blur(0px)}',
+    /* noćna obrada: plavi sloj, tamni prelaz slijeva (ispod teksta) i odozdo (ispod izbora), vinjeta, toplo svjetlo izloga gore desno */
+    '#R .jsu-tint{position:absolute;inset:0;pointer-events:none;background:linear-gradient(160deg,#1E4F96 0%,#0E2A55 100%);mix-blend-mode:soft-light;opacity:.5}',
+    '#R .jsu-scrim{position:absolute;inset:0;pointer-events:none;',
+    'background:linear-gradient(90deg,rgba(6,11,22,.9) 0,rgba(6,11,22,.78) calc(var(--side) + 300px),rgba(6,11,22,.42) calc(var(--side) + 520px),rgba(6,11,22,.08) calc(var(--side) + 740px),rgba(6,11,22,0) calc(var(--side) + 880px)),',
+    'linear-gradient(0deg,rgba(6,11,22,.62) 0%,rgba(6,11,22,0) 34%),linear-gradient(180deg,rgba(6,18,42,.3) 0%,rgba(6,18,42,0) 20%),',
+    'radial-gradient(130% 100% at 60% 50%,transparent 58%,rgba(4,8,18,.5) 100%)}',
+    '#R .jsu-light{position:absolute;inset:0;pointer-events:none;background:radial-gradient(38% 56% at 72% 0%,rgba(255,222,184,.16),rgba(255,200,150,.05) 55%,transparent 80%)}',
 
-    /* tekst */
-    '#R .jsu-body{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;min-width:0}',
-    '#R .jsu-kicker{display:flex;align-items:center;gap:14px;font:600 11px/1 var(--fd);letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:22px}',
+    /* tekst lijevo */
+    '#R .jsu-body{position:relative;z-index:2;width:min(calc(var(--side) + 540px),56%);padding:clamp(56px,6vw,96px) 0 clamp(56px,6vw,96px) var(--side)}',
+    '#R .jsu-kicker{display:flex;align-items:center;gap:14px;font:600 11px/1 var(--fd);letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.78);margin-bottom:24px}',
     '#R .jsu-kicker::before{content:"";width:34px;height:1.5px;flex-shrink:0;background:linear-gradient(90deg,var(--accent),#fff,var(--accent));box-shadow:0 0 10px rgba(0,185,242,.8)}',
-    '#R h2{font-size:clamp(40px,4.2vw,62px);font-weight:800;line-height:.95;letter-spacing:-.02em}',
-    '#R h2.jsu-long{font-size:clamp(34px,3.4vw,50px)}',
-    '#R h2 > span{display:block}',
-    '@supports (-webkit-text-stroke:1px #fff){#R h2 > span.jsu-o{color:transparent!important;-webkit-text-fill-color:transparent!important;-webkit-text-stroke:1.5px rgba(255,255,255,.92)!important;filter:drop-shadow(0 0 8px rgba(0,185,242,.35))}}',
-    '#R .jsu-lead{margin-top:24px;font-size:clamp(15.5px,1.15vw,17px);line-height:1.62;color:var(--text-2)!important;max-width:42ch;text-wrap:pretty}',
+    '#R h2{font-size:clamp(46px,5vw,78px);font-weight:800;line-height:.93;letter-spacing:-.025em}',
+    '#R h2.jsu-long{font-size:clamp(36px,3.8vw,58px)}',
+    '#R h2 > span{display:block;filter:drop-shadow(0 6px 30px rgba(0,0,0,.45))}',
+    '@supports (-webkit-text-stroke:1px #fff){#R h2 > span.jsu-o{color:transparent!important;-webkit-text-fill-color:transparent!important;-webkit-text-stroke:1.6px rgba(255,255,255,.94)!important;',
+    'filter:drop-shadow(0 0 8px rgba(0,185,242,.35)) drop-shadow(0 6px 30px rgba(0,0,0,.45))}}',
+    '#R .jsu-lead{margin-top:26px;font-size:clamp(15.5px,1.2vw,17.5px);line-height:1.62;color:var(--text-2)!important;max-width:42ch;text-wrap:pretty}',
     /* vrste poklona (iz teksta stranice): dvije tihe kolone sa cyan tačkicama */
-    '#R .jsu-tags{display:grid;grid-template-columns:repeat(2,max-content);gap:7px 26px;margin-top:16px!important}',
-    '#R .jsu-tags li{display:flex;align-items:center;gap:9px;font:500 13.5px/1.3 var(--fb);color:var(--text-3)}',
+    '#R .jsu-tags{display:grid;grid-template-columns:repeat(2,max-content);gap:8px 28px;margin-top:20px!important}',
+    '#R .jsu-tags li{display:flex;align-items:center;gap:10px;font:500 13.5px/1.3 var(--fb);color:rgba(255,255,255,.66)}',
     '#R .jsu-tags li::before{content:""!important;width:4px;height:4px;flex:none;border-radius:50%;background:var(--accent);box-shadow:0 0 6px rgba(0,185,242,.9)}',
-
-    /* šema gondole Poljice: kosa sajla od polazne (dolje lijevo) do izlazne stanice (gore desno), suvenirnica na obje */
-    '#R .jsu-route{position:relative;width:min(100%,420px);margin-top:28px;padding:14px 18px 13px;border-radius:20px;background:var(--nm-surface);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--nm-inset)}',
-    '#R .jsu-route__row{display:flex;justify-content:space-between;align-items:center;gap:12px}',
-    '#R .jsu-route__name{font:600 9.5px/1 var(--fd);letter-spacing:2.4px;text-transform:uppercase;color:var(--text-3);white-space:nowrap}',
-    '#R .jsu-st{display:inline-flex;align-items:center;gap:6px;font:600 12.5px/1 var(--fb);color:#fff;white-space:nowrap}',
-    '#R .jsu-st svg{width:14px;height:14px;color:var(--accent)}',
-    '#R .jsu-route__note{font:500 11.5px/1.2 var(--fb);color:var(--text-3);text-align:right}',
-    '#R .jsu-track{position:relative;height:42px;margin:9px 4px 8px}',
-    '#R .jsu-track svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}',
-    '#R .jsu-track line{stroke:rgba(255,255,255,.34);stroke-width:1.2}',
-    '#R .jsu-track line + line{stroke:rgba(0,185,242,.5);stroke-width:1}',
-    '#R .jsu-dot{position:absolute;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(0,185,242,.18),0 0 10px rgba(0,185,242,.9)}',
-    '#R .jsu-dot--a{left:0;top:100%}',
-    '#R .jsu-dot--b{left:100%;top:0}',
-    /* kabina visi na sajli; stoji na 58% puta (ulazak je dovede od polazne stanice) */
-    '#R .jsu-cab{position:absolute;left:58%;top:42%;width:13px;height:17px;margin-left:-6.5px;color:rgba(255,255,255,.9)}',
-    '#R .jsu-cab svg{width:13px;height:17px}',
-
-    /* dugmad kao u vijestima: blago ispupčeno cyan dugme sa strelicom u plitkom udubljenom krugu + tamna neumorfna pilula */
-    '#R .jsu-acts{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:28px}',
-    '#R .jsu-cta{display:inline-flex;align-items:center;gap:12px;height:44px;padding:0 6px 0 20px!important;border-radius:40px;white-space:nowrap;font:600 13.5px/1 var(--fd);letter-spacing:.3px;color:#fff!important;',
+    /* dugmad kao u vijestima: blago ispupčeno cyan dugme sa strelicom u plitkom udubljenom krugu + tamna staklena pilula */
+    '#R .jsu-acts{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:34px}',
+    '#R .jsu-cta{display:inline-flex;align-items:center;gap:14px;height:46px;padding:0 6px 0 22px!important;border-radius:40px;white-space:nowrap;font:600 14px/1 var(--fd);letter-spacing:.3px;color:#fff!important;',
     'background:linear-gradient(145deg,#27C4F2 0%,#0AAEE6 60%,#03A2D9 100%);transition:transform .25s ease,box-shadow .25s ease;',
     'box-shadow:5px 5px 12px rgba(0,0,0,.42),-4px -4px 10px rgba(70,110,170,.09),0 10px 22px -16px rgba(0,185,242,.6),inset 1px 1px 0 rgba(255,255,255,.32),inset -2px -2px 5px rgba(0,70,110,.22)}',
-    '#R .jsu-cta__ico{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:rgba(0,90,130,.18);box-shadow:inset 2px 2px 4px rgba(0,55,90,.35),inset -1px -1px 3px rgba(255,255,255,.22)}',
+    '#R .jsu-cta__ico{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(0,90,130,.18);box-shadow:inset 2px 2px 4px rgba(0,55,90,.35),inset -1px -1px 3px rgba(255,255,255,.22)}',
     '#R .jsu-cta__ico svg{width:14px;height:14px;transition:transform .25s ease}',
     '#R .jsu-cta:hover{transform:translateY(-1px);box-shadow:6px 7px 14px rgba(0,0,0,.45),-4px -4px 10px rgba(70,110,170,.1),0 12px 26px -14px rgba(0,185,242,.7),inset 1px 1px 0 rgba(255,255,255,.36),inset -2px -2px 5px rgba(0,70,110,.22)}',
     '#R .jsu-cta:hover .jsu-cta__ico svg{transform:translateX(2px)}',
     '#R .jsu-cta:active{transform:none;box-shadow:inset 3px 3px 6px rgba(0,60,95,.4),inset -2px -2px 5px rgba(255,255,255,.18)}',
-    '#R .jsu-pill,#R .jsu-gal{all:unset;box-sizing:border-box!important;display:inline-flex!important;align-items:center;gap:9px;height:44px;padding:0 20px!important;margin:0!important;border:0!important;border-radius:40px!important;cursor:pointer;white-space:nowrap;',
-    'font:600 13.5px/1 var(--fd)!important;letter-spacing:.2px!important;text-transform:none!important;color:var(--text-2)!important;background:var(--surface)!important;box-shadow:6px 6px 16px rgba(0,0,0,.55),-5px -5px 14px rgba(60,84,128,.14)!important;transition:color .2s}',
-    '#R .jsu-pill svg,#R .jsu-gal svg{width:15px;height:15px;color:var(--accent)}',
-    '#R .jsu-pill:hover,#R .jsu-gal:hover{color:var(--accent)!important}',
-    '#R .jsu-pill:active,#R .jsu-gal:active{box-shadow:inset 2px 2px 5px rgba(0,0,0,.45),inset -2px -2px 5px rgba(60,84,128,.13)!important}',
-    '#R .jsu-gal:focus-visible,#R .jsu-card:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
-    '#R .jsu-gal i{font-style:normal;color:var(--text-3);font-variant-numeric:tabular-nums}',
+    '#R .jsu-pill{display:inline-flex;align-items:center;gap:9px;height:46px;padding:0 22px!important;border-radius:40px;white-space:nowrap;font:600 14px/1 var(--fd);letter-spacing:.2px;color:#fff!important;',
+    'background:var(--nm-surface);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(255,255,255,.08);transition:color .2s,box-shadow .25s}',
+    '#R .jsu-pill svg{width:16px;height:16px;color:var(--accent)}',
+    '#R .jsu-pill:hover{color:var(--accent)!important;box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(0,185,242,.4),0 0 22px rgba(0,185,242,.3)}',
     '#R .jsu-s{display:none}',
     /* tehnički razlog kad WordPress ne odgovori — vidi ga samo prijavljeni admin */
     '#R .jsu-why{display:block;margin-top:14px;font:500 11.5px/1.4 var(--fb);color:#FFB547}',
 
-    /* vitrina: kartice različite visine stoje na staklenoj polici (bez odsjaja: preslikavao bi i natpise) */
-    '#R .jsu-case{position:relative;min-width:0;display:flex;flex-direction:column}',
-    '#R .jsu-shelf{position:relative;display:grid;grid-template-columns:1fr 1.16fr 1fr;align-items:end;gap:clamp(12px,1.4vw,22px);height:clamp(340px,31vw,480px);padding:0 2%}',
-    '#R .jsu-card{all:unset;position:relative!important;box-sizing:border-box!important;display:block!important;height:var(--h,100%);min-height:0;border-radius:18px!important;overflow:hidden;cursor:zoom-in;isolation:isolate;',
-    'background:#0E1828!important;box-shadow:0 22px 40px -22px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.07)!important;transition:transform .45s cubic-bezier(.2,.7,.2,1),box-shadow .45s}',
-    '#R .jsu-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.86) brightness(.8) contrast(1.08);transition:filter .45s,transform .9s cubic-bezier(.2,.7,.2,1)}',
-    /* noćna obrada: plavi sloj + toplo svjetlo odozgo + tamni prelaz ispod natpisa */
-    '#R .jsu-card::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(160deg,#1E4F96 0%,#0E2A55 100%);mix-blend-mode:soft-light;opacity:.42}',
-    '#R .jsu-card::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(90% 50% at 50% 0%,rgba(255,220,180,.14),transparent 70%),linear-gradient(0deg,rgba(6,11,22,.72) 0%,rgba(6,11,22,0) 38%)}',
-    '#R .jsu-cap{position:absolute;left:14px;right:14px;bottom:13px;z-index:2;font:600 12.5px/1.25 var(--fd);letter-spacing:.2px;color:#fff}',
-    '#R .jsu-card:hover{transform:translateY(-6px);box-shadow:0 30px 44px -24px rgba(0,0,0,.95),0 0 0 1px rgba(255,255,255,.14)!important}',
-    '#R .jsu-card:hover img{filter:saturate(.95) brightness(.93) contrast(1.06);transform:scale(1.03)}',
-    /* staklena polica: svijetla ivica i providna ploča ispod kartica */
-    '#R .jsu-glass{position:relative;display:block;height:16px;margin:0 -1%;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,0))}',
-    '#R .jsu-glass::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(220,236,255,.38) 18%,rgba(170,228,255,.62) 50%,rgba(220,236,255,.38) 82%,transparent);box-shadow:0 0 14px rgba(0,185,242,.22)}',
-    '#R .jsu-case__foot{display:flex;justify-content:flex-end;margin-top:30px}',
+    /* oznaka lokacije gore desno: šema gondole Poljice (kosa sajla, dvije stanice, kabina) */
+    '#R .jsu-where{position:absolute;z-index:3;top:clamp(22px,2.4vw,34px);right:var(--side);display:flex;align-items:center;gap:13px;padding:10px 18px 10px 12px;border-radius:40px;',
+    'background:var(--nm-surface);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(255,255,255,.07)}',
+    '#R .jsu-where svg{width:52px;height:26px;overflow:visible}',
+    '#R .jsu-where .jsu-cable{stroke:rgba(255,255,255,.5);stroke-width:1.1}',
+    '#R .jsu-where .jsu-stn{fill:#00B9F2;filter:drop-shadow(0 0 3px rgba(0,185,242,.9))}',
+    '#R .jsu-where .jsu-cab{color:#fff;transform:translate(30px,-10px);transform-box:view-box}',
+    '#R .jsu-where b{display:block;font:600 9.5px/1 var(--fd);letter-spacing:2.2px;text-transform:uppercase;color:var(--text-3);margin-bottom:5px}',
+    '#R .jsu-where span{display:block;font:600 13px/1.1 var(--fb);color:#fff;white-space:nowrap}',
+
+    /* izbor proizvoda dolje desno: staklena ploča sa tri sličice, brojačem, natpisom i linijom napretka */
+    '#R .jsu-show{position:absolute;z-index:3;right:var(--side);bottom:clamp(22px,2.6vw,40px);width:min(392px,34%);padding:14px 14px 13px;border-radius:24px;',
+    'background:var(--nm-surface);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(255,255,255,.07)}',
+    '#R .jsu-show__head,#R .jsu-show__foot{display:flex;align-items:center;justify-content:space-between;gap:12px}',
+    '#R .jsu-show__head{padding:2px 4px 12px}',
+    '#R .jsu-show__head b{font:600 9.5px/1 var(--fd);letter-spacing:2.6px;text-transform:uppercase;color:var(--text-3)}',
+    '#R .jsu-count{font:600 12px/1 var(--fd);letter-spacing:1px;color:var(--text-3);font-variant-numeric:tabular-nums}',
+    '#R .jsu-count em{font-style:normal;color:#fff}',
+    '#R .jsu-thumbs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}',
+    '#R .jsu-thumb{all:unset;position:relative!important;box-sizing:border-box!important;display:block!important;aspect-ratio:4/5;border-radius:13px!important;overflow:hidden;cursor:pointer;background:#0E1828!important;',
+    'box-shadow:0 0 0 1px rgba(255,255,255,.08)!important;transition:box-shadow .3s,transform .3s}',
+    '#R .jsu-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.7) brightness(.55);transition:filter .4s}',
+    '#R .jsu-thumb:hover img{filter:saturate(.85) brightness(.8)}',
+    '#R .jsu-thumb.is-on{transform:translateY(-2px);box-shadow:0 0 0 1.5px rgba(0,185,242,.85),0 10px 22px -10px rgba(0,185,242,.55)!important}',
+    '#R .jsu-thumb.is-on img{filter:saturate(.95) brightness(.98)}',
+    /* linija napretka na dnu aktivne sličice (kao u vijestima) */
+    '#R .jsu-thumb i{position:absolute;left:8px;right:8px;bottom:7px;height:2px;border-radius:2px;background:rgba(255,255,255,.22);opacity:0;transition:opacity .3s}',
+    '#R .jsu-thumb i s{position:absolute;inset:0;border-radius:inherit;background:var(--accent);box-shadow:0 0 6px rgba(0,185,242,.9);transform:scaleX(0);transform-origin:left center}',
+    '#R.jsu-auto .jsu-thumb.is-on i{opacity:1}',
+    '#R.jsu-auto .jsu-thumb.is-on i s{animation:jsuProg var(--dur) linear forwards}',
+    '#R.jsu-hold .jsu-thumb.is-on i s{animation-play-state:paused}',
+    '@keyframes jsuProg{to{transform:none}}',
+    '#R .jsu-show__foot{padding:13px 4px 1px}',
+    '#R .jsu-cap{font:600 14px/1.2 var(--fd);color:#fff;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+    '#R .jsu-gal{all:unset;box-sizing:border-box!important;display:inline-flex!important;align-items:center;gap:7px;cursor:pointer;white-space:nowrap;font:600 12.5px/1 var(--fd)!important;letter-spacing:.2px!important;color:var(--text-2)!important;transition:color .2s}',
+    '#R .jsu-gal svg{width:15px;height:15px;color:var(--accent)}',
+    '#R .jsu-gal i{font-style:normal;color:var(--text-3);font-variant-numeric:tabular-nums}',
+    '#R .jsu-gal:hover{color:var(--accent)!important}',
 
     /* ulazak (jednom): klase jsu-anim/jsu-on dodaje skripta samo kad postoji IntersectionObserver i nije uključeno smanjeno kretanje */
     '#R.jsu-anim .jsu-frame{opacity:0;transform:translateY(28px)}',
     '#R.jsu-anim.jsu-on .jsu-frame{opacity:1;transform:none;transition:opacity .8s ease,transform 1s cubic-bezier(.2,.7,.2,1)}',
+    /* fotografija izađe iz mraka i izoštri se; svjetlo izloga se upali */
+    '#R.jsu-anim:not(.jsu-on) .jsu-bg.is-on{opacity:0;filter:saturate(.86) brightness(.3) contrast(1.1) blur(14px)}',
+    '#R.jsu-anim .jsu-light{opacity:0}',
+    '#R.jsu-anim.jsu-on .jsu-light{opacity:1;transition:opacity 1.8s ease .6s}',
     /* tekst se podiže odozdo, red po red */
-    '#R.jsu-anim .jsu-up{opacity:0;transform:translateY(18px)}',
-    '#R.jsu-anim.jsu-on .jsu-up{opacity:1;transform:none;transition:opacity .7s ease var(--d,0s),transform .9s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
+    '#R.jsu-anim .jsu-up{opacity:0;transform:translateY(20px)}',
+    '#R.jsu-anim.jsu-on .jsu-up{opacity:1;transform:none;transition:opacity .7s ease var(--d,0s),transform .95s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
     '#R.jsu-anim .jsu-kicker::before{transform:scaleX(0);transform-origin:left center}',
     '#R.jsu-anim.jsu-on .jsu-kicker::before{transform:none;transition:transform .6s cubic-bezier(.2,.7,.2,1) .5s}',
-    /* polica se upali od sredine, kartice se jedna za drugom spuste na nju, svjetlo vitrine se upali */
-    '#R.jsu-anim .jsu-glass{transform:scaleX(0);opacity:0}',
-    '#R.jsu-anim.jsu-on .jsu-glass{transform:none;opacity:1;transition:transform .9s cubic-bezier(.2,.7,.2,1) .3s,opacity .6s ease .3s}',
-    '#R.jsu-anim .jsu-card{opacity:0;transform:translateY(-34px)}',
-    '#R.jsu-anim.jsu-on .jsu-card{opacity:1;transform:none;transition:opacity .6s ease var(--d,0s),transform .9s cubic-bezier(.25,1.25,.4,1) var(--d,0s),box-shadow .45s}',
-    '#R.jsu-anim.jsu-on .jsu-card:hover{transform:translateY(-6px);transition:transform .45s cubic-bezier(.2,.7,.2,1),box-shadow .45s}',
-    '#R.jsu-anim .jsu-light{opacity:0}',
-    '#R.jsu-anim.jsu-on .jsu-light{opacity:1;transition:opacity 1.6s ease .5s}',
-    /* sajla se iscrta od polazne stanice, kabina je pređe do svog mjesta */
-    '#R.jsu-anim .jsu-track svg{clip-path:inset(0 100% 0 0)}',
-    '#R.jsu-anim.jsu-on .jsu-track svg{clip-path:inset(0 0 0 0);transition:clip-path .8s cubic-bezier(.4,0,.2,1) .85s}',
-    '#R.jsu-anim .jsu-cab{left:4%;top:96%;opacity:0}',
-    '#R.jsu-anim.jsu-on .jsu-cab{left:58%;top:42%;opacity:1;transition:left 1.9s cubic-bezier(.45,0,.25,1) 1.1s,top 1.9s cubic-bezier(.45,0,.25,1) 1.1s,opacity .4s ease 1.1s}',
+    /* izbor i oznaka uplove (izbor odozdo, oznaka odozgo), sličice se upale jedna za drugom, kabina pređe sajlom */
+    '#R.jsu-anim .jsu-show{opacity:0;transform:translateY(26px)}',
+    '#R.jsu-anim.jsu-on .jsu-show{opacity:1;transform:none;transition:opacity .8s ease .7s,transform 1s cubic-bezier(.2,.7,.2,1) .7s}',
+    '#R.jsu-anim .jsu-thumb{opacity:0}',
+    '#R.jsu-anim.jsu-on .jsu-thumb{opacity:1;transition:opacity .6s ease var(--d,0s),box-shadow .3s,transform .3s}',
+    '#R.jsu-anim .jsu-where{opacity:0;transform:translateY(-14px)}',
+    '#R.jsu-anim.jsu-on .jsu-where{opacity:1;transform:none;transition:opacity .7s ease .5s,transform .9s cubic-bezier(.2,.7,.2,1) .5s}',
+    '#R.jsu-anim .jsu-where .jsu-cab{transform:translate(8px,-1px)}',
+    '#R.jsu-anim.jsu-on .jsu-where .jsu-cab{transform:translate(30px,-10px);transition:transform 1.8s cubic-bezier(.45,0,.25,1) 1.1s}',
 
-    '@media (max-width:1060px){#R .jsu-frame{grid-template-columns:minmax(0,46fr) minmax(0,54fr)}#R .jsu-shelf{height:clamp(320px,36vw,400px)}}',
-    /* tablet: tekst gore, vitrina ispod preko cijele širine */
+    /* manji laptop: šira kolona teksta */
+    '@media (max-width:1180px){#R .jsu-show{width:min(360px,36%)}}',
+    /* tablet i telefon: fotografija gore (utapa se nadolje), izbor proizvoda preko njene donje ivice, tekst ispod */
     '@media (max-width:980px){',
-    '#R .jsu-frame{grid-template-columns:1fr;row-gap:44px;padding:clamp(40px,6vw,60px) clamp(22px,6vw,56px)}',
-    '#R .jsu-light{width:100%;background:radial-gradient(64% 34% at 50% 50%,rgba(255,226,190,.1),rgba(255,206,160,.035) 55%,transparent 80%)}',
-    '#R .jsu-frame::before{background:linear-gradient(90deg,transparent 20%,rgba(255,226,190,.3) 50%,transparent 80%)}',
-    '#R h2{font-size:clamp(40px,7.4vw,62px)}',
-    '#R .jsu-lead{max-width:56ch}',
-    '#R .jsu-shelf{height:min(56vw,460px)}}',
-    /* telefon: vitrina postaje red kartica koji se prevlači prstom (druga kartica proviruje), bez odsjaja */
+    '#R .jsu-frame{flex-direction:column;align-items:stretch;min-height:0}',
+    '#R .jsu-bgs{position:relative;inset:auto;height:min(64vw,560px);-webkit-mask-image:linear-gradient(180deg,#000 62%,transparent 100%);mask-image:linear-gradient(180deg,#000 62%,transparent 100%)}',
+    '#R .jsu-bg--r{left:0;width:100%;-webkit-mask-image:none;mask-image:none}',
+    '#R .jsu-scrim{background:linear-gradient(0deg,rgba(6,11,22,.5) 0%,rgba(6,11,22,0) 40%),linear-gradient(180deg,rgba(6,18,42,.36) 0%,rgba(6,18,42,0) 26%)}',
+    '#R .jsu-light{background:radial-gradient(60% 60% at 60% 0%,rgba(255,222,184,.14),transparent 75%)}',
+    '#R .jsu-where{left:clamp(16px,4vw,28px);right:auto;top:clamp(16px,4vw,28px)}',
+    '#R .jsu-show{position:relative;right:auto;bottom:auto;width:min(440px,calc(100% - 32px));margin:-120px clamp(16px,5vw,48px) 0 auto}',
+    '#R .jsu-body{width:auto;padding:clamp(30px,5vw,48px) clamp(22px,6vw,56px) clamp(32px,5vw,52px)}',
+    '#R h2{font-size:clamp(42px,7.6vw,66px)}',
+    '#R .jsu-lead{max-width:56ch}}',
     '@media (max-width:760px){',
-    '#R .jsu-frame{border-radius:24px;padding:34px 22px 30px;row-gap:30px}',
+    '#R .jsu-frame{border-radius:24px}',
+    '#R .jsu-bgs{height:min(108vw,480px)}',
+    '#R .jsu-bg[data-k]{object-position:var(--mpos)!important}',
+    '#R .jsu-where{padding:8px 14px 8px 10px;gap:10px}',
+    '#R .jsu-where svg{width:42px;height:22px}',
+    '#R .jsu-where span{font-size:12px}',
+    '#R .jsu-show{width:auto;margin:-84px 14px 0;padding:11px 11px 10px;border-radius:20px}',
+    '#R .jsu-thumbs{gap:7px}',
+    '#R .jsu-thumb{aspect-ratio:1/1;border-radius:11px!important}',
+    '#R .jsu-body{padding:26px 22px 30px}',
     '#R .jsu-kicker{letter-spacing:2.6px;font-size:10px;gap:10px;margin-bottom:16px}',
     '#R .jsu-kicker::before{width:22px}',
-    '#R h2{font-size:clamp(38px,11.4vw,52px)}',
+    '#R h2{font-size:clamp(38px,11.6vw,54px)}',
     '#R h2.jsu-long{font-size:clamp(30px,8.6vw,42px)}',
     '#R .jsu-lead{margin-top:18px}',
-    '#R .jsu-route{width:100%;margin-top:24px}',
-    '#R .jsu-acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:24px;width:100%}',
+    '#R .jsu-tags{column-gap:18px}',
+    '#R .jsu-tags li{font-size:13px}',
+    '#R .jsu-acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:26px;width:100%}',
     '#R .jsu-cta{height:42px;padding:0 5px 0 16px!important;font-size:13px;justify-content:space-between}',
     '#R .jsu-cta__ico{width:30px;height:30px}',
-    '#R .jsu-pill{height:42px!important;justify-content:center;font-size:13px!important}',
+    '#R .jsu-pill{height:42px;justify-content:center;font-size:13px;padding:0 14px!important}',
     '#R .jsu-l{display:none}',
-    '#R .jsu-s{display:inline}',
-    '#R .jsu-body{order:1}',
-    '#R .jsu-case{order:2;margin:0 -22px}',
-    '#R .jsu-shelf{display:flex;height:auto;gap:12px;padding:0 22px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 22px;scrollbar-width:none;-webkit-overflow-scrolling:touch}',
-    '#R .jsu-shelf::-webkit-scrollbar{display:none}',
-    '#R .jsu-card{flex:0 0 68%;height:min(96vw,380px)!important;scroll-snap-align:start}',
-    '#R .jsu-glass{margin:0 22px}',
-    '#R .jsu-case__foot{justify-content:flex-start;margin:18px 22px 0}}',
-    '@media (max-width:400px){#R .jsu-route{padding:13px 14px 12px}#R .jsu-route__name{letter-spacing:1.6px}#R .jsu-route__note{display:none}#R .jsu-tags{column-gap:18px}#R .jsu-tags li{font-size:13px}}',
+    '#R .jsu-s{display:inline}}',
+    '@media (max-width:380px){#R .jsu-cap{font-size:13px}#R .jsu-gal b{display:none}}',
     '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}',
 
     /* galerija preko cijelog ekrana (ista kao u ratraku) */
@@ -273,11 +299,12 @@
   var S = 'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
   var ICON = {
     pin: svg('<path d="M12 21 C12 21 5.5 14.6 5.5 10 A6.5 6.5 0 0 1 18.5 10 C18.5 14.6 12 21 12 21 Z" ' + S + '/><circle cx="12" cy="10" r="2.3" ' + S + '/>'),
-    bag: svg('<path d="M5.5 8.5 H18.5 L17.6 19.4 A1.8 1.8 0 0 1 15.8 21 H8.2 A1.8 1.8 0 0 1 6.4 19.4 Z" ' + S + '/><path d="M9 10.5 V7 A3 3 0 0 1 15 7 V10.5" ' + S + '/>'),
     gallery: svg('<rect x="3.5" y="5.5" width="17" height="13" rx="2.5" ' + S + '/><path d="M3.8 15.5 L8.5 11 L12 14.2 L14.6 12 L20.2 16.8" ' + S + '/><circle cx="15.5" cy="9" r="1.4" ' + S + '/>'),
     arrow: svg('<path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
-    // kabina gondole: vješalica, tijelo i osvijetljen prozor
-    cab: svg('<path d="M6.5 0.5 V4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="1" y="4" width="11" height="12" rx="3" stroke="currentColor" stroke-width="1.3" fill="#0E1828"/><rect x="2.8" y="6" width="7.4" height="3.6" rx="1" fill="rgba(0,185,242,.75)"/>', '0 0 13 17'),
+    // šema gondole: kosa sajla od polazne (dolje lijevo) do izlazne stanice (gore desno), kabina visi na sajli
+    gondola: svg('<line class="jsu-cable" x1="4" y1="22" x2="48" y2="4"/><circle class="jsu-stn" cx="4" cy="22" r="2.6"/><circle class="jsu-stn" cx="48" cy="4" r="2.6"/>' +
+      '<g class="jsu-cab"><g transform="translate(0 20.4)"><path d="M0 0 V2.6" stroke="currentColor" stroke-width="1"/><rect x="-3.6" y="2.6" width="7.2" height="7" rx="1.8" stroke="currentColor" stroke-width="1" fill="#0E1828"/>' +
+      '<rect x="-2.4" y="3.9" width="4.8" height="2.2" rx=".6" fill="rgba(0,185,242,.85)"/></g></g>', '0 0 52 26'),
     prev: svg('<path d="M19 12 H5 M11 6 L5 12 L11 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
     next: svg('<path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
     close: svg('<path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>')
@@ -292,6 +319,7 @@
     return (i > n * .6 ? s.slice(0, i) : s).replace(/[\s,;:.–—-]+$/, '') + '…';
   }
   function abs(u) { try { return new URL(u, O + '/').href; } catch (e) { return u; } }
+  function pad(k) { return (k < 9 ? '0' : '') + (k + 1); }
   // qTranslate-XT: "[:SH]tekst[:en]text[:]" → samo jezik ove stranice (isto kao u vijestima)
   function pickLang(s) {
     s = s || '';
@@ -323,8 +351,8 @@
       }
       lines = [rest.slice(0, k).join(' '), rest.slice(k).join(' ')];
     } else if (rest.length) lines = [rest.join(' ')];
-    return lines.map(function (l, i) { return '<span class="jsu-up" style="--d:' + (.34 + i * .1).toFixed(2) + 's">' + esc(l) + '</span>'; }).join('') +
-      '<span class="jsu-o jsu-up" style="--d:' + (.34 + lines.length * .1).toFixed(2) + 's">' + esc(o) + '</span>';
+    return lines.map(function (l, i) { return '<span class="jsu-up" style="--d:' + (.36 + i * .1).toFixed(2) + 's">' + esc(l) + '</span>'; }).join('') +
+      '<span class="jsu-o jsu-up" style="--d:' + (.36 + lines.length * .1).toFixed(2) + 's">' + esc(o) + '</span>';
   }
   // uvod: prva rečenica pasusa (i druga, ako je prva vrlo kratka)
   function leadOf(p) {
@@ -334,38 +362,38 @@
   }
 
   /* ---------- crtanje ---------- */
-  var H = ['82%', '100%', '88%'];   // visine kartica na polici (srednja najviša)
-  function card(g, k) {
-    return '<button type="button" class="jsu-card" data-k="' + k + '" style="--h:' + H[k] + ';--d:' + (.45 + k * .14).toFixed(2) + 's" aria-haspopup="dialog" aria-label="' +
-      esc(T.galOpen + (g.cap ? ': ' + g.cap : '')) + '"><img src="' + esc(g.full) + '" alt="" decoding="async" loading="lazy"' + (g.pos ? ' style="object-position:' + g.pos + '"' : '') + '>' +
-      (g.cap ? '<span class="jsu-cap">' + esc(g.cap) + '</span>' : '') + '</button>';
+  function bg(g, k) {
+    var set = g.md ? ' srcset="' + esc(g.md) + ' 1000w, ' + esc(g.full) + ' ' + (g.w || 2000) + 'w" sizes="100vw"' : '';
+    return '<img class="jsu-bg' + (g.r ? ' jsu-bg--r' : '') + (k ? '' : ' is-on') + '" data-k="' + k + '" src="' + esc(g.full) + '"' + set + ' alt="' + esc(g.alt || '') + '"' +
+      (k ? ' aria-hidden="true"' : '') + ' style="' + (g.pos ? 'object-position:' + g.pos + ';' : '') + (g.mpos ? '--mpos:' + g.mpos + ';' : '') + (g.lum ? '--lum:' + g.lum : '') + '" decoding="async" loading="lazy">';
+  }
+  function thumb(g, k) {
+    return '<button type="button" class="jsu-thumb' + (k ? '' : ' is-on') + '" data-k="' + k + '" style="--d:' + (1 + k * .12).toFixed(2) + 's" aria-label="' + esc(T.show + ': ' + (g.cap || T.photo + ' ' + (k + 1))) + '"' +
+      ' aria-pressed="' + (k ? 'false' : 'true') + '"><img src="' + esc(g.mini || g.full) + '" alt="" decoding="async" loading="lazy"><i><s></s></i></button>';
   }
   root.innerHTML =
-    '<section class="jsu-wrap" aria-labelledby="jsu-h"><div class="jsu-frame"><span class="jsu-light" aria-hidden="true"></span>' +
+    '<section class="jsu-wrap" aria-labelledby="jsu-h"><div class="jsu-frame">' +
+      '<div class="jsu-bgs">' + SHOW.map(bg).join('') + '<span class="jsu-tint"></span><span class="jsu-scrim"></span><span class="jsu-light"></span></div>' +
+      '<div class="jsu-where" role="img" aria-label="' + esc(T.gondola + ': ' + T.stations) + '">' + ICON.gondola + '<div><b>' + esc(T.gondola) + '</b><span>' + esc(T.stations) + '</span></div></div>' +
+      '<div class="jsu-show" role="group" aria-label="' + esc(T.pick) + '">' +
+        '<div class="jsu-show__head"><b>' + esc(T.pick) + '</b><span class="jsu-count" aria-hidden="true"><em>01</em> / ' + pad(N - 1) + '</span></div>' +
+        '<div class="jsu-thumbs">' + SHOW.map(thumb).join('') + '</div>' +
+        '<div class="jsu-show__foot"><span class="jsu-cap" aria-live="polite">' + esc(SHOW[0] && SHOW[0].cap || '') + '</span>' +
+          '<button type="button" class="jsu-gal" aria-haspopup="dialog">' + ICON.gallery + '<b>' + esc(T.gal) + '</b> <i></i></button></div>' +
+      '</div>' +
       '<div class="jsu-body">' +
-        '<div class="jsu-kicker jsu-up" style="--d:.25s">' + esc(T.kicker) + '</div>' +
+        '<div class="jsu-kicker jsu-up" style="--d:.26s">' + esc(T.kicker) + '</div>' +
         '<h2 id="jsu-h">' + titleHTML(T.head) + '</h2>' +
-        '<p class="jsu-lead jsu-up" style="--d:.7s">' + esc(T.lead) + '</p>' +
-        '<ul class="jsu-tags jsu-up" style="--d:.8s">' + T.tags.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' +
-        '<div class="jsu-route jsu-up" style="--d:.9s" role="img" aria-label="' + esc(T.gondola + ': ' + T.both + ' (' + T.down + ', ' + T.up + ')') + '">' +
-          '<div class="jsu-route__row"><span class="jsu-route__name">' + esc(T.gondola) + '</span><span class="jsu-st">' + ICON.bag + esc(T.up) + '</span></div>' +
-          '<div class="jsu-track"><svg viewBox="0 0 100 42" preserveAspectRatio="none"><line x1="0" y1="42" x2="100" y2="0" vector-effect="non-scaling-stroke"/>' +
-            '<line x1="0" y1="42" x2="100" y2="0" vector-effect="non-scaling-stroke" transform="translate(0 3)"/></svg>' +
-            '<i class="jsu-dot jsu-dot--a"></i><i class="jsu-dot jsu-dot--b"></i><span class="jsu-cab">' + ICON.cab + '</span></div>' +
-          '<div class="jsu-route__row"><span class="jsu-st">' + ICON.bag + esc(T.down) + '</span><span class="jsu-route__note">' + esc(T.both) + '</span></div>' +
-        '</div>' +
-        '<div class="jsu-acts jsu-up" style="--d:1s">' +
+        '<p class="jsu-lead jsu-up" style="--d:.72s">' + esc(T.lead) + '</p>' +
+        '<ul class="jsu-tags jsu-up" style="--d:.82s">' + T.tags.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' +
+        '<div class="jsu-acts jsu-up" style="--d:.94s">' +
           '<a class="jsu-cta" href="' + esc(PAGE) + '" data-jsu="stranica">' + lbl(T.page, T.pageS) + '<b class="jsu-cta__ico">' + ICON.arrow + '</b></a>' +
           '<a class="jsu-pill" href="' + esc(MAPA) + '" target="_blank" rel="noopener" data-jsu="mapa">' + ICON.pin + lbl(T.map, T.mapS) + '</a>' +
         '</div>' +
       '</div>' +
-      '<div class="jsu-case">' +
-        '<div class="jsu-shelf">' + GAL.slice(0, 3).map(card).join('') + '</div>' +
-        '<i class="jsu-glass" aria-hidden="true"></i>' +
-        '<div class="jsu-case__foot"><button type="button" class="jsu-gal" aria-haspopup="dialog">' + ICON.gallery + esc(T.gal) + ' <i></i></button></div>' +
-      '</div>' +
     '</div></section>';
   function q(s) { return root.querySelector(s); }
+  function qa(s) { return [].slice.call(root.querySelectorAll(s)); }
   function galCount() {
     var b = q('.jsu-gal');
     b.querySelector('i').textContent = GAL.length;
@@ -437,6 +465,67 @@
   }
   rise();
 
+  /* ---------- izlog: smjena proizvoda u pozadini ---------- */
+  var reduced = w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var AUTO = N > 1 && !reduced && 'IntersectionObserver' in w;
+  var cur = 0, timer = 0, t0 = 0, left = DUR, hov = false, foc = false, vis = false, on = false;
+  function hold() { return hov || foc || !vis || !on || d.hidden; }
+  function stop() {
+    if (timer) { clearTimeout(timer); timer = 0; left = Math.max(0, left - (Date.now() - t0)); }
+    root.classList.add('jsu-hold');
+  }
+  function go() {
+    if (!AUTO || timer) return;
+    if (hold()) { root.classList.add('jsu-hold'); return; }
+    root.classList.remove('jsu-hold');
+    t0 = Date.now(); timer = setTimeout(function () { timer = 0; show(cur + 1); }, left);
+  }
+  function show(k) {
+    k = (k % N + N) % N;
+    if (timer) { clearTimeout(timer); timer = 0; }
+    left = DUR;
+    if (k !== cur) {
+      cur = k;
+      qa('.jsu-bg').forEach(function (im) {
+        var a = +im.getAttribute('data-k') === k;
+        im.classList.toggle('is-on', a);
+        if (a) im.removeAttribute('aria-hidden'); else im.setAttribute('aria-hidden', 'true');
+      });
+      qa('.jsu-thumb').forEach(function (b) {
+        var a = +b.getAttribute('data-k') === k;
+        b.classList.toggle('is-on', a); b.setAttribute('aria-pressed', a ? 'true' : 'false');
+      });
+      q('.jsu-count em').textContent = pad(k);
+      q('.jsu-cap').textContent = SHOW[k].cap || '';
+    }
+    go();
+  }
+  if (AUTO) root.classList.add('jsu-auto');
+  q('.jsu-thumbs').addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.jsu-thumb');
+    if (b) show(+b.getAttribute('data-k'));
+  });
+  var fr = q('.jsu-frame');
+  fr.addEventListener('mouseenter', function () { hov = true; stop(); });
+  fr.addEventListener('mouseleave', function () { hov = false; go(); });
+  fr.addEventListener('focusin', function () { foc = true; stop(); });
+  fr.addEventListener('focusout', function (e) { if (!fr.contains(e.relatedTarget)) { foc = false; go(); } });
+  d.addEventListener('visibilitychange', function () { if (d.hidden) stop(); else go(); });
+  if ('IntersectionObserver' in w) new IntersectionObserver(function (es) {
+    vis = es[es.length - 1].isIntersecting; if (vis) go(); else stop();
+  }, { threshold: .25 }).observe(fr);
+  // prevlačenje prstom preko fotografije bira sljedeći/prethodni proizvod
+  (function () {
+    var bx = q('.jsu-bgs'), sx = 0, sy = 0, down = false;
+    bx.addEventListener('pointerdown', function (e) { if (e.pointerType === 'mouse') return; down = true; sx = e.clientX; sy = e.clientY; });
+    bx.addEventListener('pointerup', function (e) {
+      if (!down) return; down = false;
+      var dx = e.clientX - sx, dy = e.clientY - sy;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) show(cur + (dx < 0 ? 1 : -1));
+    });
+    bx.addEventListener('pointercancel', function () { down = false; });
+  })();
+
   /* ---------- Google Analytics: gtag (GA4) ili dataLayer (Google Tag Manager); bez njih ništa se ne šalje ---------- */
   function track(name, params) {
     params = params || {}; params.jezik = EN ? 'en' : 'sr';
@@ -479,7 +568,7 @@
   function lbShow(k) {
     var n = GAL.length; lbCur = (k % n + n) % n;
     lbImg.src = GAL[lbCur].full;
-    lbImg.alt = GAL[lbCur].cap || GAL[lbCur].alt || (T.photo + ' ' + (lbCur + 1) + ' / ' + n + ': ' + T.kicker);
+    lbImg.alt = GAL[lbCur].alt || GAL[lbCur].cap || (T.photo + ' ' + (lbCur + 1) + ' / ' + n + ': ' + T.kicker);
     lbCap.textContent = (lbCur + 1) + ' / ' + n;
     if (n > 1) { var pre = new Image(); pre.src = GAL[(lbCur + 1) % n].full; }
   }
@@ -511,11 +600,7 @@
     setTimeout(function () { if (!lb.classList.contains('is-open')) lb.classList.remove('is-shown'); }, 320);
     if (lbBack && lbBack.focus) lbBack.focus();
   }
-  q('.jsu-shelf').addEventListener('click', function (e) {
-    var c = e.target.closest && e.target.closest('.jsu-card');
-    if (c) lbOpen(+c.getAttribute('data-k') || 0);
-  });
-  q('.jsu-gal').addEventListener('click', function () { lbOpen(0); });
+  q('.jsu-gal').addEventListener('click', function () { lbOpen(cur); });   // galerija počinje od proizvoda koji je u izlogu
 
   /* ---------- sadržaj iz WordPressa (REST API): stranica Suvenirnica ---------- */
   // EN stranice prvo pitaju /en/wp-json (qTranslate tada vraća engleski), pa obični put, pa ?rest_route= rezerva
@@ -608,13 +693,17 @@
     why(e && e.message || 'REST');
   });
 
-  // ulazak jednom, kad kadar dođe u vidno polje
-  var still = !('IntersectionObserver' in w) || (w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  if (!still) {
+  // ulazak jednom, kad kadar dođe u vidno polje; smjena proizvoda kreće tek poslije ulaska
+  var still = !('IntersectionObserver' in w) || reduced;
+  if (still) on = true;
+  else {
     root.classList.add('jsu-anim');
     var io = new IntersectionObserver(function (es) {
-      if (es.some(function (e) { return e.isIntersecting; })) { root.classList.add('jsu-on'); io.disconnect(); }
+      if (es.some(function (e) { return e.isIntersecting; })) {
+        root.classList.add('jsu-on'); io.disconnect();
+        setTimeout(function () { on = true; go(); }, 1600);
+      }
     }, { rootMargin: '0px 0px -10% 0px' });
-    io.observe(q('.jsu-frame'));
+    io.observe(fr);
   }
 })(window, document);
