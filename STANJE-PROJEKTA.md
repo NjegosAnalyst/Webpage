@@ -96,6 +96,10 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 3. Od korisnika tražiti screenshotove kako je sekcija sada napravljena (Elementor/BeBuilder/widget, kategorija/izvor podataka).
 4. Prvo pregled (artifact samo sa sekcijom), pa doterivanje po korisnikovim komentarima, pa tek onda red za Elementor i postavljanje na HERO TEST.
 
+## Grane
+- Najnoviji rad (vijesti, ratrak, suvenirnica, ovaj fajl): grana **`claude/compassionate-albattani-u02lab`** (nastala iz `claude/sleepy-faraday-v9memd` + suvenirnica). Nova sesija čita odavde i nastavlja na svojoj grani napravljenoj od ove.
+- Redovi za Elementor pokazuju na tačan commit na jsDelivr-u, pa rade bez obzira na granu.
+
 ## Linkovi
 - Repo: https://github.com/NjegosAnalyst/Webpage (grana `main`, javan)
 - Pregled vijesti (artifact): https://claude.ai/artifact/YVHQy2joUTm9avVS1mP3Wv
