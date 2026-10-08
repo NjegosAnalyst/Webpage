@@ -132,22 +132,22 @@ async function state(p) {
       kicker: r.querySelector('.jsu-kicker').textContent, lead: r.querySelector('.jsu-lead').textContent,
       tags: [...r.querySelectorAll('.jsu-tags li')].map((e) => e.textContent).join('|'),
       where: [...r.querySelectorAll('.jsu-where b, .jsu-where span')].map((e) => e.textContent).join('|'),
-      whereFits: [...r.querySelectorAll('.jsu-where b, .jsu-where span, .jsu-cap')].every((e) => e.getClientRects().length === 1 && e.scrollWidth <= e.clientWidth + 1),
+      whereFits: [...r.querySelectorAll('.jsu-where b, .jsu-where span, .jsu-seg .jsu-n')].every((e) => e.getClientRects().length === 1 && e.scrollWidth <= e.clientWidth + 1),
       // tekst (naslov, uvod, vrste, dugmad) se ne preklapa sa oznakom lokacije ni sa izborom proizvoda
       overlap: (() => {
         const hit = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
         const txt = [...r.querySelectorAll('.jsu-kicker, h2 span, .jsu-lead, .jsu-tags li, .jsu-cta, .jsu-pill')].map((e) => e.getBoundingClientRect());
-        return [...r.querySelectorAll('.jsu-where, .jsu-show')].map((e) => e.getBoundingClientRect()).some((b) => txt.some((a) => hit(a, b)));
+        return [...r.querySelectorAll('.jsu-where, .jsu-pick')].map((e) => e.getBoundingClientRect()).some((b) => txt.some((a) => hit(a, b)));
       })(),
-      inFrame: (() => { const f = r.querySelector('.jsu-frame').getBoundingClientRect(); return [...r.querySelectorAll('.jsu-where, .jsu-show, .jsu-body')].every((e) => { const q = e.getBoundingClientRect(); return q.left >= f.left - 1 && q.right <= f.right + 1 && q.bottom <= f.bottom + 1; }); })(),
+      inFrame: (() => { const f = r.querySelector('.jsu-frame').getBoundingClientRect(); return [...r.querySelectorAll('.jsu-where, .jsu-pick, .jsu-body')].every((e) => { const q = e.getBoundingClientRect(); return q.left >= f.left - 1 && q.right <= f.right + 1 && q.bottom <= f.bottom + 1; }); })(),
       tagCols: new Set([...r.querySelectorAll('.jsu-tags li')].map((e) => Math.round(e.getBoundingClientRect().left))).size,
       bullets: getComputedStyle(r.querySelector('.jsu-tags li')).listStyleType,
       page: r.querySelector('a[data-jsu="stranica"]').getAttribute('href'),
-      gal: r.querySelector('.jsu-gal i').textContent, thumbs: r.querySelectorAll('.jsu-thumb').length,
-      active: +r.querySelector('.jsu-bg.is-on').getAttribute('data-k'), cap: r.querySelector('.jsu-cap').textContent, count: r.querySelector('.jsu-count').textContent,
-      pressed: [...r.querySelectorAll('.jsu-thumb')].map((b) => b.getAttribute('aria-pressed')).join(','),
+      gal: r.querySelector('.jsu-gal i').textContent, thumbs: r.querySelectorAll('.jsu-seg').length,
+      active: +r.querySelector('.jsu-bg.is-on').getAttribute('data-k'), cap: r.querySelector('.jsu-seg.is-on .jsu-n').innerText, count: r.querySelector('.jsu-seg.is-on em').textContent,
+      pressed: [...r.querySelectorAll('.jsu-seg')].map((b) => b.getAttribute('aria-pressed')).join(','),
       why: (r.querySelector('.jsu-why') || {}).textContent || '',
-      hidden: [...r.querySelectorAll('.jsu-up,.jsu-show,.jsu-where,.jsu-thumb,.jsu-bg.is-on')].filter((e) => getComputedStyle(e).opacity !== '1').length,
+      hidden: [...r.querySelectorAll('.jsu-up,.jsu-pick,.jsu-where,.jsu-bg.is-on')].filter((e) => getComputedStyle(e).opacity !== '1').length,
       imgOk: [...r.querySelectorAll('img')].every((i) => i.complete && i.naturalWidth > 0),
       acts: [...r.querySelectorAll('.jsu-cta,.jsu-pill')].map((a) => { const q = a.getBoundingClientRect(); return [Math.round(q.top), Math.round(q.width), Math.round(q.height)]; }),
       cab: (() => { const c = r.querySelector('.jsu-where .jsu-cab').getBoundingClientRect(), t = r.querySelector('.jsu-where svg').getBoundingClientRect(); return Math.round((c.left + c.width / 2 - t.left) / t.width * 100); })(),
@@ -168,7 +168,7 @@ async function state(p) {
   check('uvod = prva rečenica sa stranice', S.lead === P1.split('. ')[0] + '.', S.lead);
   check('vrste poklona i oznaka lokacije', S.tags === 'Lokalni majstori|Prirodna kozmetika|Topli tekstil|Za ljubimce' && S.where === 'Gondola Poljice|Polazna i izlazna stanica' && S.whereFits, [S.tags, S.where, S.whereFits]);
   check('kabina stigla na svoje mjesto na sajli', Math.abs(S.cab - 58) <= 3, S.cab);
-  check('izlog: 3 sličice, prva u pozadini, 01 / 03, natpis', S.thumbs === 3 && S.active === 0 && S.count === '01 / 03' && S.cap === 'Marame i tekstil' && S.pressed === 'true,false,false', [S.thumbs, S.active, S.count, S.cap, S.pressed]);
+  check('izlog: 3 linije izbora, prva u pozadini, 01, natpis', S.thumbs === 3 && S.active === 0 && S.count === '01' && S.cap === 'Marame i tekstil' && S.pressed === 'true,false,false', [S.thumbs, S.active, S.count, S.cap, S.pressed]);
   check('tekst se ne preklapa sa oznakom i izborom, sve u kadru', !S.overlap && S.inFrame, [S.overlap, S.inFrame]);
   check('bez tačkica liste iz teme', S.bullets === 'none', S.bullets);
   check('link = stranica iz WP-a', S.page === SITE + '/suvenirnica/', S.page);
@@ -203,10 +203,10 @@ async function state(p) {
   await p.waitForTimeout(450);
   g = await p.evaluate(() => ({ shown: getComputedStyle(document.getElementById('jsu-lb')).display, focus: document.activeElement.className, overflow: document.documentElement.style.overflow }));
   check('Esc zatvara, fokus se vraća na pilulu Galerija', g.shown === 'none' && g.focus === 'jsu-gal' && g.overflow === '', g);
-  await p.click('#jsu-suvenirnica .jsu-thumb[data-k="2"]');
+  await p.click('#jsu-suvenirnica .jsu-seg[data-k="2"]');
   await p.waitForTimeout(1600);
   S = await state(p);
-  check('klik na treću sličicu: vitrina u pozadini, 03 / 03, natpis', S.active === 2 && S.count === '03 / 03' && S.cap === 'Zimski dodaci' && S.pressed === 'false,false,true' && S.hidden === 0, [S.active, S.count, S.cap, S.pressed]);
+  check('klik na treću liniju: vitrina u pozadini, 03, natpis', S.active === 2 && S.count === '03' && S.cap === 'Zimski dodaci' && S.pressed === 'false,false,true' && S.hidden === 0, [S.active, S.count, S.cap, S.pressed]);
   await p.locator('#jsu-suvenirnica .jsu-frame').screenshot({ path: path.join(OUT, 'sr-racunar-vitrina.png') });
   await p.click('#jsu-suvenirnica .jsu-gal');
   await p.waitForTimeout(700);
@@ -223,9 +223,9 @@ async function state(p) {
   await p.mouse.move(5, 5);
   await p.waitForTimeout(7200);
   S = await state(p);
-  check('poslije ~6,5 s u izlogu je drugi proizvod (Magneti, 02 / 03)', S.active === 1 && S.cap === 'Magneti' && S.count === '02 / 03', [S.active, S.cap, S.count]);
-  const prog = await p.evaluate(() => getComputedStyle(document.querySelector('#jsu-suvenirnica .jsu-thumb.is-on i')).opacity);
-  check('linija napretka na aktivnoj sličici', prog === '1', prog);
+  check('poslije ~6,5 s u izlogu je drugi proizvod (Magneti, 02)', S.active === 1 && S.cap === 'Magneti' && S.count === '02', [S.active, S.cap, S.count]);
+  const prog = await p.evaluate(() => getComputedStyle(document.querySelector('#jsu-suvenirnica .jsu-seg.is-on i s')).animationName);
+  check('linija napretka se puni na aktivnoj liniji', prog === 'jsuProg', prog);
   await p.hover('#jsu-suvenirnica .jsu-lead');
   await p.waitForTimeout(7000);
   S = await state(p);
@@ -251,7 +251,7 @@ async function state(p) {
   ({ p, ctx, errors, rest } = await open(browser, { path: '/en/pocetna-zima/', ga: 'gtm', wp: 'qtranslate' }));
   S = await state(p);
   check('engleski naslov iz WP-a', S.lines.join('|') === 'Take a piece|of Jahorina|with you' && S.kicker === 'Souvenir shop', [S.lines, S.kicker]);
-  check('engleski uvod, vrste poklona i stanice', /^Visit our souvenir shops/.test(S.lead) && S.tags === 'Local artisans|Natural cosmetics|Warm textiles|For pets' && S.where === 'Poljice gondola|Lower and upper station' && S.whereFits && S.cap === 'Neck gaiters and textiles', [S.lead, S.tags, S.where, S.cap]);
+  check('engleski uvod, vrste poklona i stanice', /^Visit our souvenir shops/.test(S.lead) && S.tags === 'Local artisans|Natural cosmetics|Warm textiles|For pets' && S.where === 'Poljice gondola|Lower and upper station' && S.whereFits && S.cap === 'Neck gaiters', [S.lead, S.tags, S.where, S.cap]);
   check('link vodi na /en/', S.page === SITE + '/en/suvenirnica/', S.page);
   check('prvo /en/wp-json, pa /wp-json', /^\/en\/wp-json/.test(rest[0]) && /^\/wp-json/.test(rest[1]), rest);
   await p.click('#jsu-suvenirnica .jsu-cta');
@@ -305,7 +305,7 @@ async function state(p) {
     S = await state(p);
     check('bez vodoravnog skrola, preko cijele širine', S.scroll === 0 && S.left === 0 && S.width === S.cw, S);
     check('sve vidljivo poslije ulaska', S.hidden === 0, S.hidden);
-    check('oznaka lokacije i natpis u jednom redu', S.whereFits);
+    check('oznaka lokacije i nazivi proizvoda cijeli, u jednom redu', S.whereFits);
     check('vrste poklona u dvije kolone', S.tagCols === 2, S.tagCols);
     check('tekst se ne preklapa sa oznakom i izborom, sve u kadru', !S.overlap && S.inFrame, [S.overlap, S.inFrame]);
     if (name === 'telefon') check('telefon: oba dugmeta u jednom redu, 42px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 42, S.acts);
@@ -332,7 +332,7 @@ async function state(p) {
 
   console.log('Smanjeno kretanje (bez ulaska)');
   ({ p, ctx, errors } = await open(browser, { reduced: true }));
-  const rm = await p.evaluate(() => ({ cls: document.getElementById('jsu-suvenirnica').className, hidden: [...document.querySelectorAll('#jsu-suvenirnica .jsu-up,#jsu-suvenirnica .jsu-show,#jsu-suvenirnica .jsu-thumb')].filter((e) => getComputedStyle(e).opacity !== '1').length }));
+  const rm = await p.evaluate(() => ({ cls: document.getElementById('jsu-suvenirnica').className, hidden: [...document.querySelectorAll('#jsu-suvenirnica .jsu-up,#jsu-suvenirnica .jsu-pick')].filter((e) => getComputedStyle(e).opacity !== '1').length }));
   check('odmah vidljivo, bez klasa za ulazak', !/jsu-anim/.test(rm.cls) && rm.hidden === 0, rm);
   await ctx.close();
 

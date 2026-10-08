@@ -5,8 +5,8 @@
    različiti"; v2 bez fotografije u pozadini: "prejednostavno, nije premium, fotografiju koristi i u pozadini"):
      · fotografija proizvoda je pozadina cijelog kadra, a proizvodi se SMJENJUJU (marama → magneti → vitrina):
        meki prelaz iz zamućenog u oštro, bez zumiranja;
-     · dolje desno STAKLENI IZBOR PROIZVODA: tri sličice, brojač 01 / 03, natpis, tanka cyan linija napretka;
-       klik bira proizvod, "Sve fotografije" otvara galeriju preko cijelog ekrana;
+     · dolje desno TIHI IZBOR PROIZVODA direktno na fotografiji (bez ploče): tri tanke linije sa brojem i nazivom,
+       aktivna se puni cyan bojom; klik bira proizvod, "Sve fotografije" otvara galeriju preko cijelog ekrana;
      · gore desno OZNAKA LOKACIJE: mala šema gondole Poljice (kosa sajla, dvije stanice, kabina jednom pređe sajlom);
      · lijevo veliki naslov, uvod, vrste poklona, dugmad kao u vijestima (cyan sa strelicom u udubljenom krugu + pilula).
    Smjena svakih 6,5 s; staje na mišu, fokusu, van ekrana i uz smanjeno kretanje; na telefonu i prevlačenje prstom.
@@ -48,7 +48,7 @@
     lead: 'Visit our souvenir shops at the lower and upper stations of the Poljice gondola and find gifts that warm the heart.',
     tags: ['Local artisans', 'Natural cosmetics', 'Warm textiles', 'For pets'],
     gondola: 'Poljice gondola', stations: 'Lower and upper station',
-    caps: ['Neck gaiters and textiles', 'Magnets', 'Winter accessories'],
+    caps: ['Neck gaiters', 'Magnets', 'Accessories'], capsS: ['Textiles', 'Magnets', 'Accessories'],
     alts: ['Neck gaiter with the Olympic Centre Jahorina logo on a shop shelf', 'Jahorina magnets: ski boots, trees, gondola cabins, snowboards', 'Display case with Jahorina neck gaiters, gloves, goggles and ski socks'],
     pick: 'From the shop', show: 'Show', page: 'More about the shop', pageS: 'Learn more', map: 'How to find us', mapS: 'Directions',
     gal: 'All photos', galLabel: 'Souvenir shop gallery', galOpen: 'Open gallery', photo: 'Photo', close: 'Close', prev: 'Previous photo', next: 'Next photo',
@@ -58,7 +58,7 @@
     lead: 'Svratite u naše suvenirnice na polaznoj i izlaznoj stanici gondole Poljice i pronađite poklone koji griju srce.',
     tags: ['Lokalni majstori', 'Prirodna kozmetika', 'Topli tekstil', 'Za ljubimce'],
     gondola: 'Gondola Poljice', stations: 'Polazna i izlazna stanica',
-    caps: ['Marame i tekstil', 'Magneti', 'Zimski dodaci'],
+    caps: ['Marame i tekstil', 'Magneti', 'Zimski dodaci'], capsS: ['Tekstil', 'Magneti', 'Zimski dodaci'],
     alts: ['Marama za vrat sa logom Olimpijskog centra Jahorina na polici suvenirnice', 'Magneti Jahorina: ski cipele, jelke, kabine gondole, daske', 'Vitrina sa maramama Jahorina, rukavicama, naočarama i ski čarapama'],
     pick: 'Iz ponude', show: 'Prikaži', page: 'Više o suvenirnici', pageS: 'Saznaj više', map: 'Kako do nas', mapS: 'Kako do nas',
     gal: 'Sve fotografije', galLabel: 'Galerija: suvenirnica', galOpen: 'Otvori galeriju', photo: 'Fotografija', close: 'Zatvori', prev: 'Prethodna fotografija', next: 'Sljedeća fotografija',
@@ -71,7 +71,7 @@
     ? opt('galerija', '').split(',').map(function (x) { x = x.trim(); return x && { full: x }; }).filter(Boolean)
     : ['suvenirnica-glavna', 'suvenirnica-1', 'suvenirnica-2'].map(function (f, k) {
         var u = HERE + 'slike/' + f;
-        return { full: u + '.webp', md: u + '-1000.webp', mini: u + '-mini.webp', cap: T.caps[k], alt: T.alts[k],
+        return { full: u + '.webp', md: u + '-1000.webp', cap: T.caps[k], capS: T.capsS[k], alt: T.alts[k],
           w: k === 1 ? 1334 : 2000, pos: ['60% 50%', '50% 32%', '50% 56%'][k], r: !k, mpos: ['56% 50%', '50% 30%', '50% 50%'][k], lum: [.78, .8, .62][k] };
       });
   var SHOW = BASE.slice(0, 3), N = SHOW.length;
@@ -167,32 +167,26 @@
     '#R .jsu-where b{display:block;font:600 9.5px/1 var(--fd);letter-spacing:2.2px;text-transform:uppercase;color:var(--text-3);margin-bottom:5px}',
     '#R .jsu-where span{display:block;font:600 13px/1.1 var(--fb);color:#fff;white-space:nowrap}',
 
-    /* izbor proizvoda dolje desno: staklena ploča sa tri sličice, brojačem, natpisom i linijom napretka */
-    '#R .jsu-show{position:absolute;z-index:3;right:var(--side);bottom:clamp(22px,2.6vw,40px);width:min(392px,34%);padding:14px 14px 13px;border-radius:24px;',
-    'background:var(--nm-surface);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(255,255,255,.07)}',
-    '#R .jsu-show__head,#R .jsu-show__foot{display:flex;align-items:center;justify-content:space-between;gap:12px}',
-    '#R .jsu-show__head{padding:2px 4px 12px}',
-    '#R .jsu-show__head b{font:600 9.5px/1 var(--fd);letter-spacing:2.6px;text-transform:uppercase;color:var(--text-3)}',
-    '#R .jsu-count{font:600 12px/1 var(--fd);letter-spacing:1px;color:var(--text-3);font-variant-numeric:tabular-nums}',
-    '#R .jsu-count em{font-style:normal;color:#fff}',
-    '#R .jsu-thumbs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}',
-    '#R .jsu-thumb{all:unset;position:relative!important;box-sizing:border-box!important;display:block!important;aspect-ratio:4/5;border-radius:13px!important;overflow:hidden;cursor:pointer;background:#0E1828!important;',
-    'box-shadow:0 0 0 1px rgba(255,255,255,.08)!important;transition:box-shadow .3s,transform .3s}',
-    '#R .jsu-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.7) brightness(.55);transition:filter .4s}',
-    '#R .jsu-thumb:hover img{filter:saturate(.85) brightness(.8)}',
-    '#R .jsu-thumb.is-on{transform:translateY(-2px);box-shadow:0 0 0 1.5px rgba(0,185,242,.85),0 10px 22px -10px rgba(0,185,242,.55)!important}',
-    '#R .jsu-thumb.is-on img{filter:saturate(.95) brightness(.98)}',
-    /* linija napretka na dnu aktivne sličice (kao u vijestima) */
-    '#R .jsu-thumb i{position:absolute;left:8px;right:8px;bottom:7px;height:2px;border-radius:2px;background:rgba(255,255,255,.22);opacity:0;transition:opacity .3s}',
-    '#R .jsu-thumb i s{position:absolute;inset:0;border-radius:inherit;background:var(--accent);box-shadow:0 0 6px rgba(0,185,242,.9);transform:scaleX(0);transform-origin:left center}',
-    '#R.jsu-auto .jsu-thumb.is-on i{opacity:1}',
-    '#R.jsu-auto .jsu-thumb.is-on i s{animation:jsuProg var(--dur) linear forwards}',
-    '#R.jsu-hold .jsu-thumb.is-on i s{animation-play-state:paused}',
+    /* izbor proizvoda dolje desno: tiha navigacija direktno na fotografiji (bez ploče, korisnik: "da se uklopi u pozadinu,
+       a da se opet može kliknuti"): tanka linija, broj i naziv; aktivni je bijel i linija mu se puni cyan bojom; na kraju tihi link galerije */
+    '#R .jsu-pick{position:absolute;z-index:3;right:var(--side);bottom:clamp(28px,3vw,46px);display:flex;align-items:flex-end;gap:24px}',
+    '#R .jsu-segs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;width:min(430px,31vw)}',
+    '#R .jsu-seg{all:unset;position:relative!important;box-sizing:border-box!important;display:block!important;min-width:0;padding:14px 0 2px!important;cursor:pointer}',
+    '#R .jsu-seg i{position:absolute;left:0;right:0;top:0;height:2px;border-radius:2px;overflow:hidden;background:rgba(255,255,255,.2);transition:background .3s}',
+    '#R .jsu-seg i s{position:absolute;inset:0;background:var(--accent);box-shadow:0 0 8px rgba(0,185,242,.8);transform:scaleX(0);transform-origin:left center}',
+    '#R .jsu-seg.is-on i s{transform:none}',
+    '#R.jsu-auto .jsu-seg.is-on i s{transform:scaleX(0);animation:jsuProg var(--dur) linear forwards}',
+    '#R.jsu-hold .jsu-seg.is-on i s{animation-play-state:paused}',
     '@keyframes jsuProg{to{transform:none}}',
-    '#R .jsu-show__foot{padding:13px 4px 1px}',
-    '#R .jsu-cap{font:600 14px/1.2 var(--fd);color:#fff;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
-    '#R .jsu-gal{all:unset;box-sizing:border-box!important;display:inline-flex!important;align-items:center;gap:7px;cursor:pointer;white-space:nowrap;font:600 12.5px/1 var(--fd)!important;letter-spacing:.2px!important;color:var(--text-2)!important;transition:color .2s}',
-    '#R .jsu-gal svg{width:15px;height:15px;color:var(--accent)}',
+    '#R .jsu-seg em{display:block;margin-bottom:7px;font:600 10.5px/1 var(--fd);font-style:normal;letter-spacing:1.6px;color:rgba(255,255,255,.42);font-variant-numeric:tabular-nums;transition:color .3s}',
+    '#R .jsu-seg .jsu-n{display:block;font:500 14px/1.25 var(--fb);color:rgba(255,255,255,.52);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 10px rgba(0,0,0,.6);transition:color .3s}',
+    '#R .jsu-seg:hover i{background:rgba(255,255,255,.38)}',
+    '#R .jsu-seg:hover .jsu-n{color:rgba(255,255,255,.86)}',
+    '#R .jsu-seg.is-on em{color:var(--accent-2)}',
+    '#R .jsu-seg.is-on .jsu-n{color:#fff}',
+    '#R .jsu-gal{all:unset;box-sizing:border-box!important;display:inline-flex!important;align-items:center;gap:8px;height:34px;padding:0 0 0 24px!important;border-left:1px solid rgba(255,255,255,.16)!important;cursor:pointer;white-space:nowrap;',
+    'font:600 13px/1 var(--fd)!important;letter-spacing:.2px!important;color:rgba(255,255,255,.72)!important;text-shadow:0 1px 10px rgba(0,0,0,.6);transition:color .2s}',
+    '#R .jsu-gal svg{width:16px;height:16px;color:var(--accent)}',
     '#R .jsu-gal i{font-style:normal;color:var(--text-3);font-variant-numeric:tabular-nums}',
     '#R .jsu-gal:hover{color:var(--accent)!important}',
 
@@ -208,19 +202,20 @@
     '#R.jsu-anim.jsu-on .jsu-up{opacity:1;transform:none;transition:opacity .7s ease var(--d,0s),transform .95s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
     '#R.jsu-anim .jsu-kicker::before{transform:scaleX(0);transform-origin:left center}',
     '#R.jsu-anim.jsu-on .jsu-kicker::before{transform:none;transition:transform .6s cubic-bezier(.2,.7,.2,1) .5s}',
-    /* izbor i oznaka uplove (izbor odozdo, oznaka odozgo), sličice se upale jedna za drugom, kabina pređe sajlom */
-    '#R.jsu-anim .jsu-show{opacity:0;transform:translateY(26px)}',
-    '#R.jsu-anim.jsu-on .jsu-show{opacity:1;transform:none;transition:opacity .8s ease .7s,transform 1s cubic-bezier(.2,.7,.2,1) .7s}',
-    '#R.jsu-anim .jsu-thumb{opacity:0}',
-    '#R.jsu-anim.jsu-on .jsu-thumb{opacity:1;transition:opacity .6s ease var(--d,0s),box-shadow .3s,transform .3s}',
+    /* izbor i oznaka uplove (izbor odozdo, oznaka odozgo), linije izbora se iscrtaju jedna za drugom, kabina pređe sajlom */
+    '#R.jsu-anim .jsu-pick{opacity:0;transform:translateY(16px)}',
+    '#R.jsu-anim.jsu-on .jsu-pick{opacity:1;transform:none;transition:opacity .8s ease .8s,transform 1s cubic-bezier(.2,.7,.2,1) .8s}',
+    '#R.jsu-anim .jsu-seg i{transform:scaleX(0);transform-origin:left center}',
+    '#R.jsu-anim.jsu-on .jsu-seg i{transform:none;transition:transform .8s cubic-bezier(.2,.7,.2,1) var(--d,0s),background .3s}',
     '#R.jsu-anim .jsu-where{opacity:0;transform:translateY(-14px)}',
     '#R.jsu-anim.jsu-on .jsu-where{opacity:1;transform:none;transition:opacity .7s ease .5s,transform .9s cubic-bezier(.2,.7,.2,1) .5s}',
     '#R.jsu-anim .jsu-where .jsu-cab{transform:translate(8px,-1px)}',
     '#R.jsu-anim.jsu-on .jsu-where .jsu-cab{transform:translate(30px,-10px);transition:transform 1.8s cubic-bezier(.45,0,.25,1) 1.1s}',
 
     /* manji laptop: šira kolona teksta */
-    '@media (max-width:1180px){#R .jsu-show{width:min(360px,36%)}}',
-    /* tablet i telefon: fotografija gore (utapa se nadolje), izbor proizvoda preko njene donje ivice, tekst ispod */
+    /* manji laptop: link galerije ide iznad linija, da izbor ne priđe dugmadi */
+    '@media (max-width:1180px){#R .jsu-pick{flex-direction:column-reverse;align-items:flex-end;gap:16px}#R .jsu-segs{width:min(380px,34vw)}#R .jsu-gal{height:auto;padding:0!important;border-left:0!important}}',
+    /* tablet i telefon: fotografija gore (utapa se nadolje), izbor proizvoda na njenoj donjoj ivici, tekst ispod */
     '@media (max-width:980px){',
     '#R .jsu-frame{flex-direction:column;align-items:stretch;min-height:0}',
     '#R .jsu-bgs{position:relative;inset:auto;height:min(64vw,560px);-webkit-mask-image:linear-gradient(180deg,#000 62%,transparent 100%);mask-image:linear-gradient(180deg,#000 62%,transparent 100%)}',
@@ -228,7 +223,9 @@
     '#R .jsu-scrim{background:linear-gradient(0deg,rgba(6,11,22,.5) 0%,rgba(6,11,22,0) 40%),linear-gradient(180deg,rgba(6,18,42,.36) 0%,rgba(6,18,42,0) 26%)}',
     '#R .jsu-light{background:radial-gradient(60% 60% at 60% 0%,rgba(255,222,184,.14),transparent 75%)}',
     '#R .jsu-where{left:clamp(16px,4vw,28px);right:auto;top:clamp(16px,4vw,28px)}',
-    '#R .jsu-show{position:relative;right:auto;bottom:auto;width:min(440px,calc(100% - 32px));margin:-120px clamp(16px,5vw,48px) 0 auto}',
+    '#R .jsu-pick{position:relative;right:auto;bottom:auto;flex-direction:row;align-items:flex-end;justify-content:space-between;gap:20px;margin:-88px clamp(22px,6vw,56px) 0}',
+    '#R .jsu-segs{width:min(480px,72%)}',
+    '#R .jsu-gal{height:34px;padding:0 0 0 20px!important;border-left:1px solid rgba(255,255,255,.16)!important}',
     '#R .jsu-body{width:auto;padding:clamp(30px,5vw,48px) clamp(22px,6vw,56px) clamp(32px,5vw,52px)}',
     '#R h2{font-size:clamp(42px,7.6vw,66px)}',
     '#R .jsu-lead{max-width:56ch}}',
@@ -239,9 +236,12 @@
     '#R .jsu-where{padding:8px 14px 8px 10px;gap:10px}',
     '#R .jsu-where svg{width:42px;height:22px}',
     '#R .jsu-where span{font-size:12px}',
-    '#R .jsu-show{width:auto;margin:-84px 14px 0;padding:11px 11px 10px;border-radius:20px}',
-    '#R .jsu-thumbs{gap:7px}',
-    '#R .jsu-thumb{aspect-ratio:1/1;border-radius:11px!important}',
+    '#R .jsu-pick{position:static;margin:-74px 22px 0}',
+    '#R .jsu-segs{flex:1;width:auto;gap:12px}',
+    '#R .jsu-seg .jsu-n{font-size:12.5px}',
+    '#R .jsu-gal{position:absolute!important;z-index:3;top:clamp(16px,4vw,28px);right:14px;height:38px;padding:0 13px!important;border:0!important;border-radius:40px!important;text-shadow:none;',
+    'background:var(--nm-surface)!important;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(255,255,255,.07)!important}',
+    '#R .jsu-gal b{display:none}',
     '#R .jsu-body{padding:26px 22px 30px}',
     '#R .jsu-kicker{letter-spacing:2.6px;font-size:10px;gap:10px;margin-bottom:16px}',
     '#R .jsu-kicker::before{width:22px}',
@@ -256,7 +256,7 @@
     '#R .jsu-pill{height:42px;justify-content:center;font-size:13px;padding:0 14px!important}',
     '#R .jsu-l{display:none}',
     '#R .jsu-s{display:inline}}',
-    '@media (max-width:380px){#R .jsu-cap{font-size:13px}#R .jsu-gal b{display:none}}',
+    '@media (max-width:380px){#R .jsu-segs{gap:9px}#R .jsu-seg .jsu-n{font-size:12px}}',
     '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}',
 
     /* galerija preko cijelog ekrana (ista kao u ratraku) */
@@ -367,20 +367,17 @@
     return '<img class="jsu-bg' + (g.r ? ' jsu-bg--r' : '') + (k ? '' : ' is-on') + '" data-k="' + k + '" src="' + esc(g.full) + '"' + set + ' alt="' + esc(g.alt || '') + '"' +
       (k ? ' aria-hidden="true"' : '') + ' style="' + (g.pos ? 'object-position:' + g.pos + ';' : '') + (g.mpos ? '--mpos:' + g.mpos + ';' : '') + (g.lum ? '--lum:' + g.lum : '') + '" decoding="async" loading="lazy">';
   }
-  function thumb(g, k) {
-    return '<button type="button" class="jsu-thumb' + (k ? '' : ' is-on') + '" data-k="' + k + '" style="--d:' + (1 + k * .12).toFixed(2) + 's" aria-label="' + esc(T.show + ': ' + (g.cap || T.photo + ' ' + (k + 1))) + '"' +
-      ' aria-pressed="' + (k ? 'false' : 'true') + '"><img src="' + esc(g.mini || g.full) + '" alt="" decoding="async" loading="lazy"><i><s></s></i></button>';
+  function seg(g, k) {
+    var cap = g.cap || T.photo + ' ' + (k + 1);
+    return '<button type="button" class="jsu-seg' + (k ? '' : ' is-on') + '" data-k="' + k + '" style="--d:' + (1 + k * .12).toFixed(2) + 's" aria-pressed="' + (k ? 'false' : 'true') + '"' +
+      ' aria-label="' + esc(T.show + ': ' + cap) + '"><i><s></s></i><em>' + pad(k) + '</em><span class="jsu-n">' + lbl(cap, g.capS || cap) + '</span></button>';
   }
   root.innerHTML =
     '<section class="jsu-wrap" aria-labelledby="jsu-h"><div class="jsu-frame">' +
       '<div class="jsu-bgs">' + SHOW.map(bg).join('') + '<span class="jsu-tint"></span><span class="jsu-scrim"></span><span class="jsu-light"></span></div>' +
       '<div class="jsu-where" role="img" aria-label="' + esc(T.gondola + ': ' + T.stations) + '">' + ICON.gondola + '<div><b>' + esc(T.gondola) + '</b><span>' + esc(T.stations) + '</span></div></div>' +
-      '<div class="jsu-show" role="group" aria-label="' + esc(T.pick) + '">' +
-        '<div class="jsu-show__head"><b>' + esc(T.pick) + '</b><span class="jsu-count" aria-hidden="true"><em>01</em> / ' + pad(N - 1) + '</span></div>' +
-        '<div class="jsu-thumbs">' + SHOW.map(thumb).join('') + '</div>' +
-        '<div class="jsu-show__foot"><span class="jsu-cap" aria-live="polite">' + esc(SHOW[0] && SHOW[0].cap || '') + '</span>' +
-          '<button type="button" class="jsu-gal" aria-haspopup="dialog">' + ICON.gallery + '<b>' + esc(T.gal) + '</b> <i></i></button></div>' +
-      '</div>' +
+      '<nav class="jsu-pick" aria-label="' + esc(T.pick) + '"><div class="jsu-segs">' + SHOW.map(seg).join('') + '</div>' +
+        '<button type="button" class="jsu-gal" aria-haspopup="dialog">' + ICON.gallery + '<b>' + esc(T.gal) + '</b> <i></i></button></nav>' +
       '<div class="jsu-body">' +
         '<div class="jsu-kicker jsu-up" style="--d:.26s">' + esc(T.kicker) + '</div>' +
         '<h2 id="jsu-h">' + titleHTML(T.head) + '</h2>' +
@@ -491,18 +488,16 @@
         im.classList.toggle('is-on', a);
         if (a) im.removeAttribute('aria-hidden'); else im.setAttribute('aria-hidden', 'true');
       });
-      qa('.jsu-thumb').forEach(function (b) {
+      qa('.jsu-seg').forEach(function (b) {
         var a = +b.getAttribute('data-k') === k;
         b.classList.toggle('is-on', a); b.setAttribute('aria-pressed', a ? 'true' : 'false');
       });
-      q('.jsu-count em').textContent = pad(k);
-      q('.jsu-cap').textContent = SHOW[k].cap || '';
     }
     go();
   }
   if (AUTO) root.classList.add('jsu-auto');
-  q('.jsu-thumbs').addEventListener('click', function (e) {
-    var b = e.target.closest && e.target.closest('.jsu-thumb');
+  q('.jsu-segs').addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.jsu-seg');
     if (b) show(+b.getAttribute('data-k'));
   });
   var fr = q('.jsu-frame');
