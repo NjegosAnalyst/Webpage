@@ -132,7 +132,7 @@ async function state(p) {
     const r = document.getElementById('jb-bar'), b = r.getBoundingClientRect();
     const h2 = r.querySelector('h2 span');
     const hit = (a, c) => a.left < c.right && c.left < a.right && a.top < c.bottom && c.top < a.bottom;
-    const book = r.querySelector('.jb-bk-pages').getBoundingClientRect(), cap = r.querySelector('.jb-cap').getBoundingClientRect(), f = r.querySelector('.jb-frame').getBoundingClientRect();
+    const book = r.querySelector('.jb-fb').getBoundingClientRect(), cap = r.querySelector('.jb-cap').getBoundingClientRect(), f = r.querySelector('.jb-frame').getBoundingClientRect();
     const txt = [...r.querySelectorAll('.jb-kicker, h2 span, .jb-lead, .jb-facts li, .jb-btn, .jb-more')].map((e) => e.getBoundingClientRect());
     return {
       scroll: document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -143,15 +143,18 @@ async function state(p) {
       kicker: r.querySelector('.jb-kicker').textContent, lead: r.querySelector('.jb-lead').textContent,
       facts: [...r.querySelectorAll('.jb-facts li')].map((e) => e.querySelector('b').textContent + ' ' + e.querySelector('small').textContent).join('|'),
       factsShown: getComputedStyle(r.querySelector('.jb-facts')).display !== 'none',
-      factsRow: new Set([...r.querySelectorAll('.jb-facts b')].map((e) => Math.round(e.getBoundingClientRect().top))).size === 1,
-      cap: r.querySelector('.jb-cap').textContent,
-      bookCover: getComputedStyle(r.querySelector('.jb-bk-f')).backgroundImage,
+      // vrijednosti na istoj liniji (na telefonu brojevi gore, "Bar · restoran · terasa" ispod)
+      factsRow: new Set([...r.querySelectorAll(innerWidth > 760 ? '.jb-facts b' : '.jb-f-alt b, .jb-f-ev b')].map((e) => Math.round(e.getBoundingClientRect().top))).size === 1,
+      cap: r.querySelector('.jb-cap b').textContent,
+      bookCover: getComputedStyle(r.querySelector('.jb-fb .jb-leaf[data-j="0"] .jb-face[data-p="0"]')).backgroundImage,
+      bg: +r.querySelector('.jb-bg.is-on').getAttribute('data-k'), bgs: r.querySelectorAll('.jb-bg').length,
+      rez: [r.querySelector('a[data-jb="rezervacija"]').getAttribute('href'), r.querySelector('a[data-jb="rezervacija"]').innerText.trim()],
       overlap: txt.some((a) => hit(a, book) || hit(a, cap)),
       bookIn: book.left >= f.left && book.right <= f.right && book.top >= f.top && cap.bottom <= f.bottom + 1,
       bodyIn: (() => { const q = r.querySelector('.jb-body').getBoundingClientRect(); return q.left >= f.left - 1 && q.right <= f.right + 1 && q.bottom <= f.bottom + 1; })(),
       page: r.querySelector('a[data-jb="stranica"]').getAttribute('href'),
       why: (r.querySelector('.jb-why') || {}).textContent || '',
-      hidden: [...r.querySelectorAll('.jb-up,.jb-bk-in,.jb-bg')].filter((e) => getComputedStyle(e).opacity !== '1').length,
+      hidden: [...r.querySelectorAll('.jb-up,.jb-bk-in,.jb-bg.is-on')].filter((e) => getComputedStyle(e).opacity !== '1').length,
       imgOk: [...r.querySelectorAll('img')].every((i) => i.complete && i.naturalWidth > 0),
       acts: [...r.querySelectorAll('.jb-btn')].map((a) => { const q = a.getBoundingClientRect(); return [Math.round(q.top), Math.round(q.width), Math.round(q.height)]; }),
       actsFit: [...r.querySelectorAll('.jb-btn')].every((a) => a.scrollWidth <= a.clientWidth + 1),
@@ -165,7 +168,7 @@ async function reader(p) {
     const st = m.querySelector('.jb-r-stage'), bk = m.querySelector('.jb-r-book').getBoundingClientRect();
     return {
       shown: getComputedStyle(m).display, op: getComputedStyle(m).opacity,
-      ind: m.querySelector('.jb-r-ind span').textContent, mode: st.classList.contains('is-single') ? 'single' : 'spread',
+      ind: m.querySelector('.jb-r-ind span').textContent, mode: m.querySelector('.jb-r-book').classList.contains('is-single') ? 'single' : 'spread',
       w: Math.round(bk.width), h: Math.round(bk.height), vw: innerWidth, vh: innerHeight, left: Math.round(bk.left), right: Math.round(bk.right), top: Math.round(bk.top), bottom: Math.round(bk.bottom),
       leaves: m.querySelectorAll('.jb-leaf').length,
       firstBg: getComputedStyle(m.querySelector('.jb-leaf .jb-face[data-p]')).backgroundImage,
@@ -177,6 +180,9 @@ async function reader(p) {
     };
   });
 }
+// klik na lijevi rub menija u kadru (lijevo = korica; miš preko menija lista strane prema položaju)
+async function clickCover(p) { const b = await p.locator('#jb-bar .jb-book').boundingBox(); await p.mouse.move(b.x + 3, b.y + b.height / 2); await p.waitForTimeout(500); await p.mouse.click(b.x + 3, b.y + b.height / 2); }
+async function cap(p) { return p.evaluate(() => document.querySelector('#jb-bar .jb-cap b').textContent); }
 async function waitIdle(p) { await p.waitForFunction(() => !document.querySelector('#jb-meni .jb-r-stage.is-anim')); await p.waitForTimeout(80); }
 
 (async () => {
@@ -189,8 +195,10 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   check('naslov bijeli i Archivo uprkos temi', S.h2color === 'rgb(255, 255, 255)' && /Archivo/.test(S.h2font), [S.h2color, S.h2font]);
   check('naslov iz WP-a: "Olimpijski / bar", bar obris', S.lines.join('|') === 'Olimpijski|bar' && S.outline === 'bar', S.lines);
   check('uvod = prva rečenica sa stranice (1.879 ne prekida rečenicu)', S.lead === P1.split('zabave.')[0] + 'zabave.', S.lead);
-  check('brojevi iz teksta: 1.879 m, 700 m², 40+ u jednom redu', S.facts === '1.879m nadmorske visine|700m² toplog ambijenta|40+ događaja godišnje' && S.factsRow, S.facts);
-  check('meni u kadru: 12 strana, korica iz Medija (768)', /12 strana/.test(S.cap) && /meni-bar-01-768x1079\.jpg/.test(S.bookCover), [S.cap, S.bookCover]);
+  check('podaci: 1.879 m (iz teksta), Bar · restoran · terasa / après-ski i koncerti, 40+ (iz teksta), na istoj liniji', S.facts === '1.879m nadmorske visine|Bar·restoran·terasa après-ski i koncerti|40+ događaja godišnje' && S.factsRow, S.facts);
+  check('meni u kadru: 12 strana, korica iz Medija (768)', S.cap === 'Meni · 12 strana' && /meni-bar-01-768x1079\.jpg/.test(S.bookCover), [S.cap, S.bookCover]);
+  check('tri fotografije u pozadini, prva upaljena', S.bgs === 3 && S.bg === 0, [S.bgs, S.bg]);
+  check('Rezervacije → kontakt telefon (057 270 003)', S.rez[0] === 'tel:+38757270003' && /Rezervacije · 057 270 003/.test(S.rez[1]), S.rez);
   check('meni se ne preklapa sa tekstom, sve u kadru', !S.overlap && S.bookIn && S.bodyIn, [S.overlap, S.bookIn, S.bodyIn]);
   check('link = stranica iz WP-a', S.page === SITE + '/olimpijski-bar/', S.page);
   rest = rest.filter((x) => !/suvenirnica/.test(x));
@@ -208,14 +216,36 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   check('suvenirnica iznad: jb--join, razmak kadar → kadar = --gap + --g', j.join && Math.abs(j.space - j.want) <= 2, j);
   await p.screenshot({ path: path.join(OUT, 'suvenirnica-bar.png'), fullPage: true });
   await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, 'sr-racunar-kadar.png') });
-  await p.hover('#jb-bar .jb-book');
-  await p.waitForTimeout(1200);
+  // listanje mišem preko menija u kadru: lijevo korica, desno kraj; strana prati miš, kad stane legne na najbližu
+  const fb = await p.evaluate(() => { const r = document.querySelector('#jb-bar .jb-fb').getBoundingClientRect(); return { l: r.left, w: r.width, y: r.top + r.height / 2 }; });
+  await p.mouse.move(fb.l + 2, fb.y); await p.waitForTimeout(300);
+  check('miš na lijevom rubu: korica', (await cap(p)) === 'Meni · 12 strana', await cap(p));
+  for (let k = 1; k <= 24; k++) { await p.mouse.move(fb.l + 2 + k * (fb.w - 4) / 24, fb.y); await p.waitForTimeout(16); }
+  await p.waitForTimeout(900);
+  check('miš preko menija do desnog ruba: zadnja strana (12 / 12)', (await cap(p)) === 'Meni · 12 / 12', await cap(p));
+  for (let k = 1; k <= 8; k++) { await p.mouse.move(fb.l + fb.w * (1 - k * .07), fb.y); await p.waitForTimeout(16); }
+  await p.waitForTimeout(60);
+  await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, 'sr-racunar-listanje-misem.png') });
+  await p.waitForTimeout(900);
+  const mid = await cap(p);
+  check('miš stao: strana legne na najbližu (05–07 / 12)', /Meni · 0[5-7] \/ 12/.test(mid) && await p.evaluate(() => !document.querySelector('#jb-bar .jb-leaf[style*="z-index: 200"]')), mid);
+  const bgHold = await p.evaluate(() => document.querySelector('#jb-bar .jb-bg.is-on').getAttribute('data-k'));
+  // klik otvara meni preko ekrana na strani koja je u kadru
+  await p.mouse.click(fb.l + fb.w * .44, fb.y); await p.waitForTimeout(1300); await waitIdle(p);
+  let M = await reader(p);
+  const pg = +mid.match(/(\d+) \//)[1];
+  check('klik: meni preko ekrana na istoj strani (' + pg + ')', M.ind.split(' /')[0].split('–').map(Number).includes(pg), [mid, M.ind]);
+  await p.keyboard.press('Escape'); await p.waitForTimeout(450);
+  await p.mouse.move(fb.l + 2, fb.y); await p.waitForTimeout(900);
+  check('nazad na lijevi rub: korica', (await cap(p)) === 'Meni · 12 strana', await cap(p));
+  await p.mouse.move(5, 5);
+  await p.waitForTimeout(400);
   await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, 'sr-racunar-mis-na-meniju.png') });
 
-  // meni preko cijelog ekrana: doleti, korica se otvori → strane 2–3
-  await p.click('#jb-bar .jb-book');
+  // meni preko cijelog ekrana od korice: doleti, korica se otvori → strane 2–3
+  await clickCover(p);
   await p.waitForTimeout(400);
-  let M = await reader(p);
+  M = await reader(p);
   check('meni se otvara (dijalog, stranica ne skroluje, fokus unutra)', M.shown === 'block' && M.overflow === 'hidden' && M.inside, M);
   check('računar: otvorena knjiga (dvije strane), 6 listova', M.mode === 'spread' && M.leaves === 6, [M.mode, M.leaves]);
   await p.waitForTimeout(1500); await waitIdle(p);
@@ -268,10 +298,7 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   await p.keyboard.press('Escape'); await p.waitForTimeout(450);
   M = await reader(p);
   check('Esc zatvara, fokus se vraća na meni u kadru, skrol vraćen', M.shown === 'none' && /jb-book/.test(M.focus) && M.overflow === '', M);
-  // dugme "Prelistaj meni" otvara od korice
-  await p.click('#jb-bar .jb-btn--solid'); await p.waitForTimeout(1600); await waitIdle(p);
-  check('dugme Prelistaj meni: opet od početka (02–03)', (await reader(p)).ind === '02–03 / 12');
-  await p.click('#jb-meni .jb-r-close'); await p.waitForTimeout(450);
+  await p.click('#jb-bar .jb-btn--solid');
   // video
   await p.click('#jb-bar .jb-btn--ghost'); await p.waitForTimeout(500);
   let V = await p.evaluate(() => { const v = document.getElementById('jb-vid'); return { shown: getComputedStyle(v).display, src: (v.querySelector('iframe') || {}).src || '', focus: document.activeElement.tagName }; });
@@ -281,14 +308,14 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   check('Esc zatvara video (iframe uklonjen, fokus na dugme)', V.shown === 'none' && V.iframes === 0 && /jb-btn--ghost/.test(V.focus), V);
   await p.click('#jb-bar .jb-more');
   let ev = await p.evaluate(() => window.__ev.map((e) => e[1] + ':' + JSON.stringify(e[2])));
-  check('GA4: bar_meni (2×), bar_video, bar_klik', JSON.stringify(ev) === JSON.stringify(['bar_meni:{"strana":12,"jezik":"sr"}', 'bar_meni:{"strana":12,"jezik":"sr"}', 'bar_video:{"jezik":"sr"}', 'bar_klik:{"cilj":"stranica","jezik":"sr"}']), ev);
+  check('GA4: bar_meni (2×), bar_rezervacija, bar_video, bar_klik', JSON.stringify(ev) === JSON.stringify(['bar_meni:{"strana":12,"jezik":"sr"}', 'bar_meni:{"strana":12,"jezik":"sr"}', 'bar_rezervacija:{"nacin":"telefon","jezik":"sr"}', 'bar_video:{"jezik":"sr"}', 'bar_klik:{"cilj":"stranica","jezik":"sr"}']), ev);
   check('bez grešaka u konzoli', errors.length === 0, errors);
   await ctx.close();
 
   console.log('Ugradnja sa YouTube iframe-om; meni nije u Medijima → ugrađeni meni (12 strana iz repoa)');
   ({ p, ctx, errors } = await open(browser, { wp: 'iframe', media: 'nema', admin: true }));
   S = await state(p);
-  check('ugrađena korica i 12 strana', /slike\/meni\/mala-01\.webp/.test(S.bookCover) && /12 strana/.test(S.cap), S.bookCover);
+  check('ugrađena korica i 12 strana', /slike\/meni\/mala-01\.webp/.test(S.bookCover) && S.cap === 'Meni · 12 strana', S.bookCover);
   check('admin vidi da meni nije u Medijima', /meni u Medijima/.test(S.why), S.why);
   await p.click('#jb-bar .jb-btn--ghost'); await p.waitForTimeout(300);
   check('video ID iz iframe-a', /embed\/ZyXwVuTsRq1/.test(await p.evaluate(() => document.querySelector('#jb-vid iframe').src)));
@@ -298,7 +325,7 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   console.log('Tekst stranice bez brojeva → red sa brojevima se sakrije; video ostaje podrazumijevani');
   ({ p, ctx, errors } = await open(browser, { wp: 'bezbrojeva', ga: 'none' }));
   S = await state(p);
-  check('brojevi sakriveni, uvod novi', !S.factsShown && /novo mjesto/.test(S.lead), [S.factsShown, S.lead]);
+  check('brojevi sakriveni (ostaje Bar · restoran · terasa), uvod novi', S.facts === 'Bar·restoran·terasa après-ski i koncerti' && /novo mjesto/.test(S.lead), [S.facts, S.lead]);
   await p.click('#jb-bar .jb-btn--ghost'); await p.waitForTimeout(300);
   check('video: podrazumijevani ID (7qo0-fAx5CI)', /embed\/7qo0-fAx5CI/.test(await p.evaluate(() => document.querySelector('#jb-vid iframe').src)));
   await ctx.close();
@@ -307,10 +334,10 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   ({ p, ctx, errors, rest } = await open(browser, { path: '/en/pocetna-zima/', ga: 'gtm', wp: 'qtranslate' }));
   S = await state(p);
   check('engleski naslov iz WP-a: Olympic / Bar', S.lines.join('|') === 'Olympic|Bar' && S.kicker === 'Food & après-ski', [S.lines, S.kicker]);
-  check('engleski uvod i brojevi (1,879 m, 700 m², 40+)', /^At the top of Jahorina/.test(S.lead) && S.facts === '1,879m above sea level|700m² warm mountain venue|40+ events a year', [S.lead, S.facts]);
-  check('meni: 12 pages; link vodi na /en/', /12 pages/.test(S.cap) && S.page === SITE + '/en/olimpijski-bar/', [S.cap, S.page]);
+  check('engleski uvod i podaci (1,879 m, Bar · restaurant · terrace, 40+)', /^At the top of Jahorina/.test(S.lead) && S.facts === '1,879m above sea level|Bar·restaurant·terrace après-ski & concerts|40+ events a year', [S.lead, S.facts]);
+  check('meni: 12 pages; link vodi na /en/; Book: +387 57 270 003', S.cap === 'Menu · 12 pages' && S.page === SITE + '/en/olimpijski-bar/' && /Book: \+387 57 270 003/.test(S.rez[1]), [S.cap, S.page, S.rez]);
   check('prvo /en/wp-json, pa /wp-json', /^\/en\/wp-json/.test(rest[0]) && rest.some((x) => /^\/wp-json\/wp\/v2\/pages/.test(x)), rest);
-  await p.click('#jb-bar .jb-book'); await p.waitForTimeout(1600); await waitIdle(p);
+  await clickCover(p); await p.waitForTimeout(1600); await waitIdle(p);
   M = await reader(p);
   check('EN meni: 02–03 / 12', M.ind === '02–03 / 12', M.ind);
   await p.keyboard.press('Escape'); await p.waitForTimeout(400);
@@ -323,8 +350,8 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   console.log('WordPress ne odgovara (403): posjetilac vidi ugrađeni tekst i meni, admin i razlog');
   ({ p, ctx, errors } = await open(browser, { wp: 'greska', ga: 'none' }));
   S = await state(p);
-  check('ugrađeni tekst, brojevi i meni', S.lines.join('|') === 'Olimpijski|bar' && /^Na vrhu Jahorine/.test(S.lead) && S.factsShown && /12 strana/.test(S.cap) && S.why === '', S);
-  await p.click('#jb-bar .jb-book'); await p.waitForTimeout(1600); await waitIdle(p);
+  check('ugrađeni tekst, podaci i meni', S.lines.join('|') === 'Olimpijski|bar' && /^Na vrhu Jahorine/.test(S.lead) && S.facts.split('|').length === 3 && S.cap === 'Meni · 12 strana' && S.why === '', S);
+  await clickCover(p); await p.waitForTimeout(1600); await waitIdle(p);
   check('ugrađeni meni se lista', (await reader(p)).ind === '02–03 / 12');
   await ctx.close();
   ({ p, ctx, errors } = await open(browser, { wp: 'greska', ga: 'none', admin: true }));
@@ -337,6 +364,30 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   check('pogrešan slug: admin vidi da stranica nije pronađena', /nije pronađena/.test(S.why), S.why);
   await ctx.close();
 
+  console.log('Smjena fotografija u pozadini: sama, staje dok je miš na meniju');
+  ({ p, ctx, errors } = await open(browser, { ga: 'none' }));
+  await p.mouse.move(5, 5);
+  await p.waitForTimeout(7000 + 2600);
+  S = await state(p);
+  check('poslije ~7 s u pozadini je enterijer (druga fotografija)', S.bg === 1, S.bg);
+  await p.waitForTimeout(2200);
+  await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, 'sr-racunar-enterijer.png') });
+  const bb2 = await p.locator('#jb-bar .jb-book').boundingBox();
+  await p.mouse.move(bb2.x + 3, bb2.y + bb2.height / 2);
+  await p.waitForTimeout(8200);
+  check('miš na meniju: smjena stoji', (await state(p)).bg === 1);
+  await p.mouse.move(5, 5);
+  await p.waitForTimeout(700 + 7000 + 2400);
+  S = await state(p);
+  check('miš otišao: smjena nastavlja (losos)', S.bg === 2, S.bg);
+  await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, 'sr-racunar-losos.png') });
+  check('bez grešaka u konzoli', errors.length === 0, errors);
+  await ctx.close();
+  ({ p, ctx, errors } = await open(browser, { ga: 'none', reduced: true }));
+  await p.waitForTimeout(8000);
+  check('smanjeno kretanje: bez smjene', (await state(p)).bg === 0);
+  await ctx.close();
+
   for (const [name, vw, vh, touch] of [['laptop', 1280, 800], ['laptop-nizak', 1366, 680], ['siroki', 1920, 1080], ['tablet', 900, 1100, true], ['telefon', 390, 844, true], ['uski-telefon', 340, 740, true]]) {
     console.log(name);
     ({ p, ctx, errors } = await open(browser, { vw, vh, touch }));
@@ -347,10 +398,25 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
     check('brojevi u jednom redu; natpisi dugmadi staju', S.factsRow && S.actsFit, [S.factsRow, S.actsFit]);
     if (vw <= 760) check('telefon: oba dugmeta u jednom redu, 42px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 42, S.acts);
     await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, name + '.png') });
-    await p.click('#jb-bar .jb-book'); await p.waitForTimeout(1600); await waitIdle(p);
-    M = await reader(p);
     const single = vw < 820;
-    check(single ? 'jedna strana (01 / 12)' : 'dvije strane (02–03 / 12)', M.mode === (single ? 'single' : 'spread') && M.ind === (single ? '01 / 12' : '02–03 / 12'), [M.mode, M.ind]);
+    if (touch) {   // prevlačenje prstom preko menija u kadru lista jednu stranu; dodir otvara meni na toj strani
+      await p.evaluate(() => {
+        const b = document.querySelector('#jb-bar .jb-book'), r = b.getBoundingClientRect(), y = r.top + r.height / 2;
+        const o = (cx) => ({ pointerType: 'touch', pointerId: 9, bubbles: true, clientX: cx, clientY: y, isPrimary: true });
+        b.dispatchEvent(new PointerEvent('pointerdown', o(r.left + r.width * .8)));
+        b.dispatchEvent(new PointerEvent('pointerup', o(r.left + r.width * .2)));
+      });
+      await p.waitForTimeout(1000);
+      check('prevlačenje prstom po meniju u kadru → Meni · 02 / 12', (await cap(p)) === 'Meni · 02 / 12', await cap(p));
+      await p.waitForTimeout(600);
+      await p.tap('#jb-bar .jb-book'); await p.waitForTimeout(1300); await waitIdle(p);
+      M = await reader(p);
+      check(single ? 'dodir: jedna strana (02 / 12)' : 'dodir: dvije strane (02–03 / 12)', M.mode === (single ? 'single' : 'spread') && M.ind === (single ? '02 / 12' : '02–03 / 12'), [M.mode, M.ind]);
+    } else {
+      await clickCover(p); await p.waitForTimeout(1600); await waitIdle(p);
+      M = await reader(p);
+      check('dvije strane (02–03 / 12)', M.mode === 'spread' && M.ind === '02–03 / 12', [M.mode, M.ind]);
+    }
     check('knjiga staje u ekran', M.left >= 0 && M.right <= M.vw && M.top >= 40 && M.bottom <= M.vh - 60, M);
     if (touch) {   // prevlačenje prstom ulijevo → sljedeća strana
       const r = await p.evaluate(() => { const b = document.querySelector('#jb-meni .jb-r-book').getBoundingClientRect(); return { x: b.left + b.width * .8, y: b.top + b.height / 2, w: b.width }; });
@@ -362,14 +428,14 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
       }, r);
       await p.waitForTimeout(60); await waitIdle(p);
       M = await reader(p);
-      check('prevlačenje prstom → ' + (single ? '02 / 12' : '04–05 / 12'), M.ind === (single ? '02 / 12' : '04–05 / 12'), M.ind);
+      check('prevlačenje prstom → ' + (single ? '03 / 12' : '04–05 / 12'), M.ind === (single ? '03 / 12' : '04–05 / 12'), M.ind);
       await p.evaluate(() => Promise.all([...document.querySelectorAll('#jb-meni .jb-face[data-p]')].map((f) => { const m = getComputedStyle(f).backgroundImage.match(/url\("(.*)"\)/); if (!m) return 0; const i = new Image(); i.src = m[1]; return i.decode().catch(() => {}); })));
     }
     await p.screenshot({ path: path.join(OUT, 'meni-' + name + '.png') });
     if (name === 'telefon') {
       await p.click('#jb-meni .jb-r-zbtn'); await p.waitForTimeout(300);
       M = await reader(p);
-      check('telefon: Uvećaj pokazuje stranu 2, šire od ekrana (skrol)', M.zoom && M.zimgs.join(',') === 'meni-bar-02.jpg' && await p.evaluate(() => { const z = document.querySelector('#jb-meni .jb-r-zoom'); return z.scrollWidth > z.clientWidth; }), M.zimgs);
+      check('telefon: Uvećaj pokazuje stranu 3, šire od ekrana (skrol)', M.zoom && M.zimgs.join(',') === 'meni-bar-03.jpg' && await p.evaluate(() => { const z = document.querySelector('#jb-meni .jb-r-zoom'); return z.scrollWidth > z.clientWidth; }), M.zimgs);
       await p.evaluate(() => Promise.all([...document.querySelectorAll('#jb-meni .jb-r-zoom img')].map((i) => i.decode().catch(() => {}))));
       await p.screenshot({ path: path.join(OUT, 'meni-telefon-uvecano.png') });
     }
@@ -381,7 +447,7 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   ({ p, ctx, errors } = await open(browser, { reduced: true }));
   const rm = await p.evaluate(() => ({ cls: document.getElementById('jb-bar').className, hidden: [...document.querySelectorAll('#jb-bar .jb-up,#jb-bar .jb-bk-in')].filter((e) => getComputedStyle(e).opacity !== '1').length }));
   check('odmah vidljivo, bez klasa za ulazak', !/jb-anim/.test(rm.cls) && rm.hidden === 0, rm);
-  await p.click('#jb-bar .jb-book'); await p.waitForTimeout(150);
+  await clickCover(p); await p.waitForTimeout(150);
   check('meni odmah na 02–03', (await reader(p)).ind === '02–03 / 12');
   await p.keyboard.press('ArrowRight'); await p.waitForTimeout(30);
   check('strelica: odmah 04–05', (await reader(p)).ind === '04–05 / 12');

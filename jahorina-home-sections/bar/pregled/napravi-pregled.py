@@ -46,13 +46,13 @@ __SUV__
 __BAR__
 </script>
 <script>
-// samo u pregledu: ponovi ulazak; linkovi (stranica, mapa) se ne otvaraju
+// samo u pregledu: ponovi ulazak; linkovi (stranica, mapa, telefon) se ne otvaraju
 document.getElementById('pv-replay').addEventListener('click', function () {
   var r = document.getElementById('jb-bar');
   if (!r.classList.contains('jb-anim')) return;
-  r.classList.remove('jb-on', 'jb-peek'); void r.offsetWidth;
+  r.classList.remove('jb-on'); void r.offsetWidth;
   r.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  setTimeout(function () { r.classList.add('jb-on'); setTimeout(function () { r.classList.add('jb-peek'); setTimeout(function () { r.classList.remove('jb-peek'); }, 2000); }, 2100); }, 450);
+  setTimeout(function () { r.classList.add('jb-on'); }, 450);
 });
 document.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('#jsu-suvenirnica a, #jb-bar a:not(.pv-yt)'); if (a) e.preventDefault(); });
 // pregled ne smije ugraditi YouTube, pa dugme za video ovdje otvara video na YouTube-u (na sajtu se video otvara preko ekrana)
