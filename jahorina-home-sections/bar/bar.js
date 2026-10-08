@@ -1056,13 +1056,28 @@
   /* ---------- sadržaj iz WordPressa (REST API): stranica Olimpijski bar + meni iz Medija ---------- */
   // EN stranice prvo pitaju /en/wp-json (qTranslate tada vraća engleski), pa obični put, pa ?rest_route= rezerva
   var bases = (EN ? [O + '/en/wp-json/'] : []).concat([O + '/wp-json/', O + '/?rest_route=/']);
+  // JSON iz odgovora; kad WordPress (prikaz PHP grešaka) ili neki dodatak ispiše tekst prije ili poslije podataka
+  // (Safari tada javlja "The string did not match the expected pattern"), podaci se izvade iz sredine
+  function json(t, path) {
+    try { return JSON.parse(t); } catch (e) {}
+    var ss = [t.indexOf('[{"'), t.indexOf('{"'), t.indexOf('[]')].filter(function (x) { return x >= 0; }).sort(function (a, b) { return a - b; });
+    var es = [t.lastIndexOf(']'), t.lastIndexOf('}')].sort(function (a, b) { return b - a; });
+    for (var i = 0; i < ss.length; i++) for (var k = 0; k < es.length; k++)
+      if (es[k] > ss[i]) try { return JSON.parse(t.slice(ss[i], es[k] + 1)); } catch (e) {}
+    var snip = clean(String(t).replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]*>/g, ' ')).slice(0, 110);
+    throw new Error('odgovor nije JSON · ' + path + (snip ? ': „' + snip + '“' : ' (prazan)'));
+  }
   function api(path, query) {
-    var i = 0;
+    var i = 0, first = null;
     function attempt(err) {
-      if (i >= bases.length) return Promise.reject(err);
+      if (err && !first && err.message !== 'REST') first = err;   // admin vidi prvi (najkorisniji) razlog
+      if (i >= bases.length) return Promise.reject(first || err);
       var b = bases[i++], url = b + 'wp/v2/' + path + (b.indexOf('?') > -1 ? '&' : '?') + query;
       return fetch(url, { credentials: 'same-origin', headers: { Accept: 'application/json' } })
-        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status + ' · ' + path); return r.json(); })
+        .then(function (r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status + ' · ' + path);
+          return r.text().then(function (t) { return json(t, path); });
+        })
         .then(function (j) { bases = [b].concat(bases.filter(function (x) { return x !== b; })); return j; }, attempt);
     }
     return attempt(new Error('REST'));

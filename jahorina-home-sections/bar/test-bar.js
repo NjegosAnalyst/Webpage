@@ -101,10 +101,13 @@ async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900
       }
       if (/wp\/v2\/pages/.test(u.pathname + u.search)) {
         if (wp === 'nema' || !/slug=olimpijski-bar/.test(u.search)) return route.fulfill({ contentType: 'application/json', body: '[]' });   // suvenirnica iznad: ugrađeni tekst
-        return route.fulfill({ contentType: 'application/json', body: JSON.stringify([{
+        // PHP upozorenje ispisano prije podataka (WordPress sa prikazom grešaka) ili HTML umjesto JSON-a
+        const pre = wp === 'upozorenje' ? '<br />\n<b>Warning</b>:  Undefined array key "x" in <b>/home/oc/public_html/wp-content/themes/betheme/functions.php</b> on line <b>12</b><br />\n' : '';
+        if (wp === 'html') return route.fulfill({ contentType: 'text/html', body: '<!doctype html><html><head><title>Olimpijski centar Jahorina</title></head><body><p>Stranica u održavanju</p></body></html>' });
+        return route.fulfill({ contentType: 'application/json', body: pre + JSON.stringify([{
           id: 77, link: SITE + '/olimpijski-bar/',
           title: { rendered: wp === 'qtranslate' ? '[:SH]Olimpijski bar[:en]Olympic Bar[:]' : 'Olimpijski bar' },
-          content: { rendered: CONTENT[wp] },
+          content: { rendered: CONTENT[wp === 'upozorenje' ? 'elementor' : wp] },
         }]) });
       }
       return route.fulfill({ status: 404, body: '' });
@@ -317,6 +320,16 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   await p.click('#jb-bar .jb-btn--ghost'); await p.waitForTimeout(300);
   check('video ID iz iframe-a', /embed\/ZyXwVuTsRq1/.test(await p.evaluate(() => document.querySelector('#jb-vid iframe').src)));
   check('bez grešaka u konzoli', errors.length === 0, errors);
+  await ctx.close();
+
+  console.log('WordPress ispiše PHP upozorenje prije JSON-a (Safari: "The string did not match the expected pattern")');
+  ({ p, ctx, errors } = await open(browser, { wp: 'upozorenje', ga: 'none', admin: true }));
+  S = await state(p);
+  check('podaci se ipak pročitaju (uvod, brojevi, link), admin bez poruke o stranici', S.lead === P1.split('zabave.')[0] + 'zabave.' && S.facts.split('|').length === 3 && !/stranica/.test(S.why), [S.lead, S.why]);
+  await ctx.close();
+  ({ p, ctx, errors } = await open(browser, { wp: 'html', ga: 'none', admin: true }));
+  S = await state(p);
+  check('HTML umjesto JSON-a: ugrađeni tekst, admin vidi početak odgovora', /^Na vrhu Jahorine/.test(S.lead) && /odgovor nije JSON · pages: „[^“]*Stranica u održavanju“/.test(S.why), S.why);
   await ctx.close();
 
   console.log('Tekst stranice bez brojeva → red sa brojevima se sakrije; video ostaje podrazumijevani');
