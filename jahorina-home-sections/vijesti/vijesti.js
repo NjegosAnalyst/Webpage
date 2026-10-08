@@ -182,10 +182,10 @@
     '@media (prefers-reduced-motion:reduce){#V *,#V *::before,#V *::after{animation:none!important;transition:none!important}#V .jv-body > *,#V .jv-car{opacity:1!important;transform:none!important}}'
   ].join('\n').replace(/#V/g, '#jv-vijesti');
 
-  if (!d.getElementById('jv-css')) {
-    var st = d.createElement('style'); st.id = 'jv-css'; st.textContent = CSS;
-    (d.head || d.documentElement).appendChild(st);
-  }
+  // stil se uvijek osvježi: Elementor editor ne učitava stranicu ponovo kad se widget izmijeni, pa bi ostao stil stare verzije
+  var st = d.getElementById('jv-css');
+  if (!st) { st = d.createElement('style'); st.id = 'jv-css'; (d.head || d.documentElement).appendChild(st); }
+  st.textContent = CSS;
   if (!d.querySelector('link[href*="family=Archivo"]')) {
     var fl = d.createElement('link'); fl.rel = 'stylesheet';
     fl.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap';
@@ -412,7 +412,6 @@
   function fit() {
     var st = root.style;
     st.removeProperty('width'); st.removeProperty('max-width'); st.removeProperty('margin-left');
-    st.removeProperty('margin-top'); st.removeProperty('margin-bottom');
     var cw = d.documentElement.clientWidth, r = root.getBoundingClientRect();
     if (r.width < cw - 1) {
       st.setProperty('width', cw + 'px', 'important');
@@ -424,18 +423,27 @@
     root.classList.toggle('jv--boxed', boxed);
     // Elementor kontejner/sekcija oko bloka ima svoj padding (podrazumijevano 10px) na bijeloj pozadini stranice → bijela traka
     // iznad/ispod. Kad je blok jedini widget u njemu, blok prekrije taj padding, pa se sekcije spoje bez šava.
-    var sh = !boxed && shell();
+    // Margine se ne skidaju pa vraćaju (to bi pomjerilo sadržaj ispod i skrol), nego se padding računa uz trenutnu marginu.
+    var sh = !boxed && shell(), up = 0, dn = 0;
     if (sh) {
-      var a = sh.getBoundingClientRect(), b = root.getBoundingClientRect(), up = b.top - a.top, dn = a.bottom - b.bottom;
-      if (up > .5 && up <= 40) st.setProperty('margin-top', -up + 'px', 'important');
-      if (dn > .5 && dn <= 40) st.setProperty('margin-bottom', -dn + 'px', 'important');
+      var a = sh.getBoundingClientRect(), b = root.getBoundingClientRect();
+      up = b.top - a.top - (parseFloat(st.getPropertyValue('margin-top')) || 0);
+      dn = a.bottom - b.bottom - (parseFloat(st.getPropertyValue('margin-bottom')) || 0);
     }
+    if (up > .5 && up <= 40) st.setProperty('margin-top', -up + 'px', 'important'); else st.removeProperty('margin-top');
+    if (dn > .5 && dn <= 40) st.setProperty('margin-bottom', -dn + 'px', 'important'); else st.removeProperty('margin-bottom');
   }
-  // najviši Elementor element (kontejner ili sekcija) oko bloka, samo ako je blok jedini widget u njemu
+  // najviši Elementor element (kontejner ili sekcija) oko bloka, samo ako je blok jedini vidljivi widget u njemu
+  // (sidro za meni, sakriven widget ili widget samo sa <style> se ne broje)
   function shell() {
+    if (!root.matches) return null;
     for (var e = root; e.parentElement; e = e.parentElement)
-      if (e.parentElement.matches('.elementor, .elementor-section-wrap'))
-        return e !== root && e.querySelectorAll('.elementor-widget').length === 1 ? e : null;
+      if (e.parentElement.matches('.elementor, .elementor-section-wrap')) {
+        if (e === root) return null;
+        var n = 0, ws = e.querySelectorAll('.elementor-widget');
+        for (var i = 0; i < ws.length; i++) if (ws[i].offsetHeight > 0) n++;
+        return n === 1 ? e : null;
+      }
     return null;
   }
   function refit() { clearTimeout(fit.t); fit.t = setTimeout(fit, 120); }

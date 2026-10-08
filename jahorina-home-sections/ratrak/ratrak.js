@@ -44,7 +44,7 @@
     tiles: [['time', CFG.trajanje, 'Duration'], ['pin', CFG.polazak, 'Poljice gondola'], ['ticket', CFG.cijena, 'Per person']],
     notes: ['Children under 6 ride free.', 'Payment at the Poljice ski ticket office.'],
     book: 'Book at least one day in advance by email to ' + MAIL + ' or by phone at ' + PHONE + '.',
-    mail: 'Book by email', call: PHONE, shop: 'Book online', mail2: 'Email',
+    mail: 'Book by email', mailS: 'Book by email', call: PHONE, callS: 'Call', shop: 'Book online', mail2: 'Email',
     gal: 'Gallery', galLabel: 'Panoramic snowcat ride gallery', galOpen: 'Open gallery', photo: 'Photo', close: 'Close', prev: 'Previous photo', next: 'Next photo'
   } : {
     kicker: 'Doživljaj na Jahorini', t: ['Panoramska', 'vožnja'], o: 'ratrakom', alt: 'Ratrak uređuje stazu na Jahorini u zalasku sunca',
@@ -52,7 +52,7 @@
     tiles: [['time', CFG.trajanje, 'Trajanje'], ['pin', CFG.polazak, 'Polaz gondole Poljice'], ['ticket', CFG.cijena, 'Po osobi']],
     notes: ['Za djecu do 6 godina vožnja je besplatna.', 'Plaćanje na ski kasi Poljice.'],
     book: 'Rezervacija najmanje dan unaprijed na mail ' + MAIL + ' ili putem telefona na broj ' + PHONE + '.',
-    mail: 'Rezerviši putem maila', call: PHONE, shop: 'Rezerviši online', mail2: 'Pošalji mail',
+    mail: 'Rezerviši putem maila', mailS: 'Rezerviši mailom', call: PHONE, callS: 'Pozovi', shop: 'Rezerviši online', mail2: 'Pošalji mail',
     gal: 'Galerija', galLabel: 'Galerija: panoramska vožnja ratrakom', galOpen: 'Otvori galeriju', photo: 'Fotografija', close: 'Zatvori', prev: 'Prethodna fotografija', next: 'Sljedeća fotografija'
   };
 
@@ -149,9 +149,12 @@
     '#R .jr-notes li::before{content:""!important;width:5px;height:5px;border-radius:50%;flex:none;background:var(--accent);box-shadow:0 0 8px rgba(0,185,242,.8)}',
 
     /* rezervacija: dva dugmeta iste visine i fonta, ikona uvijek ispred teksta; bijelo glavno + stakleno sporedno (kao u hero-u) */
-    '#R .jr-acts{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:28px}',
-    '#R .jr-btn{position:relative;isolation:isolate;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:9px;height:46px;padding:0 22px!important;border-radius:40px;white-space:nowrap;font:600 14px/1 var(--fb);letter-spacing:.2px;font-variant-numeric:tabular-nums}',
-    '#R .jr-btn svg{width:16px;height:16px}',
+    /* dva dugmeta iste širine, red tačno širok kao panel sa pločicama iznad (ivice poravnate); tri (web shop) se prelamaju */
+    '#R .jr-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:28px;width:min(100%,440px)}',
+    '#R .jr-acts--3{display:flex;flex-wrap:wrap}',
+    '#R .jr-btn{position:relative;isolation:isolate;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px!important;border-radius:40px;white-space:nowrap;font:600 13.5px/1 var(--fb);letter-spacing:.2px;font-variant-numeric:tabular-nums}',
+    '#R .jr-btn svg{width:15px;height:15px}',
+    '#R .jr-s{display:none}',
     '#R .jr-btn--solid{overflow:hidden;color:#0d1524!important;background:linear-gradient(145deg,#fff,#E6EEF6);transition:transform .2s,box-shadow .2s;',
     'box-shadow:inset -2px -2px 4px rgba(13,21,36,.1),inset 2px 2px 3px #fff,4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16)}',
     '#R .jr-btn--solid::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:45%;pointer-events:none;transform:skewX(-20deg);',
@@ -215,8 +218,11 @@
     '#R .jr-tile{padding:14px 4px 8px!important}',
     '#R .jr-tile small{letter-spacing:.3px}',
     '#R .jr-notes{flex-direction:column;gap:6px}',
-    '#R .jr-acts{margin-top:24px;width:100%}',
-    '#R .jr-btn{flex:1 1 auto;justify-content:center}}',
+    '#R .jr-acts{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:24px;width:100%}',
+    '#R .jr-acts--3{display:flex;flex-wrap:wrap}',
+    '#R .jr-btn{flex:1 1 auto;height:42px;padding:0 12px!important;font-size:13px}',
+    '#R .jr-acts:not(.jr-acts--3) .jr-l{display:none}',
+    '#R .jr-acts:not(.jr-acts--3) .jr-s{display:inline}}',
     '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}',
 
     /* galerija preko cijelog ekrana */
@@ -244,10 +250,10 @@
     '@media (prefers-reduced-motion:reduce){#L,#L figure{transition:none!important}}'
   ].join('\n').replace(/#R/g, '#jr-ratrak').replace(/#L/g, '#jr-lb');
 
-  if (!d.getElementById('jr-css')) {
-    var st = d.createElement('style'); st.id = 'jr-css'; st.textContent = CSS;
-    (d.head || d.documentElement).appendChild(st);
-  }
+  // stil se uvijek osvježi: Elementor editor ne učitava stranicu ponovo kad se widget izmijeni, pa bi ostao stil stare verzije
+  var st = d.getElementById('jr-css');
+  if (!st) { st = d.createElement('style'); st.id = 'jr-css'; (d.head || d.documentElement).appendChild(st); }
+  st.textContent = CSS;
   if (!d.querySelector('link[href*="family=Archivo"]')) {
     var fl = d.createElement('link'); fl.rel = 'stylesheet';
     fl.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap';
@@ -269,6 +275,8 @@
     close: svg('<path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'),
     phone: svg('<path d="M6.6 3.8 L9.2 3.6 L10.6 7.6 L8.7 9 C9.6 11.1 11.2 12.8 13.3 13.8 L14.8 11.9 L18.8 13.4 L18.5 16 C18.4 17.2 17.3 18.1 16.1 18 C9.7 17.4 5 12.6 4.5 6.2 C4.4 5 5.3 3.9 6.6 3.8 Z" ' + S + '/>')
   };
+  // dugi natpis (računar) i kratki (telefon, da oba dugmeta stanu u jedan red)
+  function lbl(l, s) { return l === s ? esc(l) : '<span class="jr-l">' + esc(l) + '</span><span class="jr-s">' + esc(s) + '</span>'; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   // mail i broj u rečenici postaju linkovi
   function linkify(s) {
@@ -293,12 +301,12 @@
           return '<li class="jr-tile' + (k === 2 ? ' jr-tile--accent' : '') + '" style="--d:' + (1.08 + k * .09).toFixed(2) + 's">' + ICON[t[0]] + '<b>' + esc(t[1]) + '</b><small>' + esc(t[2]) + '</small></li>';
         }).join('') + '</ul>' +
         '<ul class="jr-notes jr-sl" style="--d:1.02s">' + T.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('') + '</ul>' +
-        '<div class="jr-acts jr-sl" style="--d:1.14s">' +
+        '<div class="jr-acts' + (CFG.shop ? ' jr-acts--3' : '') + ' jr-sl" style="--d:1.14s">' +
           (CFG.shop
             ? '<a class="jr-btn jr-btn--solid" href="' + esc(CFG.shop) + '" data-jr="webshop">' + esc(T.shop) + ICON.arrow + '</a>' +
               '<a class="jr-btn jr-btn--ghost" href="mailto:' + MAIL + '" data-jr="mail">' + ICON.mail + esc(T.mail2) + '</a>'
-            : '<a class="jr-btn jr-btn--solid" href="mailto:' + MAIL + '" data-jr="mail">' + ICON.mail + esc(T.mail) + '</a>') +
-          '<a class="jr-btn jr-btn--ghost" href="tel:' + TEL + '" data-jr="telefon">' + ICON.phone + esc(T.call) + '</a>' +
+            : '<a class="jr-btn jr-btn--solid" href="mailto:' + MAIL + '" data-jr="mail">' + ICON.mail + lbl(T.mail, T.mailS) + '</a>') +
+          '<a class="jr-btn jr-btn--ghost" href="tel:' + TEL + '" data-jr="telefon" aria-label="' + esc(T.callS + ' ' + PHONE) + '">' + ICON.phone + lbl(T.call, T.callS) + '</a>' +
         '</div>' +
         '<p class="jr-book jr-sl" style="--d:1.24s">' + linkify(T.book) + '</p>' +
       '</div>' +
@@ -308,7 +316,6 @@
   function fit() {
     var st = root.style;
     st.removeProperty('width'); st.removeProperty('max-width'); st.removeProperty('margin-left');
-    st.removeProperty('margin-top'); st.removeProperty('margin-bottom');
     var cw = d.documentElement.clientWidth, r = root.getBoundingClientRect();
     if (r.width < cw - 1) {
       st.setProperty('width', cw + 'px', 'important');
@@ -319,22 +326,31 @@
     root.classList.toggle('jr--boxed', boxed);
     // Elementor kontejner/sekcija oko bloka ima svoj padding (podrazumijevano 10px) na bijeloj pozadini stranice → bijela traka
     // iznad/ispod. Kad je blok jedini widget u njemu, blok prekrije taj padding, pa se sekcije spoje bez šava.
-    var sh = !boxed && shell();
+    // Margine se ne skidaju pa vraćaju (to bi pomjerilo sadržaj ispod i skrol), nego se padding računa uz trenutnu marginu.
+    var sh = !boxed && shell(), up = 0, dn = 0;
     if (sh) {
-      var a = sh.getBoundingClientRect(), b = root.getBoundingClientRect(), up = b.top - a.top, dn = a.bottom - b.bottom;
-      if (up > .5 && up <= 40) st.setProperty('margin-top', -up + 'px', 'important');
-      if (dn > .5 && dn <= 40) st.setProperty('margin-bottom', -dn + 'px', 'important');
+      var a = sh.getBoundingClientRect(), b = root.getBoundingClientRect();
+      up = b.top - a.top - (parseFloat(st.getPropertyValue('margin-top')) || 0);
+      dn = a.bottom - b.bottom - (parseFloat(st.getPropertyValue('margin-bottom')) || 0);
     }
+    if (up > .5 && up <= 40) st.setProperty('margin-top', -up + 'px', 'important'); else st.removeProperty('margin-top');
+    if (dn > .5 && dn <= 40) st.setProperty('margin-bottom', -dn + 'px', 'important'); else st.removeProperty('margin-bottom');
     // vijesti su odmah iznad (bez razmaka) → svjetlo ratraka smije preći u razmak ispod njih
     var vj = d.getElementById('jv-vijesti');
     root.classList.toggle('jr--join', !boxed && !!vj && !vj.classList.contains('jv--boxed') &&
       Math.abs(vj.getBoundingClientRect().bottom - root.getBoundingClientRect().top) < 3);
   }
-  // najviši Elementor element (kontejner ili sekcija) oko bloka, samo ako je blok jedini widget u njemu
+  // najviši Elementor element (kontejner ili sekcija) oko bloka, samo ako je blok jedini vidljivi widget u njemu
+  // (sidro za meni, sakriven widget ili widget samo sa <style> se ne broje)
   function shell() {
+    if (!root.matches) return null;
     for (var e = root; e.parentElement; e = e.parentElement)
-      if (e.parentElement.matches('.elementor, .elementor-section-wrap'))
-        return e !== root && e.querySelectorAll('.elementor-widget').length === 1 ? e : null;
+      if (e.parentElement.matches('.elementor, .elementor-section-wrap')) {
+        if (e === root) return null;
+        var n = 0, ws = e.querySelectorAll('.elementor-widget');
+        for (var i = 0; i < ws.length; i++) if (ws[i].offsetHeight > 0) n++;
+        return n === 1 ? e : null;
+      }
     return null;
   }
   function refit() { clearTimeout(fit.t); fit.t = setTimeout(fit, 120); }

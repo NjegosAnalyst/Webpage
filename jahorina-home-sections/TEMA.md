@@ -43,7 +43,8 @@ da sve sekcije izgledaju kao jedna cjelina.
   - *Meko svjetlo iz fotografije* samo tamo gdje je izvor svjetla (ratrak: zalazak iznad sunca, `.jr-bloom` radijalni prelaz) + tanak topli odsjaj na gornjoj ivici kadra; pali se tek kad se kadar pojavi i jača sa dolaskom.
   - **Odbijeno (korisnik: „nije premium“):** svjetlo preko cijele širine iza kadrova (izgleda kao obojene trake: plava ispod vijesti, žuta iznad ratraka, smeđa ispod), tamnjenje kadra koji odlazi (izgleda prljavo). Ne koristiti ni „lijepljenje“ kartica (sticky), jak parallax, CSS `animation-timeline` (omotači sa overflow:hidden ga mogu zaglaviti).
 - **Pločice sa podacima:** sve iste (bez pune cyan pločice koja liči na dugme; istaknuta vrijednost samo cyan brojem i tankim cyan rubom); ikona 18px, vrijednost Archivo 700 17px, natpis 9px; natpis ima mjesto za dva reda da sve vrijednosti stoje na istoj liniji.
-- **Dugmad u paru:** ista visina (46px), isti font (Barlow 600 14px), ikona uvijek ispred teksta; bijelo glavno + stakleno sporedno sa tankim rubom; na telefonu oba preko cijele širine.
+- **Dugmad u paru:** ista širina i visina (44px, telefon 42px), isti font (Barlow 600 13.5px, telefon 13px), ikona uvijek ispred teksta; red dugmadi širok tačno kao panel sa pločicama iznad (ivice poravnate); bijelo glavno + stakleno sporedno sa tankim rubom. Na telefonu kratki natpisi („Rezerviši mailom“, „Pozovi“) da oba stanu u jedan red; na uskim telefonima jedno ispod drugog.
+- **Stil se uvijek osvježi** (`st.textContent = CSS` i kad `<style>` već postoji): Elementor editor ne učitava stranicu ponovo kad se widget izmijeni, pa bi inače ostao stil stare verzije.
 
 ## Kako se sekcija gradi i ugrađuje
 1. Folder `jahorina-home-sections/<sekcija>/` sa jednim JS fajlom (kao `vijesti/vijesti.js`): sam ubacuje CSS, crta HTML i čita podatke.
