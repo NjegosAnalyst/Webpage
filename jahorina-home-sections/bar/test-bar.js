@@ -231,9 +231,10 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   check('pa opet stoji', k3 === 1, k3);
   // miš preko menija ne lista strane (korisnik: "ne treba da se meni lista na pokret miša")
   const fb = await p.evaluate(() => { const r = document.querySelector('#jb-bar .jb-fb').getBoundingClientRect(); return { l: r.left, w: r.width, y: r.top + r.height / 2 }; });
+  await p.waitForTimeout(2200);   // odškrinjanje korice poslije podizanja je prošlo
   for (let k = 0; k <= 12; k++) { await p.mouse.move(fb.l + 2 + k * (fb.w - 4) / 12, fb.y); await p.waitForTimeout(16); }
   await p.waitForTimeout(600);
-  check('miš preko menija: korica ostaje (bez listanja)', (await cap(p)) === 'Meni · 12 strana' && await p.evaluate(() => !document.querySelector('#jb-bar .jb-leaf[style*="z-index: 200"]') && getComputedStyle(document.querySelector('#jb-bar .jb-leaf[data-j="0"]')).transform === 'none'), await cap(p));
+  check('miš preko menija: korica ostaje (bez listanja)', (await cap(p)) === 'Meni · 12 strana' && await p.evaluate(() => !document.querySelector('#jb-bar .jb-leaf[style*="z-index: 200"]') && !/rotateY/.test(document.querySelector('#jb-bar .jb-leaf[data-j="0"]').style.transform)), await cap(p));
   await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, 'sr-racunar-mis-na-meniju.png') });
   await p.mouse.move(5, 5);
   await p.waitForTimeout(300);

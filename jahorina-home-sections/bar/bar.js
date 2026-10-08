@@ -3,11 +3,12 @@
    Tema hero-a, vijesti, ratraka i suvenirnice (noćni ton, jedan cyan akcenat, Archivo/Barlow, kadar preko cijele
    širine, fotografija u pozadini kadra, naslov sa iscrtanim krajem, staklo i blagi neumorfizam), sa svojim detaljima:
      · u pozadini kadra se SMJENJUJU fotografije bara (rižoto → enterijer → losos): nova se upali iz mraka, kao svjetlo;
-     · desno u kadru stoji PRAVI MENI (3D, debljina strana, sjenka) koji LEŽI NA STOLU i, dok se skrolom dolazi do
+     · cik-cak sa suvenirnicom iznad (tamo tekst lijevo): ovdje je meni lijevo, tekst desno;
+     · lijevo u kadru stoji PRAVI MENI (3D, debljina strana, sjenka) koji LEŽI NA STOLU i, dok se skrolom dolazi do
        sekcije, PODIŽE SE SA STOLA i uspravi (skrol nazad ga opet spusti); kad stane, korica se jednom odškrine.
        Klik/dodir otvara meni preko cijelog ekrana za listanje i čitanje;
      · preko ekrana: otvorena knjiga, strane se okreću kao papir (prevlačenje, klik, strelice, tastatura), "Uvećaj";
-     · lijevo naslov, uvod, tri podatka (nadmorska visina · Bar · restoran · terasa / après-ski i koncerti · 40+ događaja),
+     · desno naslov, uvod, tri podatka (nadmorska visina · Bar · restoran · terasa / après-ski i koncerti · 40+ događaja),
        dugmad "Rezervacije" (telefon) i "Pogledaj video" (YouTube preko ekrana tek na klik).
 
    SADRŽAJ JE IZ WORDPRESSA:
@@ -90,16 +91,17 @@
 
   // fotografije kadra (smjenjuju se): pozicija na računaru / telefonu i jačina (svaka fotografija ima svoju svjetlinu)
   var PHOTOS = [
-    { f: 'bar-glavna', w: 2000, pos: '40% 62%', mpos: '28% 64%', lum: .74 },
-    { f: 'bar-enterijer', w: 1336, pos: '50% 50%', mpos: '42% 50%', lum: .8 },
-    { f: 'bar-losos', w: 1300, pos: '50% 50%', mpos: '38% 50%', lum: .64 }
+    { f: 'bar-glavna', w: 2000, pos: '40% 62%', mpos: '14% 64%', lum: .74 },
+    { f: 'bar-enterijer', w: 1336, pos: '50% 50%', mpos: '60% 50%', lum: .8 },
+    { f: 'bar-losos', w: 1300, pos: '50% 50%', mpos: '18% 50%', lum: .64 }
   ].map(function (p, k) { p.full = HERE + 'slike/' + p.f + '.webp'; p.md = HERE + 'slike/' + p.f + '-1000.webp'; p.alt = T.photos[k]; return p; });
   var ROOM = HERE + 'slike/bar-enterijer-1000.webp';
 
   /* ---------- izgled ---------- */
   // listovi menija: isti CSS za meni u kadru (#R) i meni preko ekrana (#L)
   var LEAF = [
-    '#B .jb-under{position:absolute;top:0;height:100%;background:#0f0f0f;display:none;box-shadow:0 46px 70px -34px rgba(0,0,0,.95),0 18px 40px rgba(0,0,0,.4)}',
+    /* slojevi su malo razmaknuti po dubini (podloga iza, list u okretu ispred), da se ravni u 3D ne preklapaju */
+    '#B .jb-under{position:absolute;top:0;height:100%;background:#0f0f0f;display:none;transform:translateZ(-2px);box-shadow:0 46px 70px -34px rgba(0,0,0,.95),0 18px 40px rgba(0,0,0,.4)}',
     '#B .jb-under--r{left:50%;width:50%;border-radius:0 4px 4px 0}',
     '#B .jb-under--l{left:0;width:50%;border-radius:4px 0 0 4px}',
     /* rubovi preostalih strana (svijetli papir) */
@@ -131,7 +133,7 @@
     '#B .jb-seg--in > .jb-face--b::after{background:linear-gradient(270deg,rgba(0,0,0,.5),rgba(0,0,0,.08) 70%,rgba(255,255,255,.06))}',
     '#B .jb-seg--out > .jb-face--b::after{background:linear-gradient(270deg,rgba(255,255,255,.1),rgba(0,0,0,.12) 45%,rgba(0,0,0,.42))}',
     /* sjenka koju strana u okretu baca na strane ispod */
-    '#B .jb-cast{position:absolute;top:0;height:100%;width:50%;pointer-events:none;opacity:0;z-index:50}',
+    '#B .jb-cast{position:absolute;top:0;height:100%;width:50%;pointer-events:none;opacity:0;z-index:50;transform:translateZ(.25px)}',
     '#B .jb-cast--r{left:50%;background:linear-gradient(90deg,rgba(0,0,0,.62),rgba(0,0,0,.25) 40%,rgba(0,0,0,0) 85%)}',
     '#B .jb-cast--l{left:0;background:linear-gradient(270deg,rgba(0,0,0,.62),rgba(0,0,0,.25) 40%,rgba(0,0,0,0) 85%)}',
     '#B .is-single .jb-cast--r{left:0;width:100%}',
@@ -168,25 +170,26 @@
     '#R .jb-frame{position:relative;transform-origin:50% 0;display:flex;align-items:center;min-height:clamp(640px,48vw,860px);border-radius:26px;overflow:hidden;isolation:isolate;background:#0B1324;',
     'box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22)}',
     '#R .jb-frame::after{content:"";position:absolute;inset:0;z-index:6;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.08)}',
-    /* tanak topli odsjaj na gornjoj ivici, iznad lampe nad menijem */
-    '#R .jb-frame::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;z-index:6;pointer-events:none;background:linear-gradient(90deg,transparent 52%,rgba(255,214,170,.42) 78%,transparent 98%)}',
+    /* tanak topli odsjaj na gornjoj ivici, iznad lampe nad menijem (lijevo) */
+    '#R .jb-frame::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;z-index:6;pointer-events:none;background:linear-gradient(90deg,transparent 2%,rgba(255,214,170,.42) 22%,transparent 48%)}',
     '#R .jb-bgs{position:absolute;inset:0;z-index:-1;overflow:hidden}',
     /* fotografije: blaža noćna obrada nego u vijestima, da topla svjetlost bara ostane. Smjena: nova se upali iz mraka
-       (kao svjetlo), stara se ugasi; bez zumiranja i pomjeranja. Na širokim ekranima fotografija počinje desnije */
-    '#R .jb-bg{--bl:max(8%,calc(var(--side) - 140px));position:absolute;top:0;left:var(--bl);width:calc(100% - var(--bl));height:100%;object-fit:cover;opacity:0;',
+       (kao svjetlo), stara se ugasi; bez zumiranja i pomjeranja. Desna ivica se utapa u tamu ispod teksta */
+    '#R .jb-bg{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0;',
     'filter:saturate(.9) brightness(.22) contrast(1.08);transition:opacity 1.6s ease,filter 2.2s cubic-bezier(.3,.6,.2,1);',
-    '-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%);mask-image:linear-gradient(90deg,transparent 0,#000 22%)}',
+    '-webkit-mask-image:linear-gradient(270deg,transparent 0,#000 24%);mask-image:linear-gradient(270deg,transparent 0,#000 24%)}',
     '#R .jb-bg.is-on{opacity:1;filter:saturate(.9) brightness(var(--lum,.74)) contrast(1.08)}',
     '#R .jb-tint{position:absolute;inset:0;pointer-events:none;background:linear-gradient(160deg,#1E4F96 0%,#0E2A55 100%);mix-blend-mode:soft-light;opacity:.34}',
     '#R .jb-scrim{position:absolute;inset:0;pointer-events:none;',
-    'background:linear-gradient(90deg,rgba(6,11,22,.93) 0,rgba(6,11,22,.84) calc(var(--side) + 380px),rgba(6,11,22,.55) calc(var(--side) + 590px),rgba(6,11,22,.14) calc(var(--side) + 790px),rgba(6,11,22,0) calc(var(--side) + 930px)),',
+    'background:linear-gradient(270deg,rgba(6,11,22,.93) 0,rgba(6,11,22,.84) calc(var(--side) + 380px),rgba(6,11,22,.55) calc(var(--side) + 590px),rgba(6,11,22,.14) calc(var(--side) + 790px),rgba(6,11,22,0) calc(var(--side) + 930px)),',
+    'linear-gradient(90deg,rgba(6,11,22,.42) 0,rgba(6,11,22,0) calc(var(--side) + 180px)),',
     'linear-gradient(0deg,rgba(6,11,22,.55) 0%,rgba(6,11,22,0) 30%),linear-gradient(180deg,rgba(6,18,42,.32) 0%,rgba(6,18,42,0) 22%),',
-    'radial-gradient(130% 100% at 62% 50%,transparent 56%,rgba(4,8,18,.55) 100%)}',
+    'radial-gradient(130% 100% at 38% 50%,transparent 56%,rgba(4,8,18,.55) 100%)}',
     /* toplo svjetlo lampe iznad menija (jedini topli izvor; ostalo je noćna obrada) */
-    '#R .jb-light{position:absolute;inset:0;pointer-events:none;background:radial-gradient(30% 54% at var(--lx,80%) 0%,rgba(255,214,170,.17),rgba(255,190,140,.05) 55%,transparent 80%)}',
+    '#R .jb-light{position:absolute;inset:0;pointer-events:none;background:radial-gradient(30% 54% at var(--lx,22%) 0%,rgba(255,214,170,.17),rgba(255,190,140,.05) 55%,transparent 80%)}',
 
-    /* tekst lijevo */
-    '#R .jb-body{position:relative;z-index:2;width:min(calc(var(--side) + 560px),52%);padding:clamp(56px,6vw,96px) 0 clamp(56px,6vw,96px) var(--side)}',
+    /* tekst desno (cik-cak sa suvenirnicom iznad), poravnat sa desnom ivicom mreže 1240px */
+    '#R .jb-body{position:relative;z-index:2;width:min(calc(var(--side) + 560px),52%);margin-left:auto;padding:clamp(56px,6vw,96px) var(--side) clamp(56px,6vw,96px) 0}',
     '#R .jb-kicker{display:flex;align-items:center;gap:14px;font:600 11px/1 var(--fd);letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.78);margin-bottom:24px}',
     '#R .jb-kicker::before{content:"";width:34px;height:1.5px;flex-shrink:0;background:linear-gradient(90deg,var(--accent),#fff,var(--accent));box-shadow:0 0 10px rgba(0,185,242,.8)}',
     '#R h2{font-size:clamp(46px,5vw,78px);font-weight:800;line-height:.93;letter-spacing:-.025em}',
@@ -232,7 +235,7 @@
 
     /* MENI U KADRU: pravi meni (debljina strana, sjenka), blago okrenut prema tekstu. Dok sekcija ulazi u ekran, meni se
        podiže sa stola (--k: 0 = leži, 1 = stoji; računa skripta iz skrola); klik/dodir ga otvara preko cijelog ekrana */
-    '#R .jb-book{all:unset;position:absolute!important;z-index:3;box-sizing:border-box!important;display:block!important;right:calc(var(--side) + clamp(0px,3vw,64px));top:50%;height:clamp(340px,35vw,560px);aspect-ratio:1240/1742;',
+    '#R .jb-book{all:unset;position:absolute!important;z-index:3;box-sizing:border-box!important;display:block!important;left:calc(var(--side) + clamp(0px,3vw,64px));top:50%;height:clamp(340px,35vw,560px);aspect-ratio:1240/1742;',
     'margin-top:calc(clamp(340px,35vw,560px) / -2 - 26px)!important;cursor:pointer;perspective:2400px;touch-action:pan-y;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}',
     '#R .jb-book:focus-visible{outline:none!important}',
     '#R .jb-book:focus-visible .jb-cap b{color:var(--accent)}',
@@ -243,14 +246,12 @@
     /* sjenka na stolu ispod menija: dok leži je tamna i uska, kad se podigne razlije se i oslabi */
     '#R .jb-bk-floor{position:absolute;left:-8%;right:-14%;bottom:-5%;height:16%;pointer-events:none;border-radius:50%;',
     'background:radial-gradient(closest-side,rgba(0,0,0,.62),rgba(0,0,0,.28) 55%,transparent);opacity:calc(.35 + (1 - var(--k,1)) * .55);transform:scale(calc(1.15 - (1 - var(--k,1)) * .25),calc(.75 + (1 - var(--k,1)) * .5))}',
-    '#R .jb-bk{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateY(-20deg) rotateX(5deg) rotateZ(-1.2deg);transition:transform .9s cubic-bezier(.2,.7,.2,1)}',
-    '#R .jb-book:hover .jb-bk,#R .jb-book:focus-visible .jb-bk{transform:rotateY(-12deg) rotateX(3deg) rotateZ(-.6deg) translateZ(22px)}',
-    '#R .jb-fb{position:absolute;inset:0;transform-style:preserve-3d}',
-    /* debljina menija: rubovi strana sa desne strane (svijetli papir, tanke linije) */
-    '#R .jb-bk-edge{position:absolute;top:.6%;bottom:.6%;left:100%;width:9px;transform-origin:0 50%;transform:rotateY(90deg);',
-    'background:repeating-linear-gradient(90deg,#d8d2c6 0 1px,#a29b8f 1px 2px);box-shadow:inset 0 0 6px rgba(0,0,0,.45)}',
+    '#R .jb-bk{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateY(20deg) rotateX(5deg) rotateZ(1.2deg);transition:transform .9s cubic-bezier(.2,.7,.2,1)}',
+    '#R .jb-book:hover .jb-bk,#R .jb-book:focus-visible .jb-bk{transform:rotateY(12deg) rotateX(3deg) rotateZ(.6deg) translateZ(22px)}',
+    /* meni u kadru je jedna ravna cjelina (listovi se slažu po redu, bez 3D preklapanja); odškrinjanje korice ima svoju perspektivu */
+    '#R .jb-fb{position:absolute;inset:0;transform-style:flat;perspective:1400px}',
     /* blagi sjaj laminirane korice preko svega */
-    '#R .jb-fb::after{content:"";position:absolute;inset:0;z-index:300;pointer-events:none;border-radius:1px 4px 4px 1px;background:linear-gradient(112deg,transparent 30%,rgba(255,255,255,.06) 44%,rgba(255,255,255,.012) 54%,transparent 64%);',
+    '#R .jb-fb::after{content:"";position:absolute;inset:0;z-index:300;pointer-events:none;transform:translateZ(1.5px);border-radius:1px 4px 4px 1px;background:linear-gradient(112deg,transparent 30%,rgba(255,255,255,.06) 44%,rgba(255,255,255,.012) 54%,transparent 64%);',
     'background-size:240% 100%;background-position:100% 0;transition:background-position 1.2s cubic-bezier(.2,.7,.2,1)}',
     '#R .jb-book:hover .jb-fb::after{background-position:0 0}',
     /* natpis ispod menija: "Meni · 12 strana" (dok se lista: "Meni · 03 / 12") + kako se koristi */
@@ -285,20 +286,20 @@
     '@media (max-width:980px){',
     '#R .jb-frame{flex-direction:column;align-items:stretch;min-height:0}',
     '#R .jb-bgs{position:relative;inset:auto;height:min(66vw,560px);-webkit-mask-image:linear-gradient(180deg,#000 64%,transparent 100%);mask-image:linear-gradient(180deg,#000 64%,transparent 100%)}',
-    '#R .jb-bg{--bl:0px;-webkit-mask-image:none;mask-image:none}',
-    '#R .jb-scrim{background:linear-gradient(0deg,rgba(6,11,22,.5) 0%,rgba(6,11,22,0) 40%),linear-gradient(180deg,rgba(6,18,42,.36) 0%,rgba(6,18,42,0) 26%),linear-gradient(270deg,rgba(6,11,22,.45) 0%,rgba(6,11,22,0) 45%)}',
-    '#R .jb-light{--lx:76%}',
-    '#R .jb-book{top:clamp(28px,5vw,52px);right:clamp(30px,7vw,72px);height:min(44vw,380px);margin-top:0!important}',
+    '#R .jb-bg{-webkit-mask-image:none;mask-image:none}',
+    '#R .jb-scrim{background:linear-gradient(0deg,rgba(6,11,22,.5) 0%,rgba(6,11,22,0) 40%),linear-gradient(180deg,rgba(6,18,42,.36) 0%,rgba(6,18,42,0) 26%),linear-gradient(90deg,rgba(6,11,22,.45) 0%,rgba(6,11,22,0) 45%)}',
+    '#R .jb-light{--lx:24%}',
+    '#R .jb-book{top:clamp(28px,5vw,52px);left:clamp(30px,7vw,72px);height:min(44vw,380px);margin-top:0!important}',
     '#R .jb-cap{top:calc(100% + 18px)}',
-    '#R .jb-body{width:auto;padding:clamp(28px,4vw,40px) clamp(22px,6vw,56px) clamp(32px,5vw,52px)}',
+    '#R .jb-body{width:auto;margin-left:0;padding:clamp(28px,4vw,40px) clamp(22px,6vw,56px) clamp(32px,5vw,52px)}',
     '#R h2{font-size:clamp(42px,7.6vw,66px)}',
     '#R .jb-lead{max-width:56ch}}',
     '@media (max-width:760px){',
     '#R .jb-frame{border-radius:24px}',
     '#R .jb-bgs{height:min(118vw,520px)}',
     '#R .jb-bg{object-position:var(--mpos)!important}',
-    '#R .jb-book{top:clamp(22px,6vw,34px);right:24px;height:min(60vw,290px)}',
-    '#R .jb-bk{transform:rotateY(-16deg) rotateX(4deg) rotateZ(-1deg)}',
+    '#R .jb-book{top:clamp(22px,6vw,34px);left:28px;height:min(60vw,290px)}',
+    '#R .jb-bk{transform:rotateY(16deg) rotateX(4deg) rotateZ(1deg)}',
     '#R .jb-cap{top:calc(100% + 14px);gap:6px}',
     '#R .jb-cap b{font-size:9.5px;letter-spacing:2px;gap:8px}',
     '#R .jb-cap small{font-size:11.5px}',
@@ -396,8 +397,9 @@
   ].concat(LEAF.map(function (s) { return s.replace(/#B/g, '#L'); }), LEAF.map(function (s) { return s.replace(/#B/g, '#R'); }))
     .join('\n').replace(/#R/g, '#jb-bar').replace(/#L/g, '#jb-meni').replace(/#V/g, '#jb-vid');
   // podloga menija u kadru: uvijek vidljiva (sjenka na fotografiji); mora doći poslije opšteg pravila za listove
-  CSS += '\n#jb-bar .jb-fb .jb-under--r{display:block;box-shadow:0 34px 50px -22px rgba(0,0,0,.85),22px 30px 70px rgba(0,0,0,.42)}' +
-    '\n#jb-bar .jb-fb .jb-under--r.has-more{box-shadow:1px 1px 0 rgba(214,206,192,.5),2px 2px 0 #2b2926,3px 2px 0 rgba(200,192,178,.38),0 34px 50px -22px rgba(0,0,0,.85),22px 30px 70px rgba(0,0,0,.42)}';
+  // povez lijevo (meni je okrenut prema tekstu desno) i rubovi strana desno su tanke ivice podloge
+  CSS += '\n#jb-bar .jb-fb .jb-under--r{display:block;box-shadow:-3px 0 0 #1d1d1d,-4px 0 0 rgba(255,255,255,.07),0 34px 50px -22px rgba(0,0,0,.85),22px 30px 70px rgba(0,0,0,.42)}' +
+    '\n#jb-bar .jb-fb .jb-under--r.has-more{box-shadow:-3px 0 0 #1d1d1d,-4px 0 0 rgba(255,255,255,.07),1px 1px 0 rgba(214,206,192,.5),2px 2px 0 #2b2926,3px 2px 0 rgba(200,192,178,.38),0 34px 50px -22px rgba(0,0,0,.85),22px 30px 70px rgba(0,0,0,.42)}';
 
   // stil se uvijek osvježi: Elementor editor ne učitava stranicu ponovo kad se widget izmijeni, pa bi ostao stil stare verzije
   var st = d.getElementById('jb-css');
@@ -511,7 +513,7 @@
     '<section class="jb-wrap" aria-labelledby="jb-h"><div class="jb-frame">' +
       '<div class="jb-bgs">' + PHOTOS.map(bgImg).join('') + '<span class="jb-tint"></span><span class="jb-scrim"></span><span class="jb-light"></span></div>' +
       '<button type="button" class="jb-book" aria-haspopup="dialog">' +
-        '<span class="jb-bk-in"><span class="jb-bk-floor"></span><span class="jb-bk-lift"><span class="jb-bk"><span class="jb-bk-edge"></span><span class="jb-fb"></span></span></span></span>' +
+        '<span class="jb-bk-in"><span class="jb-bk-floor"></span><span class="jb-bk-lift"><span class="jb-bk"><span class="jb-fb"></span></span></span></span>' +
         '<span class="jb-cap"><b>' + ICON.book + '<span class="jb-cap-t"></span></b><small><span class="jb-cm">' + esc(T.capM) + '</span><span class="jb-ct">' + esc(T.capT) + '</span></small></span>' +
       '</button>' +
       '<div class="jb-body">' +
@@ -682,8 +684,8 @@
     B.render = function () {
       var t = B.t, m = B.m, sp = B.mode === 'spread';
       B.leaves.forEach(function (L, j) {
-        var f = j < t;
-        L.el.style.transform = f ? 'rotateY(-180deg)' : 'none';
+        var f = j < t, z = -.5 * (f ? t - 1 - j : j - t);   // dublje od otvorenih strana
+        L.el.style.transform = 'translateZ(' + z + 'px)' + (f ? ' rotateY(-180deg)' : '');
         L.out.style.transform = 'none';
         L.el.style.setProperty('--s', 0);
         L.el.style.zIndex = f ? j + 1 : m - j + 1;
@@ -703,7 +705,7 @@
       var L = B.leaves[j], s = Math.sin(p * Math.PI);
       L.el.classList.remove('is-off');
       L.el.style.zIndex = 200;
-      L.el.style.transform = 'rotateY(' + (-180 * p).toFixed(2) + 'deg)';
+      L.el.style.transform = 'translateZ(1px) rotateY(' + (-180 * p).toFixed(2) + 'deg)';
       L.out.style.transform = 'rotateY(' + (-dir * 32 * s).toFixed(2) + 'deg)';
       L.el.style.setProperty('--s', s.toFixed(3));
       B.castR.style.opacity = p < .5 ? (s * .9).toFixed(3) : 0;
