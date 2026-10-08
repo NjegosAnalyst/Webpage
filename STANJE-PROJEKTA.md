@@ -64,7 +64,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - Red za widget: `elementor-html-widget.html` (jsDelivr @commit + SRI; fotografije iz istog commita). jsDelivr se iz cloud okruženja ne može otvoriti, pa ga nisam provjerio uživo.
 - **Sljedeće:** korisnik zamijeni oba reda (vijesti i ratrak @95826c1) na HERO TEST i pošalje screenshot računara i telefona; pa na Početna zima. Ako web shop ima ratrak: upisati link u `data-webshop`. U GA4 označiti `ratrak_rezervacija` kao ključni događaj.
 
-### 3. Suvenirnica — v3.1 „izlog“ u pregledu (8. 10. 2026), čeka korisnikove komentare
+### 3. Suvenirnica — v3.1 „izlog“ ODOBRENA (8. 10. 2026: „sve je u redu“); korisnik je dobio red za widget (@4352164) za HERO TEST
 - Kod: `jahorina-home-sections/suvenirnica/suvenirnica.js` (prefiks `jsu-`, `#jsu-suvenirnica`; galerija `#jsu-lb`; `js-` se ne koristi jer liči na JavaScript), test `test-suvenirnica.js` (Playwright, lažni WP REST odgovori), red za widget `elementor-html-widget.html` iz `napravi-widget.py` (posljednji: @4352164), pregled `pregled/napravi-pregled.py` (ratrak iznad, da se vidi prelaz) → artifact https://claude.ai/artifact/JJKX1ekLbNmhuNnEDnspVA.
 - **Odbijeno:** v1 = ratrak u ogledalu (korisnik: „ne bi potpuno isto kao ratraci, tema da ali detalji različiti“); v2 „vitrina“ = tamna pozadina bez fotografije, kartice na staklenoj polici, šema gondole u panelu (korisnik: „prejednostavno, ne izgleda premium, fotografiju koristi i u pozadini, potrudi se da izgleda kao premium web stranica“).
 - **v3 „izlog“ (sada):**
@@ -79,7 +79,12 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - **Vezano za WordPress (isto od v1):** `wp/v2/pages?slug=suvenirnica` → nadnaslov = naslov stranice, h2 = prvi h1–h4 (kraj „sa sobom“ iscrtan), uvod = prva rečenica prvog pasusa, link stranice, galerija = 3 fotografije izloga + sve `<img>` iz teksta stranice (najveća do 2048 iz srcset-a, i data-src; bez ikona i duplikata), a ako ih nema → `media?parent=<id>`. qTranslate i `/en/wp-json` kao u vijestima. Ugrađeni tekst = tekst stranice od 8. 10. 2026 (EN moj prevod); bez odgovora ostaje on, admin vidi razlog narandžasto.
 - GA: `suvenirnica_klik` (`cilj`: stranica | mapa), `suvenirnica_galerija`.
 - **Otvoreno pitati korisnika:** tačan URL stranice (slug); radno vrijeme (nije na stranici); tačan Google Maps link; da li nove 3 fotografije dodati i u karusel na WP stranici (onda ih iz galerije koda izbaciti da se ne dupliraju); screenshot `…/wp-json/wp/v2/pages?slug=suvenirnica`.
-- **Sljedeće:** komentari na v3 → doterivanje → red za widget na HERO TEST ispod ratraka (Elementor kontejner padding/margin/gap 0) → screenshot računar + telefon.
+- **Sljedeće:** korisnik postavlja red na HERO TEST ispod ratraka (Elementor kontejner padding/margin/gap 0) → screenshot računar + telefon.
+
+### 4. Olimpijski bar — sljedeća (korisnik 8. 10. 2026: „idemo na novu sekciju. Olimpijski bar“)
+- Pravila: TEMA.md (tema ista, detalji različiti od vijesti, ratraka i suvenirnice; premium = fotografija u pozadini kadra; kontrole preko fotografije tihe). Prefiks npr. `jb-` i `#jb-bar`.
+- Stari nacrt iz prvog sistema: `project/Olimpijski Bar Sekcija.dc.html` (APRÈS-SKI, „Zagrijte se uz vatru…“, 120 mjesta, 1.916 m n.v., live muzika Pet & Sub, 09:00–00:00, podnožje staze Poljice, „Rezerviši sto“ / „Pogledaj meni“, galerija „Interijer & kamin“) — **podaci su iz nacrta, nepotvrđeni**; samo za ideju.
+- Od korisnika traženo: fotografije, tekst i podaci, da li postoji WP stranica (onda čitati iz WP-a), meni (PDF/stranica), rezervacija, mjesto na početnoj, screenshot postojećeg.
 
 ### Sljedeće sekcije
 - Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.
