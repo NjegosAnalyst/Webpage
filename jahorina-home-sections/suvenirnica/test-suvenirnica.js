@@ -78,7 +78,7 @@ async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900
     }
     if (u.origin === SITE && u.pathname.startsWith('/wp-content/uploads/')) {   // fotografije sa WordPress stranice
       const n = /suv-b/.test(u.pathname) ? 'suvenirnica-1' : /suv-c/.test(u.pathname) ? 'suvenirnica-2' : 'suvenirnica-glavna';
-      return route.fulfill({ contentType: 'image/webp', body: fs.readFileSync(path.join(__dirname, 'slike', n + (/-300x200/.test(u.pathname) ? '-mini' : '') + '.webp')) });
+      return route.fulfill({ contentType: 'image/webp', body: fs.readFileSync(path.join(__dirname, 'slike', n + '.webp')) });
     }
     if (u.origin === SITE && (/\/wp-json\//.test(u.pathname) || u.searchParams.get('rest_route'))) {
       rest.push(u.pathname + u.search);
@@ -116,7 +116,7 @@ async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900
   await p.waitForTimeout(300);   // WordPress odgovor
   await p.evaluate(() => Promise.all([...document.images].map((i) => { i.loading = 'eager'; return i.decode().catch(() => {}); })));
   await p.locator(scrollTo).scrollIntoViewIfNeeded();
-  await p.waitForTimeout(2600);   // ulazak traje ~2 s
+  await p.waitForTimeout(3400);   // ulazak traje ~3 s (kabina zadnja)
   return { p, ctx, errors, rest };
 }
 async function state(p) {
@@ -130,16 +130,19 @@ async function state(p) {
       lines: [...r.querySelectorAll('h2 span')].map((s) => s.textContent),
       outline: [...r.querySelectorAll('h2 span.jsu-o')].map((s) => s.textContent).join(''),
       kicker: r.querySelector('.jsu-kicker').textContent, lead: r.querySelector('.jsu-lead').textContent,
-      tiles: [...r.querySelectorAll('.jsu-tile b')].map((e) => e.textContent).join('|'),
-      bullets: getComputedStyle(r.querySelector('.jsu-tile')).listStyleType,
+      tags: [...r.querySelectorAll('.jsu-tags li')].map((e) => e.textContent).join('|'),
+      route: [...r.querySelectorAll('.jsu-route .jsu-st')].map((e) => e.textContent).join('|'),
+      routeFits: [...r.querySelectorAll('.jsu-route__row')].every((e) => e.scrollWidth <= e.clientWidth + 1 && [...e.children].every((c) => c.offsetParent === null || c.getClientRects().length === 1 && c.getBoundingClientRect().height < 20)),
+      tagCols: new Set([...r.querySelectorAll('.jsu-tags li')].map((e) => Math.round(e.getBoundingClientRect().left))).size,
+      bullets: getComputedStyle(r.querySelector('.jsu-tags li')).listStyleType,
       page: r.querySelector('a[data-jsu="stranica"]').getAttribute('href'),
-      gal: r.querySelector('.jsu-gal i').textContent, thumbs: r.querySelectorAll('.jsu-thumbs img').length,
+      gal: r.querySelector('.jsu-gal i').textContent, cards: [...r.querySelectorAll('.jsu-card .jsu-cap')].map((e) => e.textContent).join('|'),
       why: (r.querySelector('.jsu-why') || {}).textContent || '',
-      hidden: [...r.querySelectorAll('.jsu-sl,.jsu-tile,.jsu-shot')].filter((e) => getComputedStyle(e).opacity !== '1').length,
+      hidden: [...r.querySelectorAll('.jsu-up,.jsu-card,.jsu-glass')].filter((e) => getComputedStyle(e).opacity !== '1').length,
       imgOk: [...r.querySelectorAll('img')].every((i) => i.complete && i.naturalWidth > 0),
-      acts: [...r.querySelectorAll('.jsu-btn')].map((a) => { const q = a.getBoundingClientRect(); return [Math.round(q.top), Math.round(q.width), Math.round(q.height)]; }),
-      dock: Math.round(r.querySelector('.jsu-dock').getBoundingClientRect().width),
-      labelLines: Math.max(...[...r.querySelectorAll('.jsu-tile small')].map((e) => { const g = document.createRange(); g.selectNodeContents(e); return new Set([...g.getClientRects()].map((q) => Math.round(q.top))).size; })),
+      acts: [...r.querySelectorAll('.jsu-cta,.jsu-pill')].map((a) => { const q = a.getBoundingClientRect(); return [Math.round(q.top), Math.round(q.width), Math.round(q.height)]; }),
+      shelf: (() => { const e = r.querySelector('.jsu-shelf'); return { sw: e.scrollWidth, cw: e.clientWidth, h: [...e.children].map((c) => Math.round(c.getBoundingClientRect().height)) }; })(),
+      cab: (() => { const c = r.querySelector('.jsu-cab').getBoundingClientRect(), t = r.querySelector('.jsu-track').getBoundingClientRect(); return Math.round((c.left + c.width / 2 - t.left) / t.width * 100); })(),
     };
   });
 }
@@ -155,23 +158,25 @@ async function state(p) {
   check('naslov iz WP-a u tri reda, "sa sobom" obris', S.lines.join('|') === 'Ponesite dio|Jahorine|sa sobom' && S.outline === 'sa sobom', S.lines);
   check('nadnaslov = naslov stranice', S.kicker === 'Suvenirnica', S.kicker);
   check('uvod = prva rečenica sa stranice', S.lead === P1.split('. ')[0] + '.', S.lead);
-  check('pločice', S.tiles === 'Poljice|Domaće|Pokloni', S.tiles);
+  check('vrste poklona i stanice gondole', S.tags === 'Lokalni majstori|Prirodna kozmetika|Topli tekstil|Za ljubimce' && S.route === 'Izlazna stanica|Polazna stanica' && S.routeFits, [S.tags, S.route, S.routeFits]);
+  check('kabina stigla na 58% sajle', Math.abs(S.cab - 58) <= 2, S.cab);
+  check('vitrina: 3 kartice različite visine, srednja najviša', S.cards === 'Marame i tekstil|Magneti|Zimski dodaci' && S.shelf.h[1] > S.shelf.h[2] && S.shelf.h[2] > S.shelf.h[0], [S.cards, S.shelf.h]);
   check('bez tačkica liste iz teme', S.bullets === 'none', S.bullets);
   check('link = stranica iz WP-a', S.page === SITE + '/suvenirnica/', S.page);
-  check('galerija: 3 fotografije bloka + 3 sa stranice (bez ikone i duplikata)', S.gal === '6' && S.thumbs === 3, [S.gal, S.thumbs]);
+  check('galerija: 3 fotografije vitrine + 3 sa stranice (bez ikone i duplikata)', S.gal === '6', S.gal);
   check('jedan poziv WP-u (stranica), bez media jer tekst ima slike', rest.length === 1 && /pages\?slug=suvenirnica/.test(rest[0]), rest);
-  check('dugmad: isti red, ista širina i visina, red širok kao panel', S.acts[0][0] === S.acts[1][0] && S.acts[0][1] === S.acts[1][1] && S.acts[0][2] === 44 && Math.abs(S.acts[0][1] * 2 + 10 - S.dock) <= 1, [S.acts, S.dock]);
+  check('dugmad: isti red i ista visina (44px)', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 44 && S.acts[1][2] === 44, S.acts);
   check('sve vidljivo poslije ulaska', S.hidden === 0, S.hidden);
   check('fotografije učitane', S.imgOk);
   check('admin poruka se ne vidi', S.why === '', S.why);
   await p.screenshot({ path: path.join(OUT, 'sr-racunar.png'), fullPage: true });
   await p.locator('#jsu-suvenirnica .jsu-frame').screenshot({ path: path.join(OUT, 'sr-racunar-kadar.png') });
-  await p.click('#jsu-suvenirnica .jsu-btn--solid');
-  await p.click('#jsu-suvenirnica .jsu-btn--ghost');
+  await p.click('#jsu-suvenirnica .jsu-cta');
+  await p.click('#jsu-suvenirnica .jsu-pill');
   let ev = await p.evaluate(() => window.__ev);
   check('GA4: klik stranica i mapa', JSON.stringify(ev) === JSON.stringify([['event', 'suvenirnica_klik', { cilj: 'stranica', jezik: 'sr' }], ['event', 'suvenirnica_klik', { cilj: 'mapa', jezik: 'sr' }]]), ev);
-  const mapa = await p.getAttribute('#jsu-suvenirnica .jsu-btn--ghost', 'href');
-  check('Kako do nas → Google Maps, nova kartica', /google\.com\/maps\/search\/\?api=1&query=Gondola%20Poljice/.test(mapa) && (await p.getAttribute('#jsu-suvenirnica .jsu-btn--ghost', 'target')) === '_blank', mapa);
+  const mapa = await p.getAttribute('#jsu-suvenirnica .jsu-pill', 'href');
+  check('Kako do nas → Google Maps, nova kartica', /google\.com\/maps\/search\/\?api=1&query=Gondola%20Poljice/.test(mapa) && (await p.getAttribute('#jsu-suvenirnica .jsu-pill', 'target')) === '_blank', mapa);
   await p.click('#jsu-suvenirnica .jsu-gal');
   await p.waitForTimeout(700);
   let g = await p.evaluate(() => { const lb = document.getElementById('jsu-lb'); return { shown: getComputedStyle(lb).display, op: getComputedStyle(lb).opacity, cap: lb.querySelector('figcaption').textContent, focus: document.activeElement.className, overflow: document.documentElement.style.overflow }; });
@@ -189,6 +194,11 @@ async function state(p) {
   await p.waitForTimeout(450);
   g = await p.evaluate(() => ({ shown: getComputedStyle(document.getElementById('jsu-lb')).display, focus: document.activeElement.className, overflow: document.documentElement.style.overflow }));
   check('Esc zatvara, fokus se vraća na pilulu Galerija', g.shown === 'none' && g.focus === 'jsu-gal' && g.overflow === '', g);
+  await p.click('#jsu-suvenirnica .jsu-card[data-k="2"]');
+  await p.waitForTimeout(700);
+  check('klik na treću karticu otvara galeriju na 3 / 6', (await p.textContent('#jsu-lb figcaption')) === '3 / 6');
+  await p.keyboard.press('Escape');
+  await p.waitForTimeout(450);
   ev = await p.evaluate(() => window.__ev.map((e) => e[1]));
   check('GA4: otvaranje galerije', ev.includes('suvenirnica_galerija'), ev);
   check('bez grešaka u konzoli', errors.length === 0, errors);
@@ -206,10 +216,10 @@ async function state(p) {
   ({ p, ctx, errors, rest } = await open(browser, { path: '/en/pocetna-zima/', ga: 'gtm', wp: 'qtranslate' }));
   S = await state(p);
   check('engleski naslov iz WP-a', S.lines.join('|') === 'Take a piece|of Jahorina|with you' && S.kicker === 'Souvenir shop', [S.lines, S.kicker]);
-  check('engleski uvod i pločice', /^Visit our souvenir shops/.test(S.lead) && S.tiles === 'Poljice|Local|Gifts', [S.lead, S.tiles]);
+  check('engleski uvod, vrste poklona i stanice', /^Visit our souvenir shops/.test(S.lead) && S.tags === 'Local artisans|Natural cosmetics|Warm textiles|For pets' && S.route === 'Upper station|Lower station' && S.routeFits, [S.lead, S.tags, S.route]);
   check('link vodi na /en/', S.page === SITE + '/en/suvenirnica/', S.page);
   check('prvo /en/wp-json, pa /wp-json', /^\/en\/wp-json/.test(rest[0]) && /^\/wp-json/.test(rest[1]), rest);
-  await p.click('#jsu-suvenirnica .jsu-btn--solid');
+  await p.click('#jsu-suvenirnica .jsu-cta');
   ev = await p.evaluate(() => window.__ev);
   check('dataLayer: suvenirnica_klik', JSON.stringify(ev) === JSON.stringify([{ event: 'suvenirnica_klik', cilj: 'stranica', jezik: 'en' }]), ev);
   check('bez grešaka u konzoli', errors.length === 0, errors);
@@ -260,7 +270,9 @@ async function state(p) {
     S = await state(p);
     check('bez vodoravnog skrola, preko cijele širine', S.scroll === 0 && S.left === 0 && S.width === S.cw, S);
     check('sve vidljivo poslije ulaska', S.hidden === 0, S.hidden);
-    check('natpisi pločica najviše u dva reda', S.labelLines <= 2, S.labelLines);
+    check('šema gondole: natpisi staju u jedan red', S.routeFits);
+    check('vrste poklona u dvije kolone', S.tagCols === 2, S.tagCols);
+    if (vw <= 760) check('telefon: vitrina se prevlači (kartice šire od ekrana)', S.shelf.sw > S.shelf.cw, S.shelf);
     if (name === 'telefon') check('telefon: oba dugmeta u jednom redu, 42px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 42, S.acts);
     await p.locator('#jsu-suvenirnica .jsu-frame').screenshot({ path: path.join(OUT, name + '.png') });
     if (name === 'telefon') {
@@ -278,7 +290,7 @@ async function state(p) {
 
   console.log('Smanjeno kretanje (bez ulaska)');
   ({ p, ctx, errors } = await open(browser, { reduced: true }));
-  const rm = await p.evaluate(() => ({ cls: document.getElementById('jsu-suvenirnica').className, hidden: [...document.querySelectorAll('#jsu-suvenirnica .jsu-sl,#jsu-suvenirnica .jsu-tile')].filter((e) => getComputedStyle(e).opacity !== '1').length }));
+  const rm = await p.evaluate(() => ({ cls: document.getElementById('jsu-suvenirnica').className, hidden: [...document.querySelectorAll('#jsu-suvenirnica .jsu-up,#jsu-suvenirnica .jsu-card')].filter((e) => getComputedStyle(e).opacity !== '1').length }));
   check('odmah vidljivo, bez klasa za ulazak', !/jsu-anim/.test(rm.cls) && rm.hidden === 0, rm);
   await ctx.close();
 
