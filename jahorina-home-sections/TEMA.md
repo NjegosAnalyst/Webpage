@@ -44,6 +44,9 @@ da sve sekcije izgledaju kao jedna cjelina.
   - **Odbijeno (korisnik: „nije premium“):** svjetlo preko cijele širine iza kadrova (izgleda kao obojene trake: plava ispod vijesti, žuta iznad ratraka, smeđa ispod), tamnjenje kadra koji odlazi (izgleda prljavo). Ne koristiti ni „lijepljenje“ kartica (sticky), jak parallax, CSS `animation-timeline` (omotači sa overflow:hidden ga mogu zaglaviti).
 - **Pločice sa podacima:** sve iste (bez pune cyan pločice koja liči na dugme; istaknuta vrijednost samo cyan brojem i tankim cyan rubom); ikona 18px, vrijednost Archivo 700 17px, natpis 9px; natpis ima mjesto za dva reda da sve vrijednosti stoje na istoj liniji.
 - **Dugmad u paru:** ista širina i visina (44px, telefon 42px), isti font (Barlow 600 13.5px, telefon 13px), ikona uvijek ispred teksta; red dugmadi širok tačno kao panel sa pločicama iznad (ivice poravnate); bijelo glavno + stakleno sporedno sa tankim rubom. Na telefonu kratki natpisi („Rezerviši mailom“, „Pozovi“) da oba stanu u jedan red; na uskim telefonima jedno ispod drugog.
+- **Smjena rasporeda:** blokovi sa fotografijom se smjenjuju (ratrak: fotografija lijevo, tekst desno; suvenirnica: u ogledalu). Kad fotografija ne pokriva cijeli kadar, njena ivica se utapa (mask) u istu fotografiju jako zamućenu ispod (`.jsu-amb`), bez šava.
+- **Topli ton samo iz fotografije:** zalazak u ratraku, blago svjetlo izloga na proizvodu u suvenirnici (radijalni prelaz, alfa ~.14). Ostalo je noćna obrada.
+- **Sadržaj sa WordPress stranice** (suvenirnica): ugrađeni tekst = trenutni tekst stranice, pa se blok odmah crta (bez kostura) i zamijeni samo ako se tekst u WP-u promijeni; tehnički razlog vidi samo prijavljeni admin.
 - **Stil se uvijek osvježi** (`st.textContent = CSS` i kad `<style>` već postoji): Elementor editor ne učitava stranicu ponovo kad se widget izmijeni, pa bi inače ostao stil stare verzije.
 
 ## Kako se sekcija gradi i ugrađuje
