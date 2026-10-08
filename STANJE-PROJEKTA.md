@@ -82,7 +82,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - **Sljedeće:** korisnik postavlja red na HERO TEST ispod ratraka (Elementor kontejner padding/margin/gap 0) → screenshot računar + telefon.
 
 ### 4. Olimpijski bar — v4, PREGLED čeka korisnikov komentar (8. 10. 2026)
-- Kod: `jahorina-home-sections/bar/bar.js` (prefiks `jb-`, `#jb-bar`; meni preko ekrana `#jb-meni`; video `#jb-vid`), test `test-bar.js` (Playwright, 118 provjera, lažni WP REST odgovori za stranicu i Medije), red za widget iz `napravi-widget.py` (još NIJE napravljen: tek kad korisnik odobri izgled), pregled `pregled/napravi-pregled.py` (suvenirnica iznad) → artifact https://claude.ai/artifact/Px9Q9Mcqgp8Cdom8hctLYD.
+- Kod: `jahorina-home-sections/bar/bar.js` (prefiks `jb-`, `#jb-bar`; meni preko ekrana `#jb-meni`; video `#jb-vid`), test `test-bar.js` (Playwright, 118 provjera, lažni WP REST odgovori za stranicu i Medije), red za widget `elementor-html-widget.html` iz `napravi-widget.py` (posljednji: **@0022893**, dat korisniku 8. 10. 2026 za HERO TEST), pregled `pregled/napravi-pregled.py` (suvenirnica iznad) → artifact https://claude.ai/artifact/Px9Q9Mcqgp8Cdom8hctLYD.
 - **Od korisnika:** WP stranica https://www.oc-jahorina.com/olimpijski-bar/ (Betheme naslov, 3 pasusa, YouTube video, karusel fotografija), video https://www.youtube.com/watch?v=7qo0-fAx5CI, 3 fotografije (rižoto + vino na podmetaču „Hospitality is part of skiing“, losos, enterijer uspravno), meni PDF `Cjenovnik_Olimp_Bar_A4.pdf` (12 strana, SR+EN na istoj strani, KM). Tražio: „da se u ovoj sekciji mogu listati meniji kao da se lista fizički meni“.
 - **v1 → v2 (korisnik):** „u pozadini da se smjenjuju ove slike“, „meni da se lista na pokret miša“, umjesto „700 m² toplog ambijenta“ → „Bar · restoran · terasa / après-ski i koncerti“, „ne treba dugme za meni, stavi Rezervacije koje vode na kontakt telefon“, „meni malo veći na desktop verziji“.
 - **v2 → v3 (korisnik):** „ipak ne treba da se meni lista na pokret miša; kad se dođe do sekcije da se on podigne kao da se diže sa stola“.
@@ -99,7 +99,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - GA: `bar_rezervacija` (`nacin`: telefon; označiti kao ključni događaj u GA4), `bar_meni` (`strana`), `bar_video`, `bar_klik` (`cilj`: stranica).
 - **Otvoreno:** potvrda broja za rezervacije (stavljen kontakt OC Jahorina +387 57 270 003, isti kao za ratrak; ako bar ima svoj broj → `data-telefon` ili `tel:` link na WP stranici). Radno vrijeme nije poslano.
 - **Za korisnika kad odobri:** u WordPress Medije postaviti 12 strana menija sa imenima `meni-bar-01.webp` … `meni-bar-12.webp` (iste kao u `bar/slike/meni/`); kad se cijene promijene, dodaju se nove slike istih imena.
-- **Sljedeće:** korisnikov komentar na pregled → doterivanje → `python3 napravi-widget.py` → red za HTML widget na HERO TEST ispod suvenirnice (Elementor kontejner padding/margin/gap 0).
+- **Sljedeće:** korisnik postavlja red (@0022893) u HTML widget na HERO TEST ispod suvenirnice (Elementor kontejner padding/margin/gap 0) → screenshot računar + telefon. Potvrda broja za rezervacije. Strane menija u Medije kao `meni-bar-01` … `meni-bar-12`.
 
 ### Sljedeće sekcije
 - Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.
