@@ -3,9 +3,9 @@
    Tema hero-a, vijesti, ratraka i suvenirnice (noćni ton, jedan cyan akcenat, Archivo/Barlow, kadar preko cijele
    širine, fotografija u pozadini kadra, naslov sa iscrtanim krajem, staklo i blagi neumorfizam), sa svojim detaljima:
      · u pozadini kadra se SMJENJUJU fotografije bara (rižoto → enterijer → losos): nova se upali iz mraka, kao svjetlo;
-     · desno u kadru stoji PRAVI MENI (3D, debljina strana, sjenka) koji se LISTA POMJERANJEM MIŠA preko njega
-       (lijevo = korica, desno = kraj; strana se savija i prati miš, kad miš stane legne na najbližu stranu);
-       na telefonu se lista prevlačenjem prsta. Klik/dodir otvara meni preko cijelog ekrana za čitanje;
+     · desno u kadru stoji PRAVI MENI (3D, debljina strana, sjenka) koji LEŽI NA STOLU i, dok se skrolom dolazi do
+       sekcije, PODIŽE SE SA STOLA i uspravi (skrol nazad ga opet spusti); kad stane, korica se jednom odškrine.
+       Klik/dodir otvara meni preko cijelog ekrana za listanje i čitanje;
      · preko ekrana: otvorena knjiga, strane se okreću kao papir (prevlačenje, klik, strelice, tastatura), "Uvećaj";
      · lijevo naslov, uvod, tri podatka (nadmorska visina · Bar · restoran · terasa / après-ski i koncerti · 40+ događaja),
        dugmad "Rezervacije" (telefon) i "Pogledaj video" (YouTube preko ekrana tek na klik).
@@ -54,8 +54,8 @@
     alt: ['m', 'above sea level'], mid: ['Bar · restaurant · terrace', 'après-ski & concerts'], ev: ['+', 'events a year'],
     altV: '1,879', evV: '40',
     rez: 'Book', rezS: 'Reservations', rezAria: 'Reservations by phone', video: 'Watch the video', videoS: 'Video', more: 'More about the Olympic Bar',
-    book: 'Menu', pages: 'pages', capM: 'Move the mouse to browse, click to read', capT: 'Swipe to browse, tap to read',
-    bookAria: 'Menu: browse with the arrow keys, Enter opens it for reading',
+    book: 'Menu', pages: 'pages', capM: 'Click to browse the menu', capT: 'Tap to browse the menu',
+    bookAria: 'Open the menu',
     reader: 'Olympic Bar menu', readerT: 'Olympic Bar', readerS: 'Menu',
     prev: 'Previous page', next: 'Next page', close: 'Close', zoom: 'Zoom in', unzoom: 'Zoom out', page: 'Page', of: 'of',
     hint: 'Click or drag the page to turn it', vid: 'Video: Olympic Bar', why: 'WordPress', whyTail: 'showing built-in content',
@@ -68,8 +68,8 @@
     alt: ['m', 'nadmorske visine'], mid: ['Bar · restoran · terasa', 'après-ski i koncerti'], ev: ['+', 'događaja godišnje'],
     altV: '1.879', evV: '40',
     rez: 'Rezervacije', rezS: 'Rezervacije', rezAria: 'Rezervacije telefonom', video: 'Pogledaj video', videoS: 'Video', more: 'Više o Olimpijskom baru',
-    book: 'Meni', pages: 'strana', capM: 'Pomjerite miš za listanje, kliknite za čitanje', capT: 'Prevucite za listanje, dodirnite za čitanje',
-    bookAria: 'Meni: listanje strelicama, Enter otvara meni za čitanje',
+    book: 'Meni', pages: 'strana', capM: 'Kliknite za listanje menija', capT: 'Dodirnite za listanje menija',
+    bookAria: 'Otvori meni',
     reader: 'Meni Olimpijskog bara', readerT: 'Olimpijski bar', readerS: 'Cjenovnik',
     prev: 'Prethodna strana', next: 'Sljedeća strana', close: 'Zatvori', zoom: 'Uvećaj', unzoom: 'Smanji', page: 'Strana', of: 'od',
     hint: 'Kliknite ili prevucite stranu', vid: 'Video: Olimpijski bar', why: 'WordPress', whyTail: 'prikazan je ugrađeni sadržaj',
@@ -230,13 +230,19 @@
     '#R .jb-more:hover svg{transform:translateX(3px)}',
     '#R .jb-why{display:block;margin-top:14px;font:500 11.5px/1.4 var(--fb);color:#FFB547}',
 
-    /* MENI U KADRU: pravi meni (debljina strana, sjenka), blago okrenut prema tekstu; lista se pomjeranjem miša preko njega
-       (na telefonu prevlačenjem); klik/dodir ga otvara preko cijelog ekrana za čitanje */
+    /* MENI U KADRU: pravi meni (debljina strana, sjenka), blago okrenut prema tekstu. Dok sekcija ulazi u ekran, meni se
+       podiže sa stola (--k: 0 = leži, 1 = stoji; računa skripta iz skrola); klik/dodir ga otvara preko cijelog ekrana */
     '#R .jb-book{all:unset;position:absolute!important;z-index:3;box-sizing:border-box!important;display:block!important;right:calc(var(--side) + clamp(0px,3vw,64px));top:50%;height:clamp(340px,35vw,560px);aspect-ratio:1240/1742;',
     'margin-top:calc(clamp(340px,35vw,560px) / -2 - 26px)!important;cursor:pointer;perspective:2400px;touch-action:pan-y;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}',
     '#R .jb-book:focus-visible{outline:none!important}',
     '#R .jb-book:focus-visible .jb-cap b{color:var(--accent)}',
     '#R .jb-bk-in{position:absolute;inset:0;transform-style:preserve-3d}',
+    /* podizanje sa stola: okreće se oko donje ivice (koja ostaje na stolu), malo se odigne i primakne */
+    '#R .jb-bk-lift{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:50% 100%;',
+    'transform:translate3d(0,calc((1 - var(--k,1)) * 20px),calc(var(--k,1) * 14px)) rotateX(calc((1 - var(--k,1)) * 76deg))}',
+    /* sjenka na stolu ispod menija: dok leži je tamna i uska, kad se podigne razlije se i oslabi */
+    '#R .jb-bk-floor{position:absolute;left:-8%;right:-14%;bottom:-5%;height:16%;pointer-events:none;border-radius:50%;',
+    'background:radial-gradient(closest-side,rgba(0,0,0,.62),rgba(0,0,0,.28) 55%,transparent);opacity:calc(.35 + (1 - var(--k,1)) * .55);transform:scale(calc(1.15 - (1 - var(--k,1)) * .25),calc(.75 + (1 - var(--k,1)) * .5))}',
     '#R .jb-bk{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateY(-20deg) rotateX(5deg) rotateZ(-1.2deg);transition:transform .9s cubic-bezier(.2,.7,.2,1)}',
     '#R .jb-book:hover .jb-bk,#R .jb-book:focus-visible .jb-bk{transform:rotateY(-12deg) rotateX(3deg) rotateZ(-.6deg) translateZ(22px)}',
     '#R .jb-fb{position:absolute;inset:0;transform-style:preserve-3d}',
@@ -266,9 +272,9 @@
     '#R.jb-anim.jb-on .jb-up{opacity:1;transform:none;transition:opacity .7s ease var(--d,0s),transform .95s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
     '#R.jb-anim .jb-kicker::before{transform:scaleX(0);transform-origin:left center}',
     '#R.jb-anim.jb-on .jb-kicker::before{transform:none;transition:transform .6s cubic-bezier(.2,.7,.2,1) .5s}',
-    /* meni se spusti na mjesto (kao da je položen), pa se korica jednom odškrine */
-    '#R.jb-anim .jb-bk-in{opacity:0;transform:translate3d(0,-26px,60px) rotateZ(-4deg)}',
-    '#R.jb-anim.jb-on .jb-bk-in{opacity:1;transform:none;transition:opacity .9s ease .55s,transform 1.3s cubic-bezier(.2,.7,.2,1) .55s}',
+    /* meni se pojavi na stolu (podiže ga skrol), pa se korica jednom odškrine */
+    '#R.jb-anim .jb-bk-in{opacity:0}',
+    '#R.jb-anim.jb-on .jb-bk-in{opacity:1;transition:opacity .9s ease .45s}',
     '#R.jb-anim .jb-cap{opacity:0}',
     '#R.jb-anim.jb-on .jb-cap{opacity:1;transition:opacity .8s ease 1.3s}',
 
@@ -505,7 +511,7 @@
     '<section class="jb-wrap" aria-labelledby="jb-h"><div class="jb-frame">' +
       '<div class="jb-bgs">' + PHOTOS.map(bgImg).join('') + '<span class="jb-tint"></span><span class="jb-scrim"></span><span class="jb-light"></span></div>' +
       '<button type="button" class="jb-book" aria-haspopup="dialog">' +
-        '<span class="jb-bk-in"><span class="jb-bk"><span class="jb-bk-edge"></span><span class="jb-fb"></span></span></span>' +
+        '<span class="jb-bk-in"><span class="jb-bk-floor"></span><span class="jb-bk-lift"><span class="jb-bk"><span class="jb-bk-edge"></span><span class="jb-fb"></span></span></span></span>' +
         '<span class="jb-cap"><b>' + ICON.book + '<span class="jb-cap-t"></span></b><small><span class="jb-cm">' + esc(T.capM) + '</span><span class="jb-ct">' + esc(T.capT) + '</span></small></span>' +
       '</button>' +
       '<div class="jb-body">' +
@@ -625,7 +631,7 @@
      na listu i sjenku na stranama ispod.
      ===================================================================== */
   function makeBook(el, o) {
-    var B = { el: el, mode: '', t: 0, m: 0, leaves: [], anim: null, posed: -1, built: '', auto: false };
+    var B = { el: el, mode: '', t: 0, m: 0, leaves: [], anim: null, built: '', auto: false };
     var stage = o.stage || el;
     function src(p) { return (o.small ? MENU_S : MENU)[p]; }
     function face(cls, h, p) {
@@ -640,7 +646,7 @@
       }
       el.innerHTML = '<span class="jb-under jb-under--l"></span><span class="jb-under jb-under--r"></span>' + html +
         '<span class="jb-cast jb-cast--l"></span><span class="jb-cast jb-cast--r"></span>';
-      B.mode = mode; B.m = m; B.posed = -1; B.anim = null; B.built = mode + ':' + MENU.join('|');
+      B.mode = mode; B.m = m; B.anim = null; B.built = mode + ':' + MENU.join('|');
       B.leaves = [].slice.call(el.querySelectorAll('.jb-leaf')).map(function (x) {
         return { el: x, out: x.querySelector('.jb-seg--out'), faces: [].slice.call(x.querySelectorAll('.jb-face[data-p]')), loaded: false };
       });
@@ -650,7 +656,7 @@
       B.t = Math.max(0, Math.min(B.t, B.maxT()));
     };
     B.maxT = function () { return B.mode === 'spread' ? B.m : B.m - 1; };
-    // slike se učitavaju samo za listove oko otvorenih strana (ili sve, kad se lista mišem)
+    // slike se učitavaju samo za listove oko otvorenih strana
     B.load = function (all) {
       var lo = all ? 0 : Math.max(0, B.t - 2), hi = all ? B.m - 1 : Math.min(B.m - 1, B.t + 2);
       for (var j = lo; j <= hi; j++) {
@@ -679,7 +685,6 @@
         var f = j < t;
         L.el.style.transform = f ? 'rotateY(-180deg)' : 'none';
         L.out.style.transform = 'none';
-        L.el.style.opacity = '';
         L.el.style.setProperty('--s', 0);
         L.el.style.zIndex = f ? j + 1 : m - j + 1;
         L.el.classList.toggle('is-top', j === t);
@@ -690,7 +695,6 @@
       unders(t, t);
       el.style.transform = B.shift(t);
       stage.classList.toggle('can-next', t < B.maxT());
-      B.posed = -1;
       B.load(false);
       if (o.onRender) o.onRender(B);
     };
@@ -702,11 +706,8 @@
       L.el.style.transform = 'rotateY(' + (-180 * p).toFixed(2) + 'deg)';
       L.out.style.transform = 'rotateY(' + (-dir * 32 * s).toFixed(2) + 'deg)';
       L.el.style.setProperty('--s', s.toFixed(3));
-      // u kadru okrenuta strana nestaje dok prelazi preko fotografije (kao listanje palcem)
-      if (o.fade) L.el.style.opacity = p > .62 ? Math.max(0, 1 - (p - .62) / .3).toFixed(3) : '';
       B.castR.style.opacity = p < .5 ? (s * .9).toFixed(3) : 0;
       B.castL.style.opacity = p >= .5 && B.mode === 'spread' ? (s * .9).toFixed(3) : 0;
-      B.posed = j;
     };
     function ease(x) { return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
     // animacija od p0 do p1; commit = list ostaje okrenut, inače se vraća
@@ -744,84 +745,53 @@
       if (B.anim) B.finish();
       B.t = Math.max(0, Math.min(B.maxT(), t)); B.render();
     };
-    // listanje mišem: P = 0 … maxT (cijeli dio = okrenuti listovi, ostatak = list u okretu)
-    B.scrub = function (P, dir) {
-      if (B.anim) B.finish();
-      var max = B.maxT(), k = Math.max(0, Math.min(max, Math.floor(P + 1e-4))), f = Math.min(1, P - k);
-      if (k !== B.t) { B.t = k; B.render(); }
-      if (f > .002 && k < max) B.pose(k, f, dir);
-      else if (B.posed !== -1) B.render();
-    };
     return B;
   }
 
-  /* ---------- MENI U KADRU: lista se pomjeranjem miša (lijevo korica, desno kraj), prevlačenjem prsta i strelicama ---------- */
+  /* ---------- MENI U KADRU: leži na stolu i podiže se dok se skrolom dolazi do sekcije; klik otvara meni preko ekrana ---------- */
   var bookEl = q('.jb-book');
   function capUpdate(B) {
-    var n = MENU.length;
-    q('.jb-cap-t').textContent = T.book + ' · ' + (B.t === 0 ? n + ' ' + T.pages : pad(B.t + 1) + ' / ' + pad(n));
-    bookEl.setAttribute('aria-label', T.bookAria + ' (' + T.page + ' ' + (B.t + 1) + ' ' + T.of + ' ' + n + ')');
+    q('.jb-cap-t').textContent = T.book + ' · ' + MENU.length + ' ' + T.pages;
+    bookEl.setAttribute('aria-label', T.bookAria + ' (' + MENU.length + ' ' + T.pages + ')');
   }
-  var FB = makeBook(q('.jb-fb'), { small: true, fade: true, stage: bookEl, onRender: capUpdate });
-  function buildFrameBook() { FB.build('single'); FB.render(); }
+  var FB = makeBook(q('.jb-fb'), { small: true, stage: bookEl, onRender: capUpdate });
+  function buildFrameBook() { FB.t = 0; FB.build('single'); FB.render(); }
   buildFrameBook();
-  var RF = { P: 0, target: 0, raf: 0, idle: 0, all: false, on: false };
-  function rfKick() { if (!RF.raf) RF.raf = w.requestAnimationFrame(rfStep); }
-  function rfStep() {
-    RF.raf = 0;
-    var dd = RF.target - RF.P;
-    RF.P = Math.abs(dd) < .004 ? RF.target : RF.P + dd * .2;   // strana prati miš mekano
-    FB.scrub(RF.P, dd >= 0 ? 1 : -1);
-    if (RF.P !== RF.target) rfKick();
-  }
-  function rfSnap() { RF.target = Math.round(RF.target); rfKick(); }
-  bookEl.addEventListener('pointerenter', function (e) {
-    if (e.pointerType !== 'mouse') return;
-    RF.on = true; RF.P = RF.target = FB.t; bgGo();
-  });
-  bookEl.addEventListener('pointermove', function (e) {
-    if (e.pointerType !== 'mouse' || reduced) return;
-    if (!RF.on) { RF.on = true; RF.P = RF.target = FB.t; }
-    if (!RF.all) { RF.all = true; FB.load(true); }
-    var r = q('.jb-fb').getBoundingClientRect(), pd = r.width * .1;
-    var x = Math.max(0, Math.min(1, (e.clientX - r.left - pd) / Math.max(1, r.width - 2 * pd)));
-    RF.target = x * FB.maxT();
-    rfKick();
-    clearTimeout(RF.idle); RF.idle = setTimeout(rfSnap, 260);
-  });
-  bookEl.addEventListener('pointerleave', function (e) {
-    if (e.pointerType !== 'mouse') return;
-    clearTimeout(RF.idle); rfSnap();
-    setTimeout(function () { if (RF.P === RF.target) { RF.on = false; bgGo(); } }, 700);
-  });
-  // telefon/tablet: prevlačenje prstom preko menija lista jednu stranu; dodir otvara meni preko ekrana
-  var sw = null, swiped = 0;
-  bookEl.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse') sw = { x: e.clientX, y: e.clientY }; });
-  bookEl.addEventListener('pointerup', function (e) {
-    if (!sw) return;
-    var dx = e.clientX - sw.x, dy = e.clientY - sw.y; sw = null;
-    if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy) * 1.2) { FB.load(true); FB.flip(dx < 0 ? 1 : -1); swiped = Date.now(); }
-  });
-  bookEl.addEventListener('pointercancel', function () { sw = null; });
-  bookEl.addEventListener('keydown', function (e) {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); FB.load(true); FB.flip(e.key === 'ArrowRight' ? 1 : -1); }
-  });
-  // poslije ulaska se korica jednom odškrine (poziv na listanje)
+  // poslije podizanja se korica jednom odškrine (poziv na listanje)
   function peek() {
-    if (reduced || FB.t !== 0 || RF.on || FB.anim) return;
+    if (reduced || FB.anim) return;
     var t0 = now(), dur = 1700;
     (function stp() {
-      if (RF.on || FB.anim || FB.t !== 0) return;
+      if (FB.anim) return;
       var k = Math.min(1, (now() - t0) / dur);
       FB.pose(0, .2 * Math.sin(Math.PI * k), 1);
       if (k < 1) w.requestAnimationFrame(stp); else FB.render();
     })();
   }
+  // podizanje sa stola prati skrol: sredina menija na dnu ekrana = leži (0), na ~52 % visine ekrana = stoji (1)
+  (function lift() {
+    var raf = 0, last = -1, peeked = false;
+    if (reduced) { bookEl.style.setProperty('--k', 1); return; }
+    function upd() {
+      raf = 0;
+      var vh = w.innerHeight || d.documentElement.clientHeight, r = bookEl.getBoundingClientRect(), cy = r.top + r.height / 2;
+      var k = Math.min(1, Math.max(0, (vh * 1.02 - cy) / (vh * .5)));
+      k = 1 - Math.pow(1 - k, 2.2);
+      if (k > .985 && !peeked && root.classList.contains('jb-on')) { peeked = true; setTimeout(peek, 450); }
+      if (Math.abs(k - last) < .001) return; last = k;
+      bookEl.style.setProperty('--k', k.toFixed(3));
+    }
+    function req() { if (!raf) raf = w.requestAnimationFrame(upd); }
+    w.addEventListener('scroll', req, { passive: true });
+    w.addEventListener('resize', req);
+    root.__jbLift = req;
+    req();
+  })();
 
   root.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-jb], .jb-book');
     if (!b) return;
-    if (b === bookEl) { if (Date.now() - swiped > 500) rOpen(bookEl, FB.t); return; }
+    if (b === bookEl) { rOpen(bookEl, 0); return; }
     var k = b.getAttribute('data-jb');
     if (k === 'video') vOpen();
     else if (k === 'rezervacija') track('bar_rezervacija', { nacin: 'telefon' });
@@ -831,7 +801,7 @@
   /* ---------- smjena fotografija u pozadini (nova se upali iz mraka; bez zumiranja) ---------- */
   var BG = { cur: 0, timer: 0, vis: false, on: false };
   var AUTO = PHOTOS.length > 1 && !reduced && 'IntersectionObserver' in w;
-  function bgHold() { return !BG.vis || !BG.on || d.hidden || !!modal || RF.on; }
+  function bgHold() { return !BG.vis || !BG.on || d.hidden || !!modal; }
   function bgGo() {
     clearTimeout(BG.timer); BG.timer = 0;
     if (!AUTO || bgHold()) return;
@@ -1160,7 +1130,7 @@
       if (urls.join('|') !== MENU.join('|')) {
         MENU = urls; MENU_S = mn.map(function (x) { return x.small; });
         if (mn[0].ratio > 1 && mn[0].ratio < 2) RATIO = mn[0].ratio;
-        RF.all = false; buildFrameBook();
+        buildFrameBook();
         if (R && R.open) layout();
       }
     } else if (mn) miss.push('meni u Medijima (meni-bar-01, -02 …)' + (mn.err ? ': ' + mn.err.message : ''));
@@ -1182,7 +1152,7 @@
     var io = new IntersectionObserver(function (es) {
       if (es.some(function (e) { return e.isIntersecting; })) {
         root.classList.add('jb-on'); io.disconnect();
-        setTimeout(peek, 2100);
+        setTimeout(function () { if (root.__jbLift) root.__jbLift(); }, 1200);   // meni već stoji → korica se odškrine
         setTimeout(function () { BG.on = true; bgGo(); }, 1800);
       }
     }, { rootMargin: '0px 0px -10% 0px' });

@@ -100,7 +100,7 @@ async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900
         return route.fulfill({ contentType: 'application/json', body: JSON.stringify(mediaList()) });
       }
       if (/wp\/v2\/pages/.test(u.pathname + u.search)) {
-        if (wp === 'nema') return route.fulfill({ contentType: 'application/json', body: '[]' });
+        if (wp === 'nema' || !/slug=olimpijski-bar/.test(u.search)) return route.fulfill({ contentType: 'application/json', body: '[]' });   // suvenirnica iznad: ugrađeni tekst
         return route.fulfill({ contentType: 'application/json', body: JSON.stringify([{
           id: 77, link: SITE + '/olimpijski-bar/',
           title: { rendered: wp === 'qtranslate' ? '[:SH]Olimpijski bar[:en]Olympic Bar[:]' : 'Olimpijski bar' },
@@ -216,36 +216,32 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   check('suvenirnica iznad: jb--join, razmak kadar → kadar = --gap + --g', j.join && Math.abs(j.space - j.want) <= 2, j);
   await p.screenshot({ path: path.join(OUT, 'suvenirnica-bar.png'), fullPage: true });
   await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, 'sr-racunar-kadar.png') });
-  // listanje mišem preko menija u kadru: lijevo korica, desno kraj; strana prati miš, kad stane legne na najbližu
+  // meni leži na stolu i podiže se dok sekcija ulazi u ekran (prati skrol, i nazad)
+  const kAt = async (off) => {
+    await p.evaluate((o) => { const f = document.querySelector('#jb-bar .jb-frame'); window.scrollTo(0, f.getBoundingClientRect().top + scrollY - innerHeight * o); }, off);
+    await p.waitForTimeout(250);
+    return p.evaluate(() => +getComputedStyle(document.querySelector('#jb-bar .jb-book')).getPropertyValue('--k'));
+  };
+  const k0 = await kAt(.86), k1 = await kAt(.5), k2 = await kAt(.08);
+  check('meni leži (vrh kadra na dnu ekrana), diže se, stoji (kadar u ekranu)', k0 < .05 && k1 > .2 && k1 < .95 && k2 === 1, [k0, k1, k2]);
+  await kAt(.5); await p.screenshot({ path: path.join(OUT, 'sr-racunar-meni-se-dize.png') });
+  check('skrol nazad: meni se opet spusti', (await kAt(.86)) < .05);
+  await p.locator('#jb-bar').scrollIntoViewIfNeeded(); await p.waitForTimeout(400);
+  const k3 = await p.evaluate(() => +getComputedStyle(document.querySelector('#jb-bar .jb-book')).getPropertyValue('--k'));
+  check('pa opet stoji', k3 === 1, k3);
+  // miš preko menija ne lista strane (korisnik: "ne treba da se meni lista na pokret miša")
   const fb = await p.evaluate(() => { const r = document.querySelector('#jb-bar .jb-fb').getBoundingClientRect(); return { l: r.left, w: r.width, y: r.top + r.height / 2 }; });
-  await p.mouse.move(fb.l + 2, fb.y); await p.waitForTimeout(300);
-  check('miš na lijevom rubu: korica', (await cap(p)) === 'Meni · 12 strana', await cap(p));
-  for (let k = 1; k <= 24; k++) { await p.mouse.move(fb.l + 2 + k * (fb.w - 4) / 24, fb.y); await p.waitForTimeout(16); }
-  await p.waitForTimeout(900);
-  check('miš preko menija do desnog ruba: zadnja strana (12 / 12)', (await cap(p)) === 'Meni · 12 / 12', await cap(p));
-  for (let k = 1; k <= 8; k++) { await p.mouse.move(fb.l + fb.w * (1 - k * .07), fb.y); await p.waitForTimeout(16); }
-  await p.waitForTimeout(60);
-  await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, 'sr-racunar-listanje-misem.png') });
-  await p.waitForTimeout(900);
-  const mid = await cap(p);
-  check('miš stao: strana legne na najbližu (05–07 / 12)', /Meni · 0[5-7] \/ 12/.test(mid) && await p.evaluate(() => !document.querySelector('#jb-bar .jb-leaf[style*="z-index: 200"]')), mid);
-  const bgHold = await p.evaluate(() => document.querySelector('#jb-bar .jb-bg.is-on').getAttribute('data-k'));
-  // klik otvara meni preko ekrana na strani koja je u kadru
-  await p.mouse.click(fb.l + fb.w * .44, fb.y); await p.waitForTimeout(1300); await waitIdle(p);
-  let M = await reader(p);
-  const pg = +mid.match(/(\d+) \//)[1];
-  check('klik: meni preko ekrana na istoj strani (' + pg + ')', M.ind.split(' /')[0].split('–').map(Number).includes(pg), [mid, M.ind]);
-  await p.keyboard.press('Escape'); await p.waitForTimeout(450);
-  await p.mouse.move(fb.l + 2, fb.y); await p.waitForTimeout(900);
-  check('nazad na lijevi rub: korica', (await cap(p)) === 'Meni · 12 strana', await cap(p));
-  await p.mouse.move(5, 5);
-  await p.waitForTimeout(400);
+  for (let k = 0; k <= 12; k++) { await p.mouse.move(fb.l + 2 + k * (fb.w - 4) / 12, fb.y); await p.waitForTimeout(16); }
+  await p.waitForTimeout(600);
+  check('miš preko menija: korica ostaje (bez listanja)', (await cap(p)) === 'Meni · 12 strana' && await p.evaluate(() => !document.querySelector('#jb-bar .jb-leaf[style*="z-index: 200"]') && getComputedStyle(document.querySelector('#jb-bar .jb-leaf[data-j="0"]')).transform === 'none'), await cap(p));
   await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, 'sr-racunar-mis-na-meniju.png') });
+  await p.mouse.move(5, 5);
+  await p.waitForTimeout(300);
 
   // meni preko cijelog ekrana od korice: doleti, korica se otvori → strane 2–3
   await clickCover(p);
   await p.waitForTimeout(400);
-  M = await reader(p);
+  let M = await reader(p);
   check('meni se otvara (dijalog, stranica ne skroluje, fokus unutra)', M.shown === 'block' && M.overflow === 'hidden' && M.inside, M);
   check('računar: otvorena knjiga (dvije strane), 6 listova', M.mode === 'spread' && M.leaves === 6, [M.mode, M.leaves]);
   await p.waitForTimeout(1500); await waitIdle(p);
@@ -308,7 +304,7 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   check('Esc zatvara video (iframe uklonjen, fokus na dugme)', V.shown === 'none' && V.iframes === 0 && /jb-btn--ghost/.test(V.focus), V);
   await p.click('#jb-bar .jb-more');
   let ev = await p.evaluate(() => window.__ev.map((e) => e[1] + ':' + JSON.stringify(e[2])));
-  check('GA4: bar_meni (2×), bar_rezervacija, bar_video, bar_klik', JSON.stringify(ev) === JSON.stringify(['bar_meni:{"strana":12,"jezik":"sr"}', 'bar_meni:{"strana":12,"jezik":"sr"}', 'bar_rezervacija:{"nacin":"telefon","jezik":"sr"}', 'bar_video:{"jezik":"sr"}', 'bar_klik:{"cilj":"stranica","jezik":"sr"}']), ev);
+  check('GA4: bar_meni, bar_rezervacija, bar_video, bar_klik', JSON.stringify(ev) === JSON.stringify(['bar_meni:{"strana":12,"jezik":"sr"}', 'bar_rezervacija:{"nacin":"telefon","jezik":"sr"}', 'bar_video:{"jezik":"sr"}', 'bar_klik:{"cilj":"stranica","jezik":"sr"}']), ev);
   check('bez grešaka u konzoli', errors.length === 0, errors);
   await ctx.close();
 
@@ -364,7 +360,7 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   check('pogrešan slug: admin vidi da stranica nije pronađena', /nije pronađena/.test(S.why), S.why);
   await ctx.close();
 
-  console.log('Smjena fotografija u pozadini: sama, staje dok je miš na meniju');
+  console.log('Smjena fotografija u pozadini: sama, redom');
   ({ p, ctx, errors } = await open(browser, { ga: 'none' }));
   await p.mouse.move(5, 5);
   await p.waitForTimeout(7000 + 2600);
@@ -372,14 +368,10 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   check('poslije ~7 s u pozadini je enterijer (druga fotografija)', S.bg === 1, S.bg);
   await p.waitForTimeout(2200);
   await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, 'sr-racunar-enterijer.png') });
-  const bb2 = await p.locator('#jb-bar .jb-book').boundingBox();
-  await p.mouse.move(bb2.x + 3, bb2.y + bb2.height / 2);
-  await p.waitForTimeout(8200);
-  check('miš na meniju: smjena stoji', (await state(p)).bg === 1);
-  await p.mouse.move(5, 5);
-  await p.waitForTimeout(700 + 7000 + 2400);
+  await p.waitForTimeout(7000 - 2200 + 600);
   S = await state(p);
-  check('miš otišao: smjena nastavlja (losos)', S.bg === 2, S.bg);
+  check('pa losos (treća)', S.bg === 2, S.bg);
+  await p.waitForTimeout(2200);
   await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, 'sr-racunar-losos.png') });
   check('bez grešaka u konzoli', errors.length === 0, errors);
   await ctx.close();
@@ -399,19 +391,11 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
     if (vw <= 760) check('telefon: oba dugmeta u jednom redu, 42px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 42, S.acts);
     await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, name + '.png') });
     const single = vw < 820;
-    if (touch) {   // prevlačenje prstom preko menija u kadru lista jednu stranu; dodir otvara meni na toj strani
-      await p.evaluate(() => {
-        const b = document.querySelector('#jb-bar .jb-book'), r = b.getBoundingClientRect(), y = r.top + r.height / 2;
-        const o = (cx) => ({ pointerType: 'touch', pointerId: 9, bubbles: true, clientX: cx, clientY: y, isPrimary: true });
-        b.dispatchEvent(new PointerEvent('pointerdown', o(r.left + r.width * .8)));
-        b.dispatchEvent(new PointerEvent('pointerup', o(r.left + r.width * .2)));
-      });
-      await p.waitForTimeout(1000);
-      check('prevlačenje prstom po meniju u kadru → Meni · 02 / 12', (await cap(p)) === 'Meni · 02 / 12', await cap(p));
-      await p.waitForTimeout(600);
-      await p.tap('#jb-bar .jb-book'); await p.waitForTimeout(1300); await waitIdle(p);
+    check('meni u kadru stoji', await p.evaluate(() => +getComputedStyle(document.querySelector('#jb-bar .jb-book')).getPropertyValue('--k')) === 1);
+    if (touch) {   // dodir otvara meni preko ekrana od korice
+      await p.tap('#jb-bar .jb-book'); await p.waitForTimeout(1600); await waitIdle(p);
       M = await reader(p);
-      check(single ? 'dodir: jedna strana (02 / 12)' : 'dodir: dvije strane (02–03 / 12)', M.mode === (single ? 'single' : 'spread') && M.ind === (single ? '02 / 12' : '02–03 / 12'), [M.mode, M.ind]);
+      check(single ? 'dodir: jedna strana (01 / 12)' : 'dodir: dvije strane (02–03 / 12)', M.mode === (single ? 'single' : 'spread') && M.ind === (single ? '01 / 12' : '02–03 / 12'), [M.mode, M.ind]);
     } else {
       await clickCover(p); await p.waitForTimeout(1600); await waitIdle(p);
       M = await reader(p);
@@ -428,14 +412,14 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
       }, r);
       await p.waitForTimeout(60); await waitIdle(p);
       M = await reader(p);
-      check('prevlačenje prstom → ' + (single ? '03 / 12' : '04–05 / 12'), M.ind === (single ? '03 / 12' : '04–05 / 12'), M.ind);
+      check('prevlačenje prstom → ' + (single ? '02 / 12' : '04–05 / 12'), M.ind === (single ? '02 / 12' : '04–05 / 12'), M.ind);
       await p.evaluate(() => Promise.all([...document.querySelectorAll('#jb-meni .jb-face[data-p]')].map((f) => { const m = getComputedStyle(f).backgroundImage.match(/url\("(.*)"\)/); if (!m) return 0; const i = new Image(); i.src = m[1]; return i.decode().catch(() => {}); })));
     }
     await p.screenshot({ path: path.join(OUT, 'meni-' + name + '.png') });
     if (name === 'telefon') {
       await p.click('#jb-meni .jb-r-zbtn'); await p.waitForTimeout(300);
       M = await reader(p);
-      check('telefon: Uvećaj pokazuje stranu 3, šire od ekrana (skrol)', M.zoom && M.zimgs.join(',') === 'meni-bar-03.jpg' && await p.evaluate(() => { const z = document.querySelector('#jb-meni .jb-r-zoom'); return z.scrollWidth > z.clientWidth; }), M.zimgs);
+      check('telefon: Uvećaj pokazuje stranu 2, šire od ekrana (skrol)', M.zoom && M.zimgs.join(',') === 'meni-bar-02.jpg' && await p.evaluate(() => { const z = document.querySelector('#jb-meni .jb-r-zoom'); return z.scrollWidth > z.clientWidth; }), M.zimgs);
       await p.evaluate(() => Promise.all([...document.querySelectorAll('#jb-meni .jb-r-zoom img')].map((i) => i.decode().catch(() => {}))));
       await p.screenshot({ path: path.join(OUT, 'meni-telefon-uvecano.png') });
     }
