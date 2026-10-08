@@ -49,7 +49,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - Posljednji red za widget je uvijek u `vijesti/elementor-html-widget.html`.
 - **Svaka izmjena:** izmijeni `vijesti.js` → `bash ../alati/preuzmi-fontove.sh <fontovi>` (jednom) → `node test-vijesti.js <screenshotovi> <fontovi>` → commit + push → `python3 napravi-widget.py` → commit + push → korisniku novi red za HTML widget. Pregled: `python3 pregled/napravi-pregled.py` → objaviti `pregled/index.html` (+ `img/*.jpg`) na isti artifact URL.
 
-### 2. Panoramska vožnja ratrakom — gotovo, red za widget spreman, sljedeće: HERO TEST (ispod vijesti)
+### 2. Panoramska vožnja ratrakom — na HERO TEST ispod vijesti (zadnji red za widget @95826c1, u `ratrak/elementor-html-widget.html`)
 - Kod: `jahorina-home-sections/ratrak/ratrak.js` (prefiks `jr-`, `#jr-ratrak`; galerija `#jr-lb`), test `test-ratrak.js`, red za widget `elementor-html-widget.html` iz `napravi-widget.py`, pregled `pregled/napravi-pregled.py` → artifact https://claude.ai/artifact/L7sAdcd13XrkaA4mRZ9Z5N.
 - **Odbijeno:** v1 isječak ratraka + animirana scena („izuzetno loše“); v2 dvije fotografije lijevo + tekst desno na ravnoj pozadini („loše i jednostavno, mora biti premium, pogledaj hero“).
 - **v3 (sada), jezikom hero-a:** jedan veliki uokvireni kadar **preko cijele širine ekrana** (korisnik: „nije puna širina“; rub sa strane clamp(14px,1.6vw,22px) kao kadar hero-a, radius 26px, sjenka kao hero; tekst se na širokim ekranima poravna sa sadržajem 1240px). Fotografija `ratrak-glavna.webp` (pejzažna 1600×1066 od korisnika, ratrak u zalasku na uređenoj stazi; 960 px kroz srcset za telefone) je **pozadina cijelog kadra** (korisnik: „uklopi u pozadinu, da nije odvojeno“) — malo uvećana i pomjerena ulijevo (img left:-24%, width:124%) da ratrak i sunce budu lijevo od teksta; tekst desno stoji na tamnom prelazu zdesna (kao naslov u hero-u), prelaz ne dopire do sunca da ostane bijelo. Obrada blaža od vijesti (saturate .9, brightness .97, plavi sloj .32), da zlatni zalazak ostane. Desno nadnaslov kao u hero-u („Doživljaj na Jahorini“), naslov u tri reda „Panoramska / vožnja / *ratrakom*“ (zadnja riječ obris), uvod, stakleni panel sa pločicama kao u hero-u (Trajanje / Polaz gondole Poljice / Po osobi, cijena na cyan pločici), dvije napomene, dugmad kao u hero-u (bijelo „Rezerviši putem maila“ + stakleno sa brojem) i rečenica o rezervaciji. Tablet (do 980 px) i telefon: fotografija preko cijele širine gore, meko prelazi u tamno, tekst ispod.
@@ -62,9 +62,14 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
   - schema.org: `TouristTrip` sa ponudom (cijena iz `data-cijena`, valuta BAM) se ubacuje u `<head>`.
 - Tekst je korisnikov i ostaje u kodu (korisnik: „to je taj tekst“); EN je moj prevod.
 - Red za widget: `elementor-html-widget.html` (jsDelivr @commit + SRI; fotografije iz istog commita). jsDelivr se iz cloud okruženja ne može otvoriti, pa ga nisam provjerio uživo.
-- **Sljedeće:** postaviti red iz `elementor-html-widget.html` na HERO TEST ispod vijesti (Elementor HTML widget), provjeriti računar i telefon, pa na Početna zima. Ako web shop ima ratrak: upisati link u `data-webshop`. U GA4 označiti `ratrak_rezervacija` kao ključni događaj.
+- **Sljedeće:** korisnik zamijeni oba reda (vijesti i ratrak @95826c1) na HERO TEST i pošalje screenshot računara i telefona; pa na Početna zima. Ako web shop ima ratrak: upisati link u `data-webshop`. U GA4 označiti `ratrak_rezervacija` kao ključni događaj.
 
 ### Sljedeće sekcije
+- **3. Suvenirnica — sljedeća (korisnik 8. 10. 2026: „pripremamo novu sekciju Suvenirnica“, radi se u novom četu).**
+  - Ide u istom jeziku kao hero, vijesti i ratrak (TEMA.md; uzor `ratrak/ratrak.js`: kadar preko cijele širine, fotografija kao pozadina, naslov sa iscrtanom zadnjom riječi, stakleni panel, dugmad u paru, `--gap` ritam, dolazak kadra `rise()`).
+  - Stariji nacrt iz prvog sistema (Bar/Ratrak/Suvenirnica, velika kartica sa brojem): `project/Suvenirnica Sekcija.dc.html` i `chats/chat2.md` (oko reda 595) — samo za sadržaj/ideju, izgled ide po TEMA.md.
+  - Od korisnika tražiti: fotografije suvenirnice i proizvoda, tekst (šta se prodaje, gdje je, radno vrijeme, cijene ako treba), link (web shop za suvenire ili stranica na sajtu), da li sadržaj postoji u WordPressu (onda čitati iz WP-a), mjesto na početnoj (vjerovatno ispod ratraka) i screenshot kako je sada napravljena ako postoji.
+  - Prefiks `js-` je zauzet u praksi (JavaScript), pa koristiti `jsu-` i `#jsu-suvenirnica`.
 - Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.
 - Događaji: na sajtu je **The Events Calendar** (Elementor widget "Events Loop", sada „Trenutno nema događaja...“), pa podatke čitati iz njega (REST `/wp-json/tribe/events/v1/events`), ne ručno.
 
