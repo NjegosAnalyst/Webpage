@@ -403,6 +403,14 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
     check('meni se ne preklapa sa tekstom, sve u kadru', !S.overlap && S.bookIn && S.bodyIn, [S.overlap, S.bookIn, S.bodyIn]);
     check('brojevi u jednom redu; natpisi dugmadi staju', S.factsRow && S.actsFit, [S.factsRow, S.actsFit]);
     if (vw <= 760) check('telefon: oba dugmeta u jednom redu, 42px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 42, S.acts);
+    if (vw <= 760) {   // telefon: meni veći i u sredini fotografije, ispod samo "Meni"
+      const ph = await p.evaluate(() => {
+        const r = document.getElementById('jb-bar'), b = r.querySelector('.jb-book').getBoundingClientRect(), f = r.querySelector('.jb-frame').getBoundingClientRect(), c = r.querySelector('.jb-cap b').getBoundingClientRect();
+        return { off: Math.round(b.left + b.width / 2 - (f.left + f.width / 2)), w: Math.round(b.width), fw: Math.round(f.width), capOff: Math.round(c.left + c.width / 2 - (f.left + f.width / 2)),
+          cap: r.querySelector('.jb-cap b').innerText.trim(), small: getComputedStyle(r.querySelector('.jb-cap small')).display };
+      });
+      check('telefon: meni u sredini, veći (≥ 55 % širine kadra), ispod samo "Meni"', Math.abs(ph.off) <= 2 && Math.abs(ph.capOff) <= 3 && ph.w >= ph.fw * .55 && /^MENI$/i.test(ph.cap) && ph.small === 'none', ph);
+    }
     await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, name + '.png') });
     const single = vw < 820;
     check('meni u kadru stoji', await p.evaluate(() => +getComputedStyle(document.querySelector('#jb-bar .jb-book')).getPropertyValue('--k')) === 1);

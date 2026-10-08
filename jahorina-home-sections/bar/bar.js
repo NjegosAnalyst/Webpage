@@ -91,9 +91,9 @@
 
   // fotografije kadra (smjenjuju se): pozicija na računaru / telefonu i jačina (svaka fotografija ima svoju svjetlinu)
   var PHOTOS = [
-    { f: 'bar-glavna', w: 2000, pos: '40% 62%', mpos: '14% 64%', lum: .74 },
-    { f: 'bar-enterijer', w: 1336, pos: '50% 50%', mpos: '60% 50%', lum: .8 },
-    { f: 'bar-losos', w: 1300, pos: '50% 50%', mpos: '18% 50%', lum: .64 }
+    { f: 'bar-glavna', w: 2000, pos: '40% 62%', mpos: '40% 64%', lum: .74 },
+    { f: 'bar-enterijer', w: 1336, pos: '50% 50%', mpos: '50% 50%', lum: .8 },
+    { f: 'bar-losos', w: 1300, pos: '50% 50%', mpos: '50% 50%', lum: .64 }
   ].map(function (p, k) { p.full = HERE + 'slike/' + p.f + '.webp'; p.md = HERE + 'slike/' + p.f + '-1000.webp'; p.alt = T.photos[k]; return p; });
   var ROOM = HERE + 'slike/bar-enterijer-1000.webp';
 
@@ -296,13 +296,15 @@
     '#R .jb-lead{max-width:56ch}}',
     '@media (max-width:760px){',
     '#R .jb-frame{border-radius:24px}',
-    '#R .jb-bgs{height:min(118vw,520px)}',
     '#R .jb-bg{object-position:var(--mpos)!important}',
-    '#R .jb-book{top:clamp(22px,6vw,34px);left:28px;height:min(60vw,290px)}',
-    '#R .jb-bk{transform:rotateY(16deg) rotateX(4deg) rotateZ(1deg)}',
-    '#R .jb-cap{top:calc(100% + 14px);gap:6px}',
-    '#R .jb-cap b{font-size:9.5px;letter-spacing:2px;gap:8px}',
-    '#R .jb-cap small{font-size:11.5px}',
+    /* telefon: meni veći i u sredini fotografije (korisnik), skoro okrenut ka posjetiocu; ispod samo "Meni" */
+    '#R .jb-bgs{height:min(124vw,540px)}',
+    '#R .jb-book{top:clamp(22px,6vw,34px);left:50%;height:min(78vw,370px);margin-left:calc(min(78vw,370px) * -.356)!important}',
+    '#R .jb-bk{transform:rotateY(8deg) rotateX(4deg) rotateZ(.5deg)}',
+    '#R .jb-light{--lx:50%}',
+    '#R .jb-cap{top:calc(100% + 14px)}',
+    '#R .jb-cap b{font-size:9.5px;letter-spacing:2.4px;gap:8px}',
+    '#R .jb-cap small,#R .jb-cap-n{display:none}',
     '#R .jb-body{padding:14px 22px 30px}',
     '#R .jb-kicker{letter-spacing:2.6px;font-size:10px;gap:10px;margin-bottom:16px}',
     '#R .jb-kicker::before{width:22px}',
@@ -514,7 +516,7 @@
       '<div class="jb-bgs">' + PHOTOS.map(bgImg).join('') + '<span class="jb-tint"></span><span class="jb-scrim"></span><span class="jb-light"></span></div>' +
       '<button type="button" class="jb-book" aria-haspopup="dialog">' +
         '<span class="jb-bk-in"><span class="jb-bk-floor"></span><span class="jb-bk-lift"><span class="jb-bk"><span class="jb-fb"></span></span></span></span>' +
-        '<span class="jb-cap"><b>' + ICON.book + '<span class="jb-cap-t"></span></b><small><span class="jb-cm">' + esc(T.capM) + '</span><span class="jb-ct">' + esc(T.capT) + '</span></small></span>' +
+        '<span class="jb-cap"><b>' + ICON.book + '<span><span class="jb-cap-t"></span><span class="jb-cap-n"></span></span></b><small><span class="jb-cm">' + esc(T.capM) + '</span><span class="jb-ct">' + esc(T.capT) + '</span></small></span>' +
       '</button>' +
       '<div class="jb-body">' +
         '<div class="jb-kicker jb-up" style="--d:.26s">' + esc(T.kicker) + '</div>' +
@@ -753,7 +755,8 @@
   /* ---------- MENI U KADRU: leži na stolu i podiže se dok se skrolom dolazi do sekcije; klik otvara meni preko ekrana ---------- */
   var bookEl = q('.jb-book');
   function capUpdate(B) {
-    q('.jb-cap-t').textContent = T.book + ' · ' + MENU.length + ' ' + T.pages;
+    q('.jb-cap-t').textContent = T.book;
+    q('.jb-cap-n').textContent = ' · ' + MENU.length + ' ' + T.pages;   // na telefonu se ne prikazuje
     bookEl.setAttribute('aria-label', T.bookAria + ' (' + MENU.length + ' ' + T.pages + ')');
   }
   var FB = makeBook(q('.jb-fb'), { small: true, stage: bookEl, onRender: capUpdate });
