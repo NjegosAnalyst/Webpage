@@ -121,6 +121,15 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - **Otvoreno pitati korisnika:** tačan link stranice (slug; sada `vip-gondola` + pretraga), adresa iza „OVDJE“ (dok WP ne odgovori stoji `skipass@oc-jahorina.com` kao kod ratraka), original noćne fotografije u većoj rezoluciji (sada 1080 px), fotografija meze (za VIP 2), screenshot `…/wp-json/wp/v2/pages?slug=<slug>`.
 - **Sljedeće:** korisnik postavlja red (@e231894) u HTML widget na HERO TEST ispod bara (Elementor kontejner padding/margin/gap 0) → screenshot računar + telefon. Ako admin vidi narandžastu poruku (npr. stranica nije pronađena / nema mail), popraviti slug (`SLUG` u `napravi-widget.py`) ili `data-mail`. Kad stignu: veća noćna fotografija, fotografija meze. U GA4 označiti `gondola_rezervacija` kao ključni događaj.
 
+### 6. Ski Depo — sljedeća (korisnik 9. 10. 2026: „sada idemo sa sljedećom sekcijom u novom chatu Ski Depo“)
+- Mjesto: ispod VIP gondole. **Cik-cak:** VIP gondola ima tekst lijevo → Ski Depo ima **tekst desno**, glavni detalj lijevo.
+- Pravila: TEMA.md (tema ista, detalji različiti od vijesti, ratraka, suvenirnice, bara i VIP gondole; premium = fotografija u pozadini kadra; kontrole preko fotografije tihe; ritam/razmak kao gondola ispod bara: blok ispod ima gore samo rub kad je prethodni odmah iznad, `.jg--join` obrazac). Prefiks npr. `jsd-` i `#jsd-depo` (ne `js-`, ne `jd-` jer je to za Događaje); „join“ provjerava `#jg-gondola` iznad (klasa `jg--boxed`).
+- **Ne ponavljati detalje prethodnih blokova:** slajder (vijesti), stakleni panel sa pločicama (ratrak), tihi izbor linijama + smjena proizvoda (suvenirnica), 3D meni koji se diže + smjena fotografija (bar), LED koji se pali + ulaznica sa paketima (gondola). Ski Depo treba svoj glavni detalj (npr. vezan za ormarić/ključ/broj ormarića, sušenje opreme, „ostavi opremu na planini“) — predložiti kad stignu fotografije.
+- U prijedlogu `index.src.html` postoji kartica „Ski Depo“ (nadnaslov „Oprema“, „Ostavi skije i pancerice na planini.“, fotografija „Ski ormarić sa opremom“) — samo ideja, podaci nepotvrđeni.
+- Od korisnika tražiti: fotografije (ormarići, prostorija, oprema u ormariću, ulaz), WP stranicu Ski Depoa (link + screenshot `…/wp-json/wp/v2/pages?slug=<slug>`), tekst i podatke (cijene dnevno/sezonski, veličine ormarića, lokacija/stanica, radno vrijeme, sušenje/grijanje opreme), način kupovine/rezervacije (web shop, na licu mjesta, telefon/mail), screenshot kako je sada na sajtu.
+- Obrazac za kod: `gondola/gondola.js` (najnoviji: dva sloja fotografija stopljena sa `lighten`, `fit()`, `rise()`, ulazak sa `--led` animacijom, čitanje WP stranice sa izvlačenjem podataka iz teksta + pretraga kad slug ne postoji, „prljav“ JSON, admin poruka, GA, schema.org, galerija `#jg-lb`), `gondola/test-gondola.js` (lažni WP odgovori, blok iznad za „join“), `gondola/napravi-widget.py`, `gondola/pregled/napravi-pregled.py` (blok iznad u pregledu).
+- Postupak kao do sada: prvo pregled (artifact, gondola iznad), pa doterivanje po komentarima, pa red za Elementor i HERO TEST.
+
 ### Sljedeće sekcije
 - Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.
 - Događaji: na sajtu je **The Events Calendar** (Elementor widget "Events Loop", sada „Trenutno nema događaja...“), pa podatke čitati iz njega (REST `/wp-json/tribe/events/v1/events`), ne ručno.
@@ -132,7 +141,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 4. Prvo pregled (artifact samo sa sekcijom), pa doterivanje po korisnikovim komentarima, pa tek onda red za Elementor i postavljanje na HERO TEST.
 
 ## Grane
-- Najnoviji rad (vijesti, ratrak, suvenirnica, bar, VIP gondola, ovaj fajl): grana **`claude/zen-faraday-i6fm8g`** (nastala iz `claude/nifty-dirac-x85zte` + VIP gondola). Nova sesija čita odavde i nastavlja na svojoj grani napravljenoj od ove.
+- Najnoviji rad (vijesti, ratrak, suvenirnica, bar, VIP gondola, ovaj fajl; sljedeća: Ski Depo): grana **`claude/zen-faraday-i6fm8g`** (nastala iz `claude/nifty-dirac-x85zte` + VIP gondola). Nova sesija čita odavde i nastavlja na svojoj grani napravljenoj od ove.
 - Redovi za Elementor pokazuju na tačan commit na jsDelivr-u, pa rade bez obzira na granu.
 
 ## Linkovi
