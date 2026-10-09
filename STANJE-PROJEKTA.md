@@ -103,6 +103,13 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - **Telefon (korisnik):** „uvećaj malo cjenovnik i centriraj ga, ispod menija ukloni '12 strana' i 'Dodirnite za listanje menija'“ → do 760 px: meni u sredini fotografije, visina min(78vw, 370px), rotateY 8°, fotografija min(124vw, 540px), jelo u sredini (mpos 40/50/50 %), ispod samo „Meni“ (`.jb-cap-n` i `small` sakriveni). Računar i tablet bez izmjena.
 - **Sljedeće:** korisnik zamijeni red (@62dfc7c) u HTML widgetu na HERO TEST ispod suvenirnice (Elementor kontejner padding/margin/gap 0) → screenshot računar + telefon. Potvrda broja za rezervacije. Strane menija u Medije kao `meni-bar-01` … `meni-bar-12`.
 
+### 5. VIP gondola — sljedeća (korisnik 9. 10. 2026: „idemo sada na sljedeću sekciju VIP gondola u novom chatu“)
+- Mjesto: ispod Olimpijskog bara. **Cik-cak:** bar ima tekst desno → VIP gondola ima **tekst lijevo**, glavni detalj desno.
+- Pravila: TEMA.md (tema ista, detalji različiti od vijesti, ratraka, suvenirnice i bara; premium = fotografija u pozadini kadra; kontrole preko fotografije tihe; ritam/razmak kao bar → suvenirnica: blok ispod ima gore samo rub kad je prethodni odmah iznad, `.jb--join` obrazac). Prefiks npr. `jg-` i `#jg-gondola`; „join“ provjerava `#jb-bar` iznad.
+- U prijedlogu `index.src.html` postoji kartica „VIP Gondola“ (nadnaslov „Doživljaj“, „Privatna vožnja sa pogledom na…“, fotografija „VIP gondola u zalasku sunca“) — samo ideja, podaci nepotvrđeni.
+- Od korisnika tražiti: fotografije (kabina spolja/iznutra, pogled, zalazak), WP stranicu VIP gondole (link + screenshot `…/wp-json/wp/v2/pages?slug=<slug>`), tekst i podatke (trajanje, cijena, kapacitet, termini, šta je uključeno), način rezervacije (telefon/mail/web shop), video ako postoji, screenshot kako je sada na sajtu.
+- Obrazac za kod: `bar/bar.js` (najnoviji: smjena fotografija, `fit()`, `rise()`, `--k` skrol efekat, čitanje WP-a sa izvlačenjem JSON-a iz „prljavog“ odgovora, admin poruka, GA, test sa lažnim WP odgovorima, `napravi-widget.py`, pregled sa blokom iznad).
+
 ### Sljedeće sekcije
 - Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.
 - Događaji: na sajtu je **The Events Calendar** (Elementor widget "Events Loop", sada „Trenutno nema događaja...“), pa podatke čitati iz njega (REST `/wp-json/tribe/events/v1/events`), ne ručno.
