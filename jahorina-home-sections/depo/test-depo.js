@@ -123,7 +123,7 @@ async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900
   await p.locator('#jsd-depo').scrollIntoViewIfNeeded();
   // 3D + ulazak (vrata, oprema, infografika) ~3,5 s; softversko crtanje (SwiftShader) je sporije, pa se čeka kraj ulaska
   if (wait) {
-    await p.waitForFunction(() => { const r = document.getElementById('jsd-depo'); return r.querySelector('.jsd--flat') || (r.querySelectorAll('.jsd-co.is-on').length === 3 && getComputedStyle(r.querySelector('.jsd-tag')).opacity === '1'); }, null, { timeout: 60000 }).catch(() => {});
+    await p.waitForFunction(() => { const r = document.getElementById('jsd-depo'); return r.querySelector('.jsd--flat') || (r.querySelectorAll('.jsd-co.is-on').length === 3 && getComputedStyle(r.querySelector('.jsd-tag')).opacity === '1' && getComputedStyle(r.querySelectorAll('.jsd-hs')[7]).opacity === '1'); }, null, { timeout: 60000 }).catch(() => {});
     await p.waitForTimeout(Math.min(wait, 1600));
   }
   return { p, ctx, errors, rest };
@@ -147,7 +147,11 @@ async function state(p) {
       lines: [...r.querySelectorAll('h2 span')].map((s) => s.textContent), outline: r.querySelector('h2 .jsd-o').textContent,
       kicker: r.querySelector('.jsd-kicker').textContent, lead: r.querySelector('.jsd-lead').textContent,
       packH: r.querySelector('.jsd-pk-t').textContent,
-      btns: [...r.querySelectorAll('.jsd-it')].map((t) => (t.getAttribute('aria-pressed') === 'true' ? 1 : 0)).join(''),
+      btns: [...r.querySelectorAll('.jsd-hs')].map((t) => (t.getAttribute('aria-pressed') === 'true' ? 1 : 0)).join(''),
+      hs: [...r.querySelectorAll('.jsd-hs')].map((t) => (getComputedStyle(t).opacity === '1' ? 1 : 0)).join(''),
+      hsIn: (() => { const fr = r.querySelector('.jsd-frame').getBoundingClientRect(), hb = [...r.querySelectorAll('.jsd-hs')].map((t) => t.getBoundingClientRect());
+        const lk = r.__jsd3d && r.__jsd3d.anchors(); return hb.every((b) => b.left >= fr.left && b.right <= fr.right && b.top >= fr.top && b.bottom <= fr.bottom) && (!lk || hb.every((b) => b.left + 16 >= lk.l.x - 2 + r.querySelector('.jsd-3d').getBoundingClientRect().left && b.left + 16 <= lk.r.x + 2 + r.querySelector('.jsd-3d').getBoundingClientRect().left)); })(),
+      legend: [...r.querySelectorAll('.jsd-leg li')].map((li) => li.textContent).join('|'),
       fill: r.querySelector('.jsd-fill span').textContent,
       steps: [...r.querySelectorAll('.jsd-steps li')].map((li) => li.querySelector('b').textContent + ' / ' + li.querySelector('small').textContent),
       price: r.querySelector('.jsd-tag-p').textContent, tagOn: getComputedStyle(tag).opacity === '1', tagBox: [Math.round(tb.left), Math.round(tb.top), Math.round(tb.right), Math.round(tb.bottom)],
@@ -169,8 +173,8 @@ async function state(p) {
       bodyIn: body.left >= f.left - 1 && body.right <= f.right + 1 && body.bottom <= f.bottom + 1,
       packW: Math.round(pack.width), actsW: Math.round(acts.width), howW: Math.round(how.width), packL: Math.round(pack.left), actsL: Math.round(acts.left),
       acts: [...r.querySelectorAll('.jsd-btn')].map((a) => { const q = a.getBoundingClientRect(); return [Math.round(q.top), Math.round(q.width), Math.round(q.height)]; }),
-      fit: [...r.querySelectorAll('.jsd-btn, .jsd-ch, .jsd-steps b')].every((a) => a.scrollWidth <= a.clientWidth + 1) && [...r.querySelectorAll('.jsd-ch')].every((c) => c.getBoundingClientRect().width <= c.nextElementSibling ? 1 : 1),
-      chFit: (() => { const ch = [...r.querySelectorAll('.jsd-ch')], it = [...r.querySelectorAll('.jsd-it')]; return ch.every((c, i) => { const a = c.getBoundingClientRect(), t = it[i].getBoundingClientRect(); return a.left >= t.left - 6 && a.right <= t.right + 6; }); })(),
+      fit: [...r.querySelectorAll('.jsd-btn, .jsd-steps b')].every((a) => a.scrollWidth <= a.clientWidth + 1),
+      chFit: (() => { const p = r.querySelector('.jsd-pack').getBoundingClientRect(); return [...r.querySelectorAll('.jsd-leg li')].every((li) => li.getBoundingClientRect().right <= p.right + 1); })(),
       ld: (() => { try { const j = JSON.parse(document.getElementById('jsd-ld').text); return j['@type'] + ':' + j.offers.priceSpecification.price + ' ' + j.offers.priceSpecification.priceCurrency + '/' + j.offers.priceSpecification.unitText; } catch (e) { return 'nema'; } })(),
     };
   });
@@ -183,6 +187,19 @@ async function lb(p) {
       inside: !!(document.activeElement && document.activeElement.closest('#jsd-lb')), overflow: document.documentElement.style.overflow, focus: document.activeElement.className };
   });
 }
+// klik na broj u ormariću (pravim mišem, na mjestu broja) i na opremu u 3D (sredina broja = sredina predmeta)
+async function hs(p, key, touch) {
+  const b = await p.locator(`#jsd-depo .jsd-hs[data-key="${key}"]`).boundingBox();
+  if (touch) await p.touchscreen.tap(b.x + b.width / 2, b.y + b.height / 2); else await p.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
+}
+async function item(p, key) {
+  const pt = await p.evaluate((key) => { const r = document.getElementById('jsd-depo'), a = r.__jsd3d.anchors()['h_' + key], h = r.querySelector('.jsd-3d').getBoundingClientRect(); return { x: h.left + a.x, y: h.top + a.y }; }, key);
+  await p.mouse.click(pt.x, pt.y);
+}
+// čeka da se brojevi smire (sakriveni gdje je oprema, vidljivi gdje je prazno) i da oprema doleti
+const settle = (p) => p.waitForFunction(() => { const r = document.getElementById('jsd-depo'), a = r.__jsd3d;
+  return [...r.querySelectorAll('.jsd-hs')].every((b) => getComputedStyle(b).opacity === (b.getAttribute('aria-pressed') === 'true' ? '0' : '1') && (!a || a.has(b.dataset.key.slice(0, -1), +b.dataset.key.slice(-1)) === (b.getAttribute('aria-pressed') === 'true'))); },
+  null, { timeout: 30000 }).catch(() => {}).then(() => p.waitForTimeout(400));
 const shot = (p, name) => p.locator('#jsd-depo .jsd-frame').screenshot({ path: path.join(OUT, name + '.png'), timeout: 90000 });
 
 (async () => {
@@ -197,14 +214,17 @@ const shot = (p, name) => p.locator('#jsd-depo .jsd-frame').screenshot({ path: p
   check('nadnaslov = naslov stranice', S.kicker === 'Ski depo', S.kicker);
   check('uvod = prva rečenica stranice', S.lead === 'Jedan od najboljih i najpraktičnijih načina da očuvate vašu opremu jeste korištenje ski depoa.', S.lead);
   check('3D spreman: platno preko kadra, fotografija sakrivena', S.ready && !S.flat && S.canvas && S.canvas[2] > 1000 && S.photoOp === '0', [S.ready, S.canvas, S.photoOp]);
-  check('set 1 u ormariću i na dugmadi, set 2 prazan; 4 / 8', S.has === '10 10 10 10' && S.btns === '11110000' && S.fill === 'Popunjeno 4 / 8', [S.has, S.btns, S.fill]);
+  check('ormarić prazan, brojevi 1–8 vidljivi na mjestima opreme; 0 / 8', S.has === '00 00 00 00' && S.btns === '00000000' && S.hs === '11111111' && S.hsIn && S.fill === 'Popunjeno 0 / 8', [S.has, S.hs, S.hsIn, S.fill]);
+  check('legenda brojeva', S.legend === '1–2Skije|3–4Kacige|5–6Rukavice|7–8Pancerice', S.legend);
   check('infografika: ventilacija, sušenje, grijanje upaljeni', S.cos.join('|') === 'vent+:Ventilacija za svježinu opreme|dry+:Sušenje oprema suva i spremna|heat+:Grijanje udobnost i toplina', S.cos);
   check('natpisi u kadru, ne preko teksta, jedan ispod drugog', S.coIn && S.coFree && S.coApart, [S.coIn, S.coFree, S.coApart]);
   check('privjesak: 15 KM po danu, vidljiv, u kadru, ne preko teksta', S.price === '15KM' && S.tagOn && S.tagIn && S.tagFree, [S.price, S.tagOn, S.tagBox]);
   check('"U jedan depo stanu dva puna seta"', S.packH === 'U jedan depo stanu dva puna seta', S.packH);
+  const lab0 = await p.evaluate(() => [...document.querySelectorAll('#jsd-depo .jsd-hs')].map((b) => b.getAttribute('aria-label')));
+  check('brojevi imaju natpis za čitače ekrana', lab0[0] === '1: Dodaj skije i štapove (set 1)' && lab0[3] === '4: Dodaj kacigu (set 2)' && lab0[7] === '8: Dodaj pancerice (set 2)', lab0);
   check('koraci sa stranice: Poljice, depozit 10 KM', S.steps.join('|') === 'Ski kasa / na polazu gondole Poljice|Kartica depoa / depozit 10 KM|Skenirajte kartu / u polaznoj stanici', S.steps);
   check('dugmad: Više o ski depou (stranica) + Lokacija (mapa, nova kartica)', S.btxt.join('|') === 'Više o ski depou|Lokacija' && S.page === SITE + '/ski-depo/' && /google\.com\/maps/.test(S.map[0]) && S.map[1] === '_blank', [S.btxt, S.page, S.map]);
-  check('spakuj, koraci i dugmad iste širine, poravnati', S.packW === S.actsW && S.howW === S.actsW && S.packL === S.actsL, [S.packW, S.howW, S.actsW]);
+  check('legenda, koraci i dugmad iste širine, poravnati', S.packW === S.actsW && S.howW === S.actsW && S.packL === S.actsL, [S.packW, S.howW, S.actsW]);
   check('dugmad: isti red, ista širina i visina (44px), natpisi staju', S.acts[0][0] === S.acts[1][0] && S.acts[0][1] === S.acts[1][1] && S.acts[0][2] === 44 && S.fit && S.chFit, [S.acts, S.fit, S.chFit]);
   check('sve vidljivo poslije ulaska, tekst u kadru', S.hidden === 0 && S.bodyIn, [S.hidden, S.bodyIn]);
   check('admin poruka se ne vidi', S.why === '', S.why);
@@ -220,21 +240,27 @@ const shot = (p, name) => p.locator('#jsd-depo .jsd-frame').screenshot({ path: p
   check('VIP gondola iznad: jsd--join, razmak kadar → kadar = --gap + --g', j.join && Math.abs(j.space - j.want) <= 2, j);
   await p.screenshot({ path: path.join(OUT, 'gondola-depo.png'), fullPage: true });
   await shot(p, 'sr-racunar-kadar');
-  // dodaj drugi set: skije i pancerice; ukloni rukavice prvog seta
-  await p.click('#jsd-depo .jsd-it[data-k="ski"][data-s="1"]'); await p.waitForTimeout(150);
-  await p.click('#jsd-depo .jsd-it[data-k="boot"][data-s="1"]');
-  await p.click('#jsd-depo .jsd-it[data-k="glove"][data-s="0"]'); await p.waitForTimeout(1400);
+  // klik na brojeve: 1 (skije), 2 (druge skije), 7 (pancerice), 3 (kaciga)
+  await hs(p, 'ski0'); await p.waitForTimeout(150); await hs(p, 'ski1'); await hs(p, 'boot0'); await hs(p, 'helmet0'); await settle(p);
   S = await state(p);
-  check('klik: set 2 skije i pancerice dodani, rukavice seta 1 uklonjene (dugmad = ormarić); 5 / 8', S.has === '11 11 10 00' && S.btns === '11101100' && S.fill === 'Popunjeno 5 / 8', [S.has, S.btns, S.fill]);
-  const lab = await p.evaluate(() => [...document.querySelectorAll('#jsd-depo .jsd-it')].slice(0, 5).map((b) => b.getAttribute('aria-label')));
-  check('dugmad imaju natpis za čitače ekrana', lab[0] === 'Ukloni: skije i štapove, Set 1' && lab[3] === 'Dodaj: rukavice, Set 1' && lab[4] === 'Ukloni: skije i štapove, Set 2', lab);
+  check('brojevi 1, 2, 3, 7: oprema u ormariću, ti brojevi nestali; 4 / 8', S.has === '11 10 10 00' && S.btns === '11100010' && S.hs === '00011101' && S.fill === 'Popunjeno 4 / 8', [S.has, S.btns, S.hs, S.fill]);
+  const lab = await p.evaluate(() => [...document.querySelectorAll('#jsd-depo .jsd-hs')].slice(0, 2).map((b) => b.getAttribute('aria-label')));
+  check('natpis se mijenja u "Ukloni"', lab[0] === '1: Ukloni skije i štapove (set 1)', lab);
   await shot(p, 'sr-racunar-set2');
-  // napuni sve
-  for (const k of ['helmet', 'glove']) await p.click(`#jsd-depo .jsd-it[data-k="${k}"][data-s="1"]`);
-  await p.click('#jsd-depo .jsd-it[data-k="glove"][data-s="0"]'); await p.waitForTimeout(1400);
+  // klik na kacigu u ormariću je vadi, broj 3 se vraća
+  await item(p, 'helmet0'); await p.waitForTimeout(300); await settle(p);
   S = await state(p);
-  check('pun depo: 8 / 8', S.has === '11 11 11 11' && S.fill === 'Popunjeno 8 / 8', [S.has, S.fill]);
+  check('klik na kacigu: izvađena, broj 3 opet vidljiv', S.has === '11 10 00 00' && S.hs === '00111101', [S.has, S.hs]);
+  // napuni sve
+  for (const k of ['helmet0', 'helmet1', 'glove0', 'glove1', 'boot1']) await hs(p, k);
+  await settle(p);
+  S = await state(p);
+  check('pun depo: "Depo je pun", nijedan broj', S.has === '11 11 11 11' && S.fill === 'Depo je pun: dva kompletna seta' && S.hs === '00000000', [S.has, S.fill, S.hs]);
   await shot(p, 'sr-racunar-pun');
+  // tastatura: Tab do broja (sakriven, ali fokus ga pokaže), Enter vadi opremu
+  await p.focus('#jsd-depo .jsd-hs[data-key="glove1"]'); await p.keyboard.press('Enter'); await p.waitForTimeout(300); await settle(p);
+  S = await state(p);
+  check('tastatura: Enter na broju 6 vadi rukavice seta 2', S.has === '11 11 11 10', S.has);
   // okretanje prevlačenjem
   const fb = await p.locator('#jsd-depo .jsd-frame').boundingBox();
   await p.mouse.move(fb.x + fb.width * .2, fb.y + fb.height * .5); await p.mouse.down();
@@ -257,11 +283,9 @@ const shot = (p, name) => p.locator('#jsd-depo .jsd-frame').screenshot({ path: p
   check('Esc zatvara, fokus nazad, skrol vraćen', L.shown === 'none' && /jsd-ph/.test(L.focus) && L.overflow === '', L);
   await p.click('#jsd-depo a[data-jsd="stranica"]'); await p.click('#jsd-depo a[data-jsd="mapa"]');
   const ev = await p.evaluate(() => window.__ev.filter((e) => /^depo_/.test(e[1])).map((e) => e[1] + ':' + JSON.stringify(e[2])));
-  check('GA4: depo_oprema ×6, depo_okretanje, depo_galerija, depo_klik ×2', JSON.stringify(ev) === JSON.stringify([
-    'depo_oprema:{"predmet":"ski","set":2,"akcija":"dodaj","jezik":"sr"}', 'depo_oprema:{"predmet":"boot","set":2,"akcija":"dodaj","jezik":"sr"}',
-    'depo_oprema:{"predmet":"glove","set":1,"akcija":"ukloni","jezik":"sr"}', 'depo_oprema:{"predmet":"helmet","set":2,"akcija":"dodaj","jezik":"sr"}',
-    'depo_oprema:{"predmet":"glove","set":2,"akcija":"dodaj","jezik":"sr"}', 'depo_oprema:{"predmet":"glove","set":1,"akcija":"dodaj","jezik":"sr"}',
-    'depo_okretanje:{"jezik":"sr"}', 'depo_galerija:{"jezik":"sr"}', 'depo_klik:{"cilj":"stranica","jezik":"sr"}', 'depo_klik:{"cilj":"mapa","jezik":"sr"}']), ev);
+  const evO = ev.filter((e) => /^depo_oprema/.test(e)), evR = ev.filter((e) => !/^depo_oprema/.test(e));
+  check('GA4: depo_oprema ×11 (broj / oprema), prvi = skije set 1 brojem, kaciga izvađena klikom na opremu', evO.length === 11 && evO[0] === 'depo_oprema:{"predmet":"ski","set":1,"akcija":"dodaj","nacin":"broj","jezik":"sr"}' && evO[4] === 'depo_oprema:{"predmet":"helmet","set":1,"akcija":"ukloni","nacin":"oprema","jezik":"sr"}', evO);
+  check('GA4: depo_okretanje, depo_galerija, depo_klik ×2', JSON.stringify(evR) === JSON.stringify(['depo_okretanje:{"jezik":"sr"}', 'depo_galerija:{"jezik":"sr"}', 'depo_klik:{"cilj":"stranica","jezik":"sr"}', 'depo_klik:{"cilj":"mapa","jezik":"sr"}']), evR);
   check('bez grešaka u konzoli', errors.length === 0, errors);
   await ctx.close();
 
@@ -269,14 +293,15 @@ const shot = (p, name) => p.locator('#jsd-depo .jsd-frame').screenshot({ path: p
   ({ p, ctx, errors } = await open(browser, { wait: 0, ga: 'none', gondola: true }));   // gondola iznad → depo je ispod ekrana dok se ne skroluje
   const seq = [];
   for (let i = 0; i < 160; i++) {   // uzorak svakih 250 ms (softversko crtanje je sporo, pa se ne mjeri tačno vrijeme)
-    const v = await p.evaluate(() => { const r = document.getElementById('jsd-depo'), a = r.__jsd3d; return [a ? +a.anchors().door.toFixed(2) : -1, r.querySelectorAll('.jsd-co.is-on').length]; });
+    const v = await p.evaluate(() => { const r = document.getElementById('jsd-depo'), a = r.__jsd3d; return [a ? +a.anchors().door.toFixed(2) : -1, r.querySelectorAll('.jsd-co.is-on').length, r.querySelectorAll('.jsd-hs.is-shown').length]; });
     seq.push(v);
     if (v[0] > .2 && v[0] < .8 && !seq.shot) { seq.shot = 1; await p.screenshot({ path: path.join(OUT, 'sr-racunar-ulazak.png') }); }
     if (v[1] === 3) break;
     await p.waitForTimeout(250);
   }
   const fst = seq.find((v) => v[0] >= 0), mid = seq.some((v) => v[0] > 0 && v[0] < 1), firstCo = seq.findIndex((v) => v[1] > 0);
-  check('vrata: zatvorena → otvaraju se → otvorena; infografika tek kad su vrata otvorena', fst && fst[0] === 0 && fst[1] === 0 && mid && firstCo > 0 && seq[firstCo][0] === 1 && seq[seq.length - 1][1] === 3,
+  const firstHs = seq.findIndex((v) => v[2] > 0);
+  check('vrata: zatvorena → otvaraju se → otvorena; brojevi pa infografika tek kad su vrata otvorena', fst && fst[0] === 0 && fst[1] === 0 && fst[2] === 0 && mid && firstHs > 0 && seq[firstHs][0] >= .85 && firstCo >= firstHs && seq[seq.length - 1][1] === 3 && seq[seq.length - 1][2] === 8,
     seq.filter((v, i) => !i || v[0] !== seq[i - 1][0] || v[1] !== seq[i - 1][1]));
   check('bez grešaka u konzoli', errors.length === 0, errors);
   await ctx.close();
@@ -313,12 +338,14 @@ const shot = (p, name) => p.locator('#jsd-depo .jsd-frame').screenshot({ path: p
   ({ p, ctx, errors, rest } = await open(browser, { path: '/en/pocetna-zima/', ga: 'gtm', wp: 'qtranslate' }));
   S = await state(p);
   check('engleski naslov, nadnaslov i uvod iz WP-a', S.lines.join('|') === 'Leave your gear|on the mountain' && S.kicker === 'Ski lockers' && /^Ski lockers are the easiest way/.test(S.lead), [S.lines, S.kicker, S.lead]);
-  check('engleska infografika i koraci', S.packH === 'One locker fits two full sets' && S.steps[0] === 'Ski ticket office / at the Poljice gondola base' && S.steps[1] === 'Locker card / 10 KM deposit' && /^vent\+:Ventilation/.test(S.cos[0]), [S.packH, S.steps, S.cos]);
+  check('engleska infografika i koraci', S.packH === 'One locker fits two full sets' && S.legend === '1–2Skis|3–4Helmets|5–6Gloves|7–8Boots' && S.steps[0] === 'Ski ticket office / at the Poljice gondola base' && S.steps[1] === 'Locker card / 10 KM deposit' && /^vent\+:Ventilation/.test(S.cos[0]), [S.packH, S.steps, S.cos]);
   check('dugmad i link /en/', S.btxt.join('|') === 'More about ski lockers|Location' && S.page === SITE + '/en/ski-depo/', [S.btxt, S.page]);
   check('prvo /en/wp-json, pa /wp-json', /^\/en\/wp-json/.test(rest[0]) && rest.some((x) => /^\/wp-json\/wp\/v2\/pages/.test(x)), rest);
-  await p.click('#jsd-depo .jsd-it[data-k="helmet"][data-s="1"]'); await p.waitForTimeout(100);
+  const enLab = await p.evaluate(() => document.querySelector('#jsd-depo .jsd-hs[data-key="helmet1"]').getAttribute('aria-label'));
+  check('engleski natpis broja', enLab === '4: Add helmet (set 2)', enLab);
+  await hs(p, 'helmet1'); await p.waitForTimeout(100);
   const ev2 = await p.evaluate(() => window.__ev.filter((e) => /^depo_/.test(e.event)));
-  check('dataLayer: depo_oprema', JSON.stringify(ev2) === JSON.stringify([{ event: 'depo_oprema', predmet: 'helmet', set: 2, akcija: 'dodaj', jezik: 'en' }]), ev2);
+  check('dataLayer: depo_oprema', JSON.stringify(ev2) === JSON.stringify([{ event: 'depo_oprema', predmet: 'helmet', set: 2, akcija: 'dodaj', nacin: 'broj', jezik: 'en' }]), ev2);
   check('bez grešaka u konzoli', errors.length === 0, errors);
   await p.waitForTimeout(900);
   await shot(p, 'en-racunar-kadar');
@@ -327,10 +354,9 @@ const shot = (p, name) => p.locator('#jsd-depo .jsd-frame').screenshot({ path: p
   console.log('Bez WebGL-a: fotografija pravog ormarića, privjesak pored nje, dugmad samo prikaz');
   ({ p, ctx, errors } = await open(browser, { nogl: true, ga: 'none', wait: 1800 }));
   S = await state(p);
-  check('fotografija vidljiva, 3D nije, privjesak 15 KM vidljiv', S.flat && !S.ready && S.photoOp === '1' && S.tagOn && S.tagFree, [S.flat, S.ready, S.photoOp, S.tagOn]);
-  await p.$eval('#jsd-depo .jsd-it[data-k="ski"][data-s="1"]', (b) => b.click()); await p.waitForTimeout(100);
-  S = await state(p);
-  check('klik ne mijenja ništa (aria-disabled)', S.btns === '11110000', S.btns);
+  check('fotografija vidljiva, 3D nije, privjesak 15 KM vidljiv, brojeva nema', S.flat && !S.ready && S.photoOp === '1' && S.tagOn && S.tagFree && S.hs === '00000000', [S.flat, S.ready, S.photoOp, S.tagOn, S.hs]);
+  const flatTxt = await p.evaluate(() => document.querySelector('#jsd-depo .jsd-pack-h small').textContent);
+  check('tekst bez poziva na klik', flatTxt === 'Skije, kacige, rukavice i pancerice za dvije osobe.', flatTxt);
   check('bez grešaka u konzoli', errors.length === 0, errors);
   await shot(p, 'bez-webgl');
   await ctx.close();
@@ -357,14 +383,15 @@ const shot = (p, name) => p.locator('#jsd-depo .jsd-frame').screenshot({ path: p
     check('sve vidljivo poslije ulaska, tekst u kadru', S.hidden === 0 && S.bodyIn, [S.hidden, S.bodyIn]);
     check('3D spreman, infografika u kadru, ne preko teksta, natpisi se ne preklapaju', S.ready && S.coIn && S.coFree && S.coApart, [S.ready, S.coIn, S.coFree, S.coApart]);
     check('privjesak vidljiv, u kadru, ne preko teksta', S.tagOn && S.tagIn && S.tagFree, S.tagBox);
-    check('natpisi dugmadi, kolona i koraka staju', S.fit && S.chFit, [S.fit, S.chFit]);
-    check('spakuj i dugmad iste širine', S.packW === S.actsW && S.packL === S.actsL, [S.packW, S.actsW]);
+    check('natpisi dugmadi, legende i koraka staju', S.fit && S.chFit, [S.fit, S.chFit]);
+    check('brojevi 1–8 vidljivi, u kadru i na ormariću', S.hs === '11111111' && S.hsIn, [S.hs, S.hsIn]);
+    check('legenda i dugmad iste širine', S.packW === S.actsW && S.packL === S.actsL, [S.packW, S.actsW]);
     if (vw <= 760 && vw > 360) check('telefon: oba dugmeta u jednom redu, 42px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 42, S.acts);
     await shot(p, name);
     if (touch) {
-      await p.tap('#jsd-depo .jsd-it[data-k="boot"][data-s="1"]'); await p.waitForTimeout(1100);
+      await hs(p, 'boot1', true); await hs(p, 'ski0', true); await p.waitForTimeout(1400);
       S = await state(p);
-      check('dodir: pancerice seta 2', S.has === '10 11 10 10', S.has);
+      check('dodir na brojeve 8 i 1: pancerice seta 2 i skije', S.has === '10 01 00 00', S.has);
       await shot(p, name + '-dodir');
     }
     check('bez grešaka u konzoli', errors.length === 0, errors);
@@ -375,8 +402,12 @@ const shot = (p, name) => p.locator('#jsd-depo .jsd-frame').screenshot({ path: p
   for (const [name, vw, vh, touch] of [['kvalitet-racunar', 1440, 900], ['kvalitet-telefon', 390, 844, true]]) {
     ({ p, ctx, errors } = await open(browser, { vw, vh, touch, low: false, ga: 'none' }));
     S = await state(p);
-    check(name + ': 3D spreman, set 1 unutra, infografika', S.ready && S.has === '10 10 10 10' && S.cos.every((c) => /\+/.test(c)), [S.ready, S.has]);
+    check(name + ': 3D spreman, brojevi, infografika', S.ready && S.hs === '11111111' && S.cos.every((c) => /\+/.test(c)), [S.ready, S.hs]);
     await shot(p, name);
+    for (const k of ['ski0', 'ski1', 'helmet0', 'helmet1', 'glove0', 'glove1', 'boot0', 'boot1']) await hs(p, k, touch);
+    await p.waitForFunction(() => document.getElementById('jsd-depo').__jsd3d.has('boot', 1), null, { timeout: 60000 });
+    await p.waitForTimeout(1500);
+    await shot(p, name + '-pun');
     check('bez grešaka u konzoli', errors.length === 0, errors);
     await ctx.close();
   }
@@ -385,7 +416,7 @@ const shot = (p, name) => p.locator('#jsd-depo .jsd-frame').screenshot({ path: p
   ({ p, ctx, errors } = await open(browser, { reduced: true, wait: 1500 }));
   S = await state(p);
   const rm = await p.evaluate(() => ({ cls: document.getElementById('jsd-depo').className, door: document.getElementById('jsd-depo').__jsd3d.anchors().door }));
-  check('odmah vidljivo, bez klasa za ulazak, vrata otvorena, set 1 unutra, infografika', !/jsd-anim/.test(rm.cls) && rm.door === 1 && S.has === '10 10 10 10' && S.hidden === 0 && S.cos.every((c) => /\+/.test(c)), [rm, S.has]);
+  check('odmah vidljivo, bez klasa za ulazak, vrata otvorena, brojevi i infografika', !/jsd-anim/.test(rm.cls) && rm.door === 1 && S.hs === '11111111' && S.hidden === 0 && S.cos.every((c) => /\+/.test(c)), [rm, S.hs]);
   check('bez grešaka u konzoli', errors.length === 0, errors);
   await ctx.close();
 
