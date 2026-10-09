@@ -653,10 +653,9 @@
   function start() {
     if (started || !api) return; started = true;
     if (reduced) { api.setOpen(1); showHs(); showCallouts(); return; }
+    // brojevi i infografika čekaju da se vrata stvarno otvore (i na sporim uređajima)
     setTimeout(function () {
-      api.open().then(function () {}, function () {});
-      setTimeout(showHs, 1150);
-      setTimeout(showCallouts, 1150 + 8 * 110 + 250);
+      api.open().then(function () { showHs(); setTimeout(showCallouts, 8 * 110 + 250); });
     }, 650);
   }
 
