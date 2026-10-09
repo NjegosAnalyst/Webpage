@@ -137,10 +137,16 @@ async function state(p) {
       rez: [decodeURIComponent(rez.getAttribute('href') || ''), rez.innerText.trim(), rez.getAttribute('target') || ''],
       note: r.querySelector('.jg-note').innerText.replace(/\s+/g, ' ').trim(),
       page: r.querySelector('a[data-jg="stranica"]').getAttribute('href'),
+      gal: r.querySelector('.jg-btn--ghost').innerText.trim(),
+      inside: (() => {   // boca je na 53 % širine fotografije iznutra; maska sloja nestaje na min(--side + 820px, 62 %)
+        const im = r.querySelector('.jg-in img'), q = im.getBoundingClientRect(), side = parseFloat(getComputedStyle(r.querySelector('.jg-wrap')).getPropertyValue('--side')) || 0;
+        const tr = Math.max(...[...r.querySelectorAll('.jg-lead, .jg-pass')].map((e) => e.getBoundingClientRect().right));
+        return { ok: im.complete && im.naturalWidth > 0, bottle: Math.round(q.left + q.width * .53), textRight: Math.round(tr), fadeEnd: Math.round(f.left + Math.min(side + 820, f.width * .62)), cabLeft: Math.round(cab.left) };
+      })(),
       why: (r.querySelector('.jg-why') || {}).textContent || '',
       led: getComputedStyle(r).getPropertyValue('--led').trim(),
       litMask: getComputedStyle(r.querySelector('.jg-lit')).maskImage || getComputedStyle(r.querySelector('.jg-lit')).webkitMaskImage,
-      hidden: [...r.querySelectorAll('.jg-up,.jg-ph')].filter((e) => getComputedStyle(e).opacity !== '1').length,
+      hidden: [...r.querySelectorAll('.jg-up,.jg-ph,.jg-in')].filter((e) => getComputedStyle(e).opacity !== '1').length,
       imgOk: [...r.querySelectorAll('img')].every((i) => i.complete && i.naturalWidth > 0),
       bodyIn: body.left >= f.left - 1 && body.right <= f.right + 1 && body.bottom <= f.bottom + 1,
       cabFree: innerWidth <= 980 || ![...r.querySelectorAll('.jg-kicker, h2 span, .jg-lead, .jg-pass, .jg-acts, .jg-note')].some((e) => hit(e.getBoundingClientRect(), cab)),
@@ -170,7 +176,9 @@ async function lb(p) {
   let S = await state(p);
   check('bez vodoravnog skrola, preko cijele širine', S.scroll === 0 && S.left === 0 && S.width === S.cw, S);
   check('naslov bijeli i Archivo uprkos temi', S.h2color === 'rgb(255, 255, 255)' && /Archivo/.test(S.h2font), [S.h2color, S.h2font]);
-  check('naslov "Noćna vožnja / VIP kabinom", kraj iscrtan', S.lines.join('|') === 'Noćna vožnja|VIP kabinom' && S.outline === 'VIP kabinom', S.lines);
+  check('naslov "Vožnja / VIP gondolom", kraj iscrtan', S.lines.join('|') === 'Vožnja|VIP gondolom' && S.outline === 'VIP gondolom', S.lines);
+  check('dugme Galerija', S.gal === 'Galerija', S.gal);
+  check('kabina iznutra diskretno lijevo: učitana, boca desno od teksta, utapa se prije kabina', S.inside.ok && S.inside.bottle > S.inside.textRight - 40 && S.inside.fadeEnd <= S.inside.cabLeft + 1, S.inside);
   check('nadnaslov = naslov stranice', S.kicker === 'VIP gondola', S.kicker);
   check('uvod = rečenica "Priuštite sebi …" sa stranice', /^Priuštite sebi nezaboravnu vožnju.*ljubavlju\.$/.test(S.lead), S.lead);
   check('paketi iz teksta: VIP 1 izabran, VIP 2', S.tog === 'VIP 1*|VIP 2', S.tog);
@@ -210,10 +218,10 @@ async function lb(p) {
   S = await state(p);
   check('strelica ← bira VIP 1 (fokus prati izbor)', S.tog === 'VIP 1*|VIP 2' && S.price === '150KM' && await p.evaluate(() => document.activeElement.getAttribute('data-k') === '0'), S.tog);
   await p.click('#jg-gondola .jg-btn--solid');
-  // fotografije: "Pogledaj unutra" počinje od unutrašnjosti kabine; 3 naše + 2 sa stranice (logo preskočen)
+  // fotografije: "Galerija" počinje od unutrašnjosti kabine; 3 naše + 2 sa stranice (logo preskočen)
   await p.click('#jg-gondola .jg-btn--ghost'); await p.waitForTimeout(450);
   let L = await lb(p);
-  check('Pogledaj unutra: kabina iznutra, 1 / 5, fokus unutra, stranica ne skroluje', L.shown === 'grid' && L.src === 'gondola-kabina.webp' && L.cap === '1 / 5' && L.inside && L.overflow === 'hidden', L);
+  check('Galerija: kabina iznutra, 1 / 5, fokus unutra, stranica ne skroluje', L.shown === 'grid' && L.src === 'gondola-kabina.webp' && L.cap === '1 / 5' && L.inside && L.overflow === 'hidden', L);
   await p.evaluate(() => document.querySelector('#jg-lb img').decode().catch(() => {}));
   await p.screenshot({ path: path.join(OUT, 'galerija-kabina.png') });
   await p.keyboard.press('ArrowRight'); await p.keyboard.press('ArrowRight'); await p.keyboard.press('ArrowRight');
@@ -222,7 +230,7 @@ async function lb(p) {
   await p.keyboard.press('Escape'); await p.waitForTimeout(400);
   L = await lb(p);
   check('Esc zatvara, fokus nazad na dugme, skrol vraćen', L.shown === 'none' && /jg-btn--ghost/.test(L.focus) && L.overflow === '', L);
-  // klik na fotografiju (desno) → noćna gondola
+  // klik na fotografiju desno → noćna gondola (lijevo bi otvorilo kabinu iznutra)
   const fr = await p.locator('#jg-gondola .jg-frame').boundingBox();
   await p.mouse.click(fr.x + fr.width * .82, fr.y + fr.height * .3); await p.waitForTimeout(400);
   L = await lb(p);
@@ -284,7 +292,7 @@ async function lb(p) {
   console.log('EN, računar, Google Tag Manager, qTranslate oznake (/en/wp-json ne radi → /wp-json)');
   ({ p, ctx, errors, rest } = await open(browser, { path: '/en/pocetna-zima/', ga: 'gtm', wp: 'qtranslate' }));
   S = await state(p);
-  check('engleski naslov i uvod iz WP-a', S.lines.join('|') === 'Night ride|VIP cabin' && /^Treat yourself to an unforgettable night ride/.test(S.lead), [S.lines, S.lead]);
+  check('engleski naslov i uvod iz WP-a', S.lines.join('|') === 'Ride in the|VIP gondola' && S.gal === 'Gallery' && /^Treat yourself to an unforgettable night ride/.test(S.lead), [S.lines, S.lead]);
   check('engleski paketi: Ride up to 1 h, Champagne, Meze platter(-), 150 KM', S.inc === 'Ride up to 1 h|Champagne|Meze platter(-)' && S.price === '150KM', [S.inc, S.price]);
   check('Book VIP 1 → mail, engleski predmet; link /en/', /^mailto:vip@oc-jahorina\.com\?subject=Booking: VIP gondola 1/.test(S.rez[0]) && S.rez[1] === 'Book VIP 1' && S.page === SITE + '/en/vip-gondola/', [S.rez, S.page]);
   check('napomena: at least a day in advance', /Book by email at least a day in advance/.test(S.note), S.note);

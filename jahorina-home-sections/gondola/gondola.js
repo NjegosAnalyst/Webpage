@@ -1,12 +1,13 @@
 /* =====================================================================
-   JAHORINA — VIP GONDOLA (početna, ispod Olimpijskog bara) · v1 "noćna vožnja"
+   JAHORINA — VIP GONDOLA (početna, ispod Olimpijskog bara) · v1.1 "noćna vožnja"
    Tema hero-a i ostalih blokova (noćni ton, jedan cyan akcenat, Archivo/Barlow, kadar preko cijele širine, fotografija
    u pozadini kadra, naslov sa iscrtanim krajem, staklo i blagi neumorfizam), sa svojim detaljima:
      · cik-cak sa barom iznad (tamo tekst desno): ovdje je tekst lijevo, a desno u kadru noćna fotografija gondole Poljice;
      · LED SE PALI: kad kadar uđe u ekran, kabine su ugašene, pa im se LED rasvjeta upali duž užeta (od dalekih ka
        bliskim), sa mekim plavim sjajem oko bliskih kabina i tankim odsjajem na gornjoj ivici kadra. Jednom, ~2 s;
+     · lijevo iza teksta diskretno stoji fotografija kabine iznutra (šampanjac), utopljena u noć;
      · ULAZNICA sa paketima: VIP 1 / VIP 2 (izbor u plitkom žlijebu), šta je uključeno i cijena na otcjepku ulaznice;
-       dugme "Rezerviši VIP N" otvara mail sa već upisanim paketom; "Pogledaj unutra" = fotografije preko ekrana.
+       dugme "Rezerviši VIP N" otvara mail sa već upisanim paketom; "Galerija" = fotografije preko ekrana.
 
    SADRŽAJ JE IZ WORDPRESSA (stranica VIP gondole, data-stranica = slug; ako slug ne postoji, traži se stranica sa "VIP"):
      nadnaslov = naslov stranice; uvod = rečenica "Priuštite sebi …" (ili prva rečenica); paketi = "VIP gondola 1/2 …
@@ -40,10 +41,10 @@
 
   // ugrađeni tekst = tekst stranice VIP gondole (9. 10. 2026); naslov je korisnikov dizajn; EN je prevod
   var T = EN ? {
-    kicker: 'VIP gondola', h: ['Night ride', 'VIP cabin'],
+    kicker: 'VIP gondola', h: ['Ride in the', 'VIP gondola'],
     lead: 'Treat yourself to an unforgettable ride: settle into the leather seats, open a bottle of champagne and taste a fine meze platter of delicious local products, prepared for you with great care and love.',
     pick: 'Choose your package', price: 'Package price', ride: 'Ride up to', rideX: 'Panoramic ride', ch: 'Champagne', mz: 'Meze platter',
-    book: 'Book', bookS: 'Book', inside: 'Look inside', insideS: 'Photos', more: 'More about the VIP gondola',
+    book: 'Book', bookS: 'Book', inside: 'Gallery', insideS: 'Gallery', more: 'More about the VIP gondola',
     adv: function (n) { return 'Book by email at least ' + (n ? n + ' days' : 'a day') + ' in advance'; }, advX: 'Book by email',
     name: 'VIP gondola', subj: 'Booking: ', body: 'Hello,\n\nI would like to book the {p} package.\n\nDate:\nPreferred time:\nNumber of guests:\nName:\nPhone:\n\nThank you!',
     gal: 'VIP gondola photos', photo: 'Photo', prev: 'Previous photo', next: 'Next photo', close: 'Close',
@@ -51,10 +52,10 @@
     photos: ['Inside the VIP cabin: black leather seats with Jahorina headrests, a bottle of Moët and a glass on the table, the ski slope through the window',
       'Two hands toasting with champagne in front of a snowy mountain', 'Gondola Poljice at night: cabins with blue LED lights on the cable']
   } : {
-    kicker: 'VIP gondola', h: ['Noćna vožnja', 'VIP kabinom'],
+    kicker: 'VIP gondola', h: ['Vožnja', 'VIP gondolom'],
     lead: 'Priuštite sebi nezaboravnu vožnju, udobno se smjestite u kožna sjedišta, otvorite bocu šampanjca i probajte izvrsnu mezu sačinjenu od velikog broja preukusnih domaćih proizvoda, pripremljenu za vas sa velikom pažnjom i ljubavlju.',
     pick: 'Izaberite paket', price: 'Cijena paketa', ride: 'Vožnja do', rideX: 'Panoramska vožnja', ch: 'Šampanjac', mz: 'Meze',
-    book: 'Rezerviši', bookS: 'Rezerviši', inside: 'Pogledaj unutra', insideS: 'Fotografije', more: 'Više o VIP gondoli',
+    book: 'Rezerviši', bookS: 'Rezerviši', inside: 'Galerija', insideS: 'Galerija', more: 'Više o VIP gondoli',
     adv: function (n) { return 'Rezervacija e-poštom, najmanje ' + (n ? n + ' dana' : 'dan') + ' ranije'; }, advX: 'Rezervacija e-poštom',
     name: 'VIP gondola', subj: 'Rezervacija: ', body: 'Poštovani,\n\nželim da rezervišem paket {p}.\n\nDatum vožnje:\nOkvirno vrijeme:\nBroj osoba:\nIme i prezime:\nKontakt telefon:\n\nHvala!',
     gal: 'Fotografije VIP gondole', photo: 'Fotografija', prev: 'Prethodna fotografija', next: 'Sljedeća fotografija', close: 'Zatvori',
@@ -70,8 +71,8 @@
   var ADV = '';   // '' = dan; broj dana ako stranica kaže "najmanje 2 dana"
   var SEL = 0;
 
-  // fotografije: noćna gondola je pozadina kadra; galerija počinje od unutrašnjosti ("Pogledaj unutra")
-  var NIGHT = HERE + 'slike/gondola-noc.webp';
+  // fotografije: noćna gondola je pozadina kadra; galerija počinje od unutrašnjosti; kabina iznutra je i diskretno lijevo u kadru
+  var NIGHT = HERE + 'slike/gondola-noc.webp', INSIDE = HERE + 'slike/gondola-kabina.webp';
   var FIXED_GAL = !!opt('galerija', '');
   var BASE = ['gondola-kabina', 'gondola-zdravica', 'gondola-noc'].map(function (f, k) { return { full: HERE + 'slike/' + f + '.webp', alt: T.photos[k] }; });
   var GAL = FIXED_GAL ? opt('galerija', '').split(',').map(function (x) { x = x.trim(); return x && { full: x }; }).filter(Boolean) : BASE.slice();
@@ -111,7 +112,14 @@
     '#R .jg-frame::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;z-index:6;pointer-events:none;opacity:var(--led,1);background:linear-gradient(90deg,transparent 50%,rgba(120,196,255,.46) 76%,transparent 97%)}',
     '#R .jg-bgs{position:absolute;inset:0;z-index:-1;overflow:hidden;cursor:zoom-in}',
     /* fotografija u visini kadra, širina po razmjeri (oštra, bez velikog uvećanja); lijeva ivica se utapa u tamu */
-    '#R .jg-ph{position:absolute;top:0;right:0;height:100%;aspect-ratio:1080/675;min-width:58%;',
+    /* fotografija iznutra (kabina sa šampanjcem), diskretno lijevo iza teksta: boca stoji desno od teksta, slika se utapa
+       udesno prije kabina na noćnoj fotografiji */
+    '#R .jg-in{position:absolute;inset:0;pointer-events:none;',
+    '-webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,.85) 0,#000 min(calc(var(--side) + 300px),30%),transparent min(calc(var(--side) + 820px),62%));',
+    'mask-image:linear-gradient(90deg,rgba(0,0,0,.85) 0,#000 min(calc(var(--side) + 300px),30%),transparent min(calc(var(--side) + 820px),62%))}',
+    '#R .jg-in img{position:absolute;top:0;left:calc(var(--side) + 520px);height:100%;width:auto;transform:translateX(-53%);filter:saturate(.8) brightness(.56) contrast(1.05);',
+    '-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 24%);mask-image:linear-gradient(90deg,transparent 0,#000 24%)}',
+    '#R .jg-ph{position:absolute;top:0;right:0;height:100%;aspect-ratio:1080/675;min-width:58%;mix-blend-mode:lighten;',
     '-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 34%);mask-image:linear-gradient(90deg,transparent 0,#000 34%)}',
     '#R .jg-ph img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:50% 56%}',
     /* LED: ugašeno (prigušeno, bez boje) i upaljeno; upaljeni sloj se otkriva slijeva nadesno (--led 0 → 1) */
@@ -203,6 +211,8 @@
     /* ulazak (jednom): klase jg-anim/jg-on dodaje skripta samo kad postoji IntersectionObserver i nije uključeno smanjeno kretanje */
     '#R.jg-anim .jg-frame{opacity:0;transform:translateY(28px)}',
     '#R.jg-anim.jg-on .jg-frame{opacity:1;transform:none;transition:opacity .8s ease,transform 1s cubic-bezier(.2,.7,.2,1)}',
+    '#R.jg-anim .jg-in{opacity:0}',
+    '#R.jg-anim.jg-on .jg-in{opacity:1;transition:opacity 1.5s ease .1s}',
     '#R.jg-anim .jg-ph{opacity:0}',
     '#R.jg-anim.jg-on .jg-ph{opacity:1;transition:opacity 1.3s ease .25s}',
     '#R.jg-anim .jg-up{opacity:0;transform:translateY(20px)}',
@@ -218,6 +228,8 @@
     '#R .jg-bgs{position:relative;inset:auto;height:min(62vw,500px);-webkit-mask-image:linear-gradient(180deg,#000 66%,transparent 100%);mask-image:linear-gradient(180deg,#000 66%,transparent 100%)}',
     '#R .jg-ph{left:0;width:100%;min-width:0;aspect-ratio:auto;-webkit-mask-image:none;mask-image:none}',
     '#R .jg-ph img{object-position:80% 55%}',
+    '#R .jg-in{-webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,.9) 0,#000 16%,transparent 48%);mask-image:linear-gradient(90deg,rgba(0,0,0,.9) 0,#000 16%,transparent 48%)}',
+    '#R .jg-in img{left:21%;-webkit-mask-image:none;mask-image:none}',
     '#R .jg-scrim{background:linear-gradient(0deg,rgba(6,11,22,.5) 0%,rgba(6,11,22,0) 40%),linear-gradient(90deg,rgba(6,11,22,.55) 0%,rgba(6,11,22,0) 40%)}',
     '#R .jg-body{width:auto;padding:clamp(24px,4vw,40px) clamp(22px,6vw,56px) clamp(32px,5vw,52px)}',
     '#R h2{font-size:clamp(42px,7.4vw,64px)}',
@@ -227,6 +239,8 @@
     '#R .jg-frame{border-radius:24px}',
     '#R .jg-bgs{height:min(92vw,420px)}',
     '#R .jg-ph img{object-position:90% 55%}',
+    '#R .jg-in{-webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,.7) 0,rgba(0,0,0,.8) 12%,transparent 42%);mask-image:linear-gradient(90deg,rgba(0,0,0,.7) 0,rgba(0,0,0,.8) 12%,transparent 42%)}',
+    '#R .jg-in img{left:18%;filter:saturate(.8) brightness(.46) contrast(1.05)}',
     '#R .jg-body{padding:6px 20px 30px}',
     '#R .jg-kicker{letter-spacing:2.6px;font-size:10px;gap:10px;margin-bottom:16px}',
     '#R .jg-kicker::before{width:22px}',
@@ -353,7 +367,7 @@
   }
   root.innerHTML =
     '<section class="jg-wrap" aria-labelledby="jg-h"><div class="jg-frame">' +
-      '<div class="jg-bgs"><div class="jg-ph">' +
+      '<div class="jg-bgs"><div class="jg-in"><img src="' + esc(INSIDE) + '" alt="' + esc(T.photos[0]) + '" decoding="async"></div><div class="jg-ph">' +
         '<img class="jg-dim" src="' + esc(NIGHT) + '" alt="' + esc(T.photos[2]) + '" decoding="async">' +
         '<img class="jg-lit" src="' + esc(NIGHT) + '" alt="" aria-hidden="true" decoding="async">' +
         '<span class="jg-glow"></span>' +
@@ -518,7 +532,10 @@
   root.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-jg], .jg-bgs');
     if (!b) return;
-    if (b.classList.contains('jg-bgs')) { lbOpen(FIXED_GAL ? 0 : 2); return; }   // klik na fotografiju → noćna gondola
+    if (b.classList.contains('jg-bgs')) {   // klik na fotografiju: lijevo kabina iznutra, desno noćna gondola
+      var fr = b.getBoundingClientRect();
+      lbOpen(FIXED_GAL || e.clientX - fr.left < fr.width * .45 ? 0 : 2); return;
+    }
     var k = b.getAttribute('data-jg');
     if (k === 'galerija') lbOpen(0);
     else if (k === 'rezervacija') track('gondola_rezervacija', { nacin: RES_URL ? 'stranica' : 'mail', paket: 'VIP ' + PK[SEL].n });
@@ -735,7 +752,7 @@
     if (!sc) { sc = d.createElement('script'); sc.type = 'application/ld+json'; sc.id = 'jg-ld'; (d.head || d.documentElement).appendChild(sc); }
     sc.text = JSON.stringify({
       '@context': 'https://schema.org', '@type': 'TouristTrip',
-      name: T.h.join(' ') + ' — ' + T.kicker, description: q('.jg-lead').textContent, image: abs(NIGHT),
+      name: T.h.join(' '), description: q('.jg-lead').textContent, image: abs(NIGHT),
       provider: { '@type': 'Organization', name: 'Olimpijski centar Jahorina', url: O + '/' },
       offers: PK.map(function (p) {
         return { '@type': 'Offer', name: pkName(p), price: String(num(p.price)), priceCurrency: p.cur === '€' ? 'EUR' : 'BAM', url: q('a[data-jg="stranica"]').href };
