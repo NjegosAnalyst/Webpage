@@ -136,51 +136,50 @@ async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900
   await p.waitForTimeout(300);
   await p.evaluate(() => Promise.all([...document.images].map((i) => { i.loading = 'eager'; return i.decode().catch(() => {}); })));
   await p.locator('#jsb-park').scrollIntoViewIfNeeded();
-  // ulazak: kadar, tekst, linija se otvori (~2 s), pa jednom blagi pomak (~1,6 s)
+  // ulazak: kadar, tekst, ivični natpis se pojavi (~2 s), pa druga ponuda jednom proviri (~1,7 s)
   if (wait) {
     await p.waitForFunction(() => getComputedStyle(document.querySelector('#jsb-park .jsb-frame')).getPropertyValue('--open').trim() === '1.000' || !document.getElementById('jsb-park').classList.contains('jsb-anim'), null, { timeout: 15000 }).catch(() => {});
-    await p.waitForTimeout(2000);
+    await p.waitForTimeout(2200);
   }
   return { p, ctx, errors, rest };
 }
 async function state(p) {
   return p.evaluate(() => {
     const r = document.getElementById('jsb-park'), b = r.getBoundingClientRect(), fr = r.querySelector('.jsb-frame'), f = fr.getBoundingClientRect();
-    const st = r.querySelector('.jsb-stage').getBoundingClientRect(), body = r.querySelector('.jsb-body').getBoundingClientRect();
-    const k = r.querySelector('.jsb-knob').getBoundingClientRect(), seam = r.querySelector('.jsb-seam').getBoundingClientRect();
-    const on = r.querySelector('.jsb-pan.is-on'), pan = (sel) => r.querySelector(sel);
-    const op = (sel) => +(+getComputedStyle(pan(sel)).opacity).toFixed(2);
+    const on = r.querySelector('.jsb-sc.is-on'), body = on.querySelector('.jsb-body').getBoundingClientRect(), bg = on.querySelector('.jsb-bg').getBoundingClientRect();
+    const edge = r.querySelector('.jsb-edge.is-on'), eb = edge.getBoundingClientRect();
     const hit = (a, c) => a.left < c.right - 1 && c.left < a.right - 1 && a.top < c.bottom - 1 && c.top < a.bottom - 1;
-    const texts = [...on.querySelectorAll('h2 span, .jsb-lead, .jsb-facts, .jsb-acts'), r.querySelector('.jsb-tabs')].map((e) => e.getBoundingClientRect());
-    const labs = [...r.querySelectorAll('.jsb-lab')].filter((e) => getComputedStyle(e).opacity !== '0').map((e) => e.getBoundingClientRect());
+    const texts = [...on.querySelectorAll('.jsb-tabs, h2 span, .jsb-lead, .jsb-facts, .jsb-acts')].map((e) => e.getBoundingClientRect());
+    const tb = [...on.querySelectorAll('.jsb-tabs, h2 span, .jsb-lead, .jsb-facts, .jsb-acts')].reduce((a, e) => { const q = e.getBoundingClientRect(); return { l: Math.min(a.l, q.left), r: Math.max(a.r, q.right) }; }, { l: 1e9, r: -1e9 });
+    const facts = (sel) => [...r.querySelectorAll(sel + ' .jsb-facts li')].map((li) => li.querySelector('b').textContent + ' / ' + li.querySelector('small').textContent);
+    const clip = getComputedStyle(r.querySelector('.jsb-sc--bike')).clipPath;
     return {
       scroll: document.documentElement.scrollWidth - document.documentElement.clientWidth,
       left: Math.round(b.left), width: Math.round(b.width), cw: document.documentElement.clientWidth,
-      p: +(+getComputedStyle(fr).getPropertyValue('--p')).toFixed(3), open: getComputedStyle(fr).getPropertyValue('--open').trim(),
-      act: on.id, opPark: op('.jsb-pan--park'), opBike: op('.jsb-pan--bike'),
-      inert: [...r.querySelectorAll('.jsb-pan')].map((x) => (x.hasAttribute('inert') ? 1 : 0)).join(''),
-      tabs: [...r.querySelectorAll('.jsb-tab')].map((t) => t.textContent + (t.getAttribute('aria-selected') === 'true' ? '*' : '')).join('|'),
-      labelled: r.querySelector('.jsb-wrap').getAttribute('aria-labelledby'), knobLabel: r.querySelector('.jsb-knob').getAttribute('aria-label'),
+      p: +(+getComputedStyle(fr).getPropertyValue('--p')).toFixed(3), open: getComputedStyle(fr).getPropertyValue('--open').trim(), clip,
+      act: on.id, inert: [...r.querySelectorAll('.jsb-sc')].map((x) => (x.hasAttribute('inert') ? 1 : 0)).join(''),
+      seam: +(+getComputedStyle(r.querySelector('.jsb-seam')).opacity).toFixed(2), knob: +(+getComputedStyle(r.querySelector('.jsb-knob')).opacity).toFixed(2),
+      edge: edge.className.replace(/.*jsb-edge--(\w+).*/, '$1'), edgeTxt: edge.textContent, edgeLabel: edge.getAttribute('aria-label'), edgeOp: +(+getComputedStyle(edge).opacity).toFixed(2),
+      edgeOff: [...r.querySelectorAll('.jsb-edge:not(.is-on)')].map((e) => +getComputedStyle(e).opacity).join(''),
+      edgeIn: eb.left >= f.left && eb.right <= f.right && eb.top >= f.top && eb.bottom <= f.bottom,
+      edgeFree: !texts.some((t) => hit(eb, t)), edgeOnPhoto: eb.top >= bg.top && eb.bottom <= bg.bottom,
+      // tekst neaktivne scene se ne vidi: tačka usred njenog naslova pripada aktivnoj sceni
+      covered: (() => { const off = r.querySelector('.jsb-sc:not(.is-on) h2 span').getBoundingClientRect(); const el = document.elementFromPoint(off.left + off.width / 2, off.top + off.height / 2); return !el || !el.closest('.jsb-sc:not(.is-on)'); })(),
+      side: (tb.l + tb.r) / 2 < f.left + f.width / 2 ? 'L' : 'R', textL: Math.round(tb.l - f.left), textR: Math.round(f.right - tb.r),
+      tabs: [...on.querySelectorAll('.jsb-tab')].map((t) => t.textContent + (t.getAttribute('aria-pressed') === 'true' ? '*' : '')).join('|'),
       h2color: getComputedStyle(on.querySelector('h2 span')).color, h2font: getComputedStyle(on.querySelector('h2 span')).fontFamily.split(',')[0],
       lines: [...on.querySelectorAll('h2 span')].map((s) => s.textContent), outline: on.querySelector('h2 .jsb-o').textContent,
-      lead: on.querySelector('.jsb-lead').textContent, leadPark: pan('.jsb-pan--park .jsb-lead').textContent, leadBike: pan('.jsb-pan--bike .jsb-lead').textContent,
-      facts: [...on.querySelectorAll('.jsb-facts li')].map((li) => li.querySelector('b').textContent + ' / ' + li.querySelector('small').textContent),
-      factsPark: [...r.querySelectorAll('.jsb-pan--park .jsb-facts li')].map((li) => li.querySelector('b').textContent + ' / ' + li.querySelector('small').textContent),
-      factsBike: [...r.querySelectorAll('.jsb-pan--bike .jsb-facts li')].map((li) => li.querySelector('b').textContent + ' / ' + li.querySelector('small').textContent),
+      lead: on.querySelector('.jsb-lead').textContent, leadPark: r.querySelector('.jsb-sc--park .jsb-lead').textContent, leadBike: r.querySelector('.jsb-sc--bike .jsb-lead').textContent,
+      facts: facts('.jsb-sc.is-on'), factsPark: facts('.jsb-sc--park'), factsBike: facts('.jsb-sc--bike'),
       btxt: [...on.querySelectorAll('.jsb-btn')].map((a) => a.innerText.trim()),
       pages: [...r.querySelectorAll('a[data-jsb="stranica"]')].map((a) => a.getAttribute('href')),
-      seamX: Math.round(seam.left + seam.width / 2 - st.left), knobX: Math.round(k.left + k.width / 2 - st.left), stageW: Math.round(st.width),
-      knobFree: !texts.some((t) => hit(k, t)), labFree: labs.every((l) => !texts.some((t) => hit(l, t))),
-      labIn: labs.every((l) => l.left >= st.left - 1 && l.right <= st.right + 1),
-      labSide: (() => { const x = seam.left + seam.width / 2; return [...r.querySelectorAll('.jsb-lab')].filter((e) => getComputedStyle(e).opacity !== '0').every((e) => { const q = e.getBoundingClientRect(); return e.classList.contains('jsb-lab--park') ? q.right <= x - 8 : q.left >= x + 8; }); })(),
-      stageAbove: st.bottom <= body.top + 60, bodyIn: body.left >= f.left - 1 && body.right <= f.right + 1 && body.bottom <= f.bottom + 1,
-      textLeft: (() => { const tb = on.querySelector('.jsb-lead').getBoundingClientRect(); return tb.right < k.left; })(),
+      stageAbove: bg.bottom <= body.top + 60, bodyIn: body.left >= f.left - 1 && body.right <= f.right + 1 && body.bottom <= f.bottom + 1,
       acts: [...on.querySelectorAll('.jsb-btn')].map((a) => { const q = a.getBoundingClientRect(); return [Math.round(q.top), Math.round(q.width), Math.round(q.height)]; }),
       factsW: Math.round(on.querySelector('.jsb-facts').getBoundingClientRect().width), actsW: Math.round(on.querySelector('.jsb-acts').getBoundingClientRect().width),
       fit: [...on.querySelectorAll('.jsb-btn, .jsb-facts b')].every((a) => a.scrollWidth <= a.clientWidth + 1),
-      hint: r.querySelector('.jsb-hint').classList.contains('is-gone'),
+      used: r.classList.contains('jsb--used'), hint: getComputedStyle(edge.querySelector('i')).opacity,
       why: (r.querySelector('.jsb-why') || {}).textContent || '',
-      hidden: [...on.querySelectorAll('.jsb-up'), r.querySelector('.jsb-tabs')].filter((e) => getComputedStyle(e).opacity !== '1').length,
+      hidden: [...on.querySelectorAll('.jsb-up')].filter((e) => getComputedStyle(e).opacity !== '1').length,
       ld: (() => { try { const j = JSON.parse(document.getElementById('jsb-ld').text); return j['@graph'].map((x) => x['@type'] + ':' + x.name).join('|'); } catch (e) { return 'nema'; } })(),
     };
   });
@@ -193,11 +192,13 @@ async function lb(p) {
       inside: !!(document.activeElement && document.activeElement.closest('#jsb-lb')), overflow: document.documentElement.style.overflow, focus: document.activeElement.className };
   });
 }
-// prevlačenje mišem (ili prstom kao miš) preko fotografije: od x do x + dx, u koracima; vraća screenshot sredine ako se traži
-async function drag(p, dx, { from = null, steps = 14, shotAt = null, fast = false, hold = 0 } = {}) {
-  const s = await p.locator('#jsb-park .jsb-stage').boundingBox();
-  const k = await p.locator('#jsb-park .jsb-knob').boundingBox();
-  const x0 = from != null ? s.x + from : k.x + k.width / 2, y = k.y + k.height / 2 + (from != null ? 60 : 0);
+// prevlačenje mišem: od ivičnog natpisa (podrazumijevano) ili od tačke na fotografiji (from = x u kadru), za dx (dio širine kadra ako je |dx| ≤ 1)
+async function drag(p, dx, { from = null, steps = 16, shotAt = null, fast = false, hold = 0 } = {}) {
+  const fb = await p.locator('#jsb-park .jsb-frame').boundingBox();
+  const bg = await p.locator('#jsb-park .jsb-sc.is-on .jsb-bg').boundingBox();
+  const e = await p.locator('#jsb-park .jsb-edge.is-on').boundingBox();
+  if (Math.abs(dx) <= 1) dx = dx * fb.width;
+  const x0 = from != null ? fb.x + from : e.x + e.width / 2, y = from != null ? bg.y + bg.height * .55 : e.y + e.height / 2;
   await p.mouse.move(x0, y); await p.mouse.down();
   for (let i = 1; i <= steps; i++) {
     await p.mouse.move(x0 + dx * i / steps, y);
@@ -207,7 +208,7 @@ async function drag(p, dx, { from = null, steps = 14, shotAt = null, fast = fals
   if (hold) await p.waitForTimeout(hold);
   await p.mouse.up();
 }
-const settle = (p) => p.waitForTimeout(800).then(() => p.waitForFunction(() => { const v = +getComputedStyle(document.querySelector('#jsb-park .jsb-frame')).getPropertyValue('--p'); return v === 0 || v === 1; }, null, { timeout: 5000 })).catch(() => {}).then(() => p.waitForTimeout(150));
+const settle = (p) => p.waitForTimeout(950).then(() => p.waitForFunction(() => { const v = +getComputedStyle(document.querySelector('#jsb-park .jsb-frame')).getPropertyValue('--p'); return v === 0 || v === 1; }, null, { timeout: 5000 })).catch(() => {}).then(() => p.waitForTimeout(150));
 const shot = (p, name) => p.locator('#jsb-park .jsb-frame').screenshot({ path: path.join(OUT, name + '.png') });
 const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1] || e.event)).map((e) => (e[1] ? e[1] + ':' + JSON.stringify(e[2]) : JSON.stringify(e))));
 
@@ -219,18 +220,19 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
   let S = await state(p);
   check('bez vodoravnog skrola, preko cijele širine', S.scroll === 0 && S.left === 0 && S.width === S.cw, S);
   check('naslov bijeli i Archivo uprkos temi', S.h2color === 'rgb(255, 255, 255)' && /Archivo/.test(S.h2font), [S.h2color, S.h2font]);
-  check('počinje od parka: "Snowboard / park", kraj iscrtan', S.act === 'jsb-p0' && S.lines.join('|') === 'Snowboard|park' && S.outline === 'park' && S.p === 0, [S.act, S.lines, S.p]);
-  check('linija otvorena, blizu desne ivice (ski bike viri)', S.open === '1.000' && S.seamX > S.stageW * .8 && S.seamX < S.stageW * .9 && Math.abs(S.knobX - S.seamX) <= 1, [S.open, S.seamX, S.stageW]);
-  check('nadnaslov: Snowboard park* | Ski bike; dugme linije ima natpis', S.tabs === 'Snowboard park*|Ski bike' && S.knobLabel === 'Prikaži ski bike (prevucite ulijevo)', [S.tabs, S.knobLabel]);
-  check('tekst parka vidljiv, ski bike sakriven i neaktivan', S.opPark === 1 && S.opBike === 0 && S.inert === '01' && S.labelled === 'jsb-h0', [S.opPark, S.opBike, S.inert]);
+  check('park potpuno otvoren: "Snowboard / park", tekst lijevo, ski bike sakriven', S.act === 'jsb-p0' && S.p === 0 && S.side === 'L' && S.inert === '01' && /inset\(0px 0px 0px 100%\)/.test(S.clip) && S.lines.join('|') === 'Snowboard|park' && S.outline === 'park', [S.act, S.p, S.side, S.clip]);
+  check('linija i dugme na njoj skriveni dok nema prelaza', S.seam === 0 && S.knob === 0, [S.seam, S.knob]);
+  check('ivični natpis desno: "02 Ski bike", vidljiv, na fotografiji, ne preko teksta', S.edge === 'bike' && /02Ski bike/.test(S.edgeTxt) && S.edgeLabel === 'Prikaži ski bike' && S.edgeOp === 1 && S.edgeOff === '0' && S.edgeIn && S.edgeFree && S.edgeOnPhoto, [S.edge, S.edgeTxt, S.edgeOp, S.edgeFree]);
+  check('uputa "Prevucite" ispod natpisa', S.hint === '1' && !S.used, S.hint);
+  check('nadnaslov: Snowboard park* | Ski bike', S.tabs === 'Snowboard park*|Ski bike', S.tabs);
   check('uvod parka = rečenica o prostoru sa stranice', S.lead === PARK_LEAD, S.lead);
   check('podaci parka sa stranice: 3.000 m², Trnovo, Šator', S.facts.join('|') === '3.000 m² / Površina parka|Trnovo / Staza|Šator / Kod vikend naselja', S.facts);
   check('ski bike (pretraga "bike"): uvod = šta je ski bike; poligon Trnovo, bez iskustva, za sve', S.leadBike === BIKE_LEAD && S.factsBike.join('|') === BIKE_FACTS, [S.leadBike, S.factsBike]);
   check('linkovi stranica', S.pages.join('|') === SITE + '/snowboard-park/|' + SITE + '/ski-bike-jahorina/', S.pages);
   check('dugmad: Više o snowboard parku + Galerija, isti red, 44px, natpisi staju', S.btxt.join('|') === 'Više o snowboard parku|Galerija' && S.acts[0][0] === S.acts[1][0] && S.acts[0][1] === S.acts[1][1] && S.acts[0][2] === 44 && S.fit, [S.btxt, S.acts, S.fit]);
   check('podaci i dugmad iste širine', S.factsW === S.actsW, [S.factsW, S.actsW]);
-  check('tekst lijevo od linije; dugme i natpisi linije ne prelaze preko teksta', S.textLeft && S.knobFree && S.labFree, [S.textLeft, S.knobFree, S.labFree]);
   check('sve vidljivo poslije ulaska, tekst u kadru', S.hidden === 0 && S.bodyIn, [S.hidden, S.bodyIn]);
+  const textL0 = S.textL;
   check('admin poruka se ne vidi; schema.org park + ski bike', S.why === '' && S.ld === 'SportsActivityLocation:Snowboard park Jahorina|TouristAttraction:Ski bike Jahorina', [S.why, S.ld]);
   const rs = rest.filter((x) => !/ski-depo|search=depo/.test(x));
   check('pozivi WP-u: park (slug), ski bike (slug pa search=bike)', rs.length === 3 && rs.some((x) => /pages\?slug=snowboard-park/.test(x)) && rs.some((x) => /pages\?slug=ski-bike&/.test(x)) && rs.some((x) => /search=bike/.test(x)), rs);
@@ -243,41 +245,44 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
   check('Ski depo iznad: jsb--join, razmak kadar → kadar = --gap + --g', j.join && Math.abs(j.space - j.want) <= 2, j);
   await p.screenshot({ path: path.join(OUT, 'depo-park.png'), fullPage: true });
   await shot(p, '1-racunar-park');
-  // prevlačenje ulijevo preko pola (sredina snimljena), pa pušteno → ski bike
-  await drag(p, -420, { steps: 20, shotAt: { at: .55, name: '2-racunar-prevlacenje' } });
+  // ivični natpis povučen ulijevo preko pola (sredina snimljena), pušteno → ski bike se potpuno otvori
+  await drag(p, -.62, { steps: 22, shotAt: { at: .7, name: '2-racunar-prevlacenje' } });
+  const mid = await p.evaluate(() => { const fr = document.querySelector('#jsb-park .jsb-frame'); return +getComputedStyle(fr).getPropertyValue('--p'); });
   await settle(p);
   S = await state(p);
-  check('prevučeno ulijevo: ski bike, linija odmah desno od teksta', S.act === 'jsb-p1' && S.p === 1 && S.opBike === 1 && S.opPark === 0 && S.inert === '10' && S.textLeft && S.knobFree && S.labFree, [S.act, S.p, S.seamX, S.knobFree, S.labFree]);
-  check('ski bike: "Ski / bike", nadnaslov i natpisi prebačeni, uputa nestala', S.lines.join('|') === 'Ski|bike' && S.tabs === 'Snowboard park|Ski bike*' && S.labelled === 'jsb-h1' && S.knobLabel === 'Prikaži snowboard park (prevucite udesno)' && S.hint, [S.lines, S.tabs, S.hint]);
-  check('ski bike: dugmad Više o ski bike-u + Galerija', S.btxt.join('|') === 'Više o ski bike-u|Galerija' && S.fit, S.btxt);
+  check('prevučeno ulijevo: ski bike potpuno otvoren, tekst desno, park sakriven', S.act === 'jsb-p1' && S.p === 1 && S.side === 'R' && S.inert === '10' && /inset\(0px( 0px 0px 0(px|%))?\)/.test(S.clip) && S.seam === 0, [S.act, S.p, S.side, S.clip, mid]);
+  check('ski bike: "Ski / bike", nadnaslov Snowboard park | Ski bike*, ivični natpis lijevo "01 Snowboard park"', S.lines.join('|') === 'Ski|bike' && S.tabs === 'Snowboard park|Ski bike*' && S.edge === 'park' && /01Snowboard park/.test(S.edgeTxt) && S.edgeOp === 1 && S.edgeIn && S.edgeFree && S.edgeOnPhoto, [S.lines, S.tabs, S.edge, S.edgeFree]);
+  check('tekst parka se ne vidi kroz ski bike', S.covered, S.covered);
+    check('tekst ski bike-a poravnat sa desnom ivicom mreže kao park sa lijevom', Math.abs(S.textR - textL0) <= 3, [S.textR, textL0]);
+  check('ski bike: dugmad Više o ski bike-u + Galerija; uputa nestala', S.btxt.join('|') === 'Više o ski bike-u|Galerija' && S.fit && S.used && S.hint === '0', [S.btxt, S.hint]);
   await shot(p, '3-racunar-bike');
-  // kratko prevlačenje udesno (ispod pola) → vraća se na ski bike
-  await drag(p, 90, { steps: 6, hold: 200 }); await settle(p);
+  // kratko prevlačenje po fotografiji udesno (zaustavljeno prije puštanja) → ostaje ski bike
+  await drag(p, 120, { from: 260, steps: 6, hold: 200 }); await settle(p);
   S = await state(p);
   check('kratko prevlačenje udesno: ostaje ski bike', S.act === 'jsb-p1' && S.p === 1, [S.act, S.p]);
-  // brz kratak potez udesno → park
-  await drag(p, 120, { steps: 3, fast: true }); await settle(p);
+  // brz kratak potez udesno po fotografiji → park
+  await drag(p, 140, { from: 260, steps: 3, fast: true }); await settle(p);
   S = await state(p);
-  check('brz potez udesno: park', S.act === 'jsb-p0' && S.p === 0, [S.act, S.p]);
-  // klik na fotografiju ski bike-a iza linije
-  const sb = await p.locator('#jsb-park .jsb-stage').boundingBox();
-  await p.mouse.click(sb.x + sb.width - 40, sb.y + sb.height * .6); await settle(p);
+  check('brz potez udesno: park', S.act === 'jsb-p0' && S.p === 0 && S.side === 'L', [S.act, S.p]);
+  // klik na ivični natpis
+  await p.click('#jsb-park .jsb-edge--bike'); await settle(p);
   S = await state(p);
-  check('klik na ski bike iza linije: ski bike', S.act === 'jsb-p1', S.act);
-  // nadnaslov (tab) i tastatura
-  await p.click('#jsb-park #jsb-t0'); await settle(p);
+  check('klik na "02 Ski bike": ski bike', S.act === 'jsb-p1' && S.p === 1, S.act);
+  // nadnaslov i tastatura
+  await p.click('#jsb-park #jsb-p1 .jsb-tab[data-k="0"]'); await settle(p);
   S = await state(p);
   check('klik na "Snowboard park" u nadnaslovu: park', S.act === 'jsb-p0' && S.p === 0, S.act);
-  await p.focus('#jsb-park .jsb-knob'); await p.keyboard.press('ArrowLeft'); await settle(p);
+  await p.focus('#jsb-park .jsb-edge--bike'); await p.keyboard.press('ArrowLeft'); await settle(p);
   S = await state(p);
-  check('tastatura: ← na dugmetu linije → ski bike', S.act === 'jsb-p1', S.act);
+  let foc = await p.evaluate(() => document.activeElement.className);
+  check('tastatura: ← na ivičnom natpisu → ski bike, fokus prelazi na natpis parka', S.act === 'jsb-p1' && /jsb-edge--park/.test(foc), [S.act, foc]);
   await p.keyboard.press('ArrowRight'); await settle(p);
-  await p.focus('#jsb-park #jsb-t0'); await p.keyboard.press('ArrowRight'); await settle(p);
+  await p.focus('#jsb-park #jsb-p0 .jsb-tab[data-k="0"]'); await p.keyboard.press('ArrowRight'); await settle(p);
   S = await state(p);
-  const foc = await p.evaluate(() => document.activeElement.id);
-  check('tastatura: → u nadnaslovu prebaci na ski bike i fokus pređe', S.act === 'jsb-p1' && foc === 'jsb-t1', [S.act, foc]);
-  // galerija ski bike-a: 2 naše + 1 sa stranice
-  await p.click('#jsb-park .jsb-pan--bike [data-jsb="galerija"]'); await p.waitForTimeout(450);
+  foc = await p.evaluate(() => document.activeElement.closest('.jsb-sc').id + ':' + document.activeElement.textContent);
+  check('tastatura: → u nadnaslovu prebaci na ski bike i fokus pređe na "Ski bike" u novoj sceni', S.act === 'jsb-p1' && foc === 'jsb-p1:Ski bike', [S.act, foc]);
+  // galerija ski bike-a: 2 naše + 1 sa stranice (emotikon preskočen)
+  await p.click('#jsb-park #jsb-p1 [data-jsb="galerija"]'); await p.waitForTimeout(450);
   let L = await lb(p);
   check('galerija ski bike-a: 1 / 3, naša fotografija, fokus unutra', L.shown === 'grid' && L.src === 'bike-glavna.webp' && L.cap === 'Ski bike · 1 / 3' && L.inside && L.overflow === 'hidden', L);
   await p.keyboard.press('ArrowLeft');
@@ -286,7 +291,7 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
   await p.keyboard.press('Escape'); await p.waitForTimeout(400);
   L = await lb(p);
   check('Esc zatvara, fokus nazad, skrol vraćen', L.shown === 'none' && /jsb-btn--ghost/.test(L.focus) && L.overflow === '', L);
-  await p.click('#jsb-park .jsb-pan--bike a[data-jsb="stranica"]');
+  await p.click('#jsb-park #jsb-p1 a[data-jsb="stranica"]');
   const ev = await evs(p);
   check('GA4: park_prebaci (prevlačenje, klik, tastatura), park_galerija, park_klik', JSON.stringify(ev) === JSON.stringify([
     'park_prebaci:{"ponuda":"ski_bike","nacin":"prevlacenje","jezik":"sr"}', 'park_prebaci:{"ponuda":"snowboard_park","nacin":"prevlacenje","jezik":"sr"}',
@@ -296,17 +301,17 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
   check('bez grešaka u konzoli', errors.length === 0, errors);
   await ctx.close();
 
-  console.log('Ulazak: kadar, tekst, linija se otvori, jednom blagi pomak');
+  console.log('Ulazak: kadar, tekst, ivični natpis, pa ski bike jednom malo proviri');
   ({ p, ctx, errors } = await open(browser, { wait: false, ga: 'none', depo: true }));
   const seq = [];
   for (let i = 0; i < 60; i++) {
-    const v = await p.evaluate(() => { const f = getComputedStyle(document.querySelector('#jsb-park .jsb-frame')); return [+(+f.getPropertyValue('--open')).toFixed(2), +(+f.getPropertyValue('--p')).toFixed(3)]; });
+    const v = await p.evaluate(() => { const f = getComputedStyle(document.querySelector('#jsb-park .jsb-frame')); return [+(+f.getPropertyValue('--open')).toFixed(2), +(+f.getPropertyValue('--p')).toFixed(3), +(+getComputedStyle(document.querySelector('#jsb-park .jsb-knob')).opacity).toFixed(2)]; });
     seq.push(v);
-    if (v[0] > .3 && v[0] < .8 && !seq.shot) { seq.shot = 1; await p.screenshot({ path: path.join(OUT, 'ulazak.png') }); }
+    if (v[1] > .06 && !seq.shot) { seq.shot = 1; await p.locator('#jsb-park .jsb-frame').screenshot({ path: path.join(OUT, 'ulazak-proviri.png') }); }
     await p.waitForTimeout(100);
   }
-  const maxP = Math.max(...seq.map((v) => v[1]));
-  check('linija: zatvorena → otvara se → otvorena; pomak do ~0,08 pa nazad na 0', seq[0][0] === 0 && seq.some((v) => v[0] > 0 && v[0] < 1) && seq[seq.length - 1][0] === 1 && maxP > .05 && maxP < .1 && seq[seq.length - 1][1] === 0, { maxP, kraj: seq[seq.length - 1] });
+  const maxP = Math.max(...seq.map((v) => v[1])), maxK = Math.max(...seq.map((v) => v[2]));
+  check('natpis: skriven → pojavljuje se → vidljiv; ski bike proviri do ~0,1 (sa linijom i dugmetom) pa nazad na 0', seq[0][0] === 0 && seq.some((v) => v[0] > 0 && v[0] < 1) && seq[seq.length - 1][0] === 1 && maxP > .08 && maxP < .13 && maxK > .8 && seq[seq.length - 1][1] === 0, { maxP, maxK, kraj: seq[seq.length - 1] });
   check('bez grešaka u konzoli', errors.length === 0, errors);
   await ctx.close();
 
@@ -317,10 +322,10 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
   await shot(p, 'admin-poruka');
   await ctx.close();
 
-  console.log('Izmijenjena stranica parka: 4.500 m², Poljice, bez naselja; počinje od ski bike-a (data-pocetak)');
+  console.log('Izmijenjena stranica parka: 4.500 m², Poljice, bez naselja; ski bike sa cijenom; počinje od ski bike-a (data-pocetak)');
   ({ p, ctx, errors } = await open(browser, { wp: 'novo', admin: true, attrs: 'data-pocetak="bike"', ga: 'none' }));
   S = await state(p);
-  check('počinje od ski bike-a, linija lijevo', S.act === 'jsb-p1' && S.p === 1 && S.seamX < S.stageW * .6, [S.act, S.p, S.seamX]);
+  check('počinje od ski bike-a: tekst desno, ivični natpis parka lijevo', S.act === 'jsb-p1' && S.p === 1 && S.side === 'R' && S.edge === 'park', [S.act, S.p, S.side, S.edge]);
   check('novi uvod i podaci parka (bez naselja)', /^Snowboard park Jahorina je poligon/.test(S.leadPark) && S.factsPark.join('|') === '4.500 m² / Površina parka|Poljice / Staza', [S.leadPark, S.factsPark]);
   check('ski bike sa cijenom: najam 25 KM po satu prvi, pa poligon i bez iskustva', S.factsBike.join('|') === '25 KM / Najam po satu|Trnovo / Poligon za vožnju|Bez iskustva / Lako se savladava', S.factsBike);
   await ctx.close();
@@ -344,13 +349,13 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
   check('engleski nadnaslov, naslov i uvod parka iz WP-a', S.tabs === 'Snowboard park*|Ski bike' && S.lines.join('|') === 'Snowboard|park' && /^This truly authentic mountain offers snowboarders a terrain/.test(S.lead), [S.tabs, S.lead]);
   check('engleski podaci parka: 3,000 m², Trnovo, Šator', S.facts.join('|') === '3,000 m² / Park area|Trnovo / Slope|Šator / Near the chalet village', S.facts);
   check('engleski ski bike: uvod, najam 20 KM per hour', /^The ski bike is a bike with skis/.test(S.leadBike) && S.factsBike[0] === '20 KM / Rental per hour', [S.leadBike, S.factsBike]);
-  check('dugmad i link /en/', S.btxt.join('|') === 'More about the park|Gallery' && S.pages[0] === SITE + '/en/snowboard-park/', [S.btxt, S.pages]);
+  check('dugmad, ivični natpis i link /en/', S.btxt.join('|') === 'More about the park|Gallery' && S.edgeLabel === 'Show the ski bike' && S.pages[0] === SITE + '/en/snowboard-park/', [S.btxt, S.edgeLabel, S.pages]);
   check('prvo /en/wp-json, pa /wp-json', /^\/en\/wp-json/.test(rest[0]) && rest.some((x) => /^\/wp-json\/wp\/v2\/pages/.test(x)), rest);
-  await drag(p, -420); await settle(p);
+  await drag(p, -.62); await settle(p);
   const ev2 = await p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e.event)));
   check('dataLayer: park_prebaci', JSON.stringify(ev2) === JSON.stringify([{ event: 'park_prebaci', ponuda: 'ski_bike', nacin: 'prevlacenje', jezik: 'en' }]), ev2);
   S = await state(p);
-  check('EN ski bike: dugmad', S.btxt.join('|') === 'More about the ski bike|Gallery', S.btxt);
+  check('EN ski bike: dugmad, tekst desno', S.btxt.join('|') === 'More about the ski bike|Gallery' && S.side === 'R', [S.btxt, S.side]);
   check('bez grešaka u konzoli', errors.length === 0, errors);
   await shot(p, 'en-racunar-bike');
   await ctx.close();
@@ -372,16 +377,16 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
     check('bez vodoravnog skrola, preko cijele širine', S.scroll === 0 && S.left === 0 && S.width === S.cw, S);
     check('sve vidljivo poslije ulaska, tekst u kadru', S.hidden === 0 && S.bodyIn, [S.hidden, S.bodyIn]);
     check('natpisi dugmadi i podataka staju; podaci i dugmad iste širine', S.fit && S.factsW === S.actsW, [S.fit, S.factsW, S.actsW]);
-    if (vw > 980) check('tekst lijevo od linije, dugme i natpisi ne prelaze preko teksta', S.textLeft && S.knobFree && S.labFree, [S.textLeft, S.knobFree, S.labFree]);
-    else check('fotografije iznad teksta, natpisi u kadru', S.stageAbove && S.labIn, [S.stageAbove, S.labIn]);
-    check('natpisi uz liniju, svaki na svojoj strani', S.labSide && S.labIn, [S.labSide, S.labIn]);
+    check('ivični natpis ski bike-a: vidljiv, u kadru, na fotografiji, ne preko teksta', S.edge === 'bike' && S.edgeOp === 1 && S.edgeIn && S.edgeFree && S.edgeOnPhoto, [S.edgeIn, S.edgeFree, S.edgeOnPhoto]);
+    if (vw > 980) check('park: tekst lijevo', S.side === 'L', S.side);
+    else check('fotografija iznad teksta', S.stageAbove, S.stageAbove);
     if (vw <= 760 && vw > 360) check('telefon: oba dugmeta u jednom redu, 42px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 42, S.acts);
     await shot(p, name + '-park');
-    await drag(p, -(S.stageW * .5)); await settle(p);
+    await drag(p, -.65); await settle(p);
     S = await state(p);
-    check('prevlačenje ulijevo: ski bike', S.act === 'jsb-p1' && S.p === 1, [S.act, S.p]);
-    if (vw > 980) check('ski bike: tekst lijevo od linije, ništa preko teksta', S.textLeft && S.knobFree && S.labFree, [S.textLeft, S.knobFree, S.labFree]);
-    check('ski bike: natpisi staju; natpisi linije na svojoj strani', S.fit && S.labSide && S.labIn, [S.fit, S.labSide, S.labIn]);
+    check('prevlačenje ulijevo: ski bike potpuno otvoren', S.act === 'jsb-p1' && S.p === 1, [S.act, S.p]);
+    check('ski bike: natpisi staju; ivični natpis parka vidljiv i ne preko teksta', S.fit && S.edge === 'park' && S.edgeOp === 1 && S.edgeIn && S.edgeFree, [S.fit, S.edgeIn, S.edgeFree]);
+    if (vw > 980) check('ski bike: tekst desno', S.side === 'R', S.side);
     await shot(p, name + '-bike');
     check('bez grešaka u konzoli', errors.length === 0, errors);
     await ctx.close();
@@ -390,20 +395,20 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
   console.log('Telefon: okomit pokret prsta preko fotografije skroluje stranicu (ne prebacuje)');
   ({ p, ctx, errors } = await open(browser, { vw: 390, vh: 844, touch: true, ga: 'none' }));
   const y0 = await p.evaluate(() => window.scrollY);
-  const sb2 = await p.locator('#jsb-park .jsb-stage').boundingBox();
+  const sb2 = await p.locator('#jsb-park .jsb-sc.is-on .jsb-bg').boundingBox();
   const cdp = await ctx.newCDPSession(p);
   const tp = (type, x, y) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y }] });
-  await tp('touchStart', sb2.x + 200, sb2.y + 300);
-  for (let i = 1; i <= 10; i++) await tp('touchMove', sb2.x + 200, sb2.y + 300 - i * 20);
+  await tp('touchStart', sb2.x + 160, sb2.y + 300);
+  for (let i = 1; i <= 10; i++) await tp('touchMove', sb2.x + 160, sb2.y + 300 - i * 20);
   await tp('touchEnd'); await p.waitForTimeout(600);
   S = await state(p);
   const y1 = await p.evaluate(() => window.scrollY);
   check('stranica skrolovana, ostaje park', y1 > y0 + 50 && S.act === 'jsb-p0' && S.p === 0, [y0, y1, S.act]);
   await tp('touchStart', sb2.x + 300, sb2.y + 200 - (y1 - y0));
-  for (let i = 1; i <= 10; i++) await tp('touchMove', sb2.x + 300 - i * 22, sb2.y + 200 - (y1 - y0));
+  for (let i = 1; i <= 10; i++) await tp('touchMove', sb2.x + 300 - i * 24, sb2.y + 200 - (y1 - y0));
   await tp('touchEnd'); await settle(p);
   S = await state(p);
-  check('vodoravni pokret prsta: ski bike', S.act === 'jsb-p1' && S.p === 1, [S.act, S.p]);
+  check('vodoravni pokret prsta po fotografiji: ski bike', S.act === 'jsb-p1' && S.p === 1, [S.act, S.p]);
   check('bez grešaka u konzoli', errors.length === 0, errors);
   await ctx.close();
 
@@ -411,8 +416,8 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
   ({ p, ctx, errors } = await open(browser, { reduced: true }));
   S = await state(p);
   const rm = await p.evaluate(() => document.getElementById('jsb-park').className);
-  check('odmah vidljivo, bez klasa za ulazak, linija otvorena', !/jsb-anim/.test(rm) && S.hidden === 0 && (S.open === '' || S.open === '1') && S.p === 0, [rm, S.open]);
-  await p.click('#jsb-park #jsb-t1'); await p.waitForTimeout(50);
+  check('odmah vidljivo, bez klasa za ulazak, ivični natpis vidljiv', !/jsb-anim/.test(rm) && S.hidden === 0 && S.edgeOp === 1 && S.p === 0, [rm, S.edgeOp]);
+  await p.click('#jsb-park #jsb-p0 .jsb-tab[data-k="1"]'); await p.waitForTimeout(50);
   S = await state(p);
   check('klik u nadnaslovu: ski bike odmah', S.act === 'jsb-p1' && S.p === 1, [S.act, S.p]);
   check('bez grešaka u konzoli', errors.length === 0, errors);
