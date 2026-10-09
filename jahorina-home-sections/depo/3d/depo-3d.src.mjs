@@ -251,7 +251,7 @@ function create(host, opt = {}) {
   const PX = -.058, GX = [-.112, -.004];
   const SLOT = {};
   // kacige: dvije "lopatice" sa prorezima (gore)
-  [1.65, 1.4].forEach((y, k) => {
+  [1.6, 1.36].forEach((y, k) => {
     rosetteAt(PX, y - .01);
     tube([[PX, y - .01, ZB], [PX, y - .005, ZB + .06], [PX, y + .015, ZB + .085]], .011);
     const pad = mesh(rbox(.1, .024, .08, .011), M.peg); pad.position.set(PX, y + .028, ZB + .11); box.add(pad);
@@ -273,7 +273,7 @@ function create(host, opt = {}) {
     glowMats[glowMats.length - 1].kind = 'boot' + k;
   });
   // piktogrami pored nosača
-  [['helmet', 1.56], ['glove', 1.2], ['boot', .36]].forEach(([k, y]) => {
+  [['helmet', 1.52], ['glove', 1.2], ['boot', .36]].forEach(([k, y]) => {
     const p = new Mesh(new PlaneGeometry(.075, .0375), new MeshStandardMaterial({ map: pictoTex(k), transparent: true, roughness: .6 }));
     p.position.set(PX + .002, y, ZB + .0014); box.add(p);
   });
@@ -319,7 +319,7 @@ function create(host, opt = {}) {
   const GEO = {};   // geometrije koje dijele oba seta
   // materijali sa mikro-reljefom (normal mape se prave jednom)
   const NT = { weave: normalTex('weave', 3.2, 9), grain: normalTex('grain', 1.6, 3), rib: normalTex('rib', 2.4, 6), tread: normalTex('tread', 2, 5) };
-  function plastic(c, r = .32, n = NT.grain) { return new MeshPhysicalMaterial({ color: c, roughness: r, metalness: 0, clearcoat: .55, clearcoatRoughness: .35, normalMap: n, normalScale: new Vector2(.35, .35) }); }
+  function plastic(c, r = .32, n = NT.grain) { return new MeshPhysicalMaterial({ color: c, roughness: r, metalness: 0, clearcoat: .55, clearcoatRoughness: .35, normalMap: n, normalScale: new Vector2(.18, .18) }); }
   function fabric(c, n) { const m = new MeshStandardMaterial({ color: c, roughness: .9, metalness: 0 }); if (n) { m.normalMap = n; m.normalScale = new Vector2(.9, .9); } return m; }
   // opšte tijelo "presjeka": redovi {y, hw, ht, cz} (poluširina, poludebljina, pomak po z); presjek je zaobljeni pravougaonik
   function loftY(rows, NTs = 36, e = 2.4) {
@@ -724,7 +724,7 @@ function create(host, opt = {}) {
     b: [box, new Vector3(0, PL, ZF)]
   };
   // brojevi 1–8 na mjestima opreme (sredina predmeta kad je u ormariću): skije, kacige, rukavice, pancerice
-  const HS = { ski0: [.13, 1.24, -.1], ski1: [.13, .72, .13], helmet0: [PX, 1.78, -.1], helmet1: [PX, 1.53, -.1],
+  const HS = { ski0: [.13, 1.24, -.1], ski1: [.13, .72, .13], helmet0: [PX, 1.74, -.1], helmet1: [PX, 1.5, -.1],
     glove0: [PX, 1.21, -.165], glove1: [PX, .97, -.165], boot0: [PX, .7, -.09], boot1: [PX, .32, -.09] };
   for (const k in HS) ANCH['h_' + k] = [box, new Vector3(...HS[k])];
   const tmp = new Vector3();

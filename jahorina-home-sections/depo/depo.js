@@ -36,7 +36,7 @@
   var SCRIPT = d.currentScript && d.currentScript.src || '';
   var HERE = SCRIPT.replace(/[^\/]*$/, '');
   // SRI za depo-3d.js (upisuje ga napravi-3d.mjs; isti commit kao ovaj fajl)
-  var SRI3D = 'sha384-sgq/JBK0TmHDRO0f1wvGgd/B4i1hWyVsMROxSLkYvu0sFr2tgWCsld7wUd5V8lXK';
+  var SRI3D = 'sha384-gyz0fmzOIXtdyy6dwO+Fd7BWnelNnCkeThNo1hUdVJDFW8j57pwqJZYSq0XJJfyS';
   function opt(k, def) { var v = root.getAttribute('data-' + k); return v == null || !v.trim() ? def : v.trim(); }
   var SLUG = opt('stranica', 'ski-depo').replace(/^\/+|\/+$/g, '');
   var PAGE = O + (EN ? '/en/' : '/') + SLUG + '/';
