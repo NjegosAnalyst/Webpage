@@ -328,7 +328,7 @@ const shot = (p, name) => p.locator('#jsd-depo .jsd-frame').screenshot({ path: p
   ({ p, ctx, errors } = await open(browser, { nogl: true, ga: 'none', wait: 1800 }));
   S = await state(p);
   check('fotografija vidljiva, 3D nije, privjesak 15 KM vidljiv', S.flat && !S.ready && S.photoOp === '1' && S.tagOn && S.tagFree, [S.flat, S.ready, S.photoOp, S.tagOn]);
-  await p.click('#jsd-depo .jsd-it[data-k="ski"][data-s="1"]'); await p.waitForTimeout(100);
+  await p.$eval('#jsd-depo .jsd-it[data-k="ski"][data-s="1"]', (b) => b.click()); await p.waitForTimeout(100);
   S = await state(p);
   check('klik ne mijenja ništa (aria-disabled)', S.btns === '11110000', S.btns);
   check('bez grešaka u konzoli', errors.length === 0, errors);

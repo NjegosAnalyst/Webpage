@@ -176,6 +176,7 @@
     '#R .jsd-hint{display:inline-flex;align-items:center;gap:8px;transition:opacity .6s ease}',
     '#R .jsd-hint svg{width:18px;height:18px;color:var(--accent)}',
     '#R .jsd-hint.is-gone{opacity:0}',
+    '#R .jsd-hint.is-gone + .jsd-ph{border-left-color:transparent}',
     '#R .jsd-3d:not(.is-ready) ~ .jsd-meta .jsd-hint{display:none}',
     '#R .jsd-ph{all:unset;display:inline-flex!important;align-items:center;gap:8px;padding-left:16px!important;border-left:1px solid rgba(255,255,255,.14);cursor:pointer;color:var(--text-3)!important;font:500 12.5px/1.2 var(--fb)!important;transition:color .2s}',
     '#R .jsd-3d:not(.is-ready) ~ .jsd-meta .jsd-ph{padding-left:0!important;border-left:0}',
