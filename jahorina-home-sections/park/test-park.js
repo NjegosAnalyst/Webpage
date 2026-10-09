@@ -44,12 +44,28 @@ const PARK_P = [
   'Sasvim sigurno ovaj poligon spretnosti, hrabrosti, adrenalina i zabave postaće novo mjesto okupljanja ljubitelja ovog sporta, upoznavanja, druženja pa i odmeravanja snaga, odnosno vještina. Sve i da ste skijaš ili šetač, poligon spretnosti i adrenalina na više 3.000 metara kvadratnih prostora, „Snowboard park“, daće vam priliku da iz “prvog reda” posmatrate borderske vratolomije. Ko zna, možda se baš vi zaljubite u ovaj predivni sport.'
 ];
 const PARK_LEAD = 'Ova, po mnogo čemu autentična, planina podariće ljubiteljima snowboarding-a prostor o kojem su do sada mogli samo da sanjaju, i to – rezervisan samo za njih.';
+const BIKE_P = [
+  'Ove zime Jahorina postaje bogatija za još jednu atrakciju koja obećava nezaboravno iskustvo – <strong>Ski Bike</strong>! Ako volite snijeg, planine i avanture, ovo je prava aktivnost za vas.',
+  'Ski Bike je jedinstvena kombinacija bicikla i skija koja vam omogućava da se spuštate niz staze na potpuno nov način. Za vožnju nisu potrebne posebne vještine ili prethodno iskustvo – sve što vam treba je želja za zabavom!',
+];
+const BIKE_LEAD = 'Ski Bike je jedinstvena kombinacija bicikla i skija koja vam omogućava da se spuštate niz staze na potpuno nov način.';
+const BIKE_FACTS = 'Trnovo / Poligon za vožnju|Bez iskustva / Lako se savladava|Za sve / Bez obzira na godine';
+// tekst stranice ski bike-a (screenshot korisnika, 9. 10. 2026); emotikon kao slika (wp-emoji) ne ide u galeriju
+const BIKE_PAGE = `<h2>Ski Bike – Novo uzbuđenje na Jahorini!</h2><p>${BIKE_P[0]}</p><h4>Šta je Ski Bike?</h4><p>${BIKE_P[1]}</p>
+<h4>Za koga je Ski Bike?</h4><p>Ski Bike je idealan za sve:</p><ul><li><strong>Porodice</strong> koje traže zabavan način da zajedno uživaju na snijegu.</li>
+<li><strong>Prijatelje</strong> koji žele probati nešto novo i drugačije.</li><li><strong>Pojedince</strong> željne adrenalina i avanture.<br>Bez obzira na godine i nivo iskustva, ova aktivnost je prilagođena svima!</li></ul>
+<h4>Gdje možete voziti Ski Bike?</h4><p>Posebno za vas, omogućili smo vožnju <strong>Ski Bike-a na poligonu Trnovo</strong>, koji je savršeno prilagođen početnicima i iskusnim avanturistima. Na ovom poligonu možete sigurno savladati osnove i uživati u vožnji na potpuno nov način!</p>
+<h4>Zašto odabrati Ski Bike?</h4><p><img class="emoji" alt="👉" src="https://s.w.org/images/core/emoji/15.0.3/72x72/1f449.png"> <strong>Jednostavno i sigurno</strong> – lako se savladava, čak i ako nikada niste stali na skije.</p>
+<p>👉 <strong>Zabavno i uzbudljivo</strong> – osjećaj vožnje je potpuno drugačiji od klasičnog skijanja.</p><p>👉 <strong>Prilagođeno svima</strong> – od početnika do iskusnih avanturista, svi mogu uživati!</p>
+<img src="${UP}ski-bike-1024x683.jpg" srcset="${UP}ski-bike-1024x683.jpg 1024w, ${UP}ski-bike.jpg 2000w" alt="Ski bike">`;
 const BOX = (f) => `<div class="photo_box"><div class="image_frame"><img src="${UP}${f}-1024x683.jpg" srcset="${UP}${f}-1024x683.jpg 1024w, ${UP}${f}.jpg 1600w" width="1024" alt="Snowboard park"></div><h4>SNOWBOARD PARK</h4></div>`;
 const CONTENT = {
   park: `<h3>Snowboard park Jahorina</h3><p>${PARK_P[0]}</p><p>${PARK_P[1]}</p>${BOX('park-1')}${BOX('park-2')}<p>${PARK_P[2]}</p><p>${PARK_P[3]}</p><img src="${UP}ikona.png" width="64" alt="">`,
   // nova verzija stranice: druga površina i staza, bez naselja
   parkNovo: `<p>Snowboard park Jahorina je poligon sa preprekama i skakaonicama za sve nivoe, na čak 4.500 m² staze Poljice.</p>`,
-  bike: `<p>Ski bike je bicikl sa skijama, a vožnja ski bike-om je novi doživljaj na stazama Jahorine.</p><p>Najam ski bike-a: 25 KM po satu, na stazi Poljice, uz kacigu.</p><img src="${UP}ski-bike-1024x683.jpg" srcset="${UP}ski-bike-1024x683.jpg 1024w, ${UP}ski-bike.jpg 2000w" alt="Ski bike">`,
+  bike: BIKE_PAGE,
+  // ski bike stranica sa cijenom najma
+  bikeCijena: BIKE_PAGE + '<p>Cijena najma Ski Bike-a je 25 KM po satu.</p>',
   qpark: `<p>[:SH]${PARK_P[2]}[:en]This truly authentic mountain offers snowboarders a terrain they could only dream of. Spread over 3,000 square meters on the Trnovo slope, near the Šator chalet village, the Snowboard park is full of jumps and obstacles.[:]</p>`,
   qbike: `<p>[:SH]Ski bike je bicikl sa skijama umjesto točkova.[:en]The ski bike is a bike with skis instead of wheels, a new way to ride the slopes of Jahorina.[:]</p><p>[:SH]Najam: 20 KM po satu.[:en]Rental: 20 KM per hour.[:]</p>`,
 };
@@ -92,7 +108,7 @@ async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900
         const park = { id: 51, link: SITE + '/' + parkSlug + '/', slug: parkSlug, title: { rendered: wp === 'qtranslate' ? '[:SH]Snowboard Park[:en]Snowboard Park[:]' : 'Snowboard Park' },
           content: { rendered: CONTENT[wp === 'qtranslate' ? 'qpark' : wp === 'novo' ? 'parkNovo' : 'park'] } };
         const bike = { id: 52, link: SITE + '/ski-bike-jahorina/', slug: 'ski-bike-jahorina', title: { rendered: wp === 'qtranslate' ? '[:SH]Ski bike[:en]Ski bike[:]' : 'Ski bike' },
-          content: { rendered: CONTENT[wp === 'qtranslate' ? 'qbike' : 'bike'] } };
+          content: { rendered: CONTENT[wp === 'qtranslate' ? 'qbike' : wp === 'novo' ? 'bikeCijena' : 'bike'] } };
         const other = { id: 12, link: SITE + '/bike-park-ljeto/', slug: 'x', title: { rendered: 'Ljetna ponuda' }, content: { rendered: '<p>Bike park ljeti.</p>' } };
         const json = (a) => route.fulfill({ contentType: 'application/json', body: (wp === 'upozorenje' ? '<br />\n<b>Warning</b>:  Undefined array key "x" in <b>/home/oc/public_html/wp-content/themes/betheme/functions.php</b> on line <b>12</b><br />\n' : '') + JSON.stringify(a) });
         if (wp === 'nema') return json([]);
@@ -209,7 +225,7 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
   check('tekst parka vidljiv, ski bike sakriven i neaktivan', S.opPark === 1 && S.opBike === 0 && S.inert === '01' && S.labelled === 'jsb-h0', [S.opPark, S.opBike, S.inert]);
   check('uvod parka = rečenica o prostoru sa stranice', S.lead === PARK_LEAD, S.lead);
   check('podaci parka sa stranice: 3.000 m², Trnovo, Šator', S.facts.join('|') === '3.000 m² / Površina parka|Trnovo / Staza|Šator / Kod vikend naselja', S.facts);
-  check('ski bike (pretraga "bike"): uvod, najam 25 KM po satu, staza Poljice', /^Ski bike je bicikl sa skijama/.test(S.leadBike) && S.factsBike.join('|') === '25 KM / Najam po satu|Poljice / Staza|2 skije / Umjesto točkova', [S.leadBike, S.factsBike]);
+  check('ski bike (pretraga "bike"): uvod = šta je ski bike; poligon Trnovo, bez iskustva, za sve', S.leadBike === BIKE_LEAD && S.factsBike.join('|') === BIKE_FACTS, [S.leadBike, S.factsBike]);
   check('linkovi stranica', S.pages.join('|') === SITE + '/snowboard-park/|' + SITE + '/ski-bike-jahorina/', S.pages);
   check('dugmad: Više o snowboard parku + Galerija, isti red, 44px, natpisi staju', S.btxt.join('|') === 'Više o snowboard parku|Galerija' && S.acts[0][0] === S.acts[1][0] && S.acts[0][1] === S.acts[1][1] && S.acts[0][2] === 44 && S.fit, [S.btxt, S.acts, S.fit]);
   check('podaci i dugmad iste širine', S.factsW === S.actsW, [S.factsW, S.actsW]);
@@ -297,7 +313,7 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
   console.log('Ski bike stranica ne postoji → ugrađeni tekst ski bike-a; admin vidi razlog');
   ({ p, ctx, errors } = await open(browser, { wp: 'park', admin: true, ga: 'none' }));
   S = await state(p);
-  check('park sa stranice, ski bike ugrađen; admin: ski bike nije pronađen', S.lead === PARK_LEAD && /^Bicikl sa skijama umjesto točkova/.test(S.leadBike) && S.factsBike.join('|') === '2 skije / Umjesto točkova|Volan / Vozi se kao bicikl|Amortizer / Za mekšu vožnju' && /Ski bike: stranica "ski-bike" nije pronađena/.test(S.why), [S.leadBike, S.why]);
+  check('park sa stranice, ski bike ugrađen (isti kao stranica); admin: ski bike nije pronađen', S.lead === PARK_LEAD && S.leadBike === BIKE_LEAD && S.factsBike.join('|') === BIKE_FACTS && /Ski bike: stranica "ski-bike" nije pronađena/.test(S.why), [S.leadBike, S.why]);
   await shot(p, 'admin-poruka');
   await ctx.close();
 
@@ -306,6 +322,7 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
   S = await state(p);
   check('počinje od ski bike-a, linija lijevo', S.act === 'jsb-p1' && S.p === 1 && S.seamX < S.stageW * .6, [S.act, S.p, S.seamX]);
   check('novi uvod i podaci parka (bez naselja)', /^Snowboard park Jahorina je poligon/.test(S.leadPark) && S.factsPark.join('|') === '4.500 m² / Površina parka|Poljice / Staza', [S.leadPark, S.factsPark]);
+  check('ski bike sa cijenom: najam 25 KM po satu prvi, pa poligon i bez iskustva', S.factsBike.join('|') === '25 KM / Najam po satu|Trnovo / Poligon za vožnju|Bez iskustva / Lako se savladava', S.factsBike);
   await ctx.close();
 
   console.log('Pogrešan slug parka → stranica se nađe pretragom "snowboard"');
@@ -318,7 +335,7 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
   console.log('WordPress ispiše PHP upozorenje prije JSON-a');
   ({ p, ctx, errors } = await open(browser, { wp: 'upozorenje', ga: 'none', admin: true }));
   S = await state(p);
-  check('podaci se ipak pročitaju, admin bez poruke', S.leadPark === PARK_LEAD && S.factsBike[0] === '25 KM / Najam po satu' && S.why === '', [S.why]);
+  check('podaci se ipak pročitaju, admin bez poruke', S.leadPark === PARK_LEAD && S.factsBike.join('|') === BIKE_FACTS && S.why === '', [S.why]);
   await ctx.close();
 
   console.log('EN, računar, Google Tag Manager, qTranslate oznake (/en/wp-json ne radi → /wp-json)');

@@ -13,9 +13,9 @@
 
    SADRŽAJ JE IZ WORDPRESSA (dvije stranice: data-park i data-bike = slug; ako slug ne postoji, traži se stranica sa
    "snowboard", odnosno "bike" u naslovu): uvod = prva rečenica o samom parku/vožnji; površina (m²), staza i naselje
-   (park), cijena i staza (ski bike) iz teksta; fotografije sa stranice idu u galeriju; "Više o …" = link stranice.
-   Dok WordPress ne odgovori, stoji ugrađeni tekst (park: stranica od 9. 10. 2026; ski bike: radni tekst dok stranica
-   ne stigne). Prijavljeni admin vidi razlog kad nešto nedostaje.
+   (park); cijena najma, poligon/staza, "bez iskustva" i "za sve" (ski bike) iz teksta; fotografije sa stranice idu u
+   galeriju; "Više o …" = link stranice. Dok WordPress ne odgovori, stoji ugrađeni tekst (stranice od 9. 10. 2026).
+   Prijavljeni admin vidi razlog kad nešto nedostaje.
 
    Ugradnja: Elementor HTML widget sa <div id="jsb-park"></div> + ovaj fajl sa jsDelivr-a (slike/ iz istog commita).
    Podešavanja na <div id="jsb-park"> (sva su neobavezna):
@@ -40,7 +40,7 @@
   var reduced = w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var ACT = opt('pocetak', 'park') === 'bike' ? 1 : 0;
 
-  // ugrađeni tekst: park = stranica snowboard parka (9. 10. 2026); ski bike = radni tekst dok stranica ne stigne;
+  // ugrađeni tekst = tekst stranica snowboard parka i ski bike-a (9. 10. 2026);
   // naslovi i kratki natpisi su dizajn; EN je prevod
   var T = EN ? {
     tabs: 'Snowboard park or ski bike', drag: 'Drag', more: 'More', gal: 'Gallery',
@@ -49,8 +49,9 @@
       lead: 'This truly authentic mountain gives snowboarders a space they could only dream of until now, and it is reserved just for them.',
       fArea: 'Park area', fSlope: 'Slope', fNear: 'Near the chalet village', photos: ['Snowboarder in a burst of powder in front of a wooden fence, blue sky'] },
     bike: { name: 'Ski bike', h: ['Ski', 'bike'], more: 'More about the ski bike', moreS: 'Learn more',
-      lead: 'A bike with skis instead of wheels: take a seat, grab the handlebars and ride down a groomed slope. It is easy to learn, so it is fun even for non-skiers.',
-      fPrice: 'Rental', fSlope: 'Slope', per: { h: 'per hour', d: 'per day', r: 'per ride' },
+      lead: 'The Ski Bike is a unique combination of a bike and skis that lets you ride down the slopes in a whole new way.',
+      fPrice: 'Rental', fSlope: 'Slope', fPoly: 'Riding area', fEasy: ['No experience', 'Easy to learn'], fAll: ['For everyone', 'Any age'],
+      per: { h: 'per hour', d: 'per day', r: 'per ride' },
       base: [{ v: '2 skis', l: 'Instead of wheels' }, { v: 'Handlebars', l: 'Rides like a bike' }, { v: 'Suspension', l: 'For a softer ride' }],
       photos: ['Ski bike in action: the rider carves a turn and sprays snow, a chairlift above', 'Rider on a white ski bike with two skis, helmet and goggles'] },
     galT: 'Photos', photo: 'Photo', prev: 'Previous photo', next: 'Next photo', close: 'Close',
@@ -62,18 +63,20 @@
       lead: 'Ova, po mnogo čemu autentična, planina podariće ljubiteljima snowboarding-a prostor o kojem su do sada mogli samo da sanjaju, i to – rezervisan samo za njih.',
       fArea: 'Površina parka', fSlope: 'Staza', fNear: 'Kod vikend naselja', photos: ['Snowboarder u oblaku snijega ispred drvene ograde, plavo nebo'] },
     bike: { name: 'Ski bike', h: ['Ski', 'bike'], more: 'Više o ski bike-u', moreS: 'Saznaj više',
-      lead: 'Bicikl sa skijama umjesto točkova: sjednete, uhvatite volan i spuštate se niz uređenu stazu. Lako se savlada, pa je zabava i za one koji ne skijaju.',
-      fPrice: 'Najam', fSlope: 'Staza', per: { h: 'po satu', d: 'po danu', r: 'po vožnji' },
+      lead: 'Ski Bike je jedinstvena kombinacija bicikla i skija koja vam omogućava da se spuštate niz staze na potpuno nov način.',
+      fPrice: 'Najam', fSlope: 'Staza', fPoly: 'Poligon za vožnju', fEasy: ['Bez iskustva', 'Lako se savladava'], fAll: ['Za sve', 'Bez obzira na godine'],
+      per: { h: 'po satu', d: 'po danu', r: 'po vožnji' },
       base: [{ v: '2 skije', l: 'Umjesto točkova' }, { v: 'Volan', l: 'Vozi se kao bicikl' }, { v: 'Amortizer', l: 'Za mekšu vožnju' }],
       photos: ['Ski bike u vožnji: vozač u zavoju podiže snijeg, iznad je žičara', 'Vozač na bijelom ski bike-u sa dvije skije, kacigom i naočarima'] },
     galT: 'Fotografije', photo: 'Fotografija', prev: 'Prethodna fotografija', next: 'Sljedeća fotografija', close: 'Zatvori',
     why: 'WordPress', whyTail: 'prikazan je ugrađeni sadržaj'
   };
-  // podaci sa stranica (ugrađeni = stranica parka od 9. 10. 2026); WordPress ih zamijeni kad se tekst promijeni
+  // podaci sa stranica (ugrađeni = stranice parka i ski bike-a od 9. 10. 2026); WordPress ih zamijeni kad se tekst promijeni
   var DATA = {
     park: { lead: T.park.lead, facts: [{ v: EN ? '3,000 m²' : '3.000 m²', l: T.park.fArea }, { v: 'Trnovo', l: T.park.fSlope }, { v: 'Šator', l: T.park.fNear }],
       link: O + (EN ? '/en/' : '/') + SLUG.park + '/' },
-    bike: { lead: T.bike.lead, facts: T.bike.base.slice(), link: O + (EN ? '/en/' : '/') + SLUG.bike + '/' }
+    bike: { lead: T.bike.lead, facts: [{ v: 'Trnovo', l: T.bike.fPoly }, { v: T.bike.fEasy[0], l: T.bike.fEasy[1] }, { v: T.bike.fAll[0], l: T.bike.fAll[1] }],
+      link: O + (EN ? '/en/' : '/') + SLUG.bike + '/' }
   };
 
   // fotografije: park (uspravna, uvećana iz 640 px dok ne stigne veća) i ski bike u vožnji; galerije dobiju i slike sa stranica
@@ -257,7 +260,7 @@
     '#R h2{font-size:clamp(38px,11.4vw,54px)}',
     '#R .jsb-lead{margin-top:16px}',
     '#R .jsb-facts{margin-top:24px!important;gap:0 12px}',
-    '#R .jsb-facts b{font-size:16px}',
+    '#R .jsb-facts b{font-size:16px;white-space:normal;overflow:visible;text-overflow:clip}',
     '#R .jsb-facts small{font-size:11.5px}',
     '#R .jsb-acts{gap:8px;margin-top:24px;width:100%}',
     '#R .jsb-btn{height:42px;padding:0 12px!important;font-size:13px!important}',
@@ -699,7 +702,7 @@
     var src = at('data-src') || at('data-lazy-src') || at('src');
     var set = at('data-srcset') || at('data-lazy-srcset') || at('srcset');
     var wd = parseInt(at('width'), 10);
-    if (wd && wd < 200) return null;   // ikone, logotipi
+    if ((wd && wd < 200) || /(^|\s)(emoji|wp-smiley)(\s|$)/.test(at('class')) || /\/emoji\//.test(src)) return null;   // ikone, logotipi, emotikoni
     var c = set.split(',').map(function (s) { var m = s.trim().match(/^(\S+)\s+(\d+)w$/); return m && { u: m[1], w: +m[2] }; })
       .filter(Boolean).sort(function (a, b) { return a.w - b.w; });
     var big = c.filter(function (x) { return x.w <= 2048; }).pop() || c[c.length - 1];
@@ -714,10 +717,11 @@
     var big = sz['2048x2048'] || sz['1536x1536'] || sz.large || sz.full;
     return { full: big && big.source_url || m.source_url, alt: clean(m.alt_text) };
   }
-  // uvod: prva rečenica o samom parku/vožnji (ne o istoriji sporta, sezoni ili navijačima), inače prva rečenica
+  // uvod: prva rečenica o samom parku/vožnji (ne o istoriji sporta, sezoni ili navijačima), inače prva rečenica;
+  // ski bike: prvo rečenica koja kaže šta je ("kombinacija bicikla i skija"), pa bilo koja o vožnji
   var LEAD = {
-    park: /prostor|poligon|prepre|skakaonic|\brail|\bbox|jump|obstacle|\bspace\b|terrain/i,
-    bike: /bicikl|\bbike|skij|volan|vožnj|vozi|\bride|handlebar/i
+    park: [/prostor|poligon|prepre|skakaonic|\brail|\bbox|jump|obstacle|\bspace\b|terrain/i],
+    bike: [/kombinacij|bicikl|bicycle|combination/i, /\bbike|skij|volan|vožnj|vozi|\bride|handlebar/i]
   };
   var OFF = /fudbal|navija|olimpijski\s+sport|popularn|\b(?:19|20)\d{2}\b|sezon|football|\bfans?\b|olympic\s+sport|popular/i;
   var CUR = '(KM|BAM|€|EUR)';
@@ -730,7 +734,9 @@
     var ps = [].slice.call(b.querySelectorAll('p')).map(function (p) { return clean(p.textContent); }).filter(function (t) { return t.length > 30; });
     var txt = clean(b.textContent), m, r = { facts: [] };
     var all = [].concat.apply([], ps.map(sentences)).filter(function (s) { return s.length > 40 && !OFF.test(s) && !/\d\s*(KM|BAM|€)/i.test(s); });
-    var hit = all.filter(function (s) { return LEAD[k].test(s); })[0] || all[0] || '';
+    var hit = '';
+    LEAD[k].forEach(function (re) { if (!hit) hit = all.filter(function (s) { return re.test(s); })[0] || ''; });
+    hit = hit || all[0] || '';
     r.lead = hit ? clip(hit, 260) : '';
     // staza: "na stazi Trnovo" / "Trnovo slope"
     var slope = (m = txt.match(/\bstaz[aeiu]\s+[„"“]?(?!Jahorin)([A-ZŠĐČĆŽ][a-zšđčćž]+(?:\s+\d)?)/)) ? m[1] : (m = txt.match(/\b([A-ZŠĐČĆŽ][a-zšđčćž]+)\s+(?:slope|run|piste)\b/)) ? m[1] : '';
@@ -749,7 +755,14 @@
         var pr = money(m), u = (m[3] || '').toLowerCase();
         r.facts.push({ v: pr.v + ' ' + pr.cur, l: T.bike.fPrice + (u ? ' ' + T.bike.per[/^(sat|h|hour)/.test(u) ? 'h' : /^(dan|day)/.test(u) ? 'd' : 'r'] : '') });
       }
-      if (slope) r.facts.push({ v: slope, l: T.bike.fSlope });
+      // gdje se vozi: "na poligonu Trnovo" (ili staza)
+      var poly = (m = txt.match(/poligon[a-z]*\s+[„"“]?(?!Jahorin)([A-ZŠĐČĆŽ][a-zšđčćž]+)/)) ? m[1] : '';
+      if (poly) r.facts.push({ v: poly, l: T.bike.fPoly }); else if (slope) r.facts.push({ v: slope, l: T.bike.fSlope });
+      // karakteristike sa stranice: bez iskustva (lako se savladava) i za sve uzraste
+      if (/posebn[a-z]*\s+vještin|prethodn[a-z]*\s+iskustv|nikada\s+niste\s+stali|lako\s+se\s+savlad|no\s+(?:prior\s+|previous\s+|special\s+)?(?:experience|skills)|easy\s+to\s+learn/i.test(txt))
+        r.facts.push({ v: T.bike.fEasy[0], l: T.bike.fEasy[1] });
+      if (/idealan\s+za\s+sve|prilagođen[a-z]*\s+svima|bez\s+obzira\s+na\s+godine|for\s+everyone|all\s+ages|any\s+age/i.test(txt))
+        r.facts.push({ v: T.bike.fAll[0], l: T.bike.fAll[1] });
     }
     var seen = {};
     r.imgs = [].slice.call(b.querySelectorAll('img')).map(fromImg).filter(function (x) {
@@ -791,10 +804,10 @@
     var miss = [], pan = q('.jsb-pan--' + k);
     if (r.lead) { DATA[k].lead = r.lead; if (r.lead !== pan.querySelector('.jsb-lead').textContent) pan.querySelector('.jsb-lead').textContent = r.lead; }
     else miss.push('tekst');
-    // park: podaci samo sa stranice (ako ih nema, red nestaje); ski bike: podaci sa stranice + kratki opis bicikla (dizajn)
+    // park: podaci samo sa stranice (ako ih nema, red nestaje); ski bike: podaci sa stranice, dopunjeni kratkim opisom bicikla (dizajn)
     var f = k === 'bike' ? r.facts.concat(T.bike.base).slice(0, 3) : r.facts;
     if (k === 'park' && !r.facts.length) miss.push('površina, staza, naselje');
-    if (k === 'bike' && !r.facts.length) miss.push('cijena najma');
+    if (k === 'bike' && !r.facts.length) miss.push('poligon/staza, cijena najma');
     if (JSON.stringify(f) !== JSON.stringify(DATA[k].facts)) { DATA[k].facts = f; pan.querySelector('.jsb-facts').innerHTML = factsHTML(k); }
     if (r.link) { DATA[k].link = r.link; pan.querySelector('a[data-jsb="stranica"]').setAttribute('href', r.link); }
     if (r.imgs.length) GAL[k] = BASE[k].concat(r.imgs);
