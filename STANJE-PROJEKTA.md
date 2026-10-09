@@ -141,6 +141,14 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - **Otvoreno pitati korisnika:** tačan slug stranice (sada `ski-depo` + pretraga „depo“); tačna lokacija za dugme „Lokacija“ (Google Maps link polazne stanice Poljice); radno vrijeme; više fotografija depoa (prostorija, ulaz, uređaj za skeniranje); da li dodati snowboard kao izbor u setu.
 - **Sljedeće:** korisnik postavlja red (@daf054c) u HTML widget na HERO TEST ispod VIP gondole (Elementor kontejner padding/margin/gap 0) → screenshot računar + telefon. U GA4 po želji označiti `depo_oprema` kao događaj za praćenje interakcije.
 
+### 7. Snowboard park i Ski bike — sljedeća (korisnik 9. 10. 2026: „prelazimo na sledeću sekciju snowboard park i ski bike u novom čatu“)
+- Mjesto: ispod Ski depoa. **Cik-cak:** Ski depo ima tekst desno → ova sekcija ima **tekst lijevo**, glavni detalj desno.
+- Pravila: TEMA.md (tema ista, detalji različiti; premium = fotografija/scena u pozadini kadra; kontrole preko fotografije tihe; ritam kao gondola ispod bara: kad je prethodni blok odmah iznad, gore ostaje samo rub — `.jsd--join` obrazac, „join“ provjerava `#jsd-depo` iznad i klasu `jsd--boxed`). Prefiks npr. `jsb-` i `#jsb-park` (ne `js-`, `jsd-`, `jd-`).
+- **Ne ponavljati glavne detalje prethodnih blokova:** slajder (vijesti), stakleni panel sa pločicama (ratrak), tihi izbor linijama + smjena proizvoda (suvenirnica), 3D meni koji se diže + smjena fotografija (bar), LED koji se pali + ulaznica sa paketima (gondola), 3D ormarić sa brojevima 1–8 + infografika linijama + privjesak sa cijenom (Ski depo). Dvije ponude u jednom bloku (snowboard park + ski bike) traže svoj način prebacivanja/poređenja — predložiti kad stignu fotografije i tekst.
+- Od korisnika tražiti: WP stranice obje ponude (linkovi + screenshotovi stranica i `…/wp-json/wp/v2/pages?slug=<slug>`), fotografije (park: skokovi/rails/boxovi, noću ako postoji; ski bike: vožnja, bicikl izbliza), tekst i podatke (lokacija/staza, radno vrijeme, cijene, iznajmljivanje ski bike-a, uslovi/kaciga, nivo težine elemenata), način kupovine/rezervacije, kako je sada na sajtu.
+- Obrazac za kod: `depo/depo.js` (najnoviji: `fit()`, `rise()`, join sa blokom iznad, WP stranica + pretraga kad slug ne postoji, „prljav“ JSON, admin poruka, GA, schema.org, galerija `#jsd-lb`) i `gondola/gondola.js`; test `depo/test-depo.js` (lažni WP odgovori, blok iznad, čekanje na stanje umjesto fiksnog vremena), `napravi-widget.py`, `pregled/napravi-pregled.py`.
+- Postupak: prvo pregled (artifact, Ski depo iznad), pa doterivanje po komentarima, pa red za Elementor i HERO TEST.
+
 ### Sljedeće sekcije
 - Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.
 - Događaji: na sajtu je **The Events Calendar** (Elementor widget "Events Loop", sada „Trenutno nema događaja...“), pa podatke čitati iz njega (REST `/wp-json/tribe/events/v1/events`), ne ručno.
@@ -152,7 +160,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 4. Prvo pregled (artifact samo sa sekcijom), pa doterivanje po korisnikovim komentarima, pa tek onda red za Elementor i postavljanje na HERO TEST.
 
 ## Grane
-- Najnoviji rad (vijesti, ratrak, suvenirnica, bar, VIP gondola, Ski depo, ovaj fajl): grana **`claude/tender-wright-q44irq`** (nastala iz `claude/zen-faraday-i6fm8g` + Ski depo). Nova sesija čita odavde i nastavlja na svojoj grani napravljenoj od ove.
+- Najnoviji rad (vijesti, ratrak, suvenirnica, bar, VIP gondola, Ski depo, ovaj fajl; sljedeća: Snowboard park i Ski bike): grana **`claude/tender-wright-q44irq`** (nastala iz `claude/zen-faraday-i6fm8g` + Ski depo). Nova sesija čita odavde i nastavlja na svojoj grani napravljenoj od ove.
 - Redovi za Elementor pokazuju na tačan commit na jsDelivr-u, pa rade bez obzira na granu.
 
 ## Linkovi
