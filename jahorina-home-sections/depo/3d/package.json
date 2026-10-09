@@ -1,0 +1,7 @@
+{
+  "name": "jahorina-ski-depo-3d",
+  "private": true,
+  "description": "3D ormarić Ski Depoa (three.js) — izvor za ../depo-3d.js",
+  "scripts": { "build": "node napravi-3d.mjs" },
+  "devDependencies": { "esbuild": "0.24.2", "three": "0.170.0" }
+}
