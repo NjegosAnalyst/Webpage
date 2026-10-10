@@ -161,6 +161,14 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - **Otvoreno pitati korisnika:** da li stranica ski bike-a ima dalje cijenu/rezervaciju (screenshot je odsječen ispod „Zašto odabrati“); tačni slugovi obje stranice (ski bike se sada nalazi pretragom „bike“); veća fotografija parka (sada 640 px, na širokim ekranima je meka), po mogućnosti pejzažna sa skokom/railom; tekst stranice parka je zastario (sezona 22/23, buduće vrijeme „postaće“) — predložiti osvježenje u WP-u (blok se sam ažurira); da li prave jednu zajedničku Elementor stranicu (onda oba `data-` na isti slug i dorada čitanja po naslovima).
 - **Sljedeće:** korisnik postavlja red (@a664ff3) u HTML widget na HERO TEST ispod Ski depoa (Elementor kontejner padding/margin/gap 0) → screenshot računar + telefon. Ako admin vidi narandžastu poruku (stranica nije pronađena), upisati tačan slug u `data-park` / `data-bike` (`PARK`/`BIKE` u `napravi-widget.py`). U GA4 po želji označiti `park_prebaci` za praćenje interakcije.
 
+### 8. Sankalište — sljedeća (korisnik 10. 10. 2026: „prelazimo u novi čat Sankalište“)
+- Mjesto: ispod Snowboard park i Ski bike. **Cik-cak:** blok iznad počinje od snowboard parka sa tekstom lijevo → Sankalište ima **tekst desno**, glavni detalj lijevo.
+- Pravila: TEMA.md (tema ista, detalji različiti; premium = fotografija/scena u pozadini kadra; kontrole preko fotografije tihe; ritam kao ostali blokovi: kad je prethodni blok odmah iznad, gore ostaje samo rub — `.jsb--join` obrazac u `park.js`, ovdje „join“ provjerava `#jsb-park` iznad i klasu `jsb--boxed`). Prefiks npr. `jsk-` i `#jsk-sankaliste` (zauzeti: `jv-`, `jr-`, `jsu-`, `jb-`, `jg-`, `jsd-`, `jsb-`, `jh-`, `jf-`; ne `js-`).
+- **Ne ponavljati glavne detalje prethodnih blokova:** slajder (vijesti), stakleni panel sa pločicama (ratrak), tihi izbor linijama + smjena proizvoda (suvenirnica), 3D meni koji se diže + smjena fotografija (bar), LED koji se pali + ulaznica sa paketima (gondola), 3D ormarić sa brojevima 1–8 + infografika linijama + privjesak sa cijenom (Ski depo), dvije pune scene sa linijom koja se prevlači + ivični natpis + podaci kao tehnički list (Snowboard park i Ski bike). Sankalište traži svoj glavni detalj — predložiti kad stignu fotografije i tekst.
+- Od korisnika tražiti: WP stranicu sankališta (link + screenshot cijele stranice + tekst iz `…/wp-json/wp/v2/pages?slug=<slug>`), fotografije (sankanje, staza, sanke izbliza, noću ako postoji; pejzažne, što veće — fotografija parka od 640 px je bila premala), podatke (lokacija, dužina/pad staze, radno vrijeme i noćno sankanje, cijene, najam sanki, uzrast/uslovi, kako se stiže/žičara), način kupovine/rezervacije, kako je sada na početnoj.
+- Obrazac za kod: `park/park.js` (najnoviji: `fit()`, `rise()`, join sa blokom iznad, dvije WP stranice + pretraga kad slug ne postoji, uvod po prioritetu rečenica, podaci iz teksta, „prljav“ JSON, admin poruka, GA, schema.org `@graph`, galerija `#jsb-lb`, emotikoni sa stranice preskočeni) i `depo/depo.js`; test `park/test-park.js` (lažni WP odgovori, blok iznad, čekanje na stanje umjesto fiksnog vremena), `napravi-widget.py`, `pregled/napravi-pregled.py` (blok iznad u pregledu).
+- Postupak: prvo pregled (artifact, Snowboard park i Ski bike iznad), pa doterivanje po komentarima, pa red za Elementor i HERO TEST.
+
 ### Sljedeće sekcije
 - Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.
 - Događaji: na sajtu je **The Events Calendar** (Elementor widget "Events Loop", sada „Trenutno nema događaja...“), pa podatke čitati iz njega (REST `/wp-json/tribe/events/v1/events`), ne ručno.
@@ -172,7 +180,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 4. Prvo pregled (artifact samo sa sekcijom), pa doterivanje po korisnikovim komentarima, pa tek onda red za Elementor i postavljanje na HERO TEST.
 
 ## Grane
-- Najnoviji rad (vijesti, ratrak, suvenirnica, bar, VIP gondola, Ski depo, Snowboard park i Ski bike, ovaj fajl): grana **`claude/nice-albattani-cg9x8f`** (nastala iz `claude/tender-wright-q44irq` + Snowboard park i Ski bike). Nova sesija čita odavde i nastavlja na svojoj grani napravljenoj od ove.
+- Najnoviji rad (vijesti, ratrak, suvenirnica, bar, VIP gondola, Ski depo, Snowboard park i Ski bike, ovaj fajl; sljedeća: Sankalište): grana **`claude/nice-albattani-cg9x8f`** (nastala iz `claude/tender-wright-q44irq` + Snowboard park i Ski bike). Nova sesija čita odavde i nastavlja na svojoj grani napravljenoj od ove.
 - Redovi za Elementor pokazuju na tačan commit na jsDelivr-u, pa rade bez obzira na granu.
 
 ## Linkovi
