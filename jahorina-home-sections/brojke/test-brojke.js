@@ -109,10 +109,10 @@ async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900
   await p.waitForTimeout(300);
   await p.evaluate(() => Promise.all([...document.images].map((i) => { i.loading = 'eager'; return i.decode().catch(() => {}); })));
   if (wait) await p.locator('#jpb-brojke .jpb-frame').scrollIntoViewIfNeeded();
-  // ulazak: kadar, tekst, koluti i crteži (~3,2 s), reflektor (~3 s)
+  // ulazak: kadar i naslov, uže (~2,2 s), kabina prođe (~1,5 + 3 s), koluti (~2 s)
   if (wait) {
     await p.waitForFunction(() => { const r = document.getElementById('jpb-brojke'); return !r.classList.contains('jpb-anim') || r.classList.contains('jpb-on'); }, null, { timeout: 8000 });
-    await p.waitForTimeout(reduced ? 300 : 3800);
+    await p.waitForTimeout(reduced ? 300 : 7000);
   }
   return { ctx, p, errors, rest };
 }
@@ -137,8 +137,15 @@ const info = (p) => p.evaluate(() => {
     vFont: cs(q('.jpb-v')).fontFamily, vSize: parseFloat(cs(q('.jpb-v')).fontSize), liStyle: cs(q('.jpb-num')).listStyleType,
     lamp: [q('.jpb-ph').style.getPropertyValue('--lx'), q('.jpb-ph').style.getPropertyValue('--ly')], lampOp: +cs(q('.jpb-lamp')).opacity,
     join: r.classList.contains('jpb--join'), boxed: r.classList.contains('jpb--boxed'), anim: r.classList.contains('jpb-anim'),
-    dots: r.querySelectorAll('.jpb-num:nth-child(2) .jpb-dot').length, lights: r.querySelectorAll('.jpb-num:nth-child(3) .jpb-glow').length,
-    sled: cs(q('.jpb-sled')).offsetDistance, imgOk: q('.jpb-ph img').naturalWidth > 0, alt: q('.jpb-ph img').alt,
+    chairs: r.querySelectorAll('.jpb-chair').length, on: r.querySelectorAll('.jpb-num.is-on').length, wires: r.querySelectorAll('.jpb-cable .jpb-wire').length,
+    wire: !!q('.jpb-cable .jpb-wire') && q('.jpb-cable .jpb-wire').getTotalLength() > 100,
+    // uže prolazi kroz hvataljke: razmak sredine hvataljke i užeta (px), najveći
+    gripGap: Math.max(...[...r.querySelectorAll('.jpb-grip')].map((g) => { const b = g.getBoundingClientRect(), x = b.left + b.width / 2, y = b.top + b.height / 2;
+      return Math.min(...[...r.querySelectorAll('.jpb-wire')].map((wr) => { const m = wr.getScreenCTM(), L = wr.getTotalLength(); let best = 1e9;
+        for (let k = 0; k <= 400; k++) { const pt = wr.getPointAtLength(L * k / 400), sx = m.a * pt.x + m.c * pt.y + m.e, sy = m.b * pt.x + m.d * pt.y + m.f; if (Math.abs(sx - x) < 3) best = Math.min(best, Math.abs(sy - y)); }
+        return best; })); })),
+    numFits: [...r.querySelectorAll('.jpb-back')].every((bk) => { const v = bk.querySelector('.jpb-v').getBoundingClientRect(), b = bk.getBoundingClientRect(); return v.width <= b.width - 8 && v.height <= b.height; }),
+    numsTop: r.querySelector('.jpb-nums').getBoundingClientRect().top, leadB: q('.jpb-lead').getBoundingClientRect().bottom, imgOk: q('.jpb-ph img').naturalWidth > 0, alt: q('.jpb-ph img').alt,
   };
 });
 const NUMS = (i) => i.nums.map((n) => n.sr).join(' | ');
@@ -160,15 +167,17 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   check('uvod bez brojki (ne ponavlja podatke)', !/\d/.test(i.lead), i.lead);
   check('puna širina ekrana bez horizontalnog skrola', Math.abs(i.rootW - i.docW) < 1 && i.rootL === 0 && i.scrollW <= i.docW, [i.rootW, i.docW, i.scrollW]);
   check('kadar: rub kao hero (22 px)', Math.abs(i.frameL - 22) < 1.5, i.frameL);
-  check('tekst lijevo na mreži 1240 (cik-cak: sankalište ima tekst desno)', Math.abs(i.bodyL - (1440 - 1240) / 2 - 48) < 3, i.bodyL);
+  check('naslov lijevo na mreži 1240 (cik-cak: sankalište ima tekst desno)', Math.abs(i.bodyL - (1440 - 1240) / 2 - 48) < 3, i.bodyL);
   check('brojke stanu u kadar', i.bodyB <= i.frameB + 1, [i.bodyB, i.frameB]);
-  check('fotografija desno od teksta', i.phL > 300 && i.imgOk, i.phL);
+  check('fotografija preko cijelog kadra', Math.abs(i.phL - i.frameL) < 1 && i.imgOk, i.phL);
   check('ispod sankališta: samo rub (join)', i.join, i.frameTop);
   check('Betheme ne mijenja naslov (bijel, Archivo, obris)', i.h2Color === 'rgb(255, 255, 255)' && /Archivo/.test(i.h2Font) && i.oStroke === '1.6px', [i.h2Color, i.h2Font, i.oStroke]);
   check('brojke Archivo, velike', /Archivo/.test(i.vFont) && i.vSize >= 60, [i.vFont, i.vSize]);
   check('bez tačkica liste iz teme', i.liStyle === 'none', i.liStyle);
-  check('crteži: 18 tačaka žičara, 10 reflektora', i.dots === 18 && i.lights === 10, [i.dots, i.lights]);
-  check('sanke kliznule do dna', parseFloat(i.sled) > 99.9, i.sled);
+  check('uže žičare i 4 sjedišta šestosjeda, sva stigla', i.wire && i.chairs === 4 && i.on === 4 && i.wires === 1, [i.wire, i.chairs, i.on, i.wires]);
+  check('uže prolazi kroz hvataljke sjedišta', i.gripGap < 4, i.gripGap);
+  check('brojke stanu u naslone sjedišta', i.numFits, i.numFits);
+  check('sjedišta ispod naslova', i.numsTop > i.leadB, [i.numsTop, i.leadB]);
   check('reflektor upaljen, svjetlo na lampi fotografije', i.lampOp > .9 && parseFloat(i.lamp[0]) > 400, [i.lampOp, i.lamp]);
   check('bez linka kad nije zadan', i.link === '', i.link);
   await r.p.screenshot({ path: path.join(OUT, '1-racunar-1440.png'), clip: { x: 0, y: (await r.p.locator('#jpb-brojke').boundingBox()).y - 140, width: 1440, height: 1040 } });
@@ -181,9 +190,11 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   const pre = await r.p.evaluate(() => { const r = document.getElementById('jpb-brojke'); return { anim: r.classList.contains('jpb-anim'), on: r.classList.contains('jpb-on') }; });
   check('prije ulaska: animacija spremna, nije pokrenuta', pre.anim && !pre.on, pre);
   await r.p.locator('#jpb-brojke .jpb-frame').scrollIntoViewIfNeeded();
-  await r.p.waitForTimeout(1500);
-  await r.p.screenshot({ path: path.join(OUT, '2-ulazak-1500ms.png') });
-  await r.p.waitForTimeout(2600);
+  await r.p.waitForTimeout(1750);
+  const mid = await r.p.evaluate(() => document.querySelectorAll('#jpb-brojke .jpb-num.is-on').length);
+  check('sjedišta stižu jedno za drugim', mid >= 1 && mid < 4, mid);
+  await r.p.screenshot({ path: path.join(OUT, '2-ulazak-sjedista.png') });
+  await r.p.waitForTimeout(5200);
   i = await info(r.p);
   check('poslije ulaska koluti stoje na brojkama', SHOWN(i) === '54 | 18 | 10 | 600', SHOWN(i));
   await r.ctx.close();
@@ -193,7 +204,6 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   i = await info(r.p);
   check('brojke iz teksta', NUMS(i) === '65 km | 21 | 12 | 1.200 m', NUMS(i));
   check('koluti pokazuju nove brojke (tačka hiljada stoji)', SHOWN(i) === '65 | 21 | 12 | 1.200', SHOWN(i));
-  check('crteži prate brojke: 21 tačka, 12 reflektora', i.dots === 21 && i.lights === 12, [i.dots, i.lights]);
   await r.p.locator('#jpb-brojke').screenshot({ path: path.join(OUT, '3-nove-brojke.png') });
   await r.ctx.close();
 
@@ -258,7 +268,7 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   console.log('\n9) Smanjeno kretanje: sve odmah na mjestu');
   r = await open(browser, { reduced: true });
   i = await info(r.p);
-  check('bez animacije, koluti na brojkama, reflektor upaljen', !i.anim && SHOWN(i) === '54 | 18 | 10 | 600' && i.lampOp > .9, [i.anim, SHOWN(i), i.lampOp]);
+  check('bez animacije, koluti na brojkama, sve upaljeno', !i.anim && SHOWN(i) === '54 | 18 | 10 | 600' && i.lampOp > .9 && i.on === 4, [i.anim, SHOWN(i), i.lampOp, i.on]);
   await r.ctx.close();
 
   console.log('\n10) Ekrani: 1920, 1180, tablet 820, telefon 390 i 360, uži kontejner');
@@ -268,6 +278,7 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
     check(name + ': bez horizontalnog skrola i grešaka', i.scrollW <= i.docW && r.errors.length === 0, [i.scrollW, i.docW, r.errors]);
     check(name + ': brojke stanu u kadar', i.bodyB <= i.frameB + 1 && i.bodyR <= i.docW, [i.bodyB, i.frameB, i.bodyR]);
     if (vw <= 980) check(name + ': fotografija gore, tekst ispod', i.phTop < i.frameB && i.phL <= i.frameL + 1, [i.phTop, i.phL]);
+    check(name + ': uže kroz hvataljke, 4 sjedišta, brojke stanu u naslone', i.wire && i.chairs === 4 && i.on === 4 && i.gripGap < 4 && i.numFits && i.wires === (vw <= 760 ? 2 : 1), [i.wires, i.chairs, i.on, i.gripGap, i.numFits]);
     if (vw === 1920) check(name + ': tekst na mreži 1240', Math.abs(i.bodyL - (1920 - 1240) / 2 - 48) < 3, i.bodyL);
     await r.p.locator('#jpb-brojke').screenshot({ path: path.join(OUT, name + '.png') });
     await r.ctx.close();
