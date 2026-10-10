@@ -9,9 +9,10 @@
      · naslov gore lijevo (cik-cak: Sankalište iznad ima tekst desno), uvod bez brojeva;
      · BROJKE kao naslovna tipografija: jedan red od četiri ogromne brojke pri dnu kadra (54 km · 18 · 10 · 600 m),
        natpis i sitni podnaslov ispod; cifre su koluti kao na mehaničkom brojaču (odometar);
-     · ŠESTOSJED (glavni detalj, korisnik: „linija kao uže žičare, na njoj korpe šestosjeda, a u korpi brojevi“): uže
-       žičare preko kadra iznad brojki, o njemu vise četiri sjedišta šestosjeda crtana tankim linijama (hvataljka, nosač,
-       račve, bočni ramovi, klupa sa 6 mjesta, oslonac za noge); brojka je u staklenom naslonu sjedišta, natpis ispod.
+     · ŠESTOSJED (glavni detalj, korisnik: „linija kao uže žičare, na njoj korpe šestosjeda, a u korpi brojevi“; „žičara
+       ide sa lijevo na desnu stranu a brojevi su okrenuti kao što su i sad“): uže žičare preko kadra, o njemu vise četiri
+       sjedišta šestosjeda IZ PROFILA, tankim linijama (hvataljka, nosač povijen do naslona, klupa naprijed, sigurnosna
+       šipka sa osloncem za noge); brojka je u staklenoj ploči u prostoru sjedišta, okrenuta prema posjetiocu; natpis ispod.
        Pri ulasku se uže iscrta, sjedišta jedno za drugim doklize po užetu i zaljuljaju se kad stanu, pa se brojka zavrti.
        Telefon: dva reda po dva sjedišta, svaki red na svom užetu;
      · tih link ispod uvoda (samo ako je zadan data-link).
@@ -139,12 +140,12 @@
     '#R .jpb-grip{fill:#0A1120!important;stroke:rgba(255,255,255,.8);stroke-width:1.3;vector-effect:non-scaling-stroke;transition:fill .5s,stroke .5s}',
     '#R .jpb-num.is-on .jpb-grip{fill:var(--accent-2)!important;stroke:#fff;filter:drop-shadow(0 0 5px rgba(0,185,242,.95))}',
     /* naslon = staklena ploča (kao paneli u hero-u); u njoj brojka */
-    '#R .jpb-back{position:absolute;left:7.33%;top:28.8%;width:85.33%;height:41.6%;display:flex;align-items:center;justify-content:center;border-radius:clamp(10px,4.6cqw,16px);',
+    '#R .jpb-back{position:absolute;left:16%;top:32%;width:69.33%;height:39.2%;display:flex;align-items:center;justify-content:center;border-radius:clamp(10px,4.6cqw,16px);',
     'background:linear-gradient(180deg,rgba(26,38,62,.62),rgba(10,17,32,.72));-webkit-backdrop-filter:blur(10px) saturate(1.1);backdrop-filter:blur(10px) saturate(1.1);',
     'box-shadow:inset 0 0 0 1px rgba(255,255,255,.2),inset 0 1px 0 rgba(255,255,255,.16),0 14px 30px -14px rgba(0,0,0,.8)}',
     '#R .jpb-back::before{content:"";position:absolute;left:12%;right:12%;top:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(0,185,242,.9),transparent);opacity:0;transition:opacity .6s ease .5s}',
     '#R .jpb-num.is-on .jpb-back::before,#R:not(.jpb-anim) .jpb-back::before{opacity:1}',
-    '#R .jpb-v{display:flex;align-items:baseline;gap:.08em;font:800 clamp(40px,5.6vw,84px)/1 var(--fd);font-size:29cqw;letter-spacing:-.045em;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}',
+    '#R .jpb-v{display:flex;align-items:baseline;gap:.08em;font:800 clamp(40px,5.6vw,84px)/1 var(--fd);font-size:25cqw;letter-spacing:-.045em;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}',
     '#R .jpb-v em{font-style:normal;font:700 .28em/1 var(--fd);letter-spacing:.02em;color:var(--accent-2)}',
     /* kolut cifre (odometar): 0–9 dva puta; --v = krajnji položaj (10 + cifra), u stanju mirovanja stoji na njemu */
     '#R .jpb-ds{display:inline-flex}',
@@ -267,14 +268,16 @@
   }
 
   /* ---------- crtanje ---------- */
-  // sjedište šestosjeda (spreda): hvataljka na užetu, nosač, račve, bočni ramovi, klupa sa 6 mjesta, oslonac za noge;
-  // naslon je HTML (staklo + brojka), na mjestu x 22–278, y 72–176 (viewBox 300 × 250)
+  // sjedište šestosjeda iz profila (žičara ide slijeva nadesno, putnici gledaju nadesno): hvataljka na užetu, nosač se
+  // povija unazad do naslona (lijevo), klupa ide naprijed, sigurnosna šipka se spušta preko sa prednje strane i završava
+  // osloncem za noge. Brojka je u staklenoj ploči u prostoru sjedišta, okrenuta prema posjetiocu (HTML, x 48–256, y 80–178)
   var CHAIR = (function () {
-    var o = '<path class="jpb-cl" d="M150 12 V44 M150 44 Q150 58 136 58 H44 Q26 58 26 74 M150 44 Q150 58 164 58 H256 Q274 58 274 74"/>';
-    o += '<path class="jpb-cl" d="M24 128 Q10 130 10 146 V186 M276 128 Q290 130 290 146 V186"/>';
-    o += '<rect class="jpb-seat" x="6" y="184" width="288" height="15" rx="7.5"/>';
-    for (var k = 1; k < 6; k++) { var x = f1(6 + 288 * k / 6); o += '<path class="jpb-cl2" d="M' + x + ' 187 V196"/>'; }
-    o += '<path class="jpb-cl2" d="M58 199 V228 H242 V199"/>';
+    var o = '<path class="jpb-cl" d="M150 12 V28 C150 44 128 50 96 52 L54 56 Q36 58 34 74"/>';
+    o += '<path class="jpb-cl" d="M44 64 Q250 56 262 104 V214 H220 V207"/>';
+    o += '<rect class="jpb-seat" x="26" y="70" width="14" height="122" rx="7" transform="rotate(-5 33 131)"/>';
+    o += '<rect class="jpb-seat" x="30" y="186" width="222" height="14" rx="7"/>';
+    o += '<path class="jpb-cl2" d="M40 200 Q60 216 96 209"/>';
+    for (var k = 1; k < 6; k++) { var x = f1(30 + 222 * k / 6); o += '<path class="jpb-cl2" d="M' + x + ' 189 V197"/>'; }
     o += '<rect class="jpb-grip" x="139" y="-2" width="22" height="14" rx="4"/>';
     return '<svg viewBox="0 0 300 250" aria-hidden="true" focusable="false">' + o + '</svg>';
   })();
