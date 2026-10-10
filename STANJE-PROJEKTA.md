@@ -180,10 +180,18 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 ### Početna: blokovi sa ponudama ZAVRŠENI (korisnik 10. 10. 2026)
 - Korisnik: „što se tiče početne strane i ponude koje imamo, završio sam sa tim slajdovima“. Gotovi blokovi ponuda: vijesti, ratrak, suvenirnica, Olimpijski bar, VIP gondola, Ski depo, Snowboard park i Ski bike, Sankalište (redovi za widget su u `<sekcija>/elementor-html-widget.html`). Nove ponude se ne prave dok korisnik ne kaže.
 
-### 9. Dodaci — SLJEDEĆE, novi chat (korisnik 10. 10. 2026: „počni novi čat Dodaci“)
-- Šta spada u „Dodatke“ korisnik još nije rekao. **Na početku novog chata pitati korisnika** šta su Dodaci (npr. manji dijelovi početne ili sajta van blokova ponuda: Danas na Jahorini, Događaji, Planina u brojkama, Pratite Jahorinu, ili nešto drugo) i tražiti screenshotove i izvore podataka (WordPress, kategorija, dodatak). Ne pretpostavljati.
-- Pravila ostaju: TEMA.md (tema ista, detalji različiti; premium; WordPress kad sadržaj postoji; prefiks klasa po bloku, zauzeti: `jv-`, `jr-`, `jsu-`, `jb-`, `jg-`, `jsd-`, `jsb-`, `jsk-`, `jh-`, `jf-`; ne `js-`). Obrazac za kod: `sankaliste/sankaliste.js` (najnoviji) i `park/park.js`; test `sankaliste/test-sankaliste.js`; pregled `sankaliste/pregled/napravi-pregled.py`; red `sankaliste/napravi-widget.py`.
-- Postupak isti: prvo pregled (artifact), pa doterivanje po komentarima, pa red za Elementor i HERO TEST.
+### 9. Dodaci (korisnik 10. 10. 2026)
+- Predloženo korisniku (redoslijed na početnoj): Hero → **Danas na Jahorini** → Vijesti → ponude → **Planina u brojkama** → **Događaji** (The Events Calendar) → **Kako do Jahorine** → **Pratite Jahorinu** → Footer; opciono traka hitnog obavještenja i „Kupi ski pass“ na telefonu. Korisnik izabrao da se počne sa **Planinom u brojkama**.
+- Pravila ostaju: TEMA.md; prefiksi zauzeti: `jv-`, `jr-`, `jsu-`, `jb-`, `jg-`, `jsd-`, `jsb-`, `jsk-`, `jpb-`, `jh-`, `jf-`; ne `js-`.
+
+### 9a. Planina u brojkama — v1 „brojčanici“, PREGLED čeka korisnikov komentar (10. 10. 2026)
+- Zamjenjuje stari blok na početnoj (svijetla isprana fotografija, veliki natpis JAHORINA, ikone u lukovima: 600 m sankalište, 10 noćnih staza, Olimp bar, Ski & Snowboard škola). Bar i ski škola izbačeni iz bloka (bar ima svoj blok; škola = moguća buduća ponuda).
+- Kod: `jahorina-home-sections/brojke/brojke.js` (prefiks `jpb-`, `#jpb-brojke`), test `test-brojke.js` (Playwright, lažni WP REST), red `napravi-widget.py` → `elementor-html-widget.html` (posljednji **@800fec2**), pregled `pregled/napravi-pregled.py` (Sankalište iznad) → artifact https://claude.ai/artifact/EFMWUuq22wh6jjFmyDr4FT.
+- Izgled: cik-cak (Sankalište tekst desno → ovdje tekst lijevo). Fotografija noćnog skijanja pod reflektorom (`slike/brojke-glavna.webp`, iz `project/uploads/Jahorina-promo-Photo-Jadran-Cilic-92-scaled.jpg`) desno; reflektor je jedini izvor svjetla (hladno bijelo, upali se pri ulasku; položaj lampe računa skripta iz object-fit). Lijevo nadnaslov „Planina u brojkama“, naslov „Olimpijska / *planina*“, uvod bez brojeva (moj tekst), pa **mreža 2 × 2**: 54 km alpskih skijaških staza · 18 žičara i ski liftova · 10 staza za noćno skijanje · 600 m staza sankališta; ispod natpisa sitno (FIS, vertikalni transport, homologovane, za cijelu porodicu).
+- Glavni detalj: **koluti cifara (odometar)** se jednom zavrte do vrijednosti (desne cifre duže) + **crteži tankim linijama** iznad brojki umjesto ikona: staza vijuga (km), uže sa N tačaka (žičare), N reflektora se pale jedan za drugim (noćno), kosina sa kotom i sanke kliznu (sankalište). Broj tačaka/reflektora prati brojku.
+- **WordPress:** brojke se čitaju iz teksta stranice `data-stranica` (podrazumijevano `pocetna-zima`, gdje danas stoje te rečenice); regexi za SR i EN rečenice; qTranslate i `/en/wp-json`; „prljav“ JSON kao u baru. Broj koji fali ostaje ugrađeni, admin vidi razlog. Ručno: `data-km`, `data-zicare`, `data-nocne`, `data-sankanje`; tih link `data-link` + `data-link-tekst` (GA `brojke_klik`).
+- **Otvoreno pitati korisnika:** koja WP stranica trajno nosi brojke (kad se stari blok ukloni sa Početne zima, brojke nestaju iz teksta → treba stranica npr. „O nama“/„Ski staze“, ili ručno u redu); link za „Mapa staza“ (ako želi link); da li uvod i natpisi odgovaraju; veća/druga noćna fotografija po želji.
+- **Sljedeće:** korisnikov komentar na pregled → doterivanje → red na HERO TEST ispod Sankališta (Elementor kontejner padding/margin/gap 0).
 
 ### Ostale moguće sekcije (iz prvobitnog prijedloga)
 - Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.
@@ -196,7 +204,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 4. Prvo pregled (artifact samo sa sekcijom), pa doterivanje po korisnikovim komentarima, pa tek onda red za Elementor i postavljanje na HERO TEST.
 
 ## Grane
-- Najnoviji rad (vijesti, ratrak, suvenirnica, bar, VIP gondola, Ski depo, Snowboard park i Ski bike, Sankalište, ovaj fajl; sljedeće: Dodaci): grana **`claude/bold-davinci-8csajm`** (nastala iz `claude/nice-albattani-cg9x8f` + Sankalište). Nova sesija čita odavde i nastavlja na svojoj grani napravljenoj od ove.
+- Najnoviji rad (sve ponude + Dodaci: Planina u brojkama): grana **`claude/dodaci-planina-brojke`** (nastala iz `claude/bold-davinci-8csajm`). Nova sesija čita odavde i nastavlja na svojoj grani napravljenoj od ove.
 - Redovi za Elementor pokazuju na tačan commit na jsDelivr-u, pa rade bez obzira na granu.
 
 ## Linkovi
