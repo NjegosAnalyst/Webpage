@@ -6,16 +6,18 @@
      · SAT SANKALIŠTA (glavni detalj): tanki 24-satni brojčanik na fotografiji (dan gore, noć dolje). Blijedi luk
        dnevnog skijanja, cyan luk sankanja (16–18 h, iz teksta stranice) i blijedi luk noćnog skijanja; kazaljka
        pokazuje trenutno vrijeme na Jahorini (Europe/Sarajevo);
-     · STATUS (zeleno / crveno, iznad sata): "Radi sada · do 18:00" ili "Ne radi · otvara se u 16:00"; računa se
-       iz radnog vremena sa stranice, a osvježava se sam (svakih 20 s);
+     · detalji sata: brojevi 6/12/18/24, četvrtine sata, sunce u podne i mjesec sa zvijezdama oko ponoći, blagi sumrak
+       u dijelu 16–18 h, tačke na krajevima luka;
+     · STATUS = boja kuglice na kazaljci (zelena = radi, crvena = ne radi; bez natpisa iznad sata, čitač ekrana ga
+       čuje); računa se iz radnog vremena sa stranice, a osvježava se sam (svakih 20 s);
      · podaci kao spisak sa tankim linijama (staza, lokacija, sidro, sanke), dugmad bijelo "Cijene karata" (link
        "OVDJE" sa stranice) + stakleno "Galerija", ispod tihi linkovi "Više o sankalištu" i video (ako ga stranica ima);
-     · ulazak (jednom): kadar sjedne, fotografija izađe iz sumraka, tekst se podigne, sat se iscrta (lukovi, pa
-       kazaljka prođe dan do trenutnog vremena) i upali se status.
+     · ulazak (jednom): kadar sjedne, fotografija izađe iz sumraka, tekst se podigne, sat se iscrta (brojevi, lukovi,
+       sunce i mjesec, pa kazaljka prođe dan do trenutnog vremena).
 
    SADRŽAJ JE IZ WORDPRESSA (data-stranica = slug; ako slug ne postoji, traži se stranica sa "sank" u naslovu):
    nadnaslov = naslov stranice; uvod = rečenica o mališanima / prvom sankalištu (inače prva rečenica o sankanju);
-   dužina i širina staze, broj staze i mjesto, sidro, radno vrijeme ("od 16h do 18h"), najam sanki na ski kasi,
+   dužina staze, broj staze i mjesto, sidro (lift), radno vrijeme ("od 16h do 18h"), najam sanki na ski kasi,
    "svoje sanke ostavite kući", link za cijene ("OVDJE"), YouTube video i fotografije iz teksta stranice. Ako tekst
    stranice kaže da sankalište danas/trenutno ne radi, status je crven sa tim razlogom. Dok WordPress ne odgovori,
    stoji ugrađeni tekst (stranica od 10. 10. 2026). Prijavljeni admin vidi razlog kad nešto nedostaje.
@@ -49,7 +51,7 @@
     aria: 'Sledding track', eyebrow: 'Sledding track', h: ['Sledding', 'like old times'],
     lead: 'If you have little ones, or you simply miss that carefree feeling from 20, 30 or more years ago, it is time to get excited, because Jahorina has built its first sledding track!',
     prices: 'Ticket prices', pricesS: 'Prices', gal: 'Gallery', more: 'More about the sledding track', video: 'Watch the video', vid: 'Video: sledding track',
-    fSize: 'Length × width', fLen: 'Track length', fWhere: 'Location', slope: 'Slope', fLift: 'Up the hill', lift: function (n) { return n + ' T-bar'; },
+    fLen: 'Length', fWhere: 'Location', slope: 'Slope', fLift: 'Lift', lift: function (n) { return n + ' T-bar'; },
     fSled: 'Sleds', sled: function (n) { return 'Rent at the ' + n + ' ski desk'; }, sledAny: 'Rent at the ski desk', own: 'Bring none: the T-bar takes adapted sleds only',
     dial: 'Sledding', daily: 'every day', day: 'DAY SKIING', night: 'NIGHT', clockAria: function (a, b) { return 'Sledding track hours: every day from ' + a + ' to ' + b + ', between day and night skiing'; },
     open: 'Open now', closed: 'Closed', closedToday: 'Closed today', until: function (t) { return 'until ' + t; },
@@ -62,7 +64,7 @@
     aria: 'Sankalište', eyebrow: 'Sankalište', h: ['Sankanje', 'kao nekad'],
     lead: 'Ukoliko sada imate mališane, ili ste se i sami uželjeli tog bezbrižnog osjećaja od prije 20, 30 ili više godina, vrijeme je da počnete da se radujete, jer je na Jahorini izgrađeno prvo Sankalište!',
     prices: 'Cijene karata', pricesS: 'Cijene', gal: 'Galerija', more: 'Više o sankalištu', video: 'Pogledaj video', vid: 'Video: Sankalište',
-    fSize: 'Dužina i širina', fLen: 'Dužina staze', fWhere: 'Lokacija', slope: 'Staza', fLift: 'Na vrh', lift: function (n) { return 'Sidro ' + n; },
+    fLen: 'Dužina', fWhere: 'Lokacija', slope: 'Staza', fLift: 'Lift', lift: function (n) { return 'Sidro ' + n; },
     fSled: 'Sanke', sled: function (n) { return 'Najam na ski kasi ' + n; }, sledAny: 'Najam na ski kasi', own: 'Svoje ostavite kod kuće: za sidro trebaju sanke sa adapterom',
     dial: 'Sankanje', daily: 'svaki dan', day: 'DNEVNO SKIJANJE', night: 'NOĆNO', clockAria: function (a, b) { return 'Radno vrijeme sankališta: svaki dan od ' + a + ' do ' + b + ', između dnevnog i noćnog skijanja'; },
     open: 'Radi sada', closed: 'Ne radi', closedToday: 'Danas ne radi', until: function (t) { return 'do ' + t; },
@@ -85,7 +87,7 @@
     eyebrow: T.eyebrow, lead: T.lead, from: 16 * 60, to: 18 * 60, closed: false, why: '',
     facts: [], link: PAGE, prices: FIX.prices || PAGE, yt: FIX.yt
   };
-  DATA.facts = factsOf({ len: '600', wid: '5', slope: '7', place: 'Poljice', lift: 'Poljice', rent: true, desk: 'Poljice', own: true });
+  DATA.facts = factsOf({ len: '600', slope: '7', place: 'Poljice', lift: 'Poljice', rent: true, desk: 'Poljice', own: true });
 
   // fotografije: roditelj i dijete u sumrak (pozadina kadra), noćna vožnja i šuma idu u galeriju; galerija dobije i slike sa stranice
   var IMG = { main: HERE + 'slike/sank-glavna.webp', mainS: HERE + 'slike/sank-glavna-1000.webp' };
@@ -120,7 +122,7 @@
     '#R .jsk-wrap{--side:max(clamp(26px,3.2vw,52px),var(--in))}',
 
     /* kadar kao u hero-u; --L = širina dijela sa tekstom (desno), fotografija je lijevo od njega i utapa se u tamu */
-    '#R .jsk-frame{--st:var(--no);--st-r:rgba(255,92,92,.4);--st-g:rgba(255,92,92,.2);--L:min(calc(var(--side) + 560px),50%);--dz:clamp(176px,14vw,236px);--cx:max(clamp(24px,2.6vw,44px),calc(var(--side) - var(--in) * .45));--cy:clamp(40px,4.4vw,70px);',
+    '#R .jsk-frame{--st:var(--no);--L:min(calc(var(--side) + 560px),50%);--dz:clamp(176px,14vw,236px);--cx:max(clamp(24px,2.6vw,44px),calc(var(--side) - var(--in) * .45));--cy:clamp(40px,4.4vw,70px);',
     'position:relative;transform-origin:50% 0;display:flex;align-items:center;justify-content:flex-end;min-height:clamp(640px,46vw,800px);border-radius:26px;overflow:hidden;isolation:isolate;background:var(--bg);',
     'box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22)}',
     '#R .jsk-frame::after{content:"";position:absolute;inset:0;z-index:8;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.08)}',
@@ -133,38 +135,45 @@
     'background:linear-gradient(270deg,rgba(6,11,22,.93) 0,rgba(6,11,22,.84) calc(var(--L) - 150px),rgba(6,11,22,.34) calc(var(--L) + 30px),rgba(6,11,22,0) calc(var(--L) + 230px)),',
     'linear-gradient(0deg,rgba(6,11,22,.5) 0%,rgba(6,11,22,0) 28%),linear-gradient(180deg,rgba(6,11,22,.42) 0%,rgba(6,11,22,0) 30%),radial-gradient(130% 100% at 32% 55%,transparent 56%,rgba(4,8,18,.5) 100%)}',
 
-    /* SAT SANKALIŠTA: status iznad, pa stakleni brojčanik (24 h, podne gore) */
-    '#R .jsk-clock{position:absolute;z-index:3;left:var(--cx);top:var(--cy);display:flex;flex-direction:column;align-items:flex-start;gap:16px;pointer-events:none}',
+    /* SAT SANKALIŠTA: stakleni brojčanik (24 h, podne gore); boja statusa je samo na kuglici kazaljke */
+    '#R .jsk-clock{position:absolute;z-index:3;left:var(--cx);top:var(--cy);pointer-events:none}',
     '#R .jsk-dial{position:relative;width:var(--dz);height:var(--dz);border-radius:50%;',
     'background:radial-gradient(circle at 50% 38%,rgba(20,31,52,.42),rgba(8,13,24,.62) 72%);-webkit-backdrop-filter:blur(12px) saturate(1.1);backdrop-filter:blur(12px) saturate(1.1);',
     'box-shadow:0 22px 44px -22px rgba(0,0,0,.8),inset 0 0 0 1px rgba(255,255,255,.13),inset 0 1px 0 rgba(255,255,255,.1),inset 0 -10px 24px rgba(0,0,0,.25)}',
+    /* nebo na brojčaniku: dan gore svjetliji, sumrak (vrijeme sankanja) blago cyan, noć dolje tamna; --fa/--ta = uglovi luka */
+    '#R .jsk-dial::before{content:"";position:absolute;inset:7%;border-radius:50%;pointer-events:none;',
+    'background:conic-gradient(from 0deg,rgba(160,196,240,.15) 0deg,rgba(160,196,240,.1) calc(var(--fa) - 22deg),rgba(0,185,242,.22) calc(var(--fa) + 8deg),rgba(0,185,242,.14) var(--ta),rgba(10,16,30,0) calc(var(--ta) + 34deg),',
+    'rgba(10,16,30,0) 236deg,rgba(120,150,210,.07) 270deg,rgba(160,196,240,.14) 312deg,rgba(160,196,240,.15) 360deg);',
+    '-webkit-mask-image:radial-gradient(circle,transparent 34%,#000 72%);mask-image:radial-gradient(circle,transparent 34%,#000 72%)}',
     '#R .jsk-dial svg{position:absolute;inset:0;width:100%;height:100%}',
-    '#R .jsk-tk{stroke:rgba(255,255,255,.3);stroke-width:.9;stroke-linecap:round}',
-    '#R .jsk-tk--m{stroke:rgba(255,255,255,.62);stroke-width:1.3}',
+    '#R .jsk-tk{stroke:rgba(255,255,255,.34);stroke-width:.9;stroke-linecap:round}',
+    '#R .jsk-tk--q{stroke:rgba(255,255,255,.16);stroke-width:.55}',
+    "#R .jsk-num{font:600 7.6px/1 'Archivo',system-ui,sans-serif;fill:rgba(255,255,255,.7);letter-spacing:.2px}",
+    '#R .jsk-num--a{fill:var(--accent-2)}',
     '#R .jsk-ring{fill:none;stroke:rgba(255,255,255,.1);stroke-width:1}',
+    '#R .jsk-ring--in{stroke:rgba(255,255,255,.05);stroke-dasharray:.6 2.4}',
     '#R .jsk-seg{fill:none;stroke:#fff;stroke-width:2;stroke-linecap:butt}',
     '#R .jsk-arc{fill:none;stroke:var(--accent-2);stroke-width:3.6;stroke-linecap:round;filter:drop-shadow(0 0 4px rgba(0,185,242,.85))}',
+    '#R .jsk-end{fill:#fff}',
     "#R .jsk-lb{font:600 6.4px/1 'Archivo',system-ui,sans-serif;letter-spacing:1.5px;fill:rgba(255,255,255,.5)}",
-    /* kazaljka: od ivice natpisa u sredini do prstena, kuglica na prstenu u boji statusa */
+    '#R .jsk-sun{stroke:rgba(255,236,200,.62);stroke-width:1;stroke-linecap:round;fill:none}',
+    '#R .jsk-sun circle{fill:rgba(255,236,200,.16)}',
+    '#R .jsk-moon{fill:rgba(214,228,255,.55)}',
+    '#R .jsk-star{fill:rgba(255,255,255,.7)}',
+    /* kazaljka: kratka, od ivice natpisa u sredini do prstena, kuglica na prstenu u boji statusa (zelena = radi, crvena = ne radi) */
     '#R .jsk-hand{transform-box:view-box;transform-origin:100px 100px;transform:rotate(var(--a,0deg))}',
     '#R .jsk-hand line{stroke:rgba(255,255,255,.92);stroke-width:1.4;stroke-linecap:round}',
-    '#R.jsk--open .jsk-frame{--st:var(--ok);--st-r:rgba(74,222,128,.4);--st-g:rgba(74,222,128,.2)}',
+    '#R.jsk--open .jsk-frame{--st:var(--ok)}',
     '#R .jsk-hand circle{fill:var(--st);stroke:#0A1120;stroke-width:1.2;filter:drop-shadow(0 0 3px var(--st))}',
+    '#R .jsk-hand circle.jsk-ping{fill:none;stroke:var(--st);stroke-width:.9;filter:none;opacity:0;transform-box:fill-box;transform-origin:center}',
+    '#R.jsk--open .jsk-hand circle.jsk-ping{animation:jskPing 2.6s ease-out infinite}',
+    '@keyframes jskPing{0%{transform:scale(.8);opacity:.75}70%,100%{transform:scale(2.4);opacity:0}}',
     '#R .jsk-dial-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:5px}',
     '#R .jsk-dial-c small{font:600 calc(var(--dz) * .04)/1 var(--fd);letter-spacing:2.4px;text-transform:uppercase;color:rgba(255,255,255,.6)}',
     '#R .jsk-dial-c b{font:800 calc(var(--dz) * .13)/1 var(--fd);letter-spacing:-.02em;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}',
     '#R .jsk-dial-c b i{font-style:normal;font-weight:600;font-size:.5em;margin-left:2px;color:rgba(255,255,255,.7)}',
-    /* STATUS (zeleno = radi, crveno = ne radi): staklena pilula sa svjetlom */
-    '#R .jsk-st{display:inline-flex;align-items:center;gap:10px;height:38px;padding:0 16px 0 14px;border-radius:40px;white-space:nowrap;',
-    'background:rgba(10,17,32,.52);-webkit-backdrop-filter:blur(12px) saturate(1.15);backdrop-filter:blur(12px) saturate(1.15);',
-    'box-shadow:4px 4px 12px rgba(0,0,0,.38),-3px -3px 10px rgba(78,104,150,.12),inset 0 0 0 1px var(--st-r),inset 1px 1px 0 rgba(255,255,255,.08)}',
-    '#R .jsk-st i{position:relative;width:9px;height:9px;border-radius:50%;flex-shrink:0;background:var(--st);box-shadow:0 0 0 3px var(--st-g),0 0 12px var(--st)}',
-    '#R.jsk--open .jsk-st i::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:1.5px solid var(--st);opacity:0;animation:jskPing 2.6s ease-out infinite}',
-    '@keyframes jskPing{0%{transform:scale(.7);opacity:.7}70%,100%{transform:scale(2.3);opacity:0}}',
-    '#R .jsk-st b{font:700 11px/1 var(--fd);letter-spacing:2.2px;text-transform:uppercase;color:var(--st)}',
-    '#R .jsk-st span{position:relative;padding-left:11px;font:500 13.5px/1 var(--fb);color:rgba(255,255,255,.86)}',
-    '#R .jsk-st span:empty{display:none}',
-    '#R .jsk-st span::before{content:"";position:absolute;left:0;top:50%;width:1px;height:14px;margin-top:-7px;background:rgba(255,255,255,.22)}',
+    /* status (radi / ne radi) se ne ispisuje, ali ga čitač ekrana čuje */
+    '#R .jsk-sr{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}',
 
     /* tekst desno (cik-cak sa Snowboard parkom iznad), desna ivica poravnata sa mrežom 1240px */
     '#R .jsk-body{position:relative;z-index:2;width:calc(480px + var(--side));max-width:50%;padding:clamp(56px,6vw,90px) var(--side) clamp(56px,6vw,90px) 0}',
@@ -220,39 +229,32 @@
     /* sat: brojčanik se pojavi, podjele i lukovi se iscrtaju, kazaljka prođe dan do sada, pa se upali status */
     '#R.jsk-anim .jsk-dial{opacity:0;transform:scale(.94)}',
     '#R.jsk-anim.jsk-on .jsk-dial{opacity:1;transform:none;transition:opacity .9s ease .55s,transform 1.1s cubic-bezier(.2,.7,.2,1) .55s}',
-    '#R.jsk-anim .jsk-tk,#R.jsk-anim .jsk-lb,#R.jsk-anim .jsk-dial-c{opacity:0}',
-    '#R.jsk-anim.jsk-on .jsk-tk,#R.jsk-anim.jsk-on .jsk-lb,#R.jsk-anim.jsk-on .jsk-dial-c{opacity:1;transition:opacity .6s ease var(--d,.9s)}',
+    '#R.jsk-anim .jsk-tk,#R.jsk-anim .jsk-num,#R.jsk-anim .jsk-lb,#R.jsk-anim .jsk-dial-c,#R.jsk-anim .jsk-sky,#R.jsk-anim .jsk-end,#R.jsk-anim .jsk-dial::before{opacity:0}',
+    '#R.jsk-anim.jsk-on .jsk-tk,#R.jsk-anim.jsk-on .jsk-num,#R.jsk-anim.jsk-on .jsk-lb,#R.jsk-anim.jsk-on .jsk-dial-c,#R.jsk-anim.jsk-on .jsk-sky,#R.jsk-anim.jsk-on .jsk-end,#R.jsk-anim.jsk-on .jsk-dial::before{opacity:1;transition:opacity .6s ease var(--d,.9s)}',
+    '#R.jsk-anim.jsk-on .jsk-dial::before{transition:opacity 1.4s ease 1.2s}',
     '#R.jsk-anim .jsk-seg,#R.jsk-anim .jsk-arc{stroke-dasharray:1;stroke-dashoffset:1}',
     '#R.jsk-anim.jsk-on .jsk-seg,#R.jsk-anim.jsk-on .jsk-arc{stroke-dashoffset:0;transition:stroke-dashoffset .55s cubic-bezier(.4,0,.2,1) var(--d,1s)}',
     '#R.jsk-anim .jsk-hand{opacity:0}',
     '#R.jsk-anim.jsk-on .jsk-hand{opacity:1;transition:opacity .4s ease 1.5s}',
-    '#R.jsk-anim .jsk-st{opacity:0;transform:translateY(-8px)}',
-    '#R.jsk-anim.jsk-on .jsk-st{opacity:1;transform:none;transition:opacity .6s ease 2.9s,transform .8s cubic-bezier(.2,.7,.2,1) 2.9s}',
 
     /* manji laptop: uži tekst, manji sat */
     '@media (max-width:1180px){#R .jsk-frame{--L:min(calc(var(--side) + 500px),53%);--dz:clamp(164px,15vw,190px)}#R .jsk-body{width:calc(430px + var(--side))}',
     '#R .jsk-lead{max-width:42ch}#R .jsk-btn{padding:0 12px!important}#R .jsk-spec,#R .jsk-acts{width:min(100%,430px)}}',
-    /* tablet i telefon: fotografija gore (sat na njenoj donjoj lijevoj strani, status pored), tekst ispod */
+    /* tablet i telefon: fotografija gore (sat gore lijevo na praznom snijegu), tekst ispod */
     '@media (max-width:980px){',
     '#R .jsk-frame{--mh:min(66vw,540px);--dz:clamp(132px,22vw,168px);flex-direction:column;align-items:stretch;justify-content:flex-start;min-height:0}',
     '#R .jsk-bg{position:relative;inset:auto;height:var(--mh);flex-shrink:0;-webkit-mask-image:linear-gradient(180deg,#000 74%,transparent 100%);mask-image:linear-gradient(180deg,#000 74%,transparent 100%)}',
     '#R .jsk-ph{right:0;-webkit-mask-image:none;mask-image:none}',
     '#R .jsk-ph img{object-position:var(--mpos,62% 55%)}',
     '#R .jsk-scrim{background:linear-gradient(0deg,rgba(6,11,22,.62) 0%,rgba(6,11,22,0) 42%),linear-gradient(180deg,rgba(6,11,22,.36) 0%,rgba(6,11,22,0) 22%),linear-gradient(90deg,rgba(6,11,22,.38) 0%,rgba(6,11,22,0) 46%)}',
-    '#R .jsk-clock{left:clamp(16px,4vw,40px);top:calc(var(--mh) - var(--dz) - clamp(14px,3vw,30px));flex-direction:row-reverse;align-items:flex-end;gap:14px}',
-    '#R .jsk-st{margin-bottom:6px}',
+    '#R .jsk-clock{left:clamp(14px,4vw,40px);top:clamp(14px,3vw,30px)}',
     '#R .jsk-body{width:auto;max-width:none;padding:clamp(18px,3vw,30px) clamp(22px,6vw,56px) clamp(32px,5vw,52px)}',
     '#R h2{font-size:clamp(42px,7.4vw,64px)}',
     '#R .jsk-lead{max-width:56ch}',
     '#R .jsk-spec,#R .jsk-acts{width:min(100%,520px)}}',
     '@media (max-width:760px){',
     '#R .jsk-frame{--mh:min(112vw,480px);--dz:clamp(118px,34vw,138px);border-radius:24px}',
-    '#R .jsk-clock{left:14px;top:14px;gap:10px;align-items:center}',
-    '#R .jsk-st{flex-direction:column;align-items:flex-start;justify-content:center;gap:6px;height:auto;padding:10px 14px 10px 30px;border-radius:18px;margin-bottom:0}',
-    '#R .jsk-st i{position:absolute;left:13px;top:13px;width:8px;height:8px}',
-    '#R .jsk-st b{font-size:10.5px;letter-spacing:2px}',
-    '#R .jsk-st span{padding-left:0;font-size:12.5px;line-height:1.2;white-space:normal;max-width:150px}',
-    '#R .jsk-st span::before{display:none}',
+    '#R .jsk-clock{left:14px;top:14px}',
     '#R .jsk-body{padding:12px 20px 30px}',
     '#R .jsk-eye{gap:10px;margin-bottom:16px;font-size:10px;letter-spacing:3px}',
     '#R .jsk-eye::before{width:22px}',
@@ -266,7 +268,7 @@
     '#R .jsk-btn{height:42px;padding:0 12px!important;font-size:13px!important}',
     '#R .jsk-l{display:none}',
     '#R .jsk-s{display:inline}}',
-    '@media (max-width:360px){#R .jsk-acts{grid-template-columns:1fr}#R .jsk-st span{max-width:120px}}',
+    '@media (max-width:360px){#R .jsk-acts{grid-template-columns:1fr}}',
     '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}',
 
     /* fotografije preko cijelog ekrana (iste kao u ostalim blokovima) */
@@ -366,11 +368,10 @@
   // rečenice teksta; tačka u broju (3.000) ne prekida rečenicu
   function sentences(p) { return (clean(p).match(/(?:[^.!?]|\.(?=\d))+(?:[.!?]+|$)/g) || []).map(clean).filter(Boolean); }
 
-  // podaci za spisak: staza (dužina × širina), lokacija (broj staze · mjesto), sidro, sanke (najam na ski kasi)
+  // podaci za spisak: dužina staze, lokacija (broj staze · mjesto), lift (sidro), sanke (najam na ski kasi)
   function factsOf(f) {
     var r = [];
-    if (f.len && f.wid) r.push({ l: T.fSize, v: f.len + ' m × ' + f.wid + ' m' });
-    else if (f.len) r.push({ l: T.fLen, v: f.len + ' m' });
+    if (f.len) r.push({ l: T.fLen, v: f.len + ' m' });
     var where = [f.slope ? T.slope + ' ' + f.slope : '', f.place || ''].filter(Boolean).join(' · ');
     if (where) r.push({ l: T.fWhere, v: where });
     if (f.lift) r.push({ l: T.fLift, v: T.lift(f.lift) });
@@ -387,16 +388,33 @@
     return 'M' + f1(p0[0]) + ' ' + f1(p0[1]) + ' A' + r + ' ' + r + ' 0 ' + big + ' ' + (ccw ? 0 : 1) + ' ' + f1(p1[0]) + ' ' + f1(p1[1]);
   }
   function dialSVG() {
-    var o = '', R = 81, h, a, p, q, i;
-    // podjele: svaki sat, duže na 0, 6, 12 i 18 h
-    for (h = 0; h < 24; h++) {
-      a = h * 15; var m = h % 6 === 0;
-      p = pt(a, m ? 86.5 : 88.5); q = pt(a, 93);
-      o += '<line class="jsk-tk' + (m ? ' jsk-tk--m' : '') + '" x1="' + f1(p[0]) + '" y1="' + f1(p[1]) + '" x2="' + f1(q[0]) + '" y2="' + f1(q[1]) + '" style="--d:' + (.75 + h * .02).toFixed(2) + 's"/>';
+    var o = '', R = 81, h, a, p, q, i, f = DATA.from, t = DATA.to;
+    // četvrtine sata (sitno), sati (crtice) i brojevi 6, 12, 18 i 24 umjesto crtica
+    for (i = 0; i < 96; i++) {
+      if (i % 4 === 0) continue;
+      a = i * 3.75; p = pt(a, 91.6); q = pt(a, 93.6);
+      o += '<line class="jsk-tk jsk-tk--q" x1="' + f1(p[0]) + '" y1="' + f1(p[1]) + '" x2="' + f1(q[0]) + '" y2="' + f1(q[1]) + '" style="--d:.8s"/>';
     }
-    o += '<circle class="jsk-ring" cx="100" cy="100" r="' + R + '"/>';
+    for (h = 0; h < 24; h++) {
+      a = (h - 12) * 15;
+      if (h % 6 === 0) {
+        p = pt(a, 88.6);
+        o += '<text class="jsk-num' + (h * 60 === t || h * 60 === f ? ' jsk-num--a' : '') + '" x="' + f1(p[0]) + '" y="' + f1(p[1]) + '" text-anchor="middle" dominant-baseline="central" style="--d:' + (.8 + h * .02).toFixed(2) + 's">' + (h || 24) + '</text>';
+        continue;
+      }
+      p = pt(a, 88.4); q = pt(a, 93.6);
+      o += '<line class="jsk-tk" x1="' + f1(p[0]) + '" y1="' + f1(p[1]) + '" x2="' + f1(q[0]) + '" y2="' + f1(q[1]) + '" style="--d:' + (.75 + h * .02).toFixed(2) + 's"/>';
+    }
+    o += '<circle class="jsk-ring" cx="100" cy="100" r="' + R + '"/><circle class="jsk-ring jsk-ring--in" cx="100" cy="100" r="62"/>';
+    // dan i noć u brojčaniku: sunce u podne (gore), mjesec i zvijezde oko ponoći (dolje)
+    var S2 = '';
+    for (i = 0; i < 8; i++) { p = pt(i * 45, 5.4); q = pt(i * 45, 7.6); S2 += '<line x1="' + f1(p[0] - 100) + '" y1="' + f1(p[1] - 100) + '" x2="' + f1(q[0] - 100) + '" y2="' + f1(q[1] - 100) + '"/>'; }
+    o += '<g class="jsk-sky jsk-sun" transform="translate(100 47)" style="--d:1.15s"><circle r="3.2"/>' + S2 + '</g>';
+    o += '<path class="jsk-sky jsk-moon" d="M104.2 146.2 A6 6 0 1 1 98.6 154.6 A4.6 4.6 0 1 0 104.2 146.2 Z" style="--d:1.2s"/>';
+    [[83, 147, .75], [119, 141, .55], [113, 161, .8], [89, 163, .5], [72, 134, .6], [130, 154, .5]].forEach(function (z, k) {
+      o += '<circle class="jsk-sky jsk-star" cx="' + z[0] + '" cy="' + z[1] + '" r="' + z[2] + '" style="--d:' + (1.25 + k * .07).toFixed(2) + 's"/>';
+    });
     // dnevno skijanje (ulazi iz blijedog do početka sankanja) i noćno skijanje (od kraja sankanja, nestaje u noć)
-    var f = DATA.from, t = DATA.to;
     for (i = 0; i < 7; i++) {
       var s0 = f - (7 - i) * 60, s1 = s0 + 60;
       o += '<path class="jsk-seg" pathLength="1" d="' + arcD(ang(s0), ang(s1) - .6, R) + '" style="opacity:' + (.14 + i * .07).toFixed(2) + ';--d:' + (1 + i * .06).toFixed(2) + 's"/>';
@@ -411,11 +429,14 @@
     o += '<path id="jsk-pn" d="' + arcD(ang(t + 150) + 40, ang(t + 150) - 40, 74, true) + '" fill="none"/>';
     o += '<text class="jsk-lb" style="--d:1.3s"><textPath href="#jsk-pd" xlink:href="#jsk-pd" startOffset="50%" text-anchor="middle">' + esc(T.day) + '</textPath></text>';
     o += '<text class="jsk-lb" style="--d:1.5s"><textPath href="#jsk-pn" xlink:href="#jsk-pn" startOffset="50%" text-anchor="middle">' + esc(T.night) + '</textPath></text>';
-    // sankanje: cyan luk
+    // sankanje: cyan luk sa tačkama na početku i kraju
     o += '<path class="jsk-arc" pathLength="1" d="' + arcD(ang(f), ang(t), R) + '" style="--d:1.25s"/>';
-    // kazaljka (sadašnje vrijeme) sa kuglicom u boji statusa
-    p = pt(0, 37); q = pt(0, 75); var b = pt(0, R);
-    o += '<g class="jsk-hand"><line x1="' + f1(p[0]) + '" y1="' + f1(p[1]) + '" x2="' + f1(q[0]) + '" y2="' + f1(q[1]) + '"/><circle cx="' + f1(b[0]) + '" cy="' + f1(b[1]) + '" r="3.6"/></g>';
+    p = pt(ang(f), R); q = pt(ang(t), R);
+    o += '<circle class="jsk-end" cx="' + f1(p[0]) + '" cy="' + f1(p[1]) + '" r="1.1" style="--d:1.75s"/><circle class="jsk-end" cx="' + f1(q[0]) + '" cy="' + f1(q[1]) + '" r="1.1" style="--d:1.8s"/>';
+    // kazaljka (sadašnje vrijeme) sa kuglicom u boji statusa; kad radi, oko kuglice se tiho širi krug
+    p = pt(0, 51); q = pt(0, 76); var b = pt(0, R);   // počinje van natpisa u sredini (i kod 6 i 18 h)
+    o += '<g class="jsk-hand"><line x1="' + f1(p[0]) + '" y1="' + f1(p[1]) + '" x2="' + f1(q[0]) + '" y2="' + f1(q[1]) + '"/>' +
+      '<circle class="jsk-ping" cx="' + f1(b[0]) + '" cy="' + f1(b[1]) + '" r="3.6"/><circle class="jsk-bead" cx="' + f1(b[0]) + '" cy="' + f1(b[1]) + '" r="3.6"/></g>';
     return '<svg viewBox="0 0 200 200" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false">' + o + '</svg>';
   }
   function dialHTML() {
@@ -437,10 +458,7 @@
       '<div class="jsk-bg" data-jsk="galerija" role="presentation"><div class="jsk-ph">' +
         '<img src="' + esc(IMG.main) + '" srcset="' + esc(IMG.mainS) + ' 1000w, ' + esc(IMG.main) + ' 2000w" sizes="(max-width: 980px) 100vw, 60vw" alt="' + esc(T.photos[0]) + '" decoding="async">' +
       '</div><span class="jsk-tint"></span><span class="jsk-scrim"></span></div>' +
-      '<div class="jsk-clock">' +
-        '<div class="jsk-st" role="status" aria-live="polite"><i aria-hidden="true"></i><b></b><span></span></div>' +
-        '<div class="jsk-dial" role="img"></div>' +
-      '</div>' +
+      '<div class="jsk-clock"><div class="jsk-dial" role="img"></div><span class="jsk-sr" role="status" aria-live="polite"></span></div>' +
       '<div class="jsk-body">' +
         '<div class="jsk-eye jsk-up" style="--d:.26s"></div>' +
         '<h2 id="jsk-h"><span class="jsk-up" style="--d:.36s">' + esc(T.h[0]) + '</span><span class="jsk-o jsk-up" style="--d:.46s">' + esc(T.h[1]) + '</span></h2>' +
@@ -455,7 +473,7 @@
     '</div></section>';
   function q(s) { return root.querySelector(s); }
   function qa(s) { return [].slice.call(root.querySelectorAll(s)); }
-  var frame = q('.jsk-frame'), dial = q('.jsk-dial'), stEl = q('.jsk-st');
+  var frame = q('.jsk-frame'), dial = q('.jsk-dial'), stEl = q('.jsk-sr');
 
   // tekst i podaci (ugrađeni, pa iz WordPressa): mijenja se samo ono što je drugačije
   var drawn = {};
@@ -470,6 +488,8 @@
     if (drawn.dial !== key) {
       var had = drawn.dial; drawn.dial = key;
       dial.innerHTML = dialHTML();
+      dial.style.setProperty('--fa', ((ang(DATA.from) % 360 + 360) % 360).toFixed(1) + 'deg');
+      dial.style.setProperty('--ta', ((ang(DATA.to) % 360 + 360) % 360).toFixed(1) + 'deg');
       dial.setAttribute('aria-label', T.clockAria(hm(DATA.from), hm(DATA.to)));
       if (had) tick(true);
     }
@@ -530,9 +550,7 @@
     var k = r.open + '|' + r.b + '|' + r.s;
     if (k === lastSt && !force) return;
     lastSt = k;
-    stEl.classList.toggle('is-open', r.open);
-    stEl.querySelector('b').textContent = r.b;
-    stEl.querySelector('span').textContent = r.s;
+    stEl.textContent = T.aria + ': ' + r.b + (r.s ? ' · ' + r.s : '');
     root.classList.toggle('jsk--open', r.open);
   }
   // ulazak: kazaljka kreće od jutra (sat prije dnevnog skijanja) i prođe dan do trenutnog vremena

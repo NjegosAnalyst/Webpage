@@ -45,7 +45,7 @@ const P = [
   'Prije nego krenete u najluđi zimski provod napominjemo vas da svoje sanke ostavite kući, jer se za ovu aktivnosti koriste sanke koje su opremljene posebnim adapterima za sidro Poljice, a koje je potrebno da unajmite na ski kasi Poljice. Ista se nalazi u neposrednoj blizini istoimenog sidra.',
 ];
 const LEAD = 'Ukoliko sada imate mališane, ili ste se i sami uželjeli tog bezbrižnog osjećaja od prije 20, 30 ili više godina, vrijeme je da počnete da se radujete, jer je na Jahorini izgrađeno prvo Sankalište!';
-const SPEC = 'Dužina i širina=600 m × 5 m|Lokacija=Staza 7 · Poljice|Na vrh=Sidro Poljice|Sanke=Najam na ski kasi PoljiceSvoje ostavite kod kuće: za sidro trebaju sanke sa adapterom';
+const SPEC = 'Dužina=600 m|Lokacija=Staza 7 · Poljice|Lift=Sidro Poljice|Sanke=Najam na ski kasi PoljiceSvoje ostavite kod kuće: za sidro trebaju sanke sa adapterom';
 const PRICES = SITE + '/cjenovnik-zima/#sankaliste';
 const SANK = `<h3>Sankalište</h3><p>${P[0]}</p><p>${P[1]}</p><p>${P[2]}</p><p>${P[3]}</p>
 <p>Cijene karata za Sankalište pronađite <a href="${PRICES}">OVDJE</a>!</p>
@@ -131,9 +131,10 @@ async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900
   }
   return { ctx, p, errors, rest };
 }
+// status se ne ispisuje (samo boja kuglice na kazaljci); tekst je za čitač ekrana: "Sankalište: Radi sada · do 18:00"
 const st = (p) => p.evaluate(() => {
-  const r = document.getElementById('jsk-sankaliste'), s = r.querySelector('.jsk-st');
-  return { open: r.classList.contains('jsk--open'), b: s.querySelector('b').textContent, s: s.querySelector('span').textContent };
+  const r = document.getElementById('jsk-sankaliste'), t = r.querySelector('.jsk-sr').textContent.replace(/^[^:]+:\s*/, '').split(' · ');
+  return { open: r.classList.contains('jsk--open'), b: t[0], s: t[1] || '', bead: getComputedStyle(r.querySelector('.jsk-bead')).fill };
 });
 const info = (p) => p.evaluate(() => {
   const r = document.getElementById('jsk-sankaliste'), q = (s) => r.querySelector(s);
@@ -172,9 +173,11 @@ const rect = (p, s) => p.evaluate((s) => { const r = document.querySelector(s).g
   check('bez vodoravnog skrola', i.over <= 0, i.over);
   check('schema.org radno vrijeme', /"opens":"16:00","closes":"18:00"/.test(i.ld));
   let s = await st(o.p);
-  check('status zelen: Radi sada · do 18:00', s.open && s.b === 'Radi sada' && s.s === 'do 18:00', s);
-  const st1 = await o.p.evaluate(() => getComputedStyle(document.querySelector('#jsk-sankaliste .jsk-st i')).backgroundColor);
-  check('svjetlo statusa zeleno', st1 === 'rgb(74, 222, 128)', st1);
+  check('status: Radi sada · do 18:00 (čitač ekrana)', s.open && s.b === 'Radi sada' && s.s === 'do 18:00', s);
+  check('kuglica kazaljke zelena', s.bead === 'rgb(74, 222, 128)', s.bead);
+  check('nema natpisa statusa iznad sata', await o.p.evaluate(() => { const e = document.querySelector('#jsk-sankaliste .jsk-sr'); return !document.querySelector('#jsk-sankaliste .jsk-st') && e.offsetWidth <= 1 && e.offsetHeight <= 1; }));
+  const dd = await o.p.evaluate(() => { const d = document.querySelector('#jsk-sankaliste .jsk-dial'); return { num: [...d.querySelectorAll('.jsk-num')].map((n) => n.textContent).join(','), q: d.querySelectorAll('.jsk-tk--q').length, sun: !!d.querySelector('.jsk-sun'), moon: !!d.querySelector('.jsk-moon'), stars: d.querySelectorAll('.jsk-star').length, ends: d.querySelectorAll('.jsk-end').length, fa: d.style.getPropertyValue('--fa'), ta: d.style.getPropertyValue('--ta') }; });
+  check('detalji sata: brojevi, četvrtine, sunce, mjesec, zvijezde, krajevi luka', dd.num === '24,6,12,18' && dd.q === 72 && dd.sun && dd.moon && dd.stars >= 5 && dd.ends === 2 && dd.fa === '60.0deg' && dd.ta === '90.0deg', dd);
   const fr = await rect(o.p, '#jsk-sankaliste .jsk-frame'), bd = await rect(o.p, '#jsk-sankaliste .jsk-body'), dl = await rect(o.p, '#jsk-sankaliste .jsk-dial');
   check('tekst desno, sat lijevo', bd.x > fr.x + fr.w * .45 && dl.r < bd.x, { bd: bd.x, dl: dl.r });
   check('desna ivica teksta na mreži 1240', Math.abs((fr.r - (await rect(o.p, '#jsk-sankaliste h2')).r) - 0) < 400);
@@ -192,8 +195,7 @@ const rect = (p, s) => p.evaluate((s) => { const r = document.querySelector(s).g
   check('18:00 → Ne radi · otvara se sutra u 16:00', !s.open && s.b === 'Ne radi' && s.s === 'otvara se sutra u 16:00', s);
   i = await info(o.p);
   check('kazaljka ide naprijed (90°)', parseFloat(i.hand) === 90, i.hand);
-  const st2 = await o.p.evaluate(() => getComputedStyle(document.querySelector('#jsk-sankaliste .jsk-st i')).backgroundColor);
-  check('svjetlo statusa crveno', st2 === 'rgb(255, 92, 92)', st2);
+  check('kuglica kazaljke crvena', s.bead === 'rgb(255, 92, 92)', s.bead);
   await o.p.evaluate(() => { const r = document.getElementById('jsk-sankaliste'); r.setAttribute('data-sat', '2026-12-21 09:15'); r.__jskTick(); });
   s = await st(o.p);
   check('ujutru → otvara se u 16:00', s.s === 'otvara se u 16:00', s);
@@ -261,7 +263,7 @@ const rect = (p, s) => p.evaluate((s) => { const r = document.querySelector(s).g
   i = await info(o.p); s = await st(o.p);
   check('novo vrijeme 15–17 na satu', i.dial === '15–17h', i.dial);
   check('17:30 poslije novog vremena → ne radi', !s.open && s.s === 'otvara se sutra u 15:00', s);
-  check('novi podaci (bez sidra na stranici → bez reda)', i.spec === 'Dužina i širina=450 m × 4 m|Lokacija=Staza 3 · Rajska|Sanke=Najam na ski kasi Rajska', i.spec);
+  check('novi podaci (bez sidra na stranici → bez reda Lift)', i.spec === 'Dužina=450 m|Lokacija=Staza 3 · Rajska|Sanke=Najam na ski kasi Rajska', i.spec);
   check('admin vidi: nema linka za cijene', /link za cijene/.test(i.why), i.why);
   check('bez videa nema linka za video', !i.video);
   await o.p.locator('#jsk-sankaliste .jsk-frame').screenshot({ path: path.join(OUT, '04-novo-admin.png') });
@@ -289,7 +291,7 @@ const rect = (p, s) => p.evaluate((s) => { const r = document.querySelector(s).g
   check('EN nadnaslov', i.eye === 'Sledding track', i.eye);
   check('EN naslov', i.h2 === 'Sledding' + 'like old times', i.h2);
   check('EN uvod', /^If you have little ones/.test(i.lead), i.lead);
-  check('EN podaci', /Length × width=600 m × 5 m/.test(i.spec) && /Slope 7 · Poljice/.test(i.spec) && /Poljice T-bar/.test(i.spec) && /Rent at the Poljice ski desk/.test(i.spec), i.spec);
+  check('EN podaci', /Length=600 m\|/.test(i.spec) && /Slope 7 · Poljice/.test(i.spec) && /Lift=Poljice T-bar/.test(i.spec) && /Rent at the Poljice ski desk/.test(i.spec), i.spec);
   check('EN vrijeme (4 pm to 6 pm)', i.dial === '16–18h', i.dial);
   check('EN status', !s.open && s.b === 'Closed' && s.s === 'opens tomorrow at 16:00', s);
   check('EN stranica /en/', i.more === SITE + '/en/sankaliste/', i.more);
@@ -305,7 +307,7 @@ const rect = (p, s) => p.evaluate((s) => { const r = document.querySelector(s).g
     check(name + ': bez vodoravnog skrola', i.over <= 0, i.over);
     check(name + ': sat i status u kadru', c.x >= f.x && c.r <= f.r + .5 && c.y >= f.y, { c, f: [f.x, f.r] });
     check(name + ': sat ne prekriva tekst', vw <= 980 ? c.b <= b.y + 30 : c.r < b.x + 10, { c: [c.r, c.b], b: [b.x, b.y] });
-    if (vw <= 760) check(name + ': sat gore lijevo na fotografiji', c.y - f.y < 20 && c.x - f.x < 20, [c.x - f.x, c.y - f.y]);
+    if (vw <= 980) check(name + ': sat gore lijevo na fotografiji', c.y - f.y < 34 && c.x - f.x < 44, [c.x - f.x, c.y - f.y]);
     check(name + ': dugmad iste veličine', btns.length === 2 && btns[0][0] === btns[1][0] && btns[0][1] === btns[1][1], btns);
     await o.p.locator('#jsk-sankaliste .jsk-frame').screenshot({ path: path.join(OUT, name + '.png') });
     check(name + ': bez grešaka', o.errors.length === 0, o.errors);
@@ -321,7 +323,7 @@ const rect = (p, s) => p.evaluate((s) => { const r = document.querySelector(s).g
   o = await open(browser, { reduced: true, ga: 'gtm', attrs: 'data-sat="2026-12-20 16:45"' });
   const vis = await o.p.evaluate(() => {
     const r = document.getElementById('jsk-sankaliste');
-    return { anim: r.classList.contains('jsk-anim'), dial: getComputedStyle(r.querySelector('.jsk-dial')).opacity, st: getComputedStyle(r.querySelector('.jsk-st')).opacity, hand: getComputedStyle(r.querySelector('.jsk-hand')).getPropertyValue('--a').trim() };
+    return { anim: r.classList.contains('jsk-anim'), dial: getComputedStyle(r.querySelector('.jsk-dial')).opacity, st: getComputedStyle(r.querySelector('.jsk-sun')).opacity, hand: getComputedStyle(r.querySelector('.jsk-hand')).getPropertyValue('--a').trim() };
   });
   check('smanjeno kretanje: sve odmah vidljivo', !vis.anim && vis.dial === '1' && vis.st === '1' && parseFloat(vis.hand) === 71.25, vis);
   await o.p.click('#jsk-sankaliste a[data-jsk="cijene"]');

@@ -4,8 +4,8 @@
 Snowboard park i Ski bike je iznad, kao na početnoj, da se vide prelaz i cik-cak. Pravi pregled/index.html + pregled/slike/
 (iste putanje kao pored park.js i sankaliste.js na jsDelivr-u, pa oba bloka koriste svoje podrazumijevane fotografije).
 WordPress se iz pregleda ne može pitati, pa pregled pokazuje ugrađeni tekst (tekst stranice Sankalište od 10. 10. 2026);
-video sa stranice se vidi tek na sajtu. Ispod sekcije su dugmad za probu statusa (stvarno vrijeme, 16:30, 19:00, danas
-ne radi) i ponovni ulazak.
+video sa stranice se vidi tek na sajtu. Ispod sekcije su dugmad za probu sata (stvarno vrijeme, 16:30 = radi, 19:00 = ne radi)
+i ponovni ulazak.
 Pokretanje: python3 napravi-pregled.py → objavi pregled/index.html kao artifact, sa fajlovima slike/*.webp.
 Izlaz (index.html, slike/) se ne čuva u gitu — uvijek se pravi iz park.js i sankaliste.js.
 """
@@ -42,12 +42,11 @@ body{margin:0;min-height:100%}
 <div id="jsb-park"></div>
 <div id="jsk-sankaliste"></div>
 <div class="pv-tools">
-  <span class="pv-lbl">Proba statusa</span>
-  <div class="pv-row" role="group" aria-label="Proba statusa">
+  <span class="pv-lbl">Proba sata · kuglica: zelena = radi, crvena = ne radi</span>
+  <div class="pv-row" role="group" aria-label="Proba sata">
     <button type="button" data-sat="" aria-pressed="true">Stvarno vrijeme</button>
     <button type="button" data-sat="16:30" aria-pressed="false">16:30 · radi</button>
     <button type="button" data-sat="19:00" aria-pressed="false">19:00 · ne radi</button>
-    <button type="button" data-sat="16:30" data-st="ne-radi" aria-pressed="false">Danas ne radi</button>
   </div>
   <div class="pv-note" id="pv-note" aria-live="polite"></div>
   <button type="button" id="pv-replay">&#8635;&nbsp; Ponovi ulazak sekcije</button>
@@ -59,7 +58,7 @@ __PARK__
 __SANK__
 </script>
 <script>
-// samo u pregledu: proba statusa, ponovi ulazak (stranica se učita ponovo i skroluje do sekcije); linkovi se ne otvaraju
+// samo u pregledu: proba sata, ponovi ulazak (stranica se učita ponovo i skroluje do sekcije); linkovi se ne otvaraju
 (function () {
   var r = document.getElementById('jsk-sankaliste');
   try {
