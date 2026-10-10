@@ -161,7 +161,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - **Otvoreno pitati korisnika:** da li stranica ski bike-a ima dalje cijenu/rezervaciju (screenshot je odsječen ispod „Zašto odabrati“); tačni slugovi obje stranice (ski bike se sada nalazi pretragom „bike“); veća fotografija parka (sada 640 px, na širokim ekranima je meka), po mogućnosti pejzažna sa skokom/railom; tekst stranice parka je zastario (sezona 22/23, buduće vrijeme „postaće“) — predložiti osvježenje u WP-u (blok se sam ažurira); da li prave jednu zajedničku Elementor stranicu (onda oba `data-` na isti slug i dorada čitanja po naslovima).
 - **Sljedeće:** korisnik postavlja red (@a664ff3) u HTML widget na HERO TEST ispod Ski depoa (Elementor kontejner padding/margin/gap 0) → screenshot računar + telefon. Ako admin vidi narandžastu poruku (stranica nije pronađena), upisati tačan slug u `data-park` / `data-bike` (`PARK`/`BIKE` u `napravi-widget.py`). U GA4 po želji označiti `park_prebaci` za praćenje interakcije.
 
-### 8. Sankalište — v1.2 „sat sankališta“, PREGLED čeka korisnikov komentar (10. 10. 2026)
+### 8. Sankalište — v1.2 „sat sankališta“, korisnik tražio kod (10. 10. 2026): red za widget @72ad9e1
 - Kod: `jahorina-home-sections/sankaliste/sankaliste.js` (prefiks `jsk-`, `#jsk-sankaliste`; fotografije preko ekrana `#jsk-lb`; video `#jsk-vid`; schema.org `#jsk-ld`), test `test-sankaliste.js` (Playwright, lažni WP REST odgovori, Snowboard park iznad; 90+ provjera), pregled `pregled/napravi-pregled.py` (park iznad + dugmad za probu statusa) → artifact https://claude.ai/artifact/7PyUFr2Tv8cPi3L1pQk6vC, red za widget `elementor-html-widget.html` iz `napravi-widget.py` (`data-stranica="sankaliste"`; posljednji: **@72ad9e1**; prije @a9eeb4f, @25c3f0d).
 - **Od korisnika:** screenshot WP stranice „Sankalište“ (4 pasusa: nostalgija i mališani, „na Jahorini izgrađeno prvo Sankalište“; **600 m dužine, 5 m širine, Poljice, staza 7, svakog dana od 16h do 18h**; između dnevnog i noćnog skijanja sidro Poljice vozi samo sankaše; svoje sanke ostaviti kući, sanke sa adapterom za sidro se unajme na **ski kasi Poljice**; „Cijene karata … OVDJE“; YouTube video „Jahorina - Staza za sankanje“), 4 fotografije (roditelj i dijete na drvenim sankama u sumrak 2000×1334, sankašica noću pod rasvjetom 2000×1334 — ista i u 1600, par u osvijetljenoj šumi 1600×1066). **Tražio:** „taster zeleno crveno da se vidi kad radi i ne radi, kao ski info“.
 - **v1 → v1.1 (korisnik):** „dužina i širina — neka piše samo dužina“, „Na vrh → Lift“, „iznad ilustracije neka ne piše ovo danas ne radi i taj taster“, „malo više detalja na ilustraciji sata“ → pilula statusa uklonjena (status je samo boja kuglice na kazaljci + tekst za čitač ekrana `.jsk-sr`); sat dobio brojeve 6/12/18/24 (18 cyan), četvrtine sata, sunce u podne, mjesec i zvijezde oko ponoći, blagi sumrak (cyan) u dijelu 16–18 h na licu brojčanika (`--fa`/`--ta`), unutrašnji tačkasti krug, tačke na krajevima luka, kraću kazaljku (r 51–76) i tihi krug oko zelene kuglice kad radi.
@@ -175,9 +175,17 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - Podešavanja na `<div id="jsk-sankaliste">`: `data-stranica`, `data-sezona="15.12-31.3"` (van datuma „Ne radi · van sezone“; sada prazno = bez provjere sezone, jer je blok na Početna zima), `data-status="ne-radi"` (ručno), `data-cijene`, `data-video`, `data-sat="2026-12-20 16:30"` (samo proba).
 - GA: `sankaliste_klik` (`cilj`: cijene | stranica), `sankaliste_galerija`, `sankaliste_video`. schema.org: `SportsActivityLocation` sa radnim vremenom (svaki dan 16:00–18:00 iz stranice) u `SkiResort`.
 - **Otvoreno pitati korisnika:** tačan slug stranice (sada `sankaliste` + pretraga); datumi sezone za `data-sezona` (ili ostaje bez provjere); da li status treba čitati i iz dnevnog izvještaja / ski-info stranice (screenshot `/ski-info/`); kuda vodi „OVDJE“ (link cijena); veći original fotografije u šumi (1600 px).
-- **Sljedeće:** korisnik komentariše pregled → doterivanje → red (@72ad9e1 ili noviji) u HTML widget na HERO TEST ispod Snowboard parka (Elementor kontejner padding/margin/gap 0) → screenshot računar + telefon.
+- **Sljedeće:** korisnik postavlja red (@72ad9e1, dat korisniku 10. 10. 2026) u HTML widget na HERO TEST ispod Snowboard parka (Elementor kontejner padding/margin/gap 0) → screenshot računar + telefon. Ako admin vidi narandžastu poruku (stranica nije pronađena), upisati tačan slug (`SLUG` u `napravi-widget.py`). Kad stignu datumi sezone: `SEZONA` u `napravi-widget.py` → novi red.
 
-### Sljedeće sekcije
+### Početna: blokovi sa ponudama ZAVRŠENI (korisnik 10. 10. 2026)
+- Korisnik: „što se tiče početne strane i ponude koje imamo, završio sam sa tim slajdovima“. Gotovi blokovi ponuda: vijesti, ratrak, suvenirnica, Olimpijski bar, VIP gondola, Ski depo, Snowboard park i Ski bike, Sankalište (redovi za widget su u `<sekcija>/elementor-html-widget.html`). Nove ponude se ne prave dok korisnik ne kaže.
+
+### 9. Dodaci — SLJEDEĆE, novi chat (korisnik 10. 10. 2026: „počni novi čat Dodaci“)
+- Šta spada u „Dodatke“ korisnik još nije rekao. **Na početku novog chata pitati korisnika** šta su Dodaci (npr. manji dijelovi početne ili sajta van blokova ponuda: Danas na Jahorini, Događaji, Planina u brojkama, Pratite Jahorinu, ili nešto drugo) i tražiti screenshotove i izvore podataka (WordPress, kategorija, dodatak). Ne pretpostavljati.
+- Pravila ostaju: TEMA.md (tema ista, detalji različiti; premium; WordPress kad sadržaj postoji; prefiks klasa po bloku, zauzeti: `jv-`, `jr-`, `jsu-`, `jb-`, `jg-`, `jsd-`, `jsb-`, `jsk-`, `jh-`, `jf-`; ne `js-`). Obrazac za kod: `sankaliste/sankaliste.js` (najnoviji) i `park/park.js`; test `sankaliste/test-sankaliste.js`; pregled `sankaliste/pregled/napravi-pregled.py`; red `sankaliste/napravi-widget.py`.
+- Postupak isti: prvo pregled (artifact), pa doterivanje po komentarima, pa red za Elementor i HERO TEST.
+
+### Ostale moguće sekcije (iz prvobitnog prijedloga)
 - Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.
 - Događaji: na sajtu je **The Events Calendar** (Elementor widget "Events Loop", sada „Trenutno nema događaja...“), pa podatke čitati iz njega (REST `/wp-json/tribe/events/v1/events`), ne ručno.
 
@@ -188,7 +196,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 4. Prvo pregled (artifact samo sa sekcijom), pa doterivanje po korisnikovim komentarima, pa tek onda red za Elementor i postavljanje na HERO TEST.
 
 ## Grane
-- Najnoviji rad (vijesti, ratrak, suvenirnica, bar, VIP gondola, Ski depo, Snowboard park i Ski bike, Sankalište, ovaj fajl): grana **`claude/bold-davinci-8csajm`** (nastala iz `claude/nice-albattani-cg9x8f` + Sankalište). Nova sesija čita odavde i nastavlja na svojoj grani napravljenoj od ove.
+- Najnoviji rad (vijesti, ratrak, suvenirnica, bar, VIP gondola, Ski depo, Snowboard park i Ski bike, Sankalište, ovaj fajl; sljedeće: Dodaci): grana **`claude/bold-davinci-8csajm`** (nastala iz `claude/nice-albattani-cg9x8f` + Sankalište). Nova sesija čita odavde i nastavlja na svojoj grani napravljenoj od ove.
 - Redovi za Elementor pokazuju na tačan commit na jsDelivr-u, pa rade bez obzira na granu.
 
 ## Linkovi
