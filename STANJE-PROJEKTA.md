@@ -20,7 +20,9 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 ## Završeno i na sajtu
 1. **Hero** — `jahorina-hero-v2/`
    - Prototip: `index.html`; build: `python3 build-slider-revolution.py` → `slider-revolution-spremno/` (SR) i `slider-revolution-EN-spremno/` (EN), svaki: `1-html.html` (HTML sloj), `2-css.css` (Custom CSS), `3-js.js` (Custom JS SR6).
-   - SR moduli: **Jahorina Hero 2027** i **Jahorina Hero 2027 EN**. Slike u Mediji: `/wp-content/uploads/2026/09/`.
+   - SR moduli: **Jahorina Hero 2027** i **Jahorina Hero 2027 EN**. Slike (od 12. 10.): `jahorina-hero-desktop.webp` (150 KB) i `jahorina-hero-mobil.webp` (98 KB) u `/wp-content/uploads/2026/10/` (putanja bez domena; ako su otpremljene u drugi mjesec, promijeni `MEDIA` u `build-slider-revolution.py`).
+   - Brzina: fontovi samo Archivo 600/700/800; platno svjetala 1× na telefonu (~22 fps); bez blur ulaska na telefonu. WPCode JS snippet „Jahorina brzi start“ (Site Wide Header) = `wordpress-ubrzanje.js` (preload slike samo na početnoj).
+   - Telefon: brzi linkovi su **vertikalna traka** uz desnu ivicu, naslov dolje lijevo.
    - Efekti: ulazak naslova, ledeno iscrtavanje "Jahorine", tačka na "i" skače, živi reflektori, **zvijezde na nebu** (posljednje dodato; korisnik treba da zamijeni `3-js.js` u oba modula ako već nije).
    - Zamjena starog slajdera na početnoj ovim modulima: korisnik to radi (Betheme Page Options → Slider ili blok u stranici).
 2. **Footer** — `jahorina-header-footer/wordpress/1-footer-snippet.html` (WPCode HTML snippet, Site Wide Footer). Radi.
