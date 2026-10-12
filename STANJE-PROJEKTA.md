@@ -199,6 +199,12 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - **Brojke ručno u redu (korisnik 12. 10. 2026):** `BROJKE` u `napravi-widget.py` → `data-km="54" data-zicare="18" data-nocne="10" data-sankanje="600"`; WordPress se ne pita. Promjena broja = samo novi red (brojke.js isti).
 - **Sljedeće:** korisnik postavlja red na HERO TEST ispod Sankališta → doterivanje → red na HERO TEST ispod Sankališta (Elementor kontejner padding/margin/gap 0).
 
+### 9b. „Kupi ski pass“ na telefonu — v1, PREGLED (12. 10. 2026)
+- Kod: `jahorina-home-sections/skipass/skipass.js` (prefiks `jks-`, `#jks-dock`; podešavanja na `#jks-skipass`), test `test-skipass.js`, redovi `napravi-widget.py` → `elementor-html-widget.html` (samo početna) i `wpcode-loader.js` (cijeli sajt: WPCode JS snippet, Site Wide Footer); posljednji **@b6ef34d**; pregled `pregled/napravi-pregled.py` → artifact https://claude.ai/artifact/YDRhbVijH45TUdtYdfUWT7.
+- Samo telefon (do 760 px). Staklena pilula pri dnu (12 px rub, safe-area, 62 px): cyan tačka + „Ski pass“ / „Kupovina online“, desno bijelo dugme „Kupi“ sa strelicom u udubljenom krugu. Pojavi se ispod hero-a (60 % ekrana), skloni se kod footera, tastature i prozora preko ekrana (overflow hidden).
+- **Link iz WordPressa:** stavka menija čiji tekst/adresa liči na kupovinu (Ski pass, Web shop, Kupi, Online, shop) — prednost prodavnici; `data-link` ima prednost. Spoljni domen → nova kartica. Bez linka nema dugmeta (admin: poruka u konzoli). GA `skipass_klik` (`mjesto: dock`).
+- **Otvoreno:** tačan link kupovine ski pass-a (web shop) → `LINK` u `napravi-widget.py`; da li samo početna ili cijeli sajt.
+
 ### Ostale moguće sekcije (iz prvobitnog prijedloga)
 - Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.
 - Događaji: na sajtu je **The Events Calendar** (Elementor widget "Events Loop", sada „Trenutno nema događaja...“), pa podatke čitati iz njega (REST `/wp-json/tribe/events/v1/events`), ne ručno.
