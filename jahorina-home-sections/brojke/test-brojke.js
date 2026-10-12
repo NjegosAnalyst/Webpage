@@ -45,7 +45,7 @@ const CONTENT = {
 <p>10 homologated ski slopes for night skiing, groomed to FIS standards.</p>${W('600 m', 'sledding track')}${W('10', 'homologated night ski trails')}
 <h3>Olimp bar</h3><p>apres-ski parties</p><h3>Ski &amp; Snowboard school</h3>`,
   // nove brojke u tekstu (WordPress se promijenio)
-  novo: `<p>Na Jahorini vas čeka 65 km uređenih staza i ukupno 21 žičara. Noću skijate na 12 staza za noćno skijanje, a sankalište je dugo 1.200 metara.</p>`,
+  novo: `<p>Na Jahorini vas čeka 65 km uređenih staza i ukupno 21 žičara. Noću skijate na 12 staza za noćno skijanje, a sankalište je dugo 1.200 metara. Plave staze: 30 km, crvene staze: 28 km, crne staze: 7 km.</p>`,
   // tekst bez sankališta
   djelimicno: `<p>54 kilometra idealno pripremljenih alpskih skijaških staza. Ukupno: 18 instalacija vertikalnog transporta.</p>`,
   qtranslate: `<p>[:SH]54 kilometra idealno pripremljenih alpskih skijaških staza, uređenih po FIS standardima. Ukupno: 18 instalacija vertikalnog transporta.[:en]70 kilometers of ideally prepared alpine skiing slopes. In total: 18 vertical transport installations.[:]</p>
@@ -144,6 +144,9 @@ const info = (p) => p.evaluate(() => {
       return Math.min(...[...r.querySelectorAll('.jpb-wire')].map((wr) => { const m = wr.getScreenCTM(), L = wr.getTotalLength(); let best = 1e9;
         for (let k = 0; k <= 400; k++) { const pt = wr.getPointAtLength(L * k / 400), sx = m.a * pt.x + m.c * pt.y + m.e, sy = m.b * pt.x + m.d * pt.y + m.f; if (Math.abs(sx - x) < 3) best = Math.min(best, Math.abs(sy - y)); }
         return best; })); })),
+    mix: [...r.querySelectorAll('.jpb-mix i')].map((x) => x.style.getPropertyValue('--k')).join('/'), mixW: [...r.querySelectorAll('.jpb-mix i')].map((x) => Math.round(x.getBoundingClientRect().width)),
+    mixLabel: q('.jpb-mix') ? q('.jpb-mix').getAttribute('aria-label') : '', key: q('.jpb-key') ? q('.jpb-key').textContent : '',
+    sway: cs(q('.jpb-sw')).animationName, vis: r.classList.contains('jpb-vis'),
     numFits: [...r.querySelectorAll('.jpb-back')].every((bk) => { const v = bk.querySelector('.jpb-v').getBoundingClientRect(), b = bk.getBoundingClientRect(); return v.width <= b.width - 8 && v.height <= b.height; }),
     numsTop: r.querySelector('.jpb-nums').getBoundingClientRect().top, leadB: q('.jpb-lead').getBoundingClientRect().bottom, imgOk: q('.jpb-ph img').naturalWidth > 0, alt: q('.jpb-ph img').alt,
   };
@@ -178,6 +181,18 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   check('uže prolazi kroz hvataljke sjedišta', i.gripGap < 4, i.gripGap);
   check('brojke stanu u naslone sjedišta', i.numFits, i.numFits);
   check('sjedišta ispod naslova', i.numsTop > i.leadB, [i.numsTop, i.leadB]);
+  check('staze po težini: traka 25/24/3 (privremeno), širine srazmjerne', i.mix === '25/24/3' && i.mixW[0] > i.mixW[2] * 4, [i.mix, i.mixW]);
+  check('legenda i opis za čitač ekrana', i.key === '25243km' && /plave 25 km, crvene 24 km, crne 3 km/.test(i.mixLabel), [i.key, i.mixLabel]);
+  check('sjedišta se njišu dok je blok na ekranu', i.sway === 'jpbSway' && i.vis, [i.sway, i.vis]);
+  await r.p.mouse.move(5, 5);
+  const ch = await r.p.locator('#jpb-brojke .jpb-num').nth(1).locator('.jpb-back').boundingBox();
+  await r.p.mouse.move(ch.x + ch.width / 2, ch.y + ch.height / 2);
+  await r.p.waitForTimeout(250);
+  const hit = await r.p.evaluate(() => { const li = document.querySelectorAll('#jpb-brojke .jpb-num')[1]; return { hit: li.classList.contains('is-hit'), anim: getComputedStyle(li.querySelector('.jpb-hit')).animationName }; });
+  check('prelaz mišem: sjedište se zaljulja', hit.hit && hit.anim === 'jpbHit', hit);
+  await r.p.waitForTimeout(2200);
+  i = await info(r.p);
+  check('poslije ljuljanja brojke opet stoje na mjestu', SHOWN(i) === '54 | 18 | 10 | 600', SHOWN(i));
   check('reflektor upaljen, svjetlo na lampi fotografije', i.lampOp > .9 && parseFloat(i.lamp[0]) > 400, [i.lampOp, i.lamp]);
   check('bez linka kad nije zadan', i.link === '', i.link);
   await r.p.screenshot({ path: path.join(OUT, '1-racunar-1440.png'), clip: { x: 0, y: (await r.p.locator('#jpb-brojke').boundingBox()).y - 140, width: 1440, height: 1040 } });
@@ -204,6 +219,8 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   i = await info(r.p);
   check('brojke iz teksta', NUMS(i) === '65 km | 21 | 12 | 1.200 m', NUMS(i));
   check('koluti pokazuju nove brojke (tačka hiljada stoji)', SHOWN(i) === '65 | 21 | 12 | 1.200', SHOWN(i));
+  i = await info(r.p);
+  check('staze po težini iz WordPressa (30/28/7)', i.mix === '30/28/7', i.mix);
   await r.p.locator('#jpb-brojke').screenshot({ path: path.join(OUT, '3-nove-brojke.png') });
   await r.ctx.close();
 
@@ -233,15 +250,16 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   console.log('\n6) "Prljav" JSON (PHP upozorenje ispred podataka)');
   r = await open(browser, { wp: 'upozorenje', admin: true });
   i = await info(r.p);
-  check('brojke pročitane', NUMS(i) === '54 km | 18 | 10 | 600 m' && i.why === '', [NUMS(i), i.why]);
+  check('brojke pročitane (admin vidi samo podsjetnik za staze po težini)', NUMS(i) === '54 km | 18 | 10 | 600 m' && /nema: staze po težini \(privremeno skiresort.info\)/.test(i.why) && !/JSON/.test(i.why), [NUMS(i), i.why]);
   await r.ctx.close();
 
   console.log('\n7) Ručne brojke i link (data-*)');
-  r = await open(browser, { attrs: 'data-km="60" data-sankanje="650" data-stranica="o-nama" data-link="/ski-staze/" data-link-tekst="Mapa staza"', wp: 'sr' });
+  r = await open(browser, { attrs: 'data-km="60" data-sankanje="650" data-stranica="o-nama" data-link="/ski-staze/" data-link-tekst="Mapa staza" data-plave="20" data-crvene="26" data-crne="8"', wp: 'sr' });
   i = await info(r.p);
   check('data-km i data-sankanje imaju prednost, ostalo iz WP', NUMS(i) === '60 km | 18 | 10 | 650 m', NUMS(i));
   check('data-stranica', r.rest.some((x) => /slug=o-nama/.test(x)), r.rest);
   check('tih link', i.link === 'Mapa staza', i.link);
+  check('ručne staze po težini', i.mix === '20/26/8', i.mix);
   await r.p.click('#jpb-brojke .jpb-link');
   const ev = await r.p.evaluate(() => window.__ev);
   check('GA: brojke_klik (cilj: link)', ev.some((e) => e[1] === 'brojke_klik' && e[2].cilj === 'link' && e[2].jezik === 'sr'), ev);

@@ -15,6 +15,9 @@
        šipka sa osloncem za noge); brojka je u staklenoj ploči u prostoru sjedišta, okrenuta prema posjetiocu; natpis ispod.
        Pri ulasku se uže iscrta, sjedišta jedno za drugim doklize po užetu i zaljuljaju se kad stanu, pa se brojka zavrti.
        Telefon: dva reda po dva sjedišta, svaki red na svom užetu;
+     · ispod "54 km": tanka traka staza po težini (plave · crvene · crne, km iz data-plave/-crvene/-crne ili teksta
+       WordPress stranice; ugrađeno PRIVREMENO skiresort.info 25 · 24 · 3) + legenda sa kilometrima;
+     · sjedišta se blago njišu kao na vjetru dok je blok na ekranu; prelaz mišem zaljulja sjedište i brojka se ponovo zavrti;
      · tih link ispod uvoda (samo ako je zadan data-link).
 
    SADRŽAJ IZ WORDPRESSA: brojke se čitaju iz teksta WordPress stranice (data-stranica = slug; podrazumijevano
@@ -26,6 +29,7 @@
    Podešavanja na <div id="jpb-brojke"> (sva su neobavezna):
      data-stranica="pocetna-zima"   (slug WordPress stranice sa brojkama)
      data-km="54" data-zicare="18" data-nocne="10" data-sankanje="600"   (ručno, ima prednost nad WordPressom)
+     data-plave="25" data-crvene="24" data-crne="3"   (km staza po težini; ručno, ima prednost nad WordPressom)
      data-link="/ski-staze/" data-link-tekst="Mapa staza"   (tih link ispod brojki; bez njega linka nema)
    GA: klik na link → brojke_klik (cilj: link).
    ===================================================================== */
@@ -50,6 +54,7 @@
     zicare: { u: '', l: 'lifts and ski tows', s: 'Vertical transport' },
     nocne: { u: '', l: 'night skiing slopes', s: 'Homologated' },
     sankanje: { u: 'm', l: 'sledding track', s: 'For the whole family' },
+    mix: { plave: 'blue', crvene: 'red', crne: 'black' }, mixT: 'Slopes by difficulty',
     photo: 'Night skiing on Jahorina: a snowboarder on a floodlit slope between snow-covered spruces',
     why: 'WordPress', whyTail: 'showing built-in numbers'
   } : {
@@ -59,6 +64,7 @@
     zicare: { u: '', l: 'žičara i ski liftova', s: 'Vertikalni transport' },
     nocne: { u: '', l: 'staza za noćno skijanje', s: 'Homologovane' },
     sankanje: { u: 'm', l: 'staza sankališta', s: 'Za cijelu porodicu' },
+    mix: { plave: 'plave', crvene: 'crvene', crne: 'crne' }, mixT: 'Staze po težini',
     photo: 'Noćno skijanje na Jahorini: snowboarder na osvijetljenoj stazi između snijegom okovanih jela',
     why: 'WordPress', whyTail: 'prikazane su ugrađene brojke'
   };
@@ -67,6 +73,11 @@
   var NUM = { km: '54', zicare: '18', nocne: '10', sankanje: '600' };
   var FIX = {};
   KEYS.forEach(function (k) { var v = opt(k, '').replace(/[^\d]/g, ''); if (v) { FIX[k] = v; NUM[k] = v; } });
+  // staze po težini (km): plave · crvene · crne. PRIVREMENO skiresort.info (25 · 24 · 3 = 52 km) dok korisnik ne pošalje
+  // zvanične; data-plave/-crvene/-crne ili tekst WordPress stranice ih zamijene
+  var MIXK = ['plave', 'crvene', 'crne'], MIXC = { plave: '#3B82F6', crvene: '#EF4444', crne: '#0B0F18' };
+  var MIX = { plave: '25', crvene: '24', crne: '3' };
+  MIXK.forEach(function (k) { var v = opt(k, '').replace(/[^\d]/g, ''); if (v) { FIX[k] = v; MIX[k] = v; } });
   var LINK = opt('link', ''), LINKT = opt('link-tekst', EN ? 'Slopes and lifts' : 'Staze i žičare');
 
   var IMG = { main: HERE + 'slike/brojke-glavna.webp', mainS: HERE + 'slike/brojke-glavna-1000.webp' };
@@ -154,6 +165,22 @@
     '#R .jpb-reel i{display:block;height:1em;margin:0;padding:0;line-height:1;font-style:normal!important;text-align:center;color:inherit!important}',
     '#R .jpb-l{display:block;margin-top:clamp(8px,1vw,14px);font:500 15.5px/1.35 var(--fb);color:#fff}',
     '#R .jpb-s{display:block;margin-top:5px;font:600 10px/1.3 var(--fd);letter-spacing:1.8px;text-transform:uppercase;color:var(--text-3)}',
+    /* staze po težini: tanka traka u bojama oznaka staza (plava, crvena, crna sa svijetlim rubom) + legenda */
+    '#R .jpb-mix{display:flex;gap:3px;width:min(100%,176px);height:4px;margin-top:11px}',
+    '#R .jpb-mix i{display:block;flex:var(--k) 1 0;min-width:4px;border-radius:2px;background:var(--c);transform-origin:left center;transition:transform .5s,filter .3s}',
+    '#R .jpb-mix i.jpb-mx--plave{box-shadow:0 0 8px rgba(59,130,246,.55)}',
+    '#R .jpb-mix i.jpb-mx--crvene{box-shadow:0 0 8px rgba(239,68,68,.45)}',
+    '#R .jpb-mix i.jpb-mx--crne,#R .jpb-key i.jpb-mx--crne{box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}',
+    '#R .jpb-mix i:hover{filter:brightness(1.35)}',
+    '#R .jpb-key{display:flex;justify-content:center;gap:10px;margin-top:9px;letter-spacing:1px;font-variant-numeric:tabular-nums}',
+    '#R .jpb-key span{display:inline-flex;align-items:center;gap:5px}',
+    '#R .jpb-key i{display:block;width:7px;height:7px;border-radius:50%;background:var(--c)}',
+    /* sjedišta se blago njišu kao na vjetru (samo dok je blok na ekranu); prelaz mišem ih zaljulja */
+    '#R .jpb-sw,#R .jpb-hit{position:absolute;inset:0;transform-origin:50% 1.6%}',
+    '#R.jpb-vis .jpb-num.is-on .jpb-sw,#R.jpb-vis:not(.jpb-anim) .jpb-sw{animation:jpbSway var(--sw,5.6s) ease-in-out var(--swd,0s) infinite}',
+    '@keyframes jpbSway{0%,100%{transform:rotate(-.6deg)}50%{transform:rotate(.6deg)}}',
+    '#R .jpb-num.is-hit .jpb-hit{animation:jpbHit 1.6s cubic-bezier(.3,.6,.3,1)}',
+    '@keyframes jpbHit{0%{transform:none}18%{transform:rotate(3.4deg)}42%{transform:rotate(-2.2deg)}66%{transform:rotate(1deg)}84%{transform:rotate(-.35deg)}100%{transform:none}}',
     '#R .jpb-sr{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}',
 
     /* tih link ispod naslova (samo ako je zadan) */
@@ -181,6 +208,8 @@
     '#R.jpb-anim.jpb-on .jpb-wire,#R.jpb-anim.jpb-on .jpb-wire2{stroke-dashoffset:0;transition:stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1) .7s}',
     '#R.jpb-anim .jpb-num:not(.is-on) .jpb-chair{opacity:0}',
     '#R.jpb-anim .jpb-num.is-on .jpb-chair{animation:jpbRide 2s cubic-bezier(.22,.7,.25,1) both}',
+    '#R.jpb-anim .jpb-num:not(.is-on) .jpb-mix i{transform:scaleX(0)}',
+    '#R.jpb-anim .jpb-num.is-on .jpb-mix i{transition:transform .7s cubic-bezier(.2,.7,.2,1) calc(1.1s + var(--d,0s)),filter .3s}',
     '@keyframes jpbRide{0%{opacity:0;transform:translateX(-160px)}12%{opacity:1}48%{transform:translateX(0) rotate(0)}64%{transform:rotate(2.6deg)}79%{transform:rotate(-1.5deg)}91%{transform:rotate(.5deg)}100%{opacity:1;transform:none}}',
     '#R.jpb-anim .jpb-num:not(.is-on) .jpb-reel{transform:none}',
     '#R.jpb-anim .jpb-reel{transition:transform var(--t,1.6s) cubic-bezier(.16,.8,.22,1) .75s}',
@@ -284,11 +313,22 @@
   function numsHTML() {
     return KEYS.map(function (k) {
       var t = T[k], n = NUM[k];
-      return '<li class="jpb-num"><div class="jpb-chair">' + CHAIR +
+      return '<li class="jpb-num"><div class="jpb-chair"><div class="jpb-sw"><div class="jpb-hit">' + CHAIR +
         '<div class="jpb-back"><div class="jpb-v">' + reels(n, 0) + (t.u ? '<em aria-hidden="true">' + esc(t.u) + '</em>' : '') +
-          '<span class="jpb-sr">' + esc(fmt(n) + (t.u ? ' ' + t.u : '')) + '</span></div></div></div>' +
-        '<span class="jpb-l">' + esc(t.l) + '</span><span class="jpb-s">' + esc(t.s) + '</span></li>';
+          '<span class="jpb-sr">' + esc(fmt(n) + (t.u ? ' ' + t.u : '')) + '</span></div></div></div></div></div>' +
+        '<span class="jpb-l">' + esc(t.l) + '</span>' + (k === 'km' && mixHTML() || '<span class="jpb-s">' + esc(t.s) + '</span>') + '</li>';
     }).join('');
+  }
+  // traka staza po težini ispod km (plave · crvene · crne) + legenda sa kilometrima
+  function mixHTML() {
+    var ks = MIXK.filter(function (k) { return +MIX[k] > 0; });
+    if (ks.length < 2) return '';
+    var sr = ks.map(function (k) { return T.mix[k] + ' ' + MIX[k] + ' km'; }).join(', ');
+    return '<span class="jpb-mix" role="img" aria-label="' + esc(T.mixT + ': ' + sr) + '">' + ks.map(function (k, i) {
+      return '<i class="jpb-mx--' + k + '" style="--k:' + +MIX[k] + ';--c:' + MIXC[k] + ';--d:' + (i * .14).toFixed(2) + 's" title="' + esc(T.mix[k] + ' ' + MIX[k] + ' km') + '"></i>';
+    }).join('') + '</span><span class="jpb-s jpb-key" aria-hidden="true">' + ks.map(function (k) {
+      return '<span><i class="jpb-mx--' + k + '" style="--c:' + MIXC[k] + '"></i>' + esc(MIX[k]) + '</span>';
+    }).join('') + '<span>km</span></span>';
   }
   root.innerHTML =
     '<section class="jpb-wrap" aria-labelledby="jpb-h"><div class="jpb-frame" style="--pos:50% 34%;--lum:.98">' +
@@ -309,7 +349,7 @@
 
   var drawn = '', lit = -1;   // lit = koliko je sjedišta stiglo po užetu (-1 = nijedno)
   function render() {
-    var key = KEYS.map(function (k) { return NUM[k]; }).join('|');
+    var key = KEYS.map(function (k) { return NUM[k]; }).concat(MIXK.map(function (k) { return MIX[k]; })).join('|');
     if (key === drawn) return;
     drawn = key;
     q('.jpb-nums').innerHTML = numsHTML();
@@ -349,7 +389,10 @@
   // upali sjedišta (dođu po užetu) do k
   function light(k) {
     lit = Math.max(lit, k);
-    [].forEach.call(root.querySelectorAll('.jpb-num'), function (li, i) { li.classList.toggle('is-on', i <= lit); });
+    [].forEach.call(root.querySelectorAll('.jpb-num'), function (li, i) {
+      li.classList.toggle('is-on', i <= lit);
+      li.style.setProperty('--sw', (5.2 + i * .9).toFixed(1) + 's'); li.style.setProperty('--swd', (-i * 1.7).toFixed(1) + 's');
+    });
   }
   // sjedišta stižu jedno za drugim
   function ride() {
@@ -357,6 +400,21 @@
   }
   function now() { return w.performance && performance.now ? performance.now() : Date.now(); }
   render();
+
+  // prelaz mišem preko sjedišta: zaljulja se, a brojka se još jednom zavrti
+  root.addEventListener('pointerover', function (e) {
+    if (e.pointerType && e.pointerType !== 'mouse' || reduced) return;
+    var li = e.target.closest && e.target.closest('.jpb-num.is-on');
+    if (!li || li.classList.contains('is-hit') || (e.relatedTarget && li.contains(e.relatedTarget))) return;
+    li.classList.add('is-hit');
+    [].forEach.call(li.querySelectorAll('.jpb-reel'), function (r) {
+      r.style.transition = 'none'; r.style.transform = 'translateY(0)'; void r.offsetWidth;
+      r.style.transition = 'transform ' + (r.style.getPropertyValue('--t') || '1.4s') + ' cubic-bezier(.16,.8,.22,1)'; r.style.transform = '';
+    });
+  });
+  root.addEventListener('animationend', function (e) {
+    if (e.animationName === 'jpbHit') { var li = e.target.closest('.jpb-num'); if (li) li.classList.remove('is-hit'); }
+  });
 
   root.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('[data-jpb="link"]');
@@ -499,8 +557,14 @@
       /(\d{1,2})\s+homolog[a-z]*\s+(?:night|noćn)/i],
     sankanje: [/(\d{2,4})\s*(?:m|metar[a-z]*|metr[a-z]*|meters?|metres?)\b[^.\d]{0,40}?(?:sank|sled|toboggan)/i, /(?:sankali[a-zš]*|sled(?:ding)?\s+track)[^.\d]{0,60}?(\d{2,4})\s*(?:m\b|metar|metr|meter|metre)/i]
   };
+  var MRX = {
+    plave: /(\d{1,2})\s*(?:km|kilometar[a-z]*|kilometr[a-z]*)\s+(?:plav[a-z]*|lak[a-z]*|blue|easy)|(?:plav[a-z]*|lak[a-z]*|blue|easy)\s*(?:staz[a-z]*|slopes?|runs?)?\s*:?\s*(\d{1,2})\s*km/i,
+    crvene: /(\d{1,2})\s*(?:km|kilometar[a-z]*|kilometr[a-z]*)\s+(?:crven[a-z]*|srednj[a-z]*|red|intermediate)|(?:crven[a-z]*|srednj[a-z]*|red|intermediate)\s*(?:staz[a-z]*|slopes?|runs?)?\s*:?\s*(\d{1,2})\s*km/i,
+    crne: /(\d{1,2})\s*(?:km|kilometar[a-z]*|kilometr[a-z]*)\s+(?:crn[a-z]*|tešk[a-z]*|black|difficult)|(?:crn[a-z]*|tešk[a-z]*|black|difficult)\s*(?:staz[a-z]*|slopes?|runs?)?\s*:?\s*(\d{1,2})\s*km/i
+  };
   function parse(pg) {
     var t = text(pg), r = {};
+    MIXK.forEach(function (k) { var m = t.match(MRX[k]); if (m && +(m[1] || m[2]) > 0) r[k] = String(+(m[1] || m[2])); });
     KEYS.forEach(function (k) {
       for (var i = 0; i < RX[k].length; i++) { var m = t.match(RX[k][i]); if (m && +m[1] > 0) { r[k] = String(+m[1]); return; } }
     });
@@ -518,6 +582,8 @@
       if (FIX[k]) return;
       if (r[k]) NUM[k] = r[k]; else miss.push(T[k].l);
     });
+    MIXK.forEach(function (k) { if (!FIX[k] && r[k]) MIX[k] = r[k]; });
+    if (!MIXK.some(function (k) { return FIX[k] || r[k]; })) miss.push(T.mixT.toLowerCase() + ' (privremeno skiresort.info)');
     render();
     if (miss.length) why('stranica "' + SLUG + '" nema: ' + miss.join(', '));
   }
@@ -548,4 +614,7 @@
     }, { rootMargin: '0px 0px -8% 0px' });
     io.observe(stats);
   } else light(KEYS.length - 1);
+  // njihanje samo dok je blok na ekranu
+  if ('IntersectionObserver' in w) new IntersectionObserver(function (es) { root.classList.toggle('jpb-vis', es[es.length - 1].isIntersecting); }).observe(stats);
+  else root.classList.add('jpb-vis');
 })(window, document);
