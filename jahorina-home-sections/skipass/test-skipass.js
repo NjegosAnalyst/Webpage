@@ -70,7 +70,7 @@ const st = (p) => p.evaluate(() => {
   const a = d.querySelector('a'), r = a.getBoundingClientRect(), cs = getComputedStyle(a);
   return { exists: true, on: d.classList.contains('is-on'), display: getComputedStyle(d).display, op: +cs.opacity, href: a.getAttribute('href'), target: a.target || '',
     tab: a.getAttribute('tabindex'), bottom: Math.round(innerHeight - r.bottom), left: Math.round(r.left), w: Math.round(r.width), h: Math.round(r.height),
-    text: a.textContent.replace(/\s+/g, ' ').trim(), font: getComputedStyle(a.querySelector('b')).fontFamily, scrollW: document.documentElement.scrollWidth };
+    text: a.textContent.replace(/\s+/g, ' ').trim(), mini: d.classList.contains('is-mini'), right: Math.round(innerWidth - r.right), font: getComputedStyle(a.querySelector('b')).fontFamily, scrollW: document.documentElement.scrollWidth };
 });
 const scrollTo = async (p, y) => { await p.evaluate((y) => window.scrollTo(0, y), y); await p.waitForTimeout(700); };
 
@@ -87,8 +87,15 @@ const scrollTo = async (p, y) => { await p.evaluate((y) => window.scrollTo(0, y)
   await scrollTo(r.p, 1100);
   s = await st(r.p);
   check('ispod hero-a: dugme klizne odozdo', s.on && s.op > .95 && s.tab === '0', s);
-  check('pri dnu ekrana, 12 px rub, puna širina, 62 px', s.bottom === 12 && s.left === 12 && s.w === 366 && s.h === 62, [s.bottom, s.left, s.w, s.h]);
-  check('tekst: Ski pass · Kupovina online · Kupi, Archivo', s.text === 'Ski passKupovina onlineKupi' && /Archivo/.test(s.font), [s.text, s.font]);
+  check('kompaktna pilula dolje desno (16 px), 56 px, ne preko cijele širine', s.bottom === 16 && s.right === 16 && s.h === 56 && s.w < 230 && s.w > 150, [s.bottom, s.right, s.w, s.h]);
+  check('tekst: Ski pass · Kupi online, Archivo', s.text === 'Ski passKupi online' && /Archivo/.test(s.font), [s.text, s.font]);
+  await scrollTo(r.p, 1500);
+  s = await st(r.p);
+  check('skrol nadolje (čitanje) → skupi se u krug', s.mini && s.w === 56 && s.on, [s.mini, s.w]);
+  await r.p.screenshot({ path: path.join(OUT, '1b-telefon-krug.png') });
+  await scrollTo(r.p, 1250);
+  s = await st(r.p);
+  check('skrol nagore → raširi se', !s.mini && s.w > 150, [s.mini, s.w]);
   check('bez horizontalnog skrola', s.scrollW <= 390, s.scrollW);
   await r.p.screenshot({ path: path.join(OUT, '1-telefon-dugme.png') });
   await r.p.click('#jks-dock a');
@@ -125,9 +132,9 @@ const scrollTo = async (p, y) => { await p.evaluate((y) => window.scrollTo(0, y)
   s = await st(r.p);
   check('stavka menija "Ski pass" (isti domen → ista kartica)', s.href === SITE + '/ski-pass-online/' && s.target === '', [s.href, s.target]);
   await r.ctx.close();
-  r = await open(browser, { menu: 'shop', attrs: 'data-link="/kupi-online/" data-dugme="Kupi odmah"' });
+  r = await open(browser, { menu: 'shop', attrs: 'data-link="/kupi-online/" data-podnaslov="Bez čekanja"' });
   s = await st(r.p);
-  check('data-link i data-dugme imaju prednost', s.href === '/kupi-online/' && /Kupi odmah$/.test(s.text), [s.href, s.text]);
+  check('data-link i data-podnaslov imaju prednost', s.href === '/kupi-online/' && /Bez čekanja$/.test(s.text), [s.href, s.text]);
   await r.ctx.close();
   r = await open(browser, { menu: 'nema', admin: true });
   await r.p.waitForTimeout(1800);
@@ -139,7 +146,7 @@ const scrollTo = async (p, y) => { await p.evaluate((y) => window.scrollTo(0, y)
   r = await open(browser, { pth: '/en/' });
   await scrollTo(r.p, 1100);
   s = await st(r.p);
-  check('EN: Ski pass · Buy online · Buy', s.text === 'Ski passBuy onlineBuy', s.text);
+  check('EN: Ski pass · Buy online', s.text === 'Ski passBuy online', s.text);
   await r.ctx.close();
   r = await open(browser, { reduced: true });
   await scrollTo(r.p, 1100);
@@ -151,7 +158,7 @@ const scrollTo = async (p, y) => { await p.evaluate((y) => window.scrollTo(0, y)
   r = await open(browser, { vw: 340, vh: 700 });
   await scrollTo(r.p, 1100);
   s = await st(r.p);
-  check('340 px: stane, bez skrola', s.w === 316 && s.scrollW <= 340, [s.w, s.scrollW]);
+  check('340 px: stane, bez skrola', s.w < 230 && s.scrollW <= 340, [s.w, s.scrollW]);
   await r.p.screenshot({ path: path.join(OUT, '2-telefon-340.png') });
   await r.ctx.close();
 

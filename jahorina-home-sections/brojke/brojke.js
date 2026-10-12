@@ -188,7 +188,7 @@
     '#R.jpb-anim.jpb-on .jpb-wire,#R.jpb-anim.jpb-on .jpb-wire2{stroke-dashoffset:0;transition:stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1) .7s}',
     '#R.jpb-anim .jpb-num:not(.is-on) .jpb-chair{opacity:0}',
     '#R.jpb-anim .jpb-num.is-on .jpb-chair{animation:jpbRide 2s cubic-bezier(.22,.7,.25,1) both}',
-    '@keyframes jpbRide{0%{opacity:0;transform:translateX(-160px)}12%{opacity:1}48%{transform:translateX(0) rotate(0)}64%{transform:rotate(2.6deg)}79%{transform:rotate(-1.5deg)}91%{transform:rotate(.5deg)}100%{opacity:1;transform:none}}',
+    '@keyframes jpbRide{0%{opacity:0;transform:translateX(var(--ride,-160px))}12%{opacity:1}48%{transform:translateX(0) rotate(0)}64%{transform:rotate(2.6deg)}79%{transform:rotate(-1.5deg)}91%{transform:rotate(.5deg)}100%{opacity:1;transform:none}}',
     '#R.jpb-anim .jpb-num:not(.is-on) .jpb-reel{transform:none}',
     '#R.jpb-anim .jpb-reel{transition:transform var(--t,1.6s) cubic-bezier(.16,.8,.22,1) .75s}',
     '#R.jpb-anim .jpb-num .jpb-l,#R.jpb-anim .jpb-num .jpb-s,#R.jpb-anim .jpb-num .jpb-v em{opacity:0;transform:translateY(8px);transition:opacity .6s ease 1s,transform .8s cubic-bezier(.2,.7,.2,1) 1s}',
@@ -219,6 +219,7 @@
     '#R .jpb-lead{margin-top:16px}',
     '#R .jpb-stats{margin-top:34px;padding:0 16px 34px}',
     '#R .jpb-nums{grid-template-columns:1fr 1fr;gap:34px 14px}',
+    '#R .jpb-num{--ride:-44px}',   /* kratko klizanje, da sjedište ne prelazi preko susjednog */
     '#R .jpb-l{font-size:13.5px}',
     '#R .jpb-s{font-size:8.5px;letter-spacing:1.2px}}',
     '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}'
