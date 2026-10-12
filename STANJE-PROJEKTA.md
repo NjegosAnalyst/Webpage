@@ -203,7 +203,8 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - Kod: `jahorina-home-sections/skipass/skipass.js` (prefiks `jks-`, `#jks-dock`; podešavanja na `#jks-skipass`), test `test-skipass.js`, redovi `napravi-widget.py` → `elementor-html-widget.html` (samo početna) i `wpcode-loader.js` (cijeli sajt: WPCode JS snippet, Site Wide Footer); posljednji **@39c4558**; pregled `pregled/napravi-pregled.py` → artifact https://claude.ai/artifact/YDRhbVijH45TUdtYdfUWT7.
 - Samo telefon (do 760 px). **v1 (traka preko cijele širine) zamijenjena** (korisnik: „ljepši i profesionalniji, istaknut, ali da ne ometa pretragu i preglednost“): **v2 = kompaktna pilula dolje desno** (16 px, safe-area, 56 px): tamno staklo, cyan krug sa ikonom karte + „Ski pass“ / „KUPI ONLINE“; skrol nadolje → skupi se u krug 56 px, nagore → raširi se; prvi put cyan prsten dvaput pulsira. Pojavi se ispod hero-a (60 % ekrana), skloni se kod footera, tastature i prozora preko ekrana (overflow hidden).
 - **Link iz WordPressa:** stavka menija čiji tekst/adresa liči na kupovinu (Ski pass, Web shop, Kupi, Online, shop) — prednost prodavnici; `data-link` ima prednost. Spoljni domen → nova kartica. Bez linka nema dugmeta (admin: poruka u konzoli). GA `skipass_klik` (`mjesto: dock`).
-- **Otvoreno:** tačan link kupovine ski pass-a (web shop) → `LINK` u `napravi-widget.py`; da li samo početna ili cijeli sajt.
+- **Link (korisnik 12. 10. 2026):** https://webshop.oc-jahorina.com/ → `LINK` u `napravi-widget.py` (data-link u oba reda; spoljni domen → nova kartica).
+- **Otvoreno:** samo početna ili cijeli sajt (preporuka: cijeli sajt, WPCode).
 
 ### Ostale moguće sekcije (iz prvobitnog prijedloga)
 - Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.

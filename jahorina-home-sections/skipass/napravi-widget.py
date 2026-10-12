@@ -9,7 +9,7 @@ import base64, hashlib, pathlib, subprocess
 
 HERE = pathlib.Path(__file__).resolve().parent
 REL = 'jahorina-home-sections/skipass/skipass.js'
-LINK = ''
+LINK = 'https://webshop.oc-jahorina.com/'
 
 def git(*a):
     return subprocess.run(['git', *a], cwd=HERE, check=True, capture_output=True).stdout
