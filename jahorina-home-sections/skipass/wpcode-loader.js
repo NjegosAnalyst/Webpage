@@ -1,0 +1,1 @@
+(function(d){var s=d.createElement('script');s.src='https://cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@b6ef34d/jahorina-home-sections/skipass/skipass.js';s.integrity='sha384-992UEMRwIXZQ/kArGQ9lAz8kAIYo+I4lrLsqd4Mpzc3BIaORM5FIrLG3gVbqg3sm';s.crossOrigin='anonymous';s.defer=true;(d.head||d.documentElement).appendChild(s);})(document);
