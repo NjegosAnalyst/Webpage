@@ -1,7 +1,7 @@
 /* =====================================================================
    JAHORINA HERO — DIO 2: CSS  (Slider Revolution → ⚙ → CSS/jQuery → CUSTOM CSS)
    ===================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&display=swap');
 
 /* Slider Revolution sloju daje svoje stilove teksta (nowrap, line-height, veličina) — ovdje ih poništavamo */
 .jh-hero{white-space:normal!important;line-height:normal;letter-spacing:normal;text-align:left;font-size:16px;font-weight:400;color:#fff;width:100%}
@@ -65,8 +65,7 @@
   /* ---------- pozadina + scrim slojevi ---------- */
   .jh-photo{
     position:absolute;inset:-3%;
-    background:url('https://oc-jahorina.com/wp-content/uploads/2026/09/jahorina-noc.jpg') center 58%/cover no-repeat;
-    background-image:image-set(url('https://oc-jahorina.com/wp-content/uploads/2026/09/jahorina-noc.webp') type('image/webp'),url('https://oc-jahorina.com/wp-content/uploads/2026/09/jahorina-noc.jpg') type('image/jpeg'));
+    background:url('/wp-content/uploads/2026/10/jahorina-hero-desktop.webp') center 58%/cover no-repeat;   /* 150 KB (bilo 200 KB + JPG rezerva 410 KB) */
     transform:translate3d(calc(var(--mx,0) * -14px),calc(var(--my,0) * -10px),0);
     animation:jhZoom 2.2s cubic-bezier(.2,.7,.2,1) both;
     will-change:transform;
@@ -469,12 +468,18 @@
     .jh-headline,.jh-intro,.jh-quick{position:relative;left:auto;right:auto;top:auto;bottom:auto}
     .jh-headline{margin-top:auto;padding:150px 24px 0}
     .jh-intro{padding:24px 24px 0;max-width:none}
-    .jh-quick{margin:24px;align-self:stretch;justify-content:space-between}
     .jh-intro{align-items:center}
-    .jh-quick__item{flex:1;width:auto}
-    .jh-kicker{letter-spacing:2.6px;font-size:10px;gap:10px}
+    /* telefon: brzi linkovi kao vertikalna traka uz desnu ivicu, naslov dolje lijevo */
+    .jh-headline{padding:150px 96px 30px 24px}
+    .jh-quick{position:absolute;right:14px;bottom:24px;flex-direction:column;gap:6px;padding:6px;border-radius:22px}
+    .jh-quick__item{width:60px;height:60px;border-radius:15px;gap:4px}
+    .jh-quick__item svg{width:20px;height:20px}
+    .jh-quick__label--word{font-size:8px;letter-spacing:.2px}
+    .jh-quick__label{font-size:10px}
+    .jh-quick__live{top:7px;right:8px;width:6px;height:6px}
+    .jh-kicker{letter-spacing:1.7px;font-size:9.5px;gap:10px;white-space:nowrap}
     /* telefon: kadar na stazu, jače zatamnjenje ispod teksta */
-    .jh-photo{background-position:64% 40%}
+    .jh-photo{background-position:64% 40%;background-image:url('/wp-content/uploads/2026/10/jahorina-hero-mobil.webp')}   /* manja slika za telefon: 98 KB */
     .jh-scrim--bottom{background:linear-gradient(0deg,rgba(6,11,22,.92) 0%,rgba(6,11,22,.75) 38%,rgba(6,11,22,0) 66%)}
     .jh-kicker::before{width:22px}
   }
@@ -486,6 +491,19 @@
   }
   @media (max-width:760px){
     .jh-title{font-size:clamp(44px,12.5vw,64px)}
+    /* telefon: bez zamućenja pri ulasku (blur preko cijele slike je skup za telefon) */
+    @keyframes jhZoomM{0%{opacity:0;scale:1.06}100%{opacity:1;scale:1}}
+    .jh-photo{animation-name:jhZoomM}
+  }
+  @media (max-width:360px){
+    .jh-kicker{letter-spacing:1.1px;font-size:9px;gap:8px}
+    .jh-kicker::before{width:16px}
+  }
+  /* nizak ekran (mali telefon / horizontalno): manje pločice da traka stane */
+  @media (max-width:760px) and (max-height:680px){
+    .jh-quick{gap:4px;padding:5px;bottom:16px}
+    .jh-quick__item{width:52px;height:52px}
+    .jh-quick__item svg{width:18px;height:18px}
   }
 
   @media (prefers-reduced-motion:reduce){
@@ -499,6 +517,9 @@
 .jh-hero .jh-quick__label{white-space:nowrap!important;text-align:center}
 @media (max-width:760px){
   .jh-hero .jh-headline{padding-top:130px}
-  .jh-hero .jh-quick{gap:5px;padding:6px}
-  .jh-hero .jh-quick__label--word{font-size:8.5px;letter-spacing:0}
+  .jh-hero .jh-quick__item svg{width:20px;height:20px}
+  .jh-hero .jh-quick__label--word{font-size:8px;letter-spacing:.2px}
+}
+@media (max-width:760px) and (max-height:680px){
+  .jh-hero .jh-quick__item svg{width:18px;height:18px}
 }

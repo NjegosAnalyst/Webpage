@@ -14,7 +14,7 @@ import re
 from pathlib import Path
 
 HERE = Path(__file__).parent
-MEDIA = 'https://oc-jahorina.com/wp-content/uploads/2026/09/'
+MEDIA = '/wp-content/uploads/2026/10/'   # bez domena: ista veza kao stranica (www ili ne), nema dodatnog povezivanja
 
 src = (HERE / 'index.html').read_text()
 css = src[src.index('<style>') + 7:src.index('</style>')].replace('  html,body{margin:0;padding:0}\n', '')
@@ -67,15 +67,18 @@ SR_LAYOUT = """
 .jh-hero .jh-quick__label{white-space:nowrap!important;text-align:center}
 @media (max-width:760px){
   .jh-hero .jh-headline{padding-top:130px}
-  .jh-hero .jh-quick{gap:5px;padding:6px}
-  .jh-hero .jh-quick__label--word{font-size:8.5px;letter-spacing:0}
+  .jh-hero .jh-quick__item svg{width:20px;height:20px}
+  .jh-hero .jh-quick__label--word{font-size:8px;letter-spacing:.2px}
+}
+@media (max-width:760px) and (max-height:680px){
+  .jh-hero .jh-quick__item svg{width:18px;height:18px}
 }
 """
 
 css_out = ("/* =====================================================================\n"
            "   JAHORINA HERO — DIO 2: CSS  (Slider Revolution → ⚙ → CSS/jQuery → CUSTOM CSS)\n"
            "   ===================================================================== */\n"
-           "@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap');\n"
+           "@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&display=swap');\n"
            + SR_RESET + css.strip() + "\n" + SR_LAYOUT)
 
 js_out = ("/* =====================================================================\n"
@@ -108,7 +111,7 @@ js_out = ("/* ==================================================================
 
 
 def with_urls(text, prefix):
-    for f in ('jahorina-noc.webp', 'jahorina-noc.jpg', 'logo-white-lockup.png'):
+    for f in ('jahorina-hero-desktop.webp', 'jahorina-hero-mobil.webp', 'logo-white-lockup.png'):
         text = text.replace('assets/' + f, prefix + f)
     return text
 
