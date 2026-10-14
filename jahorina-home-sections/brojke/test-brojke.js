@@ -11,6 +11,7 @@ const FONTS = process.argv[3] || '';
 const REPO = path.resolve(__dirname, '../..');
 const SITE = 'https://www.oc-jahorina.com';
 const CDN = 'https://cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@test/';
+const HASH = 'a'.repeat(40), CDN2 = 'https://cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@' + HASH + '/', RAW = 'https://raw.githubusercontent.com/NjegosAnalyst/Webpage/' + HASH + '/';
 fs.mkdirSync(OUT, { recursive: true });
 
 const theme = `
@@ -22,7 +23,7 @@ const theme = `
   i{font-style:italic;color:red}
   p{margin:0 0 15px} img{max-width:100%;height:auto}
   .before,.after{padding:60px 20px;color:#444} .boxed{max-width:1140px;margin:0 auto;padding:0 10px}`;
-function page({ attrs = '', sank = false, admin = false, boxed = false } = {}) {
+function page({ attrs = '', sank = false, admin = false, boxed = false, full = false } = {}) {
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <style>${theme}${boxed ? '#jpb-brojke{width:900px!important}' : ''}</style></head><body class="home${admin ? ' logged-in admin-bar' : ''}">
   <div class="before">Snowboard park (iznad)</div>
@@ -30,7 +31,7 @@ function page({ attrs = '', sank = false, admin = false, boxed = false } = {}) {
     <script src="${CDN}jahorina-home-sections/vijesti/vijesti.js" defer></script></div></div>` : ''}
   <div class="boxed"><div class="elementor-widget-html">
     <div id="jpb-brojke" ${attrs}></div>
-    <script src="${CDN}jahorina-home-sections/brojke/brojke.js" defer></script>
+    <script src="${full ? CDN2 : CDN}jahorina-home-sections/brojke/brojke.js" defer></script>
   </div></div>
   <div class="after">Sljedeća sekcija</div></body></html>`;
 }
@@ -58,7 +59,7 @@ function check(name, ok, info) {
 }
 
 // wp: 'sr', 'en', 'novo', 'djelimicno', 'qtranslate', 'upozorenje', 'greska', 'nema'
-async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900, attrs = '', ga = 'gtag', reduced = false, wp = 'sr', sank = false, admin = false, touch = false, boxed = false, wait = true } = {}) {
+async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900, attrs = '', ga = 'gtag', reduced = false, wp = 'sr', sank = false, admin = false, touch = false, boxed = false, wait = true, full = false, imgFail = false } = {}) {
   const ctx = await browser.newContext({ viewport: { width: vw, height: vh }, reducedMotion: reduced ? 'reduce' : 'no-preference', hasTouch: touch, isMobile: touch, deviceScaleFactor: touch ? 2 : 1 });
   const p = await ctx.newPage();
   const errors = [], rest = [];
@@ -70,6 +71,13 @@ async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900
     if (u.host === 'fonts.gstatic.com') {
       const f = FONTS && path.join(FONTS, u.pathname.slice(1).replace(/\//g, '_'));
       return f && fs.existsSync(f) ? route.fulfill({ contentType: 'font/woff2', body: fs.readFileSync(f) }) : route.abort();
+    }
+    if (url.startsWith(CDN2) || url.startsWith(RAW)) {
+      const rel = url.slice(url.startsWith(CDN2) ? CDN2.length : RAW.length).split('?')[0];
+      if (url.startsWith(CDN2) && imgFail && /\/slike\//.test(rel)) return route.fulfill({ status: 502, body: 'jsDelivr greška' });
+      const f = path.join(REPO, rel);
+      if (!fs.existsSync(f)) return route.fulfill({ status: 404, body: 'nema' });
+      return route.fulfill({ contentType: f.endsWith('.js') ? 'application/javascript' : 'image/webp', body: fs.readFileSync(f), headers: { 'access-control-allow-origin': '*' } });
     }
     if (url.startsWith(CDN)) {
       const f = path.join(REPO, url.slice(CDN.length).split('?')[0]);
@@ -94,7 +102,7 @@ async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900
       }
       return route.fulfill({ status: 404, body: '' });
     }
-    if (u.origin === SITE) return route.fulfill({ contentType: 'text/html; charset=utf-8', body: page({ attrs, sank, admin, boxed }) });
+    if (u.origin === SITE) return route.fulfill({ contentType: 'text/html; charset=utf-8', body: page({ attrs, sank, admin, boxed, full }) });
     return route.abort();
   });
   await p.addInitScript(({ mode }) => {
@@ -291,6 +299,17 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   r = await open(browser, { reduced: true });
   i = await info(r.p);
   check('bez animacije, koluti na brojkama, sve upaljeno', !i.anim && SHOWN(i) === '54 | 18 | 10 | 600' && i.lampOp > .9 && i.on === 4, [i.anim, SHOWN(i), i.lampOp, i.on]);
+  await r.ctx.close();
+
+  console.log('\n9b) Fotografija: jsDelivr ne vrati sliku → rezerva sa GitHuba (raw, isti commit)');
+  r = await open(browser, { full: true, imgFail: true });
+  await r.p.waitForTimeout(800);
+  const fb = await r.p.evaluate(() => { const im = document.querySelector('#jpb-brojke .jpb-ph img'); return { src: im.currentSrc || im.src, ok: im.complete && im.naturalWidth > 0 }; });
+  check('slika učitana sa raw.githubusercontent.com', fb.ok && fb.src.indexOf('raw.githubusercontent.com/NjegosAnalyst/Webpage/' + HASH + '/jahorina-home-sections/brojke/slike/brojke-glavna.webp') > -1, fb);
+  await r.ctx.close();
+  r = await open(browser, { full: true });
+  const ok = await r.p.evaluate(() => { const im = document.querySelector('#jpb-brojke .jpb-ph img'); return { src: im.currentSrc || im.src, ok: im.naturalWidth > 0 }; });
+  check('bez greške slika ostaje sa jsDelivr-a', ok.ok && /cdn\.jsdelivr\.net/.test(ok.src), ok);
   await r.ctx.close();
 
   console.log('\n10) Ekrani: 1920, 1180, tablet 820, telefon 390 i 360, uži kontejner');

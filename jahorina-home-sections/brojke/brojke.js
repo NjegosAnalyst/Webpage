@@ -410,6 +410,17 @@
     ph.style.setProperty('--ly', f1((ch - rh) * py + LAMP[1] * rh) + 'px');
   }
   img.addEventListener('load', lamp);
+  // rezerva: ako fotografija sa jsDelivr-a ne stigne (greška ili istek), učita se direktno sa GitHuba (isti commit)
+  img.addEventListener('error', function () {
+    if (img.__fb) return;
+    img.__fb = 1;
+    var m = HERE.match(/cdn\.jsdelivr\.net\/gh\/([^\/]+)\/([^@\/]+)@([0-9a-f]{40})\/(.*)$/i);
+    if (!m) return;
+    var raw = 'https://raw.githubusercontent.com/' + m[1] + '/' + m[2] + '/' + m[3] + '/' + m[4];
+    img.removeAttribute('srcset');
+    img.src = raw + 'slike/brojke-glavna.webp';
+    if (w.console) console.warn('[Jahorina Planina u brojkama] fotografija sa jsDelivr-a nije stigla, učitava se sa GitHuba');
+  });
 
   // blok uvijek ide preko cijele širine ekrana, i kad je kontejner teme/Elementora uži (isto kao ostali blokovi)
   var ABOVE = ['jsk-sankaliste', 'jsb-park', 'jsd-depo', 'jg-gondola', 'jb-bar', 'jsu-suvenirnica', 'jr-ratrak', 'jv-vijesti'];

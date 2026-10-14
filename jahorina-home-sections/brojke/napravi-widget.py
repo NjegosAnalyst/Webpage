@@ -22,7 +22,7 @@ def git(*a):
 
 if git('status', '--porcelain', '--', *FILES).strip():
     raise SystemExit('brojke.js ili slike/ imaju nesačuvane izmjene — prvo commit + push, pa ponovo.')
-commit = git('log', '-1', '--format=%h', '--', *FILES).decode().strip()
+commit = git('log', '-1', '--format=%H', '--', *FILES).decode().strip()   # puni hash: i rezerva sa GitHuba (raw) ga traži
 body = git('show', f'{commit}:{REL}')
 sri = 'sha384-' + base64.b64encode(hashlib.sha384(body).digest()).decode()
 url = f'https://cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@{commit}/{REL}'
