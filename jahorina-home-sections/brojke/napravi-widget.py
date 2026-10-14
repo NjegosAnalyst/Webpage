@@ -26,10 +26,17 @@ commit = git('log', '-1', '--format=%H', '--', *FILES).decode().strip()   # puni
 body = git('show', f'{commit}:{REL}')
 sri = 'sha384-' + base64.b64encode(hashlib.sha384(body).digest()).decode()
 url = f'https://cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@{commit}/{REL}'
+# Učitavanje kroz mali ugrađeni loader (radi i na stranici i u Elementor editoru, gdje se HTML ubacuje preko jQuery-ja):
+# jsDelivr + SRI; ako ne isporuči (greška, zastoj, SRI), ista datoteka iz istog commita sa githack CDN-a.
+def loader(url, sri):
+    return ("<script>(function(d,u,i){function g(a,b){var s=d.createElement('script');s.src=a;"
+            "if(b){s.integrity=b;s.crossOrigin='anonymous';s.onerror=function(){g(a.replace("
+            "'cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@','rawcdn.githack.com/NjegosAnalyst/Webpage/'))}}"
+            "(d.head||d.documentElement).appendChild(s)}g(u,i)})(document,'" + url + "','" + sri + "')</script>")
 
 lk = f' data-link="{LINK}"' + (f' data-link-tekst="{LINK_TEKST}"' if LINK_TEKST else '') if LINK else ''
 br = ''.join(f' data-{k}="{v}"' for k, v in BROJKE.items()) if BROJKE else f' data-stranica="{SLUG}"'
 line = (f'<div id="jpb-brojke"{br}{lk}></div>'
-        f'<script src="{url}" integrity="{sri}" crossorigin="anonymous" defer></script>\n')
+        f'{loader(url, sri)}\n')
 (HERE / 'elementor-html-widget.html').write_text(line, encoding='utf-8')
 print(line)

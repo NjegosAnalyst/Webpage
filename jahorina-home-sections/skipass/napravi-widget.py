@@ -16,13 +16,20 @@ def git(*a):
 
 if git('status', '--porcelain', '--', 'skipass.js').strip():
     raise SystemExit('skipass.js ima nesačuvane izmjene — prvo commit + push, pa ponovo.')
-commit = git('log', '-1', '--format=%h', '--', 'skipass.js').decode().strip()
+commit = git('log', '-1', '--format=%H', '--', 'skipass.js').decode().strip()
 body = git('show', f'{commit}:{REL}')
 sri = 'sha384-' + base64.b64encode(hashlib.sha384(body).digest()).decode()
 url = f'https://cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@{commit}/{REL}'
+# Učitavanje kroz mali ugrađeni loader (radi i na stranici i u Elementor editoru, gdje se HTML ubacuje preko jQuery-ja):
+# jsDelivr + SRI; ako ne isporuči (greška, zastoj, SRI), ista datoteka iz istog commita sa githack CDN-a.
+def loader(url, sri):
+    return ("<script>(function(d,u,i){function g(a,b){var s=d.createElement('script');s.src=a;"
+            "if(b){s.integrity=b;s.crossOrigin='anonymous';s.onerror=function(){g(a.replace("
+            "'cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@','rawcdn.githack.com/NjegosAnalyst/Webpage/'))}}"
+            "(d.head||d.documentElement).appendChild(s)}g(u,i)})(document,'" + url + "','" + sri + "')</script>")
 
 lk = f' data-link="{LINK}"' if LINK else ''
-line = f'<div id="jks-skipass"{lk}></div><script src="{url}" integrity="{sri}" crossorigin="anonymous" defer></script>\n'
+line = f'<div id="jks-skipass"{lk}></div>{loader(url, sri)}\n'
 (HERE / 'elementor-html-widget.html').write_text(line, encoding='utf-8')
 cfg = (f"var c=d.createElement('div');c.id='jks-skipass';c.setAttribute('data-link','{LINK}');c.hidden=true;(d.body||d.documentElement).appendChild(c);" if LINK else '')
 loader = (f"(function(d){{{cfg}var s=d.createElement('script');s.src='{url}';s.integrity='{sri}';s.crossOrigin='anonymous';s.defer=true;"
