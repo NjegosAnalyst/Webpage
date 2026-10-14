@@ -70,8 +70,16 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - Posljednji red za widget je uvijek u `vijesti/elementor-html-widget.html`.
 - **Svaka izmjena:** izmijeni `vijesti.js` → `bash ../alati/preuzmi-fontove.sh <fontovi>` (jednom) → `node test-vijesti.js <screenshotovi> <fontovi>` → commit + push → `python3 napravi-widget.py` → commit + push → korisniku novi red za HTML widget. Pregled: `python3 pregled/napravi-pregled.py` → objaviti `pregled/index.html` (+ `img/*.jpg`) na isti artifact URL.
 
+### 2. Planina u brojkama — v2.3 „šestosjed“, usklađena sa SEO pravilima i stilom B (14. 10.), red @6df2776
+- Kod: `jahorina-home-sections/brojke/` (`brojke.js`, prefiks `jpb-`, `#jpb-brojke`; test `test-brojke.js`; red `napravi-widget.py` → `elementor-html-widget.html`; pregled `pregled/napravi-pregled.py` → artifact https://claude.ai/artifact/EFMWUuq22wh6jjFmyDr4FT). Nastala na grani `claude/dodaci-planina-brojke` (tamo i istorija izmjena v1→v2.3), prenesena na main granu `claude/brojke-main`.
+- Izgled: noćna fotografija skijanja preko cijelog kadra (`slike/brojke-glavna.webp`), reflektor jedini izvor svjetla; gore lijevo nadnaslov „Planina u brojkama“ (stil malog teksta hero-a), H2 „Olimpijska / *planina*“, uvod; pri dnu uže žičare sa četiri sjedišta šestosjeda iz profila (žičara ide slijeva nadesno), brojka u staklenom naslonu sjedišta (koluti/odometar), natpis ispod. Ulazak: uže se iscrta, sjedišta doklize i zaljuljaju se, brojka se zavrti; blago njihanje dok je na ekranu; prelaz mišem zaljulja sjedište. Telefon: dva reda po dva sjedišta, svaki red na svom užetu, kratko klizanje.
+- Odbijeno: v1 (tekst i 2 × 2 brojke lijevo uz fotografiju desno, mali crteži — „nije premium i moderno“), traka staza po težini ispod km.
+- **Brojke ručno u redu** (korisnik): `data-km="54" data-zicare="18" data-nocne="10" data-sankanje="600"` (`BROJKE` u `napravi-widget.py`); WordPress se tada ne pita. Bez njih kod čita tekst WP stranice `data-stranica`.
+- **SEO (14. 10.):** 0 × H1; H2 „Olimpijska planina“; svaka brojka je **H3** („54 km alpskih skijaških staza“ — broj je skriven tekst, cifre u sjedištu `aria-hidden`); uvod „Staze ski centra Jahorina …“; slika alt „Noćno skijanje na Olimpijskoj planini Jahorina …“, `loading="lazy"`, `width/height`. **Telefon:** bez `backdrop-filter` (naslon sjedišta neproziran), bez filtera i `mix-blend-mode` na fotografiji. Test provjerava sve to (+ vijesti iznad, join bez dupliranog razmaka).
+- **Sljedeće:** korisnik postavlja red (@6df2776) na HERO TEST (Elementor kontejner padding/margin/gap 0) → screenshot računar + telefon.
+
 ### Sljedeće sekcije
-- Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti. Korisnik bira kojom se nastavlja.
+- Događaji → Uživaj i van staze → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti (Planina u brojkama urađena). Korisnik bira kojom se nastavlja. Događaji: započeto na grani `claude/dogadjaji-pocetna` — čekaju se korisnikovi screenshotovi.
 - Događaji: na sajtu je **The Events Calendar** (Elementor widget "Events Loop", sada „Trenutno nema događaja...“), pa podatke čitati iz njega (REST `/wp-json/tribe/events/v1/events`), ne ručno.
 
 ### Kako započeti novu sekciju (nova sesija)
