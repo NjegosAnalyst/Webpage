@@ -66,13 +66,12 @@ SR_LAYOUT = """
 /* ===== Opcija A: meni je iz teme; Web shop i Ski mapa su pločice u traci ===== */
 .jh-hero .jh-quick__label{white-space:nowrap!important;text-align:center}
 @media (max-width:760px){
-  .jh-hero .jh-headline{padding-top:130px}
   .jh-hero .jh-kicker > span{line-height:inherit!important}   /* H1 u dva reda: isti razmak redova kao kicker */
-  .jh-hero .jh-quick__item svg{width:20px;height:20px}
-  .jh-hero .jh-quick__label--word{font-size:8px;letter-spacing:.2px}
+  .jh-hero .jh-quick__item svg{width:18px;height:18px}
+  .jh-hero .jh-quick__label--word{font-size:7.5px;letter-spacing:.2px}
 }
 @media (max-width:760px) and (max-height:680px){
-  .jh-hero .jh-quick__item svg{width:18px;height:18px}
+  .jh-hero .jh-quick__item svg{width:16px;height:16px}
 }
 """
 
@@ -129,9 +128,9 @@ def with_urls(text, prefix):
 
 # --- engleska verzija: isti hero, prevedeni tekstovi i engleski linkovi ------
 EN = [
-    ('aria-label="Olimpijski centar Jahorina"', 'aria-label="Olympic Centre Jahorina"'),
+    ('aria-label="Olimpijska planina Jahorina"', 'aria-label="Olympic Mountain Jahorina"'),
     ('aria-label="Noćno skijanje na Jahorini"', 'aria-label="Night skiing on Jahorina"'),
-    ('>Ski centar Jahorina · Olimpijski centar<', '>Jahorina Ski Resort · Olympic Centre<'),   # H1 (SEO)
+    ('>Ski centar Jahorina · Olimpijska planina<', '>Jahorina Ski Resort · Olympic Mountain<'),   # H1 (SEO)
     ('aria-label="Otkrij čaroliju Jahorine"', 'aria-label="Discover the magic of Jahorina"'),
     ('<span>Otkrij</span>', '<span>Discover</span>'),
     ('<span>čaroliju</span>', '<span>the magic of</span>'),

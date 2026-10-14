@@ -473,24 +473,25 @@
     .jh-btn--ghost{display:none}
     .jh-btn--solid{padding:11px 20px;font-size:14px}
     .jh-headline,.jh-intro,.jh-quick{position:relative;left:auto;right:auto;top:auto;bottom:auto}
-    .jh-headline{margin-top:auto;padding:150px 24px 0}
     .jh-intro{padding:24px 24px 0;max-width:none}
     .jh-intro{align-items:center}
-    /* telefon: brzi linkovi kao vertikalna traka uz desnu ivicu, naslov dolje lijevo */
-    .jh-headline{padding:150px 96px 30px 24px}
-    .jh-quick{position:absolute;right:14px;bottom:24px;flex-direction:column;gap:6px;padding:6px;border-radius:22px}
-    .jh-quick__item{width:60px;height:60px;border-radius:15px;gap:4px}
-    .jh-quick__item svg{width:20px;height:20px}
-    .jh-quick__label--word{font-size:8px;letter-spacing:.2px}
-    .jh-quick__label{font-size:10px}
-    .jh-quick__live{top:7px;right:8px;width:6px;height:6px}
+    /* telefon: slika od ivice do ivice, naslov zakačen dolje lijevo, uža vertikalna traka desno */
+    .jh-hero{padding:0}
+    .jh-frame{border-radius:0;box-shadow:none;min-height:100vh;min-height:100svh}
+    .jh-headline{position:absolute;left:22px;right:84px;bottom:26px;top:auto;margin:0;padding:0}
+    .jh-quick{position:absolute;right:12px;bottom:22px;flex-direction:column;gap:4px;padding:5px;border-radius:20px}
+    .jh-quick__item{width:52px;height:52px;border-radius:14px;gap:3px}
+    .jh-quick__item svg{width:18px;height:18px}
+    .jh-quick__label--word{font-size:7.5px;letter-spacing:.2px}
+    .jh-quick__label{font-size:9px}
+    .jh-quick__live{top:6px;right:7px;width:6px;height:6px}
     h1.jh-kicker{letter-spacing:1.7px!important;font-size:9.5px!important;gap:10px;white-space:nowrap}
     /* duži H1 ne staje u jedan red pored vertikalne trake: prelom tačno kod "·" (tačka i razmaci se ne vide) */
     .jh-kicker .jh-sep{width:0;overflow:hidden;vertical-align:top}
-    .jh-kicker .jh-sep--dot{display:block;width:100%;height:5px}
+    .jh-kicker .jh-sep--dot{display:block;width:100%;height:5px;font-size:0;color:transparent}
     /* telefon: kadar na stazu, jače zatamnjenje ispod teksta */
     .jh-photo{background-position:64% 40%;background-image:url('ZAMIJENI-URL-jahorina-hero-mobil.webp')}   /* manja slika za telefon: 98 KB */
-    .jh-scrim--bottom{background:linear-gradient(0deg,rgba(6,11,22,.92) 0%,rgba(6,11,22,.75) 38%,rgba(6,11,22,0) 66%)}
+    .jh-scrim--bottom{background:linear-gradient(0deg,rgba(6,11,22,.94) 0%,rgba(6,11,22,.72) 34%,rgba(6,11,22,0) 62%)}
     .jh-kicker::before{width:22px}
   }
 
@@ -500,7 +501,7 @@
     .jh-title{font-size:clamp(64px,min(11vw,18.5vh),190px);letter-spacing:-.02em}
   }
   @media (max-width:760px){
-    .jh-title{font-size:clamp(44px,12.5vw,64px)}
+    .jh-title{font-size:clamp(48px,15vw,76px)}   /* ~20% veći nego ranije */
     /* telefon: bez zamućenja pri ulasku (blur preko cijele slike je skup za telefon) */
     @keyframes jhZoomM{0%{opacity:0;scale:1.06}100%{opacity:1;scale:1}}
     .jh-photo{animation-name:jhZoomM}
@@ -511,9 +512,10 @@
   }
   /* nizak ekran (mali telefon / horizontalno): manje pločice da traka stane */
   @media (max-width:760px) and (max-height:680px){
-    .jh-quick{gap:4px;padding:5px;bottom:16px}
-    .jh-quick__item{width:52px;height:52px}
-    .jh-quick__item svg{width:18px;height:18px}
+    .jh-quick{gap:3px;padding:4px;bottom:16px}
+    .jh-quick__item{width:46px;height:46px}
+    .jh-quick__item svg{width:16px;height:16px}
+    .jh-headline{bottom:20px;right:76px}
   }
 
   @media (prefers-reduced-motion:reduce){
@@ -526,11 +528,10 @@
 /* ===== Opcija A: meni je iz teme; Web shop i Ski mapa su pločice u traci ===== */
 .jh-hero .jh-quick__label{white-space:nowrap!important;text-align:center}
 @media (max-width:760px){
-  .jh-hero .jh-headline{padding-top:130px}
   .jh-hero .jh-kicker > span{line-height:inherit!important}   /* H1 u dva reda: isti razmak redova kao kicker */
-  .jh-hero .jh-quick__item svg{width:20px;height:20px}
-  .jh-hero .jh-quick__label--word{font-size:8px;letter-spacing:.2px}
+  .jh-hero .jh-quick__item svg{width:18px;height:18px}
+  .jh-hero .jh-quick__label--word{font-size:7.5px;letter-spacing:.2px}
 }
 @media (max-width:760px) and (max-height:680px){
-  .jh-hero .jh-quick__item svg{width:18px;height:18px}
+  .jh-hero .jh-quick__item svg{width:16px;height:16px}
 }
