@@ -48,6 +48,7 @@ SR_RESET = """
 .jh-hero svg[fill="none"],.jh-hero svg [fill="none"]{fill:none!important}
 .jh-hero .jh-quick__item,.jh-hero .jh-btn--ghost,.jh-hero .jh-burger,.jh-hero .jh-nav__link{color:#fff}
 .jh-hero .jh-quick__item svg{display:block;width:22px;height:22px;flex-shrink:0}
+.jh-hero .jh-dot{display:block!important;visibility:visible!important}   /* tačka na "i" je prazan span — neke teme skrivaju prazne span-ove */
 .jh-hero .jh-title{line-height:.94!important}
 .jh-hero .jh-title > span{display:block!important;line-height:.94!important}
 .jh-hero .jh-ch,.jh-hero .jh-type{line-height:inherit!important}

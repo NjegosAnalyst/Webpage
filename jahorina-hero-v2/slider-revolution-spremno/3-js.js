@@ -285,6 +285,14 @@
       setTimeout(res, 2500);
     });
     fontsReady.then(placeDot);
+    // rezerva: ako tema/dodatak sakrije tačku (npr. pravilo span:empty{display:none}), prikaži obično "i"
+    function fixDot() {
+      var cs = getComputedStyle(dot), b = dot.getBoundingClientRect();
+      if (b.width > 1 && cs.display !== 'none' && cs.visibility !== 'hidden') return;
+      var tn = dotI.firstChild; if (tn && tn.nodeType === 3) tn.data = tn.data.replace('\u0131', 'i');
+      dot.style.display = 'none';
+    }
+    setTimeout(fixDot, 9000);
     var rz; window.addEventListener('resize', function () {
       clearTimeout(rz); rz = setTimeout(function () { if (!dot.classList.contains('is-flying')) placeDot(); }, 150);
     });
@@ -304,7 +312,7 @@
     });
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      title.classList.add('is-live'); ice.classList.add('is-live'); dot.classList.add('is-set'); return;
+      title.classList.add('is-live'); ice.classList.add('is-live'); dot.classList.add('is-set'); fontsReady.then(fixDot); return;
     }
     var t0 = performance.now();
     function after(sec, fn) { setTimeout(fn, Math.max(0, sec * 1000 - (performance.now() - t0))); }
@@ -490,7 +498,7 @@
             var q = (t - TOTAL) / T4, d = Math.exp(-6 * q) * Math.cos(q * 14);
             p = D; sx = 1 + 0.35 * d; sy = 1 - 0.35 * d;
           } else {
-            dot.style.transform = ''; dot.classList.add('is-set');
+            dot.style.transform = ''; dot.classList.add('is-set'); setTimeout(fixDot, 50);
             tsvg.style.transition = 'opacity .4s'; tsvg.style.opacity = 0;
             setTimeout(tsvg.remove.bind(tsvg), 450);
             return;
