@@ -174,7 +174,6 @@
   .jh-btn--ghost:hover{box-shadow:var(--nm-raised),0 0 22px rgba(0,185,242,.4)}
   .jh-btn--solid:active{transform:none;box-shadow:inset 3px 3px 7px rgba(13,21,36,.25),inset -3px -3px 6px #fff}
   .jh-btn--solid span{font-size:16px}
-  .jh-quick__item:hover{box-shadow:var(--nm-raised-sm),0 0 16px rgba(0,185,242,.3)}
 
   /* ---------- naslov ---------- */
   .jh-headline{position:absolute;left:clamp(24px,3vw,52px);top:clamp(150px,25%,240px);z-index:5}
@@ -386,10 +385,11 @@
   /* ---------- dole desno: spojena traka brzih linkova ---------- */
   .jh-quick{
     position:absolute;right:clamp(24px,3vw,52px);bottom:clamp(26px,3.4vw,46px);z-index:6;
-    display:flex;gap:8px;padding:8px;border-radius:24px;
-    background:var(--nm-surface);
+    display:flex;gap:6px;padding:7px;border-radius:22px;
+    /* staklo: tamni prelaz, tanka svijetla ivica, meka sjena ispod (bez starih "neumorph" sjena) */
+    background:linear-gradient(180deg,rgba(18,27,45,.78),rgba(9,14,26,.88));
     -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
-    box-shadow:var(--nm-inset),5px 5px 0 -5px transparent;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.09),0 22px 44px -20px rgba(0,0,0,.95);
     animation:jhCardIn .8s cubic-bezier(.2,.7,.2,1) 1.6s both;
   }
   .jh-quick__item{animation:jhTileOn .6s cubic-bezier(.2,.7,.2,1) backwards}
@@ -407,27 +407,38 @@
   .jh-quick__item{
     position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
     width:clamp(64px,5.4vw,76px);height:clamp(68px,5.6vw,80px);border-radius:16px;
-    text-decoration:none;background:var(--nm-surface-2);
-    box-shadow:var(--nm-raised-sm);transition:box-shadow .25s,transform .2s,filter .2s;
+    text-decoration:none;color:#C4EEFF;   /* ikonice: blijeda ledeno-plava */
+    background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.02));
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.11);
+    transition:box-shadow .25s,transform .2s,filter .2s;
   }
-  .jh-quick__item:hover{transform:translateY(-2px)}
-  .jh-quick__item:active{transform:none;box-shadow:var(--nm-inset-sm)}
+  .jh-quick__item svg [stroke]{stroke-width:1.6}
+  .jh-quick__item:hover{transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(111,219,255,.38),inset 0 1px 0 rgba(255,255,255,.14),0 0 18px -4px rgba(0,185,242,.45)}
+  .jh-quick__item:active{transform:scale(.96)}
+  /* Web shop: glavno dugme (široko, cyan, strelica) — računar: lijevo u traci, naslov u dva reda; telefon: cijeli red iznad ostalih */
   .jh-quick__item--accent{
-    background:linear-gradient(145deg,#2CCBF8,#00A6DB);isolation:isolate;
-    box-shadow:3px 3px 7px rgba(0,0,0,.4),-2px -2px 6px rgba(78,104,150,.16),inset 1px 1px 0 rgba(255,255,255,.35),0 0 20px -6px rgba(0,185,242,.5);
+    flex-direction:row;width:auto;padding:0 18px 0 16px;gap:12px;color:#fff;
+    background:linear-gradient(160deg,#45D6FF 0%,#00AEE6 50%,#008BC7 100%);isolation:isolate;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.18),0 10px 24px -10px rgba(0,185,242,.95);
   }
-  .jh-quick__item--accent:hover{filter:brightness(1.08)}
-  .jh-quick__item--accent:active{box-shadow:inset 3px 3px 8px rgba(0,80,120,.55),inset -2px -2px 6px rgba(255,255,255,.25)}
-  .jh-quick__label{font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;color:#fff}
-  .jh-quick__label--word{font-size:9.5px;letter-spacing:.3px}
+  .jh-quick__item--accent:hover{filter:brightness(1.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.3),0 12px 28px -8px rgba(0,185,242,1)}
+  .jh-quick__item--accent::after{content:"\2192";font:600 18px/1 'Archivo',sans-serif;color:#fff;margin-left:2px;transition:transform .25s}
+  .jh-quick__item--accent:hover::after{transform:translateX(3px)}
+  .jh-quick__label{font-family:'Archivo',sans-serif;font-weight:600;font-size:11px;letter-spacing:.7px;color:rgba(255,255,255,.88)}
+  .jh-quick__label--word{font-size:9.5px}
+  .jh-quick__label--cta{font-weight:700;font-size:13px;letter-spacing:2px;color:#fff;text-align:left!important;min-height:0!important;line-height:1.15}
+  .jh-quick__label--cta .jh-quick__l2{padding-top:3px;font-size:9.5px;font-weight:600;letter-spacing:2.4px;color:rgba(255,255,255,.88)}
   .jh-quick__label{white-space:nowrap;text-align:center}
   /* "Dnevno / Noćno skijanje" u dva reda; svi natpisi imaju visinu dva reda, pa su ikonice u istoj liniji */
   .jh-quick__l2{display:block}
   .jh-quick__label{min-height:21px}
   .jh-quick__live{
     position:absolute;top:10px;right:11px;width:7px;height:7px;border-radius:50%;
-    background:#ff4d4d;box-shadow:0 0 0 3px rgba(255,77,77,.25);
+    background:#ff4d4d;
   }
+  /* "uživo": crvena tačka tiho pulsira (samo transform/opacity — lagano i za telefon) */
+  .jh-quick__live::after{content:"";position:absolute;inset:0;border-radius:50%;background:#ff4d4d;animation:jhLive 2s ease-out infinite}
+  @keyframes jhLive{0%{transform:scale(1);opacity:.75}100%{transform:scale(3);opacity:0}}
 
   /* ---------- mobilni meni (hamburger) ---------- */
   .jh-burger{
@@ -503,7 +514,7 @@
      zamućenja i sjene preko slova koja se animiraju telefon mora preračunati u svakom kadru (to je "kočilo");
      ovdje ih nema dok traje ulazak, a izgled poslije ulaska ostaje skoro isti */
   @media (max-width:760px){
-    .jh-quick{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(17,26,44,.9)}
+    .jh-quick{-webkit-backdrop-filter:none;backdrop-filter:none;background:linear-gradient(180deg,rgba(18,27,45,.9),rgba(9,14,26,.95))}
     .jh-quick__item{animation-name:jhTileOnM}
     @keyframes jhTileOnM{0%{opacity:0;transform:translateY(10px) scale(.9)}100%{opacity:1;transform:none}}
     .jh-title > span{filter:none}
@@ -533,6 +544,25 @@
     .jh-quick__item{height:55px}
     .jh-quick__item svg{width:17px;height:17px}
     .jh-headline{top:40%}
+  }
+
+  /* ===== Dugmad B (telefon): Web shop preko cijelog reda, ispod 5 pločica ===== */
+  @media (max-width:760px){
+    .jh-quick{flex-wrap:wrap;gap:5px;padding:6px}
+    .jh-quick__item{height:58px}
+    .jh-quick__item--accent{flex:1 1 100%;height:46px;justify-content:center;gap:10px;padding:0 14px;border-radius:14px}
+    .jh-quick__label--cta{font-size:11.5px;letter-spacing:2px}
+    .jh-quick__label--cta .jh-quick__l2{display:inline;padding:0;font:inherit;letter-spacing:inherit;color:inherit}
+    .jh-quick__label--cta .jh-quick__l2::before{content:"\00a0\00b7\00a0"}   /* razmak · razmak (bez preloma) */
+    .jh-quick__item--accent::after{font-size:16px}
+  }
+  @media (max-width:360px){
+    .jh-quick{gap:4px;padding:5px}
+    .jh-quick__label--cta{font-size:10.5px;letter-spacing:1.5px}
+  }
+  @media (max-width:760px) and (max-height:680px){
+    .jh-quick__item{height:52px}
+    .jh-quick__item--accent{height:40px}
   }
 
   @media (prefers-reduced-motion:reduce){
@@ -597,23 +627,23 @@
     <div class="jh-quick">
       <a href="https://webshop.oc-jahorina.com/" class="jh-quick__item jh-quick__item--accent" aria-label="Web shop" title="Web shop">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 4 H5.5 L7.6 15 H18.5 L20.5 7.5 H6.4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="19.2" r="1.4" fill="#fff"/><circle cx="17" cy="19.2" r="1.4" fill="#fff"/></svg>
-        <span class="jh-quick__label jh-quick__label--word">WEB SHOP</span>
+        <span class="jh-quick__label jh-quick__label--cta">WEB SHOP<span class="jh-quick__l2">SKI KARTE</span></span>
       </a>
       <a href="https://www.oc-jahorina.com/ski-mapa/" class="jh-quick__item" aria-label="Ski mapa" title="Ski mapa">
         <svg width="22" height="22" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M6.5 2.5 L2 4.5 V15.5 L6.5 13.5 L11.5 15.5 L16 13.5 V2.5 L11.5 4.5 Z" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/><line x1="6.5" y1="2.5" x2="6.5" y2="13.5" stroke="#fff" stroke-width="1.3"/><line x1="11.5" y1="4.5" x2="11.5" y2="15.5" stroke="#fff" stroke-width="1.3"/></svg>
         <span class="jh-quick__label jh-quick__label--word">SKI MAPA</span>
       </a>
       <a href="https://www.oc-jahorina.com/ski-info/" class="jh-quick__item" aria-label="Dnevno skijanje" title="Dnevno skijanje">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 16 H21 M6 16 V10 L12 5 L18 10 V16" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="5" r="1.4" fill="#fff"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2.5 20 L9 11 L12.6 15.6 L15.2 12.6 L21.5 20 Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><circle cx="17" cy="6" r="2.6" stroke="#fff" stroke-width="1.5"/></svg>
         <span class="jh-quick__label jh-quick__label--word">DNEVNO<span class="jh-quick__l2">SKIJANJE</span></span>
       </a>
       <a href="https://www.oc-jahorina.com/nocno-skijanje-info/" class="jh-quick__item" aria-label="Noćno skijanje" title="Noćno skijanje">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.3 A8.5 8.5 0 1 1 9.7 4 A6.6 6.6 0 0 0 20 14.3 Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2.5 20 L9 11 L12.6 15.6 L15.2 12.6 L21.5 20 Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><path d="M20.4 7.6 A3.6 3.6 0 1 1 16.3 3 A2.8 2.8 0 0 0 20.4 7.6 Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
         <span class="jh-quick__label jh-quick__label--word">NOĆNO<span class="jh-quick__l2">SKIJANJE</span></span>
       </a>
       <a href="https://www.link.hr/vrtours/ocjahorina/" class="jh-quick__item" aria-label="Virtuelna tura 360°" title="Virtuelna tura 360°" target="_blank" rel="noopener">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12 a8 8 0 0 1 14-5.3 M20 12 a8 8 0 0 1-14 5.3" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/><path d="M18 5 v3 h-3 M6 19 v-3 h3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span class="jh-quick__label">360°</span>
+        <span class="jh-quick__label jh-quick__label--word">360°</span>
       </a>
       <a href="https://vivo.ba/livestream/oc-jahorina/" class="jh-quick__item" aria-label="Kamere uživo" title="Kamere uživo" target="_blank" rel="noopener">
         <span class="jh-quick__live" aria-hidden="true"></span>

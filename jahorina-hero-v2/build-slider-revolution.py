@@ -46,7 +46,8 @@ SR_RESET = """
 .jh-hero svg [stroke]:not([stroke="none"]){stroke:currentColor!important}
 .jh-hero svg [fill]:not([fill="none"]){fill:currentColor!important}
 .jh-hero svg[fill="none"],.jh-hero svg [fill="none"]{fill:none!important}
-.jh-hero .jh-quick__item,.jh-hero .jh-btn--ghost,.jh-hero .jh-burger,.jh-hero .jh-nav__link{color:#fff}
+.jh-hero .jh-btn--ghost,.jh-hero .jh-burger,.jh-hero .jh-nav__link{color:#fff}
+.jh-hero .jh-quick__item{color:#C4EEFF}.jh-hero .jh-quick__item--accent{color:#fff}   /* ikonice: ledeno-plave, Web shop bijela */
 .jh-hero .jh-quick__item svg{display:block;width:22px;height:22px;flex-shrink:0}
 .jh-hero .jh-dot{display:block!important;visibility:visible!important}   /* tačka na "i" je prazan span — neke teme skrivaju prazne span-ove */
 .jh-hero .jh-title{line-height:.94!important}
@@ -78,6 +79,7 @@ SR_LAYOUT = """
   .jh-hero .jh-title > span.jh-ice{display:table!important;width:auto!important;margin-left:auto!important;margin-right:auto!important;left:auto!important;right:auto!important;float:none!important}
   .jh-hero .jh-quick{left:max(14px,calc(50% - 220px))!important;right:max(14px,calc(50% - 220px))!important;width:auto!important;max-width:none!important;margin:0!important}
   .jh-hero .jh-quick__item svg{width:19px;height:19px}
+  .jh-hero .jh-quick__item--accent .jh-quick__l2{display:inline!important}   /* telefon: "WEB SHOP · SKI KARTE" u jednom redu */
 }
 @media (max-width:760px) and (max-height:680px){
   .jh-hero .jh-quick__item svg{width:17px;height:17px}
@@ -174,6 +176,7 @@ EN = [
     ('>NOĆNO<span class="jh-quick__l2">SKIJANJE<', '>NIGHT<span class="jh-quick__l2">SKIING<'),
     ('aria-label="Virtuelna tura 360°" title="Virtuelna tura 360°"', 'aria-label="360° virtual tour" title="360° virtual tour"'),
     ('aria-label="Kamere uživo" title="Kamere uživo"', 'aria-label="Live cameras" title="Live cameras"'),
+    ('>WEB SHOP<span class="jh-quick__l2">SKI KARTE<', '>WEB SHOP<span class="jh-quick__l2">SKI PASSES<'),
     ('>UŽIVO<', '>LIVE<'),
 ]
 html_en = html
