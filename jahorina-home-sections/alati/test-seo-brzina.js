@@ -102,6 +102,7 @@ const info = (p, id) => p.evaluate((id) => {
           const box = (id, sec, attrs = '') => `<div class="e-con" style="margin-top:24px;padding:10px;background:#fff;display:flex;flex-direction:column;gap:20px"><div class="elementor-widget elementor-widget-html"><div id="${id}" ${attrs}></div><script src="${CDN}jahorina-home-sections/${sec}/${sec}.js" defer></script></div></div>`;
           return route.fulfill({ contentType: 'text/html; charset=utf-8', body: `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#fff"><div class="${wrap}"><div class="elementor-section-x">
             ${box('jsk-sankaliste', 'sankaliste')}${box('jpb-brojke', 'brojke', 'data-km="54" data-zicare="18" data-nocne="10" data-sankanje="600"')}
+            <div class="e-con" style="margin-top:24px;padding:10px;background:#fff"><div class="elementor-widget elementor-widget-spacer"><div class="elementor-spacer" style="height:30px"></div></div></div>
             <div class="e-con" style="margin-top:24px;padding:10px;background:#fff;display:flex;flex-direction:column;gap:20px"><div class="elementor-widget elementor-widget-html"><div id="jsd-depo"></div><script src="${CDN}jahorina-home-sections/depo/depo.js" defer></script></div>
             <div class="elementor-widget elementor-widget-html"><div id="jr-ratrak"></div><script src="${CDN}jahorina-home-sections/ratrak/ratrak.js" defer></script></div></div></div></div><div style="height:600px"></div></body></html>` });
         }

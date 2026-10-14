@@ -815,8 +815,10 @@
     // margin-top na tom nivou, a bijeli padding oba kontejnera negativnim margin-top na samom bloku (blok ih prekrije)
     function seam() {
       for (var el = root.parentElement; el && el.parentElement && el !== d.body && el !== d.documentElement; el = el.parentElement) {
+        // preskaču se nevidljivi i prazni elementi (prazan kontejner, Spacer, prazan widget: bez teksta, slika i videa)
         var prev = el.previousElementSibling;
-        while (prev && (!prev.offsetHeight || /^(SCRIPT|STYLE|LINK)$/.test(prev.tagName))) prev = prev.previousElementSibling;
+        while (prev && (!prev.offsetHeight || /^(SCRIPT|STYLE|LINK)$/.test(prev.tagName) ||
+          (prev.offsetHeight <= 200 && !prev.matches(DARK) && !prev.querySelector(DARK + ',img,svg,video,iframe,canvas,input,button') && !(prev.textContent || '').trim()))) prev = prev.previousElementSibling;
         if (!prev) continue;
         var dk = prev.matches(DARK) ? [prev] : [].slice.call(prev.querySelectorAll(DARK));
         if (!dk.length) return;
@@ -825,7 +827,7 @@
         var pe = root.parentElement;
         el.style.removeProperty('margin-top');
         if (pe !== el) pe.style.removeProperty('margin-top');
-        var gap = el.getBoundingClientRect().top - prev.getBoundingClientRect().bottom;
+        var gap = el.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;   // i preko praznih elemenata između
         if (gap > .5 && gap <= 160) el.style.setProperty('margin-top', (parseFloat(getComputedStyle(el).marginTop) || 0) - gap + 'px', 'important');
         // ostatak (bijeli padding kontejnera iznad i ispod) prekrije blok
         var rest = root.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;
