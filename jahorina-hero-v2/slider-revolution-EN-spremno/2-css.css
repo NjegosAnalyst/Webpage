@@ -439,6 +439,9 @@
   .jh-quick__label{font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;color:#fff}
   .jh-quick__label--word{font-size:9.5px;letter-spacing:.3px}
   .jh-quick__label{white-space:nowrap;text-align:center}
+  /* "Dnevno / Noćno skijanje" u dva reda; svi natpisi imaju visinu dva reda, pa su ikonice u istoj liniji */
+  .jh-quick__l2{display:block}
+  .jh-quick__label{min-height:21px}
   .jh-quick__live{
     position:absolute;top:10px;right:11px;width:7px;height:7px;border-radius:50%;
     background:#ff4d4d;box-shadow:0 0 0 3px rgba(255,77,77,.25);
@@ -489,7 +492,7 @@
     .jh-quick__item{flex:1 1 0;width:auto;height:63px;border-radius:15px;gap:4px}
     .jh-quick__item svg{width:19px;height:19px}
     .jh-quick__label--word{font-size:7.9px;letter-spacing:.2px}
-    .jh-quick__label{font-size:9.5px}
+    .jh-quick__label{font-size:9.5px;min-height:17.5px}
     .jh-quick__live{top:6px;right:7px;width:6px;height:6px}
     h1.jh-kicker{letter-spacing:1.7px!important;font-size:10.5px!important;gap:10px;white-space:nowrap;text-align:center!important;flex-direction:column;align-items:center}
     /* telefon: H1 u dva centrirana reda, prelom tačno kod "·" (tačka i razmaci se ne vide), cyan linija iznad */
@@ -540,6 +543,7 @@
     .jh-kicker::before{width:24px}
     .jh-quick{gap:3px;padding:4px}
     .jh-quick__label--word{font-size:7.1px;letter-spacing:0}
+    .jh-quick__label{min-height:15.7px}
   }
   /* nizak ekran (mali telefon / horizontalno): manje pločice da traka stane */
   @media (max-width:760px) and (max-height:680px){
@@ -558,6 +562,7 @@
 
 /* ===== Opcija A: meni je iz teme; Web shop i Ski mapa su pločice u traci ===== */
 .jh-hero .jh-quick__label{white-space:nowrap!important;text-align:center}
+.jh-hero .jh-quick__l2{display:block!important;line-height:inherit!important;margin:0!important}   /* drugi red natpisa (SKIJANJE) */
 @media (max-width:760px){
   .jh-hero .jh-kicker > span{line-height:inherit!important}   /* H1 u dva reda: isti razmak redova kao kicker */
   .jh-hero .jh-quick__label--word{font-size:7.9px;letter-spacing:.2px}

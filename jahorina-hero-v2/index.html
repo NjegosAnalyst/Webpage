@@ -421,6 +421,9 @@
   .jh-quick__label{font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;color:#fff}
   .jh-quick__label--word{font-size:9.5px;letter-spacing:.3px}
   .jh-quick__label{white-space:nowrap;text-align:center}
+  /* "Dnevno / Noćno skijanje" u dva reda; svi natpisi imaju visinu dva reda, pa su ikonice u istoj liniji */
+  .jh-quick__l2{display:block}
+  .jh-quick__label{min-height:21px}
   .jh-quick__live{
     position:absolute;top:10px;right:11px;width:7px;height:7px;border-radius:50%;
     background:#ff4d4d;box-shadow:0 0 0 3px rgba(255,77,77,.25);
@@ -471,7 +474,7 @@
     .jh-quick__item{flex:1 1 0;width:auto;height:63px;border-radius:15px;gap:4px}
     .jh-quick__item svg{width:19px;height:19px}
     .jh-quick__label--word{font-size:7.9px;letter-spacing:.2px}
-    .jh-quick__label{font-size:9.5px}
+    .jh-quick__label{font-size:9.5px;min-height:17.5px}
     .jh-quick__live{top:6px;right:7px;width:6px;height:6px}
     h1.jh-kicker{letter-spacing:1.7px!important;font-size:10.5px!important;gap:10px;white-space:nowrap;text-align:center!important;flex-direction:column;align-items:center}
     /* telefon: H1 u dva centrirana reda, prelom tačno kod "·" (tačka i razmaci se ne vide), cyan linija iznad */
@@ -522,6 +525,7 @@
     .jh-kicker::before{width:24px}
     .jh-quick{gap:3px;padding:4px}
     .jh-quick__label--word{font-size:7.1px;letter-spacing:0}
+    .jh-quick__label{min-height:15.7px}
   }
   /* nizak ekran (mali telefon / horizontalno): manje pločice da traka stane */
   @media (max-width:760px) and (max-height:680px){
@@ -601,11 +605,11 @@
       </a>
       <a href="https://www.oc-jahorina.com/ski-info/" class="jh-quick__item" aria-label="Dnevno skijanje" title="Dnevno skijanje">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 16 H21 M6 16 V10 L12 5 L18 10 V16" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="5" r="1.4" fill="#fff"/></svg>
-        <span class="jh-quick__label jh-quick__label--word">DNEVNO</span>
+        <span class="jh-quick__label jh-quick__label--word">DNEVNO<span class="jh-quick__l2">SKIJANJE</span></span>
       </a>
       <a href="https://www.oc-jahorina.com/nocno-skijanje-info/" class="jh-quick__item" aria-label="Noćno skijanje" title="Noćno skijanje">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.3 A8.5 8.5 0 1 1 9.7 4 A6.6 6.6 0 0 0 20 14.3 Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
-        <span class="jh-quick__label jh-quick__label--word">NOĆNO</span>
+        <span class="jh-quick__label jh-quick__label--word">NOĆNO<span class="jh-quick__l2">SKIJANJE</span></span>
       </a>
       <a href="https://www.link.hr/vrtours/ocjahorina/" class="jh-quick__item" aria-label="Virtuelna tura 360°" title="Virtuelna tura 360°" target="_blank" rel="noopener">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12 a8 8 0 0 1 14-5.3 M20 12 a8 8 0 0 1-14 5.3" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/><path d="M18 5 v3 h-3 M6 19 v-3 h3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>

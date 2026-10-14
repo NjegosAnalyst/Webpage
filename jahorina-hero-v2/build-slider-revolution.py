@@ -66,6 +66,7 @@ SR_LAYOUT = """
 
 /* ===== Opcija A: meni je iz teme; Web shop i Ski mapa su pločice u traci ===== */
 .jh-hero .jh-quick__label{white-space:nowrap!important;text-align:center}
+.jh-hero .jh-quick__l2{display:block!important;line-height:inherit!important;margin:0!important}   /* drugi red natpisa (SKIJANJE) */
 @media (max-width:760px){
   .jh-hero .jh-kicker > span{line-height:inherit!important}   /* H1 u dva reda: isti razmak redova kao kicker */
   .jh-hero .jh-quick__label--word{font-size:7.9px;letter-spacing:.2px}
@@ -167,10 +168,10 @@ EN = [
     ('>SKI MAPA<', '>SKI MAP<'),
     ('https://www.oc-jahorina.com/ski-info/', 'https://www.oc-jahorina.com/en/ski-info/'),
     ('aria-label="Dnevno skijanje" title="Dnevno skijanje"', 'aria-label="Day skiing" title="Day skiing"'),
-    ('>DNEVNO<', '>DAY<'),
+    ('>DNEVNO<span class="jh-quick__l2">SKIJANJE<', '>DAY<span class="jh-quick__l2">SKIING<'),
     ('https://www.oc-jahorina.com/nocno-skijanje-info/', 'https://www.oc-jahorina.com/en/nocno-skijanje-info/'),
     ('aria-label="Noćno skijanje" title="Noćno skijanje"', 'aria-label="Night skiing" title="Night skiing"'),
-    ('>NOĆNO<', '>NIGHT<'),
+    ('>NOĆNO<span class="jh-quick__l2">SKIJANJE<', '>NIGHT<span class="jh-quick__l2">SKIING<'),
     ('aria-label="Virtuelna tura 360°" title="Virtuelna tura 360°"', 'aria-label="360° virtual tour" title="360° virtual tour"'),
     ('aria-label="Kamere uživo" title="Kamere uživo"', 'aria-label="Live cameras" title="Live cameras"'),
     ('>UŽIVO<', '>LIVE<'),
