@@ -206,6 +206,13 @@
     animation:jhLineOn .55s cubic-bezier(.2,.7,.2,1) .4s both;
   }
   @keyframes jhLineOn{0%{transform:scaleX(0);opacity:0}60%{opacity:1}100%{transform:scaleX(1);opacity:1}}
+  /* SEO: kicker je H1 — poništi stilove teme (Betheme/SR) za h1, izgled ostaje isti kao ranije */
+  h1.jh-kicker{
+    margin:0 0 20px!important;padding:0!important;border:0!important;background:none!important;
+    font-family:'Archivo',sans-serif!important;font-size:11px!important;font-weight:600!important;
+    line-height:inherit!important;color:rgba(255,255,255,.75)!important;
+    text-transform:uppercase!important;letter-spacing:5px!important;text-shadow:none!important;text-align:left!important;
+  }
   /* dok JS ne preuzme, elementi čekaju skriveni (bez JS-a se pojave sami) */
   @keyframes jhHold{from{opacity:0}to{opacity:1}}
   /* slova koja se "otkucaju" uz blago treperenje */
@@ -477,7 +484,10 @@
     .jh-quick__label--word{font-size:8px;letter-spacing:.2px}
     .jh-quick__label{font-size:10px}
     .jh-quick__live{top:7px;right:8px;width:6px;height:6px}
-    .jh-kicker{letter-spacing:1.7px;font-size:9.5px;gap:10px;white-space:nowrap}
+    h1.jh-kicker{letter-spacing:1.7px!important;font-size:9.5px!important;gap:10px;white-space:nowrap}
+    /* duži H1 ne staje u jedan red pored vertikalne trake: prelom tačno kod "·" (tačka i razmaci se ne vide) */
+    .jh-kicker .jh-sep{width:0;overflow:hidden;vertical-align:top}
+    .jh-kicker .jh-sep--dot{display:block;width:100%;height:5px}
     /* telefon: kadar na stazu, jače zatamnjenje ispod teksta */
     .jh-photo{background-position:64% 40%;background-image:url('ZAMIJENI-URL-jahorina-hero-mobil.webp')}   /* manja slika za telefon: 98 KB */
     .jh-scrim--bottom{background:linear-gradient(0deg,rgba(6,11,22,.92) 0%,rgba(6,11,22,.75) 38%,rgba(6,11,22,0) 66%)}
@@ -496,7 +506,7 @@
     .jh-photo{animation-name:jhZoomM}
   }
   @media (max-width:360px){
-    .jh-kicker{letter-spacing:1.1px;font-size:9px;gap:8px}
+    h1.jh-kicker{letter-spacing:1.1px!important;font-size:9px!important;gap:8px}
     .jh-kicker::before{width:16px}
   }
   /* nizak ekran (mali telefon / horizontalno): manje pločice da traka stane */
@@ -517,6 +527,7 @@
 .jh-hero .jh-quick__label{white-space:nowrap!important;text-align:center}
 @media (max-width:760px){
   .jh-hero .jh-headline{padding-top:130px}
+  .jh-hero .jh-kicker > span{line-height:inherit!important}   /* H1 u dva reda: isti razmak redova kao kicker */
   .jh-hero .jh-quick__item svg{width:20px;height:20px}
   .jh-hero .jh-quick__label--word{font-size:8px;letter-spacing:.2px}
 }

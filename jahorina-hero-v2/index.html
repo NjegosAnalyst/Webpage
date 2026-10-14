@@ -189,6 +189,13 @@
     animation:jhLineOn .55s cubic-bezier(.2,.7,.2,1) .4s both;
   }
   @keyframes jhLineOn{0%{transform:scaleX(0);opacity:0}60%{opacity:1}100%{transform:scaleX(1);opacity:1}}
+  /* SEO: kicker je H1 — poništi stilove teme (Betheme/SR) za h1, izgled ostaje isti kao ranije */
+  h1.jh-kicker{
+    margin:0 0 20px!important;padding:0!important;border:0!important;background:none!important;
+    font-family:'Archivo',sans-serif!important;font-size:11px!important;font-weight:600!important;
+    line-height:inherit!important;color:rgba(255,255,255,.75)!important;
+    text-transform:uppercase!important;letter-spacing:5px!important;text-shadow:none!important;text-align:left!important;
+  }
   /* dok JS ne preuzme, elementi čekaju skriveni (bez JS-a se pojave sami) */
   @keyframes jhHold{from{opacity:0}to{opacity:1}}
   /* slova koja se "otkucaju" uz blago treperenje */
@@ -460,7 +467,10 @@
     .jh-quick__label--word{font-size:8px;letter-spacing:.2px}
     .jh-quick__label{font-size:10px}
     .jh-quick__live{top:7px;right:8px;width:6px;height:6px}
-    .jh-kicker{letter-spacing:1.7px;font-size:9.5px;gap:10px;white-space:nowrap}
+    h1.jh-kicker{letter-spacing:1.7px!important;font-size:9.5px!important;gap:10px;white-space:nowrap}
+    /* duži H1 ne staje u jedan red pored vertikalne trake: prelom tačno kod "·" (tačka i razmaci se ne vide) */
+    .jh-kicker .jh-sep{width:0;overflow:hidden;vertical-align:top}
+    .jh-kicker .jh-sep--dot{display:block;width:100%;height:5px}
     /* telefon: kadar na stazu, jače zatamnjenje ispod teksta */
     .jh-photo{background-position:64% 40%;background-image:url('assets/jahorina-hero-mobil.webp')}   /* manja slika za telefon: 98 KB */
     .jh-scrim--bottom{background:linear-gradient(0deg,rgba(6,11,22,.92) 0%,rgba(6,11,22,.75) 38%,rgba(6,11,22,0) 66%)}
@@ -479,7 +489,7 @@
     .jh-photo{animation-name:jhZoomM}
   }
   @media (max-width:360px){
-    .jh-kicker{letter-spacing:1.1px;font-size:9px;gap:8px}
+    h1.jh-kicker{letter-spacing:1.1px!important;font-size:9px!important;gap:8px}
     .jh-kicker::before{width:16px}
   }
   /* nizak ekran (mali telefon / horizontalno): manje pločice da traka stane */
@@ -538,13 +548,13 @@
 
     <!-- ===== NASLOV ===== -->
     <div class="jh-headline">
-      <div class="jh-kicker">Olimpijski centar Jahorina</div>
-      <h1 class="jh-title" aria-label="Otkrij čaroliju Jahorine">
+      <!-- SEO: H1 je mali tekst iznad slogana (ključne riječi "ski centar Jahorina"); slogan je div -->
+      <h1 class="jh-kicker">Ski centar Jahorina · Olimpijski centar</h1>
+      <div class="jh-title" aria-label="Otkrij čaroliju Jahorine">
         <span>Otkrij</span>
         <span>čaroliju</span>
         <span class="jh-ice" aria-hidden="true">Jahor<span class="jh-i">ı<span class="jh-dot"></span></span>ne</span>
-        <span class="jh-sr" style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">Jahorine</span>
-      </h1>
+      </div>
     </div>
 
     <!-- ===== DOLE DESNO: brzi linkovi ===== -->
@@ -823,25 +833,29 @@
       clearTimeout(rz); rz = setTimeout(function () { if (!dot.classList.contains('is-flying')) placeDot(); }, 150);
     });
 
+    // kicker (H1): slovo po slovo, uz blago treperenje; " · " je mjesto preloma na telefonu
+    var kick = hero.querySelector('.jh-kicker'), ktxt = kick.textContent.replace(/\s+/g, ' ').trim();
+    kick.setAttribute('aria-label', ktxt); kick.textContent = '';
+    var kwrap = document.createElement('span'); kick.appendChild(kwrap);
+    var sepAt = ktxt.indexOf(' \u00b7 ');
+    ktxt.split('').forEach(function (c, i) {
+      var sp = document.createElement('span');
+      sp.className = 'jh-type';
+      if (sepAt >= 0 && i >= sepAt && i <= sepAt + 2) sp.className += i === sepAt + 1 ? ' jh-sep jh-sep--dot' : ' jh-sep';
+      sp.setAttribute('aria-hidden', 'true'); sp.textContent = c;
+      sp.style.animationDelay = (0.55 + i * 0.022) + 's';
+      kwrap.appendChild(sp);
+    });
+
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       title.classList.add('is-live'); ice.classList.add('is-live'); dot.classList.add('is-set'); return;
     }
     var t0 = performance.now();
     function after(sec, fn) { setTimeout(fn, Math.max(0, sec * 1000 - (performance.now() - t0))); }
 
-    // kicker: slovo po slovo, uz blago treperenje
-    var kick = hero.querySelector('.jh-kicker'), ktxt = kick.textContent;
-    kick.setAttribute('aria-label', ktxt); kick.textContent = '';
-    var kwrap = document.createElement('span'); kick.appendChild(kwrap);
-    ktxt.split('').forEach(function (c, i) {
-      var sp = document.createElement('span');
-      sp.className = 'jh-type'; sp.setAttribute('aria-hidden', 'true'); sp.textContent = c;
-      sp.style.animationDelay = (0.55 + i * 0.022) + 's';
-      kwrap.appendChild(sp);
-    });
 
     // "Otkrij čaroliju": svako slovo se kristališe iz zamućenja
-    var lines = [].slice.call(title.children).filter(function (el) { return el !== ice && !el.classList.contains('jh-sr'); });
+    var lines = [].slice.call(title.children).filter(function (el) { return el !== ice; });
     var n = 0, last = 0;
     lines.forEach(function (line) {
       var t = line.textContent; line.dataset.text = t; line.textContent = '';

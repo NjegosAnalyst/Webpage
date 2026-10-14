@@ -67,6 +67,7 @@ SR_LAYOUT = """
 .jh-hero .jh-quick__label{white-space:nowrap!important;text-align:center}
 @media (max-width:760px){
   .jh-hero .jh-headline{padding-top:130px}
+  .jh-hero .jh-kicker > span{line-height:inherit!important}   /* H1 u dva reda: isti razmak redova kao kicker */
   .jh-hero .jh-quick__item svg{width:20px;height:20px}
   .jh-hero .jh-quick__label--word{font-size:8px;letter-spacing:.2px}
 }
@@ -130,12 +131,11 @@ def with_urls(text, prefix):
 EN = [
     ('aria-label="Olimpijski centar Jahorina"', 'aria-label="Olympic Centre Jahorina"'),
     ('aria-label="Noćno skijanje na Jahorini"', 'aria-label="Night skiing on Jahorina"'),
-    ('>Olimpijski centar Jahorina<', '>Olympic Centre Jahorina<'),
+    ('>Ski centar Jahorina · Olimpijski centar<', '>Jahorina Ski Resort · Olympic Centre<'),   # H1 (SEO)
     ('aria-label="Otkrij čaroliju Jahorine"', 'aria-label="Discover the magic of Jahorina"'),
     ('<span>Otkrij</span>', '<span>Discover</span>'),
     ('<span>čaroliju</span>', '<span>the magic of</span>'),
     ('<span class="jh-dot"></span></span>ne</span>', '<span class="jh-dot"></span></span>na</span>'),
-    ('nowrap;border:0">Jahorine</span>', 'nowrap;border:0">Jahorina</span>'),
     ('https://www.oc-jahorina.com/ski-mapa/', 'https://www.oc-jahorina.com/en/ski-mapa/'),
     ('aria-label="Ski mapa" title="Ski mapa"', 'aria-label="Ski map" title="Ski map"'),
     ('>SKI MAPA<', '>SKI MAP<'),

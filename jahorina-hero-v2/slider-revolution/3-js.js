@@ -268,25 +268,29 @@
       clearTimeout(rz); rz = setTimeout(function () { if (!dot.classList.contains('is-flying')) placeDot(); }, 150);
     });
 
+    // kicker (H1): slovo po slovo, uz blago treperenje; " · " je mjesto preloma na telefonu
+    var kick = hero.querySelector('.jh-kicker'), ktxt = kick.textContent.replace(/\s+/g, ' ').trim();
+    kick.setAttribute('aria-label', ktxt); kick.textContent = '';
+    var kwrap = document.createElement('span'); kick.appendChild(kwrap);
+    var sepAt = ktxt.indexOf(' \u00b7 ');
+    ktxt.split('').forEach(function (c, i) {
+      var sp = document.createElement('span');
+      sp.className = 'jh-type';
+      if (sepAt >= 0 && i >= sepAt && i <= sepAt + 2) sp.className += i === sepAt + 1 ? ' jh-sep jh-sep--dot' : ' jh-sep';
+      sp.setAttribute('aria-hidden', 'true'); sp.textContent = c;
+      sp.style.animationDelay = (0.55 + i * 0.022) + 's';
+      kwrap.appendChild(sp);
+    });
+
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       title.classList.add('is-live'); ice.classList.add('is-live'); dot.classList.add('is-set'); return;
     }
     var t0 = performance.now();
     function after(sec, fn) { setTimeout(fn, Math.max(0, sec * 1000 - (performance.now() - t0))); }
 
-    // kicker: slovo po slovo, uz blago treperenje
-    var kick = hero.querySelector('.jh-kicker'), ktxt = kick.textContent;
-    kick.setAttribute('aria-label', ktxt); kick.textContent = '';
-    var kwrap = document.createElement('span'); kick.appendChild(kwrap);
-    ktxt.split('').forEach(function (c, i) {
-      var sp = document.createElement('span');
-      sp.className = 'jh-type'; sp.setAttribute('aria-hidden', 'true'); sp.textContent = c;
-      sp.style.animationDelay = (0.55 + i * 0.022) + 's';
-      kwrap.appendChild(sp);
-    });
 
     // "Otkrij čaroliju": svako slovo se kristališe iz zamućenja
-    var lines = [].slice.call(title.children).filter(function (el) { return el !== ice && !el.classList.contains('jh-sr'); });
+    var lines = [].slice.call(title.children).filter(function (el) { return el !== ice; });
     var n = 0, last = 0;
     lines.forEach(function (line) {
       var t = line.textContent; line.dataset.text = t; line.textContent = '';
