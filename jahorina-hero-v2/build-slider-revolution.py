@@ -125,6 +125,7 @@ EN = [
     ('<span>Otkrij</span>', '<span>Discover</span>'),
     ('<span>čaroliju</span>', '<span>the magic of</span>'),
     ('<span class="jh-dot"></span></span>ne</span>', '<span class="jh-dot"></span></span>na</span>'),
+    ('nowrap;border:0">Jahorine</span>', 'nowrap;border:0">Jahorina</span>'),
     ('https://www.oc-jahorina.com/ski-mapa/', 'https://www.oc-jahorina.com/en/ski-mapa/'),
     ('aria-label="Ski mapa" title="Ski mapa"', 'aria-label="Ski map" title="Ski map"'),
     ('>SKI MAPA<', '>SKI MAP<'),

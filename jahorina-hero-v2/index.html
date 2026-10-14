@@ -543,6 +543,7 @@
         <span>Otkrij</span>
         <span>čaroliju</span>
         <span class="jh-ice" aria-hidden="true">Jahor<span class="jh-i">ı<span class="jh-dot"></span></span>ne</span>
+        <span class="jh-sr" style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">Jahorine</span>
       </h1>
     </div>
 
@@ -840,7 +841,7 @@
     });
 
     // "Otkrij čaroliju": svako slovo se kristališe iz zamućenja
-    var lines = [].slice.call(title.children).filter(function (el) { return el !== ice; });
+    var lines = [].slice.call(title.children).filter(function (el) { return el !== ice && !el.classList.contains('jh-sr'); });
     var n = 0, last = 0;
     lines.forEach(function (line) {
       var t = line.textContent; line.dataset.text = t; line.textContent = '';

@@ -286,7 +286,7 @@
     });
 
     // "Otkrij čaroliju": svako slovo se kristališe iz zamućenja
-    var lines = [].slice.call(title.children).filter(function (el) { return el !== ice; });
+    var lines = [].slice.call(title.children).filter(function (el) { return el !== ice && !el.classList.contains('jh-sr'); });
     var n = 0, last = 0;
     lines.forEach(function (line) {
       var t = line.textContent; line.dataset.text = t; line.textContent = '';
