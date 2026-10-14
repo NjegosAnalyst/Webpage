@@ -14,7 +14,7 @@ const HASH = 'b'.repeat(40);
 const CDN = 'https://cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@' + HASH + '/';
 const RAW = 'https://raw.githubusercontent.com/NjegosAnalyst/Webpage/' + HASH + '/';
 const IDS = { ratrak: 'jr-ratrak', suvenirnica: 'jsu-suvenirnica', bar: 'jb-bar', gondola: 'jg-gondola', depo: 'jsd-depo', park: 'jsb-park', sankaliste: 'jsk-sankaliste' };
-const LIST = process.argv.slice(3).length ? process.argv.slice(3) : Object.keys(IDS);
+const LIST = process.argv.slice(3).length ? process.argv.slice(3).filter((x) => IDS[x]) : Object.keys(IDS);
 let fails = 0;
 function check(name, ok, info) {
   console.log((ok ? '  ok   ' : '  FAIL ') + name + (info !== undefined ? '  → ' + JSON.stringify(info) : ''));
@@ -87,6 +87,46 @@ const info = (p, id) => p.evaluate((id) => {
     i = await info(r.p, IDS[sec]);
     check('EN: alt sa „Jahorina“', i.altBad.length === 0, i.altBad);
     await r.ctx.close();
+  }
+  // šav: tri bloka u zasebnim Elementor kontejnerima sa razmakom (margin 24 px + padding 10 px na bijeloj pozadini)
+  if (!process.argv.slice(3).length || process.argv.includes('sav')) {
+    console.log('\n== šav između sekcija (Elementor kontejneri sa razmakom)');
+    for (const [vw, vh] of [[1440, 900], [390, 844]]) {
+      const ctx = await browser.newContext({ viewport: { width: vw, height: vh }, isMobile: vw < 761 });
+      const p = await ctx.newPage();
+      await p.route('**/*', async (route) => {
+        const url = route.request().url(), u = new URL(url);
+        if (url.startsWith(CDN)) { const f = path.join(REPO, url.slice(CDN.length).split('?')[0]); return fs.existsSync(f) ? route.fulfill({ contentType: f.endsWith('.js') ? 'application/javascript' : 'image/webp', body: fs.readFileSync(f) }) : route.fulfill({ status: 404, body: '' }); }
+        if (u.origin === SITE && /wp-json/.test(u.pathname)) return route.fulfill({ contentType: 'application/json', body: '[]' });
+        if (u.origin === SITE) {
+          const box = (id, sec, attrs = '') => `<div class="e-con" style="margin-top:24px;padding:10px;background:#fff;display:flex;flex-direction:column;gap:20px"><div class="elementor-widget elementor-widget-html"><div id="${id}" ${attrs}></div><script src="${CDN}jahorina-home-sections/${sec}/${sec}.js" defer></script></div></div>`;
+          return route.fulfill({ contentType: 'text/html; charset=utf-8', body: `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#fff"><div class="elementor">
+            ${box('jsk-sankaliste', 'sankaliste')}${box('jpb-brojke', 'brojke', 'data-km="54" data-zicare="18" data-nocne="10" data-sankanje="600"')}${box('jr-ratrak', 'ratrak')}</div><div style="height:600px"></div></body></html>` });
+        }
+        return route.abort();
+      });
+      await p.goto(SITE + '/');
+      await p.waitForSelector('#jr-ratrak h2');
+      await p.waitForTimeout(1500);
+      const g = await p.evaluate(() => {
+        const a = document.getElementById('jsk-sankaliste').getBoundingClientRect(), b = document.getElementById('jpb-brojke').getBoundingClientRect(), c = document.getElementById('jr-ratrak').getBoundingClientRect();
+        return { g1: Math.round((b.top - a.bottom) * 100) / 100, g2: Math.round((c.top - b.bottom) * 100) / 100, y1: a.bottom + scrollY, y2: b.bottom + scrollY };
+      });
+      check(vw + ' px: nema razmaka između blokova (≤ 0 px)', g.g1 <= 0.01 && g.g2 <= 0.01, g);
+      // na samom spoju (lijevi rub, van kadra) mora biti jedan od naših tamnih blokova, ne bijela pozadina
+      const white = [];
+      for (const y of [g.y1, g.y2]) {
+        await p.evaluate((y) => window.scrollTo(0, y - 200), y);
+        await p.waitForTimeout(200);
+        const bad = await p.evaluate(() => [-1.5, -0.5, 0, 0.5, 1.5].filter((dy) => {
+          const y = 200 + dy, el = document.elementFromPoint(3, y);
+          return !(el && el.closest('#jsk-sankaliste, #jpb-brojke, #jr-ratrak'));
+        }).map((dy) => { const el = document.elementFromPoint(3, 200 + dy); return dy + ':' + (el ? el.className || el.tagName : '-'); }));
+        if (bad.length) white.push(bad);
+      }
+      check(vw + ' px: na spoju je tamni blok, ne bijela pozadina', white.length === 0, white);
+      await ctx.close();
+    }
   }
   await browser.close();
   console.log(fails ? `\n${fails} provjera NIJE prošlo` : '\nSve provjere su prošle');

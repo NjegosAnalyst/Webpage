@@ -808,6 +808,25 @@
       }, { rootMargin: '1600px 0px 1600px 0px' });
       pio.observe(root);
     }
+    // šav: bijela traka između ovog bloka i tamnog bloka iznad (razmak između Elementor kontejnera/sekcija, pola piksela)
+    var DARK = '#jv-vijesti,#jr-ratrak,#jsu-suvenirnica,#jb-bar,#jg-gondola,#jsd-depo,#jsb-park,#jsk-sankaliste,#jpb-brojke,.jh-hero,rs-module-wrap,rs-fullwidth-wrap';
+    function seam() {
+      var sh = root;
+      while (sh.parentElement && !sh.parentElement.matches('.elementor, .elementor-section-wrap, body, main, #Content, .entry-content, .the_content_wrapper')) sh = sh.parentElement;
+      if (sh === root || !sh.parentElement) return;
+      var prev = sh.previousElementSibling;
+      while (prev && !prev.offsetHeight) prev = prev.previousElementSibling;
+      if (!prev || !(prev.matches(DARK) || prev.querySelector(DARK))) return;
+      sh.style.removeProperty('margin-top');
+      var gap = sh.getBoundingClientRect().top - prev.getBoundingClientRect().bottom;
+      if (gap > .5 && gap <= 160) sh.style.setProperty('margin-top', (parseFloat(getComputedStyle(sh).marginTop) || 0) - gap + 'px', 'important');
+      root.style.boxShadow = '0 -2px 0 0 #0A1120';   // pola piksela između tamnih blokova
+    }
+    function reseam() { clearTimeout(reseam.t); reseam.t = setTimeout(seam, 160); }
+    seam();
+    w.addEventListener('load', reseam);
+    w.addEventListener('resize', reseam);
+    if ('ResizeObserver' in w) new ResizeObserver(reseam).observe(d.body);
     var ps = d.getElementById('jg-gondola-seo-css');
     if (!ps) { ps = d.createElement('style'); ps.id = 'jg-gondola-seo-css'; (d.head || d.documentElement).appendChild(ps); }
     ps.textContent = "@media (max-width:760px){#jg-gondola *,#jg-gondola *::before,#jg-gondola *::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}#jg-gondola img{filter:none!important}#jg-gondola [class$=\"-tint\"]{mix-blend-mode:normal!important;opacity:1!important;background:rgba(14,38,78,.32)!important}#jg-gondola .jg-ph{mix-blend-mode:normal!important}#jg-gondola .jg-sky{display:none!important}#jg-gondola .jg-glow{mix-blend-mode:normal!important;opacity:.35}#jg-gondola .jg-in{display:none!important}}";

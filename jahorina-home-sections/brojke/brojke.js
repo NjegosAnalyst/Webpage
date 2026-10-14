@@ -604,4 +604,60 @@
   // njihanje samo dok je blok na ekranu
   if ('IntersectionObserver' in w) new IntersectionObserver(function (es) { root.classList.toggle('jpb-vis', es[es.length - 1].isIntersecting); }).observe(stats);
   else root.classList.add('jpb-vis');
+  /* SEO-BRZINA:POCETAK */
+  /* ---------- SEO i brzina (pravila početne, 14. 10.; pravi ga alati/seo-brzina.py) ---------- */
+  (function () {
+    var SRC = (d.currentScript && d.currentScript.src) || '', DIMS = {"brojke-glavna-1000.webp":[1000,667],"brojke-glavna.webp":[2000,1334]};
+    var SUF = /^\/en(\/|$)/i.test(location.pathname) ? ' — Olympic Mountain Jahorina' : ' — Olimpijska planina Jahorina';
+    var CDN = /^https:\/\/cdn\.jsdelivr\.net\/gh\/([^\/]+)\/([^@\/]+)@([0-9a-f]{40})\//i, ok = CDN.test(SRC);
+    function fix(im) {
+      if (im.__jseo) return;
+      im.__jseo = 1;
+      if (!im.getAttribute('loading')) im.setAttribute('loading', 'lazy');
+      var f = (im.getAttribute('src') || '').split(/[?#]/)[0].split('/').pop();
+      if (!im.getAttribute('width') && DIMS[f]) { im.setAttribute('width', DIMS[f][0]); im.setAttribute('height', DIMS[f][1]); }
+      var a = im.getAttribute('alt');
+      if (a && !/jahorin/i.test(a)) im.setAttribute('alt', a + SUF);
+      if (ok) im.addEventListener('error', function () {
+        var u = im.currentSrc || im.src;
+        if (im.__jfb || !CDN.test(u)) return;
+        im.__jfb = 1; im.removeAttribute('srcset');
+        im.src = u.replace(CDN, 'https://raw.githubusercontent.com/$1/$2/$3/');
+      });
+    }
+    function all() { [].forEach.call(root.querySelectorAll('img'), fix); }
+    all();
+    if ('MutationObserver' in w) new MutationObserver(all).observe(root, { childList: true, subtree: true });
+    if ('IntersectionObserver' in w) {
+      var pio = new IntersectionObserver(function (es) {
+        if (!es.some(function (e) { return e.isIntersecting; })) return;
+        pio.disconnect();
+        [].forEach.call(root.querySelectorAll('img[loading="lazy"]'), function (im) { im.loading = 'eager'; });
+      }, { rootMargin: '1600px 0px 1600px 0px' });
+      pio.observe(root);
+    }
+    // šav: bijela traka između ovog bloka i tamnog bloka iznad (razmak između Elementor kontejnera/sekcija, pola piksela)
+    var DARK = '#jv-vijesti,#jr-ratrak,#jsu-suvenirnica,#jb-bar,#jg-gondola,#jsd-depo,#jsb-park,#jsk-sankaliste,#jpb-brojke,.jh-hero,rs-module-wrap,rs-fullwidth-wrap';
+    function seam() {
+      var sh = root;
+      while (sh.parentElement && !sh.parentElement.matches('.elementor, .elementor-section-wrap, body, main, #Content, .entry-content, .the_content_wrapper')) sh = sh.parentElement;
+      if (sh === root || !sh.parentElement) return;
+      var prev = sh.previousElementSibling;
+      while (prev && !prev.offsetHeight) prev = prev.previousElementSibling;
+      if (!prev || !(prev.matches(DARK) || prev.querySelector(DARK))) return;
+      sh.style.removeProperty('margin-top');
+      var gap = sh.getBoundingClientRect().top - prev.getBoundingClientRect().bottom;
+      if (gap > .5 && gap <= 160) sh.style.setProperty('margin-top', (parseFloat(getComputedStyle(sh).marginTop) || 0) - gap + 'px', 'important');
+      root.style.boxShadow = '0 -2px 0 0 #0A1120';   // pola piksela između tamnih blokova
+    }
+    function reseam() { clearTimeout(reseam.t); reseam.t = setTimeout(seam, 160); }
+    seam();
+    w.addEventListener('load', reseam);
+    w.addEventListener('resize', reseam);
+    if ('ResizeObserver' in w) new ResizeObserver(reseam).observe(d.body);
+    var ps = d.getElementById('jpb-brojke-seo-css');
+    if (!ps) { ps = d.createElement('style'); ps.id = 'jpb-brojke-seo-css'; (d.head || d.documentElement).appendChild(ps); }
+    ps.textContent = "@media (max-width:760px){#jpb-brojke *,#jpb-brojke *::before,#jpb-brojke *::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}#jpb-brojke img{filter:none!important}#jpb-brojke [class$=\"-tint\"]{mix-blend-mode:normal!important;opacity:1!important;background:rgba(14,38,78,.32)!important}}";
+  })();
+  /* SEO-BRZINA:KRAJ */
 })(window, document);
