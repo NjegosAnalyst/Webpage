@@ -56,7 +56,7 @@ const theme = `
   a{color:#0095eb;text-decoration:underline} a:hover{color:#007cc3}
   p{margin:0 0 15px} img{max-width:100%;height:auto}
   .hero{height:260px;background:#0A1120 url(${SITE}/wp-content/uploads/2026/09/jahorina-noc.webp) center/cover}
-  .after{padding:60px 20px;color:#444} .boxed{max-width:1140px;margin:40px auto;padding:0 10px}`;
+  .after{padding:60px 20px;color:#444} .boxed{max-width:1140px;margin:40px auto;padding:0 10px}   /* razmak 40 px gore/dole kao Elementor/Betheme */`;
 function page(boxed) {
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -133,6 +133,10 @@ async function run(name, { url, viewport, boxed = false, rest = 'ok', fullPage =
           linkLabel: a ? a.getAttribute('aria-label') : null, firstAlt: imgs[0] && imgs[0].alt,
           blur: bar ? getComputedStyle(bar).backdropFilter : null, imgFilter: imgs[0] ? getComputedStyle(imgs[0]).filter : null,
         };
+      })(),
+      gaps: (() => {
+        const b = r.getBoundingClientRect(), h = document.querySelector('.hero').getBoundingClientRect(), a = document.querySelector('.after').getBoundingClientRect();
+        return Math.round(b.top - h.bottom) + ' / ' + Math.round(a.top - b.bottom);
       })(),
       bleed: (() => { const b = r.getBoundingClientRect(); return Math.round(b.left) + '/' + Math.round(b.width) + ' od ' + document.documentElement.clientWidth; })(),
     };

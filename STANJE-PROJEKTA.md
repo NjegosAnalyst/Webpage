@@ -60,6 +60,10 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
   - SEO: alt slika (iz Medija ili „<naslov> — Olimpijska planina Jahorina“), sve slike `loading="lazy"` + `width`/`height`, link stavke `aria-label="Pročitaj više: <naslov>"`, „Sve vijesti“ sa `aria-label`;
   - telefon: bez `backdrop-filter`, bez filtera i `mix-blend-mode` na slikama, skeleton bez animacije.
   - Test `test-vijesti.js` sada provjerava i SEO: 0 × H1, H2 tekst, alt, lazy, dimenzije, aria-label linka, bez zamućenja na telefonu.
+- **Prelaz iz hero-a (14. 10., korisnik: bijela traka između hero-a i vijesti na HERO TEST):**
+  - blok sam mjeri razmak do susjeda iznad i ispod (preskače fiksni header i skripte) i primakne se negativnom marginom, najviše 160 px (`closeGaps()` u `fit()`);
+  - pozadina počinje bojom trake oko hero-a `#0C1424` i do 280 px prelazi u `#0A1120`; na vrhu je tihi cyan „horizont“ (linija 1 px, .26) sa mekim sjajem — bez šava i ivice;
+  - dijagnostika: stranica sa `?jvdebug` u adresi prikaže dole lijevo izmjerene razmake, susjede i padding/margine roditelja (za screenshot ako tema ipak ostavi razmak).
 - Sve fotografije imaju istu blagu **noćnu obradu**, da dnevne slike ne iskaču iz tona hero-a. Bez slike → noćna fotografija iz hero-a.
 - Iznad naslova je samo datum. Oznaka postoji **samo za Obavještenje** (narandžasta): kad naslov ili tekst počinje sa Obavještenje/Notice. Ako je naslov samo „Obavještenje“, kao naslov se prikazuje početak teksta.
 - Telefon: fotografija gore (54% kartice), tekst ispod; brojevi postaju tačkice; „Sve vijesti“ ide ispod slajdera.

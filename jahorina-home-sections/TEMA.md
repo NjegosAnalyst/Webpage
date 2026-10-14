@@ -31,6 +31,7 @@ da sve sekcije izgledaju kao jedna cjelina.
 - **Sporedni link** („SVE VIJESTI →“): staklena pločica (`.jv-more`): prelaz `rgba(255,255,255,.075)→.02` + `inset 0 0 0 1px rgba(255,255,255,.08)`; hover: podigne se 2px + cyan ivica i blag sjaj.
 - **Kontrole**: staklena traka kao brzi linkovi hero-a (`.jv-bar`: `linear-gradient(180deg,rgba(18,27,45,.78),rgba(9,14,26,.88))`, tanka ivica, meka sjena); pločice 46×42 / zaobljenje 14px (`.jv-step`, `.jv-btn`); aktivna pločica ima cyan ivicu, broj `#9BE6FF` i tanku cyan liniju napretka.
 - **Fotografije:** blaga noćna obrada: `filter: saturate(.7) brightness(.84) contrast(1.06)` + plavi sloj `mix-blend-mode: soft-light` (`.jv-tint`), plus tamni prelaz ispod teksta. Na telefonu bez filtera i miješanja (samo providan plavi sloj).
+- **Prelaz između sekcija (bez šava):** sekcija počinje bojom onoga iznad (ispod hero-a `#0C1424`) i mekim prelazom ide u svoju boju; na vrhu najviše tihi cyan „horizont“ (linija 1 px ~.25 + slab radijalni sjaj). Bez bijelih traka, ivica i kontrastnih pruga: razmak između Elementor sekcija zatvara `closeGaps()` (kopirati iz `vijesti.js`).
 - **Oznaka (chip):** mala pilula, velika slova. Samo kad nosi informaciju (npr. „Obavještenje“).
 - **Telefon (brzina kao u hero-u):** bez `backdrop-filter` (puna tamna pozadina .9), bez filtera/`mix-blend-mode` na velikim slikama, bez beskonačnih animacija preko velikih površina. Fotografija gore, tekst ispod, sporedni link ispod sadržaja.
 

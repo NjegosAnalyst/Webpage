@@ -39,7 +39,11 @@ page = r'''<title>Jahorina vijesti</title>
 :root{color-scheme:dark}
 html,body{background:#0A1120}
 body{margin:0;min-height:100%}
+/* samo dno hero-a (kartica sa noćnom fotografijom u tamnoj traci #0c1424), da se vidi prelaz u vijesti */
+.hero-dno{background:#0c1424;padding:0 clamp(14px,1.6vw,22px) clamp(14px,1.6vw,22px)}
+.hero-dno div{height:clamp(120px,16vw,200px);border-radius:0 0 26px 26px;background:#0a1120 url(img/s1-noc.jpg) center 82%/cover;box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22)}
 </style>
+<div class="hero-dno" aria-hidden="true"><div></div></div>
 <div id="jv-vijesti"></div>
 <script>
 (function () {
