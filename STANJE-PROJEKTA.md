@@ -47,7 +47,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 ## Sekcije početne ispod hero-a
 - Prijedlog izgleda svih sekcija: `jahorina-home-sections/index.src.html` (artifact "Jahorina početna — ispod hero-a"). Redoslijed: Danas na Jahorini → Obavještenja i vijesti → Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu. Prijedlog je polazna tačka; konačan izgled je po `TEMA.md` (premium, minimalistički, blag neumorfizam).
 
-### 1. Obavještenja i vijesti — urađeno, radi na HERO TEST
+### 1. Obavještenja i vijesti — urađeno, potvrđeno na HERO TEST (računar + telefon)
 - Kod: `jahorina-home-sections/vijesti/` (`vijesti.js`, test `test-vijesti.js`, red za widget `elementor-html-widget.html` iz `napravi-widget.py`, pregled `pregled/napravi-pregled.py`).
 - Čita **samo kategoriju Vijesti** (`/category/vijesti/`) preko WP REST API-ja. Objave se dodaju u WordPressu kao i do sada.
 - Izgled (korisnik tražio): **slajder sa 5 najnovijih vijesti**, jedna u kadru preko cijele kartice: fotografija sa tamnim prelazom, datum, naslov, izvod i blago neumorfno cyan dugme „Pročitaj više“ sa strelicom u plitkom udubljenom krugu. Dole desno je tihi neumorfni panel: brojevi 01–05 u plitkom žlijebu (aktivni utisnut, cyan broj + tanka cyan linija napretka), pauza i okrugle strelice. Smjena na 7 s, staje na mišu/fokusu/van ekrana; prevlačenje prstom. Naslov sekcije: „Obavještenja *i vijesti*“ (drugi dio iscrtan linijom).
@@ -72,7 +72,8 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - qTranslate oznake razdvaja sam kod; na `/en/` prvo pita `/en/wp-json/`, pa `/wp-json/`, pa `/?rest_route=`.
 - Ako ne učita: posjetioci vide poruku i dugme „Sve vijesti“; prijavljeni admin vidi i tehnički razlog (npr. `HTTP 403 · categories`).
 - **HERO TEST (6. 10. 2026):** radi, čita prave vijesti i slike. Popravljeno: bijele trake sa strane (blok se sam širi, `fit()`) i tamni naslov (Betheme `!important`). Korisnik uklanja razmak između Elementor sekcija (padding/margin/gap 0).
-- **Ostaje:** postaviti na Početna zima (HTML widget iznad starog slajdera vijesti, pa stari sakriti/obrisati) i provjeriti telefon.
+- **14. 10.: korisnik potvrdio — sve u redu na HERO TEST, računar i telefon** (izgled kao hero, bez bijele trake/linije). Verzija na sajtu: `@393b050` (red u `vijesti/elementor-html-widget.html`).
+- **Ostaje:** postaviti isti red na Početna zima (HTML widget iznad starog slajdera vijesti, pa stari sakriti/obrisati) i obrisati keš.
 - Posljednji red za widget je uvijek u `vijesti/elementor-html-widget.html`.
 - **Svaka izmjena:** izmijeni `vijesti.js` → `bash ../alati/preuzmi-fontove.sh <fontovi>` (jednom) → `node test-vijesti.js <screenshotovi> <fontovi>` → commit + push → `python3 napravi-widget.py` → commit + push → korisniku novi red za HTML widget. Pregled: `python3 pregled/napravi-pregled.py` → objaviti `pregled/index.html` (+ `img/*.jpg`) na isti artifact URL.
 
