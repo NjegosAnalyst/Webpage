@@ -14,7 +14,7 @@ import re
 from pathlib import Path
 
 HERE = Path(__file__).parent
-MEDIA = '/wp-content/uploads/2026/10/'   # bez domena: ista veza kao stranica (www ili ne), nema dodatnog povezivanja
+MEDIA = '/wp-content/uploads/2026/09/'   # bez domena: ista veza kao stranica (www ili ne), nema dodatnog povezivanja
 
 src = (HERE / 'index.html').read_text()
 css = src[src.index('<style>') + 7:src.index('</style>')].replace('  html,body{margin:0;padding:0}\n', '')
@@ -110,9 +110,19 @@ js_out = ("/* ==================================================================
           + js + "\n})();\n")
 
 
+# Slike koje su već u WordPress Mediji (provjereno na sajtu): /2026/09/jahorina-noc.webp.
+# Lakše verzije (jahorina-hero-desktop/mobil.webp) nisu otpremljene — kad se otpreme,
+# ovdje vrati njihova imena i MEDIA na mjesec otpremanja.
+SITE_FILES = {
+    'jahorina-hero-desktop.webp': 'jahorina-noc.webp',
+    'jahorina-hero-mobil.webp': 'jahorina-noc.webp',
+}
+
+
 def with_urls(text, prefix):
     for f in ('jahorina-hero-desktop.webp', 'jahorina-hero-mobil.webp', 'logo-white-lockup.png'):
-        text = text.replace('assets/' + f, prefix + f)
+        site = SITE_FILES.get(f, f) if prefix == MEDIA else f
+        text = text.replace('assets/' + f, prefix + site)
     return text
 
 

@@ -65,7 +65,7 @@
   /* ---------- pozadina + scrim slojevi ---------- */
   .jh-photo{
     position:absolute;inset:-3%;
-    background:url('/wp-content/uploads/2026/10/jahorina-hero-desktop.webp') center 58%/cover no-repeat;   /* 150 KB (bilo 200 KB + JPG rezerva 410 KB) */
+    background:url('/wp-content/uploads/2026/09/jahorina-noc.webp') center 58%/cover no-repeat;   /* 150 KB (bilo 200 KB + JPG rezerva 410 KB) */
     transform:translate3d(calc(var(--mx,0) * -14px),calc(var(--my,0) * -10px),0);
     animation:jhZoom 2.2s cubic-bezier(.2,.7,.2,1) both;
     will-change:transform;
@@ -479,7 +479,7 @@
     .jh-quick__live{top:7px;right:8px;width:6px;height:6px}
     .jh-kicker{letter-spacing:1.7px;font-size:9.5px;gap:10px;white-space:nowrap}
     /* telefon: kadar na stazu, jače zatamnjenje ispod teksta */
-    .jh-photo{background-position:64% 40%;background-image:url('/wp-content/uploads/2026/10/jahorina-hero-mobil.webp')}   /* manja slika za telefon: 98 KB */
+    .jh-photo{background-position:64% 40%;background-image:url('/wp-content/uploads/2026/09/jahorina-noc.webp')}   /* manja slika za telefon: 98 KB */
     .jh-scrim--bottom{background:linear-gradient(0deg,rgba(6,11,22,.92) 0%,rgba(6,11,22,.75) 38%,rgba(6,11,22,0) 66%)}
     .jh-kicker::before{width:22px}
   }
