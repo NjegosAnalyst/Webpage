@@ -19,15 +19,15 @@ const img = {
 
 // objave u obliku kao ih vraća WordPress (qTranslate-XT oznake u tekstu)
 const media = {
-  11: { id: 11, source_url: SITE + '/wp-content/uploads/2026/08/skijas.jpg', media_details: { sizes: {
+  11: { id: 11, source_url: SITE + '/wp-content/uploads/2026/08/skijas.jpg', media_details: { width: 2560, height: 1707, sizes: {
     thumbnail: { width: 150, height: 150, source_url: SITE + '/wp-content/uploads/2026/08/skijas-150x150.jpg' },
     medium_large: { width: 768, height: 512, source_url: SITE + '/wp-content/uploads/2026/08/skijas-768x512.jpg' },
     large: { width: 1024, height: 683, source_url: SITE + '/wp-content/uploads/2026/08/skijas-1024x683.jpg' },
     full: { width: 2560, height: 1707, source_url: SITE + '/wp-content/uploads/2026/08/skijas.jpg' } } } },
-  12: { id: 12, source_url: SITE + '/wp-content/uploads/2026/09/gondola.jpg', media_details: { sizes: {
+  12: { id: 12, source_url: SITE + '/wp-content/uploads/2026/09/gondola.jpg', media_details: { width: 2560, height: 1707, sizes: {
     thumbnail: { width: 150, height: 150, source_url: SITE + '/wp-content/uploads/2026/09/gondola-150x150.jpg' },
     large: { width: 1024, height: 683, source_url: SITE + '/wp-content/uploads/2026/09/gondola-1024x683.jpg' } } } },
-  13: { id: 13, source_url: SITE + '/wp-content/uploads/2026/07/atrakcije.jpg', media_details: { sizes: {
+  13: { id: 13, source_url: SITE + '/wp-content/uploads/2026/07/atrakcije.jpg', media_details: { width: 2560, height: 1707, sizes: {
     thumbnail: { width: 150, height: 150, source_url: SITE + '/wp-content/uploads/2026/07/atrakcije-150x150.jpg' } } } },
 };
 const posts = [
@@ -125,6 +125,15 @@ async function run(name, { url, viewport, boxed = false, rest = 'ok', fullPage =
       note: (r.querySelector('.jv-note') || {}).textContent,
       overflowX: document.documentElement.scrollWidth > document.documentElement.clientWidth,
       h2: getComputedStyle(r.querySelector('h2')).fontFamily + ' ' + getComputedStyle(r.querySelector('h2')).color,
+      seo: (() => {
+        const imgs = [...r.querySelectorAll('.jv-slide img')], a = r.querySelector('.jv-slide h3 a'), bar = r.querySelector('.jv-bar');
+        return {
+          h1: document.querySelectorAll('#jv-vijesti h1').length, h2: r.querySelector('h2').textContent, h3: r.querySelectorAll('.jv-slide h3').length,
+          alt: imgs.every((i) => i.alt.length > 8), lazy: imgs.every((i) => i.loading === 'lazy'), dims: imgs.every((i) => i.getAttribute('width') && i.getAttribute('height')),
+          linkLabel: a ? a.getAttribute('aria-label') : null, firstAlt: imgs[0] && imgs[0].alt,
+          blur: bar ? getComputedStyle(bar).backdropFilter : null, imgFilter: imgs[0] ? getComputedStyle(imgs[0]).filter : null,
+        };
+      })(),
       bleed: (() => { const b = r.getBoundingClientRect(); return Math.round(b.left) + '/' + Math.round(b.width) + ' od ' + document.documentElement.clientWidth; })(),
     };
   });

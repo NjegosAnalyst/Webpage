@@ -55,7 +55,7 @@ body{margin:0;min-height:100%}
   }
   var POSTS = [
     P(105, '2026-10-01T10:00:00', 'pretprodaja-ski-karata', 's1-noc', 'Pretprodaja ski karata za sezonu 2026/27 počinje 20. septembra',
-      'Pretprodaja sezonskih ski karata počinje 20. septembra na blagajnama Olimpijskog centra i u web shopu.'),
+      'Pretprodaja sezonskih ski karata počinje 20. septembra na blagajnama na Jahorini i u web shopu.'),
     P(104, '2026-09-28T09:12:00', 'obavjestenje-otvaranje-ponuda', 's4-reflektor', 'Obavještenje',
       'Obavještenje U prostorijama Akcionarskog društva Olimpijski centar &#8222;Jahorina&#8220; Pale &#8211; Ruski dom, Jahorina bb, u utorak 06.10. 2026. godine u 12,00 časova pristupiće se otvaranju ponuda koje su pristigle na javni poziv'),
     P(103, '2026-09-18T08:30:00', 'pripreme-staza', 's5-staza', 'Počinju pripreme staza za zimsku sezonu 2026/27',
