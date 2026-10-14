@@ -92,10 +92,22 @@ css_out = ("/* =================================================================
            "@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&display=swap');\n"
            + SR_RESET + css.strip() + "\n" + SR_LAYOUT)
 
+# telefon: "slika ispod headera" se namjesti odmah (čim postoje hero i naš header), a ne tek kad se slajd
+# prikaže — inače slika pred posjetiocem skoči ~70 px naviše. Isti blok ostaje i u glavnom dijelu (tamo samo provjeri).
+early = js[js.index('// >>> rano'):js.index('// <<< rano')]
+assert 'function underHeader' in early, 'blok "rano" nije pronađen'
+early_out = ("(function underHeaderEarly() {\n"
+             "  var hero = document.querySelector('.jh-hero');\n"
+             "  if (!hero || !document.querySelector('.jf-header')) {   // header stiže sa CDN-a — provjera u svakom kadru, prije crtanja (najduže 8 s)\n"
+             "    if (performance.now() < 8000) requestAnimationFrame(underHeaderEarly);\n"
+             "    return;\n"
+             "  }\n  " + early.strip() + "\n})();\n\n")
+
 js_out = ("/* =====================================================================\n"
           "   JAHORINA HERO — DIO 3: JavaScript  (Slider Revolution → ⚙ → CSS/jQuery → CUSTOM JS SR6)\n"
           "   Ne treba ništa mijenjati.\n"
           "   ===================================================================== */\n"
+          + early_out +
           "(function waitForHero(tries) {\n"
           "  // Slider Revolution ubaci sloj, ali ga prikaže tek kad učita slajd.\n"
           "  // Čekamo da hero bude STVARNO vidljiv, pa tek onda pokrećemo sve animacije (samo jednom).\n"
@@ -117,7 +129,11 @@ js_out = ("/* ==================================================================
           "  }\n"
           "  if (!el || window.__jahorinaHeroStarted) return;\n"
           "  window.__jahorinaHeroStarted = true;\n"
-          "  el.classList.add('jh-go');   // pušta CSS animacije koje su do sada bile pauzirane\n\n"
+          "  // pušta CSS animacije koje su do sada bile pauzirane — tek kadar POSLIJE pripreme ispod,\n"
+          "  // da teški posao (mjerenje slova, platno za svjetla) ne padne usred pokreta (to je bio trzaj na otvaranju)\n"
+          "  function go() { el.classList.add('jh-go'); }\n"
+          "  requestAnimationFrame(function () { requestAnimationFrame(go); });\n"
+          "  setTimeout(go, 150);   // rezerva (npr. stranica otvorena u pozadinskoj kartici)\n\n"
           + js + "\n})();\n")
 
 

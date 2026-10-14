@@ -165,6 +165,9 @@
     opacity:0;transition:opacity .35s;
   }
   .jh-btn--ghost:hover::before,.jh-btn--ghost:focus-visible::before,.jh-quick__item--accent:hover::before{opacity:1}
+  /* snop se vrti samo dok je vidljiv (inače preglednik stalno radi uzalud) */
+  .jh-btn--ghost::before,.jh-quick__item--accent::before{animation-play-state:paused}
+  .jh-btn--ghost:hover::before,.jh-btn--ghost:focus-visible::before,.jh-quick__item--accent:hover::before{animation-play-state:running}
   .jh-btn--ghost:hover{color:var(--jh-accent)}
   .jh-btn--ghost:active{box-shadow:var(--nm-inset-sm)}
   .jh-btn--solid{
@@ -510,6 +513,27 @@
     /* telefon: bez zamućenja pri ulasku (blur preko cijele slike je skup za telefon) */
     @keyframes jhZoomM{0%{opacity:0;scale:1.06}100%{opacity:1;scale:1}}
     .jh-photo{animation-name:jhZoomM}
+  }
+  /* ===== telefon: lakši efekti da otvaranje bude glatko =====
+     zamućenja i sjene preko slova koja se animiraju telefon mora preračunati u svakom kadru (to je "kočilo");
+     ovdje ih nema dok traje ulazak, a izgled poslije ulaska ostaje skoro isti */
+  @media (max-width:760px){
+    .jh-quick{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(17,26,44,.9)}
+    .jh-quick__item{animation-name:jhTileOnM}
+    @keyframes jhTileOnM{0%{opacity:0;transform:translateY(10px) scale(.9)}100%{opacity:1;transform:none}}
+    .jh-title > span{filter:none}
+    .jh-title.is-live > span:nth-child(-n+2){filter:drop-shadow(0 4px 18px rgba(0,0,0,.4))}   /* sjena tek kad se slova smire */
+    .jh-ch{animation-name:jhCrystalM}
+    @keyframes jhCrystalM{0%{opacity:0;transform:translateY(.35em) scale(.96)}100%{opacity:1;transform:none}}
+    /* "Jahorine": neonski sjaj ostaje, ali miran (puls je tjerao telefon da crta u svakom kadru) */
+    .jh-title > span.jh-ice.is-live{animation:none;-webkit-text-stroke-color:#E4F8FF;filter:drop-shadow(0 0 7px rgba(0,185,242,.5)) drop-shadow(0 4px 18px rgba(0,0,0,.4))}
+    .jh-dot.is-set{animation:none;border-color:#E4F8FF;box-shadow:0 0 8px rgba(0,185,242,.45)}
+    .jh-lights{mix-blend-mode:normal}   /* svjetla izgledaju isto, a telefon ne miješa cijeli ekran u svakom kadru */
+    .jh-ice__svg .jh-trail{filter:none}
+    .jh-ice__svg .jh-pen{filter:drop-shadow(0 0 4px rgba(0,185,242,.95))}
+    .jh-ice__svg.is-frost .jh-trail{animation-name:jhFrostM}
+    @keyframes jhFrostM{0%{stroke:#6FDBFF}35%{stroke:#E8FBFF}100%{stroke:rgba(255,255,255,.92)}}
+    .jh-glint,.jh-spark{filter:none}
   }
   @media (max-width:360px){
     h1.jh-kicker{letter-spacing:1.1px!important;font-size:10px!important;gap:8px}

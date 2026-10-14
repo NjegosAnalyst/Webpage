@@ -147,6 +147,9 @@
     opacity:0;transition:opacity .35s;
   }
   .jh-btn--ghost:hover::before,.jh-btn--ghost:focus-visible::before,.jh-quick__item--accent:hover::before{opacity:1}
+  /* snop se vrti samo dok je vidljiv (inače preglednik stalno radi uzalud) */
+  .jh-btn--ghost::before,.jh-quick__item--accent::before{animation-play-state:paused}
+  .jh-btn--ghost:hover::before,.jh-btn--ghost:focus-visible::before,.jh-quick__item--accent:hover::before{animation-play-state:running}
   .jh-btn--ghost:hover{color:var(--jh-accent)}
   .jh-btn--ghost:active{box-shadow:var(--nm-inset-sm)}
   .jh-btn--solid{
@@ -493,6 +496,27 @@
     @keyframes jhZoomM{0%{opacity:0;scale:1.06}100%{opacity:1;scale:1}}
     .jh-photo{animation-name:jhZoomM}
   }
+  /* ===== telefon: lakši efekti da otvaranje bude glatko =====
+     zamućenja i sjene preko slova koja se animiraju telefon mora preračunati u svakom kadru (to je "kočilo");
+     ovdje ih nema dok traje ulazak, a izgled poslije ulaska ostaje skoro isti */
+  @media (max-width:760px){
+    .jh-quick{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(17,26,44,.9)}
+    .jh-quick__item{animation-name:jhTileOnM}
+    @keyframes jhTileOnM{0%{opacity:0;transform:translateY(10px) scale(.9)}100%{opacity:1;transform:none}}
+    .jh-title > span{filter:none}
+    .jh-title.is-live > span:nth-child(-n+2){filter:drop-shadow(0 4px 18px rgba(0,0,0,.4))}   /* sjena tek kad se slova smire */
+    .jh-ch{animation-name:jhCrystalM}
+    @keyframes jhCrystalM{0%{opacity:0;transform:translateY(.35em) scale(.96)}100%{opacity:1;transform:none}}
+    /* "Jahorine": neonski sjaj ostaje, ali miran (puls je tjerao telefon da crta u svakom kadru) */
+    .jh-title > span.jh-ice.is-live{animation:none;-webkit-text-stroke-color:#E4F8FF;filter:drop-shadow(0 0 7px rgba(0,185,242,.5)) drop-shadow(0 4px 18px rgba(0,0,0,.4))}
+    .jh-dot.is-set{animation:none;border-color:#E4F8FF;box-shadow:0 0 8px rgba(0,185,242,.45)}
+    .jh-lights{mix-blend-mode:normal}   /* svjetla izgledaju isto, a telefon ne miješa cijeli ekran u svakom kadru */
+    .jh-ice__svg .jh-trail{filter:none}
+    .jh-ice__svg .jh-pen{filter:drop-shadow(0 0 4px rgba(0,185,242,.95))}
+    .jh-ice__svg.is-frost .jh-trail{animation-name:jhFrostM}
+    @keyframes jhFrostM{0%{stroke:#6FDBFF}35%{stroke:#E8FBFF}100%{stroke:rgba(255,255,255,.92)}}
+    .jh-glint,.jh-spark{filter:none}
+  }
   @media (max-width:360px){
     h1.jh-kicker{letter-spacing:1.1px!important;font-size:10px!important;gap:8px}
     .jh-kicker::before{width:24px}
@@ -664,13 +688,17 @@
 
   // ===== Telefon: hero ide ispod providnog headera sve do vrha ekrana (bez šava ispod headera) =====
   // Radi samo na sajtu (gdje postoji naš header .jf-header i Slider Revolution omotač) i samo ako je hero odmah ispod headera.
+  // U Slider Revolution verziji ovaj dio se pokrene odmah pri učitavanju, prije prikaza slajda (da slika ne "skoči" pred posjetiocem).
+  // >>> rano
   (function underHeader() {
+    if (hero.__jhFit) return hero.__jhFit();   // već namješteno ranije — samo provjeri
     var hdr = document.querySelector('.jf-header');
-    var wrap = hero.closest('rs-fullwidth-wrap') || hero.closest('rs-module-wrap') || hero.closest('rs-module');
-    if (!hdr || !wrap) return;
+    if (!hdr) return;
     function fit() {
-      wrap.style.marginTop = ''; hero.__jhPull = 0;
-      if (!window.matchMedia('(max-width:760px)').matches) return;
+      var wrap = hero.closest('rs-fullwidth-wrap') || hero.closest('rs-module-wrap') || hero.closest('rs-module');
+      if (hero.__jhWrap) hero.__jhWrap.style.marginTop = '';
+      hero.__jhPull = 0; hero.__jhWrap = null;
+      if (!wrap || !window.matchMedia('(max-width:760px)').matches) return;
       var y = window.scrollY || 0;
       var top = wrap.getBoundingClientRect().top + y, hTop = hdr.getBoundingClientRect().top + y;   // hTop = ispod admin trake, ako postoji
       var pull = Math.round(top - hTop);
@@ -678,12 +706,16 @@
         wrap.style.marginTop = (-pull) + 'px';
         if (getComputedStyle(wrap).position === 'static') wrap.style.position = 'relative';
         wrap.style.zIndex = '1';
-        hero.__jhPull = pull;
+        hero.__jhPull = pull; hero.__jhWrap = wrap;
       }
     }
+    hero.__jhFit = fit;
     fit(); window.addEventListener('load', fit);
-    var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(fit, 200); });
+    // telefon javlja "resize" i kad se pri skrolovanju sakrije traka adrese — tada nema šta da se mijenja
+    var t, lw = window.innerWidth;
+    window.addEventListener('resize', function () { if (window.innerWidth === lw) return; lw = window.innerWidth; clearTimeout(t); t = setTimeout(fit, 200); });
   })();
+  // <<< rano
 
   // ===== Reflektori: pale se uz stazu, tiho dišu, povremeno bljesne filmski zrak =====
   (function floodlights() {
@@ -801,13 +833,21 @@
 
     layout();
     if (reduce) { draw(performance.now()); return; }
-    var visible = true, last = 0;
+    var visible = true, last = 0, scrolled = 0;
     if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(hero);
+    // telefon: dok prst skroluje, svjetla miruju (sav rad ide na glatko pomjeranje stranice)
+    if (mobile) window.addEventListener('scroll', function () { scrolled = performance.now(); }, { passive: true });
     (function loop(now) {
-      if (visible && !document.hidden && now - last > (mobile ? 45 : 32)) { last = now; draw(now); }   // ~30 fps (telefon ~22) je dovoljno za svjetlo
+      if (visible && !document.hidden && now - last > (mobile ? 55 : 32) && now - scrolled > 160) { last = now; draw(now); }   // ~30 fps (telefon ~18) je dovoljno za meko svjetlo
       requestAnimationFrame(loop);
     })(performance.now());
-    var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(layout, 150); });
+    var rz, lw = photo.clientWidth, lh = photo.clientHeight;
+    window.addEventListener('resize', function () {
+      clearTimeout(rz); rz = setTimeout(function () {
+        if (photo.clientWidth === lw && photo.clientHeight === lh) return;   // traka adrese na telefonu: slika ista, platno se ne pravi ponovo
+        lw = photo.clientWidth; lh = photo.clientHeight; layout();
+      }, 150);
+    });
   })();
 
   // ===== Ulazak teksta: kicker se "otkuca", naslov se kristališe, "Jahorine" se iscrta ledom =====
@@ -816,11 +856,16 @@
     var ice = hero.querySelector('.jh-ice');
     var rating = hero.querySelector('.jh-rating__value');
     var dotI = ice.querySelector('.jh-i'), dot = ice.querySelector('.jh-dot');
+    var phone = window.matchMedia('(max-width:760px)').matches;
 
     // Mjeri riječ: položaj svakog slova, osnovnu liniju, profil vrhova slova i tačan položaj tačke na "i"
+    var mCache = null;
     function measureIce() {
       var cs = getComputedStyle(ice), box = ice.getBoundingClientRect(), fs = parseFloat(cs.fontSize);
       var font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      // isto slovo, ista veličina → mjerenje se ne ponavlja (skupo je, a pada baš usred animacije ulaska)
+      var key = box.width + '|' + font + '|' + cs.letterSpacing + '|' + (document.fonts ? document.fonts.status : '');
+      if (mCache && mCache.key === key) { mCache.box = box; return mCache; }
       var probe = document.createElement('i');
       probe.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline';
       ice.insertBefore(probe, ice.firstChild);
@@ -867,7 +912,7 @@
       }
       g.font = font;
       var asc = g.measureText('h').actualBoundingBoxAscent || fs * 0.72;
-      return { box: box, fs: fs, font: font, baseY: baseY, chars: chars, dot: dot, profile: profile, asc: asc };
+      return (mCache = { key: key, box: box, fs: fs, font: font, baseY: baseY, chars: chars, dot: dot, profile: profile, asc: asc });
     }
     // postavi tačku tačno na mjesto (u koordinatama slova "ı", pa prati i razmak slova na hover)
     function placeDot() {
@@ -890,7 +935,10 @@
       dot.style.display = 'none';
     }
     setTimeout(fixDot, 9000);
-    var rz; window.addEventListener('resize', function () {
+    var rz, lw = window.innerWidth;
+    window.addEventListener('resize', function () {
+      if (window.innerWidth === lw) return;   // veličina slova zavisi samo od širine ekrana
+      lw = window.innerWidth;
       clearTimeout(rz); rz = setTimeout(function () { if (!dot.classList.contains('is-flying')) placeDot(); }, 150);
     });
 
@@ -1052,7 +1100,7 @@
         var ln = document.createElementNS(NS, 'line');
         ln.setAttribute('stroke-linecap', 'round');
         ln.setAttribute('stroke', i > 16 ? '#E8FBFF' : '#39CFFF');
-        ln.style.filter = 'drop-shadow(0 0 4px rgba(0,185,242,.9))';
+        if (!phone) ln.style.filter = 'drop-shadow(0 0 4px rgba(0,185,242,.9))';   // telefon: bez sjaja na 22 dijela traga (skupo u svakom kadru)
         tsvg.appendChild(ln); segs.push(ln);
       }
       ice.appendChild(tsvg);

@@ -2,6 +2,40 @@
    JAHORINA HERO — DIO 3: JavaScript  (Slider Revolution → ⚙ → CSS/jQuery → CUSTOM JS SR6)
    Ne treba ništa mijenjati.
    ===================================================================== */
+(function underHeaderEarly() {
+  var hero = document.querySelector('.jh-hero');
+  if (!hero || !document.querySelector('.jf-header')) {   // header stiže sa CDN-a — provjera u svakom kadru, prije crtanja (najduže 8 s)
+    if (performance.now() < 8000) requestAnimationFrame(underHeaderEarly);
+    return;
+  }
+  // >>> rano
+  (function underHeader() {
+    if (hero.__jhFit) return hero.__jhFit();   // već namješteno ranije — samo provjeri
+    var hdr = document.querySelector('.jf-header');
+    if (!hdr) return;
+    function fit() {
+      var wrap = hero.closest('rs-fullwidth-wrap') || hero.closest('rs-module-wrap') || hero.closest('rs-module');
+      if (hero.__jhWrap) hero.__jhWrap.style.marginTop = '';
+      hero.__jhPull = 0; hero.__jhWrap = null;
+      if (!wrap || !window.matchMedia('(max-width:760px)').matches) return;
+      var y = window.scrollY || 0;
+      var top = wrap.getBoundingClientRect().top + y, hTop = hdr.getBoundingClientRect().top + y;   // hTop = ispod admin trake, ako postoji
+      var pull = Math.round(top - hTop);
+      if (pull > 0 && pull <= hdr.offsetHeight + 90) {
+        wrap.style.marginTop = (-pull) + 'px';
+        if (getComputedStyle(wrap).position === 'static') wrap.style.position = 'relative';
+        wrap.style.zIndex = '1';
+        hero.__jhPull = pull; hero.__jhWrap = wrap;
+      }
+    }
+    hero.__jhFit = fit;
+    fit(); window.addEventListener('load', fit);
+    // telefon javlja "resize" i kad se pri skrolovanju sakrije traka adrese — tada nema šta da se mijenja
+    var t, lw = window.innerWidth;
+    window.addEventListener('resize', function () { if (window.innerWidth === lw) return; lw = window.innerWidth; clearTimeout(t); t = setTimeout(fit, 200); });
+  })();
+})();
+
 (function waitForHero(tries) {
   // Slider Revolution ubaci sloj, ali ga prikaže tek kad učita slajd.
   // Čekamo da hero bude STVARNO vidljiv, pa tek onda pokrećemo sve animacije (samo jednom).
@@ -23,7 +57,11 @@
   }
   if (!el || window.__jahorinaHeroStarted) return;
   window.__jahorinaHeroStarted = true;
-  el.classList.add('jh-go');   // pušta CSS animacije koje su do sada bile pauzirane
+  // pušta CSS animacije koje su do sada bile pauzirane — tek kadar POSLIJE pripreme ispod,
+  // da teški posao (mjerenje slova, platno za svjetla) ne padne usred pokreta (to je bio trzaj na otvaranju)
+  function go() { el.classList.add('jh-go'); }
+  requestAnimationFrame(function () { requestAnimationFrame(go); });
+  setTimeout(go, 150);   // rezerva (npr. stranica otvorena u pozadinskoj kartici)
 
 (function () {
   var hero = document.querySelector('.jh-hero');
@@ -91,13 +129,17 @@
 
   // ===== Telefon: hero ide ispod providnog headera sve do vrha ekrana (bez šava ispod headera) =====
   // Radi samo na sajtu (gdje postoji naš header .jf-header i Slider Revolution omotač) i samo ako je hero odmah ispod headera.
+  // U Slider Revolution verziji ovaj dio se pokrene odmah pri učitavanju, prije prikaza slajda (da slika ne "skoči" pred posjetiocem).
+  // >>> rano
   (function underHeader() {
+    if (hero.__jhFit) return hero.__jhFit();   // već namješteno ranije — samo provjeri
     var hdr = document.querySelector('.jf-header');
-    var wrap = hero.closest('rs-fullwidth-wrap') || hero.closest('rs-module-wrap') || hero.closest('rs-module');
-    if (!hdr || !wrap) return;
+    if (!hdr) return;
     function fit() {
-      wrap.style.marginTop = ''; hero.__jhPull = 0;
-      if (!window.matchMedia('(max-width:760px)').matches) return;
+      var wrap = hero.closest('rs-fullwidth-wrap') || hero.closest('rs-module-wrap') || hero.closest('rs-module');
+      if (hero.__jhWrap) hero.__jhWrap.style.marginTop = '';
+      hero.__jhPull = 0; hero.__jhWrap = null;
+      if (!wrap || !window.matchMedia('(max-width:760px)').matches) return;
       var y = window.scrollY || 0;
       var top = wrap.getBoundingClientRect().top + y, hTop = hdr.getBoundingClientRect().top + y;   // hTop = ispod admin trake, ako postoji
       var pull = Math.round(top - hTop);
@@ -105,12 +147,16 @@
         wrap.style.marginTop = (-pull) + 'px';
         if (getComputedStyle(wrap).position === 'static') wrap.style.position = 'relative';
         wrap.style.zIndex = '1';
-        hero.__jhPull = pull;
+        hero.__jhPull = pull; hero.__jhWrap = wrap;
       }
     }
+    hero.__jhFit = fit;
     fit(); window.addEventListener('load', fit);
-    var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(fit, 200); });
+    // telefon javlja "resize" i kad se pri skrolovanju sakrije traka adrese — tada nema šta da se mijenja
+    var t, lw = window.innerWidth;
+    window.addEventListener('resize', function () { if (window.innerWidth === lw) return; lw = window.innerWidth; clearTimeout(t); t = setTimeout(fit, 200); });
   })();
+  // <<< rano
 
   // ===== Reflektori: pale se uz stazu, tiho dišu, povremeno bljesne filmski zrak =====
   (function floodlights() {
@@ -228,13 +274,21 @@
 
     layout();
     if (reduce) { draw(performance.now()); return; }
-    var visible = true, last = 0;
+    var visible = true, last = 0, scrolled = 0;
     if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(hero);
+    // telefon: dok prst skroluje, svjetla miruju (sav rad ide na glatko pomjeranje stranice)
+    if (mobile) window.addEventListener('scroll', function () { scrolled = performance.now(); }, { passive: true });
     (function loop(now) {
-      if (visible && !document.hidden && now - last > (mobile ? 45 : 32)) { last = now; draw(now); }   // ~30 fps (telefon ~22) je dovoljno za svjetlo
+      if (visible && !document.hidden && now - last > (mobile ? 55 : 32) && now - scrolled > 160) { last = now; draw(now); }   // ~30 fps (telefon ~18) je dovoljno za meko svjetlo
       requestAnimationFrame(loop);
     })(performance.now());
-    var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(layout, 150); });
+    var rz, lw = photo.clientWidth, lh = photo.clientHeight;
+    window.addEventListener('resize', function () {
+      clearTimeout(rz); rz = setTimeout(function () {
+        if (photo.clientWidth === lw && photo.clientHeight === lh) return;   // traka adrese na telefonu: slika ista, platno se ne pravi ponovo
+        lw = photo.clientWidth; lh = photo.clientHeight; layout();
+      }, 150);
+    });
   })();
 
   // ===== Ulazak teksta: kicker se "otkuca", naslov se kristališe, "Jahorine" se iscrta ledom =====
@@ -243,11 +297,16 @@
     var ice = hero.querySelector('.jh-ice');
     var rating = hero.querySelector('.jh-rating__value');
     var dotI = ice.querySelector('.jh-i'), dot = ice.querySelector('.jh-dot');
+    var phone = window.matchMedia('(max-width:760px)').matches;
 
     // Mjeri riječ: položaj svakog slova, osnovnu liniju, profil vrhova slova i tačan položaj tačke na "i"
+    var mCache = null;
     function measureIce() {
       var cs = getComputedStyle(ice), box = ice.getBoundingClientRect(), fs = parseFloat(cs.fontSize);
       var font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      // isto slovo, ista veličina → mjerenje se ne ponavlja (skupo je, a pada baš usred animacije ulaska)
+      var key = box.width + '|' + font + '|' + cs.letterSpacing + '|' + (document.fonts ? document.fonts.status : '');
+      if (mCache && mCache.key === key) { mCache.box = box; return mCache; }
       var probe = document.createElement('i');
       probe.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline';
       ice.insertBefore(probe, ice.firstChild);
@@ -294,7 +353,7 @@
       }
       g.font = font;
       var asc = g.measureText('h').actualBoundingBoxAscent || fs * 0.72;
-      return { box: box, fs: fs, font: font, baseY: baseY, chars: chars, dot: dot, profile: profile, asc: asc };
+      return (mCache = { key: key, box: box, fs: fs, font: font, baseY: baseY, chars: chars, dot: dot, profile: profile, asc: asc });
     }
     // postavi tačku tačno na mjesto (u koordinatama slova "ı", pa prati i razmak slova na hover)
     function placeDot() {
@@ -317,7 +376,10 @@
       dot.style.display = 'none';
     }
     setTimeout(fixDot, 9000);
-    var rz; window.addEventListener('resize', function () {
+    var rz, lw = window.innerWidth;
+    window.addEventListener('resize', function () {
+      if (window.innerWidth === lw) return;   // veličina slova zavisi samo od širine ekrana
+      lw = window.innerWidth;
       clearTimeout(rz); rz = setTimeout(function () { if (!dot.classList.contains('is-flying')) placeDot(); }, 150);
     });
 
@@ -479,7 +541,7 @@
         var ln = document.createElementNS(NS, 'line');
         ln.setAttribute('stroke-linecap', 'round');
         ln.setAttribute('stroke', i > 16 ? '#E8FBFF' : '#39CFFF');
-        ln.style.filter = 'drop-shadow(0 0 4px rgba(0,185,242,.9))';
+        if (!phone) ln.style.filter = 'drop-shadow(0 0 4px rgba(0,185,242,.9))';   // telefon: bez sjaja na 22 dijela traga (skupo u svakom kadru)
         tsvg.appendChild(ln); segs.push(ln);
       }
       ice.appendChild(tsvg);
