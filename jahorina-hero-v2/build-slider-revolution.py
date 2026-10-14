@@ -67,11 +67,21 @@ SR_LAYOUT = """
 .jh-hero .jh-quick__label{white-space:nowrap!important;text-align:center}
 @media (max-width:760px){
   .jh-hero .jh-kicker > span{line-height:inherit!important}   /* H1 u dva reda: isti razmak redova kao kicker */
-  .jh-hero .jh-quick__item svg{width:18px;height:18px}
-  .jh-hero .jh-quick__label--word{font-size:7.5px;letter-spacing:.2px}
+  .jh-hero .jh-quick__label--word{font-size:7.9px;letter-spacing:.2px}
+}
+/* telefon: centriranje zadato direktno svakom redu i "Jahorine", jače od stilova teme/SR (na sajtu se naslov nije centrirao) */
+@media (max-width:760px){
+  .jh-hero .jh-headline{left:16px!important;right:16px!important;text-align:center!important}
+  .jh-hero .jh-kicker,.jh-hero .jh-kicker > span,.jh-hero .jh-title,.jh-hero .jh-title > span{text-align:center!important}
+  .jh-hero .jh-title > span.jh-ice{display:table!important;width:auto!important;margin-left:auto!important;margin-right:auto!important;left:auto!important;right:auto!important;float:none!important}
+  .jh-hero .jh-quick{left:max(14px,calc(50% - 220px))!important;right:max(14px,calc(50% - 220px))!important;width:auto!important;max-width:none!important;margin:0!important}
+  .jh-hero .jh-quick__item svg{width:19px;height:19px}
 }
 @media (max-width:760px) and (max-height:680px){
-  .jh-hero .jh-quick__item svg{width:16px;height:16px}
+  .jh-hero .jh-quick__item svg{width:17px;height:17px}
+}
+@media (max-width:360px){
+  .jh-hero .jh-quick__label--word{font-size:7.1px;letter-spacing:0}
 }
 """
 

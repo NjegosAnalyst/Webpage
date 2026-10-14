@@ -29,6 +29,27 @@
   var hero = document.querySelector('.jh-hero');
   if (!hero) return;
 
+  // dijagnostika za podešavanje: dodaj ?jhdebug na adresu stranice → poslije 6 s prikaže mjere hero-a (posjetioci to ne vide)
+  if (/[?&#]jhdebug/.test(location.href)) setTimeout(function () {
+    function q(s) { return hero.querySelector(s); }
+    function r(el) { if (!el) return '-'; var b = el.getBoundingClientRect(); return Math.round(b.left) + ',' + Math.round(b.top) + ' ' + Math.round(b.width) + 'x' + Math.round(b.height); }
+    function c(el, p) { return el ? getComputedStyle(el)[p] : '-'; }
+    var ice = q('.jh-ice'), qk = q('.jh-quick'), L = [
+      'ekran ' + innerWidth + 'x' + innerHeight + ' dpr ' + devicePixelRatio + ' doc ' + document.documentElement.clientWidth,
+      'hero ' + r(hero) + ' pad ' + c(hero, 'paddingLeft'),
+      'frame ' + r(q('.jh-frame')) + ' ' + c(q('.jh-frame'), 'display'),
+      'headline ' + r(q('.jh-headline')) + ' ' + c(q('.jh-headline'), 'position') + ' ta ' + c(q('.jh-headline'), 'textAlign'),
+      'kicker ' + r(q('.jh-kicker')) + ' ta ' + c(q('.jh-kicker > span'), 'textAlign') + ' ls ' + c(q('.jh-kicker'), 'letterSpacing'),
+      'title ' + r(q('.jh-title')) + ' ta ' + c(q('.jh-title'), 'textAlign') + '/' + c(q('.jh-title > span'), 'textAlign') + ' fs ' + c(q('.jh-title'), 'fontSize'),
+      'ice ' + r(ice) + ' ' + c(ice, 'display') + ' ml ' + c(ice, 'marginLeft') + ' mr ' + c(ice, 'marginRight') + ' w ' + c(ice, 'width'),
+      'quick ' + r(qk) + ' l ' + c(qk, 'left') + ' r ' + c(qk, 'right') + ' w ' + c(qk, 'width') + ' ml ' + c(qk, 'marginLeft')
+    ];
+    for (var n = hero.parentElement, i = 0; n && i < 5; n = n.parentElement, i++) L.push('^' + n.tagName.toLowerCase() + (n.className && n.className.baseVal === undefined ? '.' + String(n.className).split(' ')[0] : '') + ' ' + r(n) + ' tf ' + c(n, 'transform').slice(0, 30));
+    var d = document.createElement('pre'); d.textContent = L.join('\n');
+    d.style.cssText = 'position:fixed;left:6px;right:6px;top:64px;z-index:2147483647;margin:0;background:rgba(0,0,0,.88);color:#7CFC9A;font:10px/1.35 monospace;padding:8px;border-radius:8px;white-space:pre-wrap;word-break:break-all;pointer-events:none';
+    document.body.appendChild(d);
+  }, 6000);
+
   // "O nama" dropdown i hamburger — samo ako hero ima svoj meni
   // (u Slider Revolution verziji meni dolazi iz teme, pa ovog dijela nema)
   var dd = hero.querySelector('.jh-dropdown');
