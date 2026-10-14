@@ -80,6 +80,13 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - **Radi na HERO TEST (14. 10.), korisnik: „radi sve samo se sporo učitava“** → ulazak skraćen sa ~4 s na ~2 s (uže .25 s, sjedišta od 650 ms svakih 200 ms, koluti .9–1.3 s), fotografija ostaje `loading="lazy"` u HTML-u ali je IntersectionObserver (rootMargin 1600 px) prebaci na eager ~2 ekrana ranije. Prvo učitavanje nove verzije sa jsDelivr-a je sporije (keš).
 - **Sljedeće:** korisnik zamijeni red (@1f3d086) na HERO TEST (Elementor kontejner padding/margin/gap 0) → screenshot računar + telefon.
 
+### 3. Sekcije ponuda — prenesene na main i usklađene (14. 10.), redovi @e72124c (puni hash)
+- Ratrak (`ratrak/`), Suvenirnica (`suvenirnica/`), Olimpijski bar (`bar/`), VIP gondola (`gondola/`), Ski depo (`depo/`), Snowboard park i Ski bike (`park/`), Sankalište (`sankaliste/`) i „Kupi ski pass“ (`skipass/`) — nastale na grani `claude/dodaci-planina-brojke` (tamo cijela istorija izgleda i korisnikovih odluka; detalji izgleda u TEMA.md), prenesene na `claude/brojke-main`.
+- **Zajednički blok „SEO i brzina“** (`alati/seo-brzina.py` ga ugrađuje/osvježava između oznaka `SEO-BRZINA:POCETAK/KRAJ` na kraju svake sekcije): slike `loading="lazy"` + `width/height` (iz `slike/`) + alt dopunjen „— Olimpijska planina Jahorina“ (EN „— Olympic Mountain Jahorina“), i za slike dodate kasnije; predučitavanje ~2 ekrana ranije; **rezerva: slika koja ne stigne sa jsDelivr-a učita se sa raw.githubusercontent.com** (isti puni hash); telefon ≤ 760 px: bez `backdrop-filter`, bez filtera na slikama, `…-tint` bez `mix-blend-mode` (gondola: noćna fotografija bez lighten, `.jg-sky`/`.jg-in` skriveni). Schema.org SkiResort = „Olimpijska planina Jahorina“ (Organization ostaje pravni naziv).
+- `napravi-widget.py` svih sekcija koristi **puni hash** (`%H`), potreban za rezervu sa GitHuba.
+- Test: `node alati/test-seo-brzina.js <fontovi> [sekcija…]` (0 × H1, H2, lazy/alt/dimenzije, rezerva sa GitHuba, telefon bez backdrop/blend) + postojeći `test-<sekcija>.js` (pokretati jedan po jedan; paralelno daju lažne greške od opterećenja).
+- **Svaka izmjena sekcije:** izmijeni `<sekcija>.js` → `python3 alati/seo-brzina.py <sekcija>` → testovi → commit + push → `python3 napravi-widget.py` → commit + push → novi red.
+
 ### Sljedeće sekcije
 - Događaji → Uživaj i van staze → Pratite Jahorinu, plus Danas na Jahorini iznad vijesti (Planina u brojkama urađena). Korisnik bira kojom se nastavlja. Događaji: započeto na grani `claude/dogadjaji-pocetna` — čekaju se korisnikovi screenshotovi.
 - Događaji: na sajtu je **The Events Calendar** (Elementor widget "Events Loop", sada „Trenutno nema događaja...“), pa podatke čitati iz njega (REST `/wp-json/tribe/events/v1/events`), ne ručno.
