@@ -57,16 +57,18 @@ const theme = `
   p{margin:0 0 15px} img{max-width:100%;height:auto}
   .hero{height:260px;background:#0A1120 url(${SITE}/wp-content/uploads/2026/09/jahorina-noc.webp) center/cover}
   .after{padding:60px 20px;color:#444} .boxed{max-width:1140px;margin:40px auto;padding:0 10px}   /* razmak 40 px gore/dole kao Elementor/Betheme */`;
+let CLIP = false;
 function page(boxed) {
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>${theme}</style></head><body class="home page logged-in"><div class="srwrap" style="background:#fff;padding-bottom:28px"><div class="hero jh-hero"></div></div>
+  <style>${theme}</style></head><body class="home page logged-in">${CLIP ? '<div class="srwrap" style="background:#fff;height:231.4px;overflow:hidden;margin-bottom:1.4px"><div class="hero jh-hero" style="height:300px"></div></div>' : '<div class="srwrap" style="background:#fff;padding-bottom:28px"><div class="hero jh-hero"></div></div>'}
   <div class="${boxed ? 'boxed' : ''}"><div class="elementor-widget-html"><div id="jv-vijesti"><a href="${SITE}/category/vijesti/">Sve vijesti</a></div>
   <script src="${SITE}/__test/vijesti.js" defer></script></div></div>
   <div class="after">Trenutno nema događaja...</div></body></html>`;
 }
 
-async function run(name, { url, viewport, boxed = false, rest = 'ok', fullPage = false, order = 'normal' }) {
+async function run(name, { url, viewport, boxed = false, rest = 'ok', fullPage = false, order = 'normal', clip = false }) {
+  CLIP = clip;
   sorted = order === 'notice' ? noticeFirst : [posts[2], posts[3], posts[0], posts[1]];
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: 2 });
@@ -135,8 +137,9 @@ async function run(name, { url, viewport, boxed = false, rest = 'ok', fullPage =
         };
       })(),
       gaps: (() => {
-        const b = r.getBoundingClientRect(), h = document.querySelector('.hero').getBoundingClientRect(), a = document.querySelector('.after').getBoundingClientRect();
-        return Math.round(b.top - h.bottom) + ' / ' + Math.round(a.top - b.bottom);
+        const b = r.getBoundingClientRect(), w = document.querySelector('.srwrap'), h = document.querySelector('.hero').getBoundingClientRect(), a = document.querySelector('.after').getBoundingClientRect();
+        const hb = getComputedStyle(w).overflow === 'hidden' ? Math.min(h.bottom, w.getBoundingClientRect().bottom) : h.bottom;
+        return (Math.round((b.top - hb) * 10) / 10) + ' / ' + (Math.round((a.top - b.bottom) * 10) / 10);
       })(),
       bleed: (() => { const b = r.getBoundingClientRect(); return Math.round(b.left) + '/' + Math.round(b.width) + ' od ' + document.documentElement.clientWidth; })(),
     };
@@ -151,6 +154,7 @@ async function run(name, { url, viewport, boxed = false, rest = 'ok', fullPage =
 (async () => {
   await run('1-desktop-sr', { url: SITE + '/pocetna-zima/', viewport: { width: 1440, height: 900 } });
   await run('2-telefon-sr', { url: SITE + '/pocetna-zima/', viewport: { width: 390, height: 844 } });
+  await run('2b-telefon-odsjecen-hero', { url: SITE + '/pocetna-zima/', viewport: { width: 412, height: 915 }, clip: true });
   await run('3-desktop-en-bez-en-rest', { url: SITE + '/en/pocetna-zima/', viewport: { width: 1280, height: 860 }, rest: 'noen' });
   await run('4-boxed-bez-embed', { url: SITE + '/pocetna-zima/', viewport: { width: 1366, height: 860 }, boxed: true, rest: 'noembed', fullPage: true });
   await run('5-greska', { url: SITE + '/pocetna-zima/', viewport: { width: 1280, height: 800 }, rest: 'fail' });

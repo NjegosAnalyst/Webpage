@@ -443,16 +443,29 @@
     var st = root.style;
     st.removeProperty('margin-top'); st.removeProperty('margin-bottom'); st.removeProperty('z-index');
     var r = root.getBoundingClientRect(), up = neighbour(-1), dn = neighbour(1), gu = 0, gd = 0;
-    // iznad je naš hero: mjeri do stvarnog dna hero-a (.jh-hero), jer su omotač Slider Revolutiona ili
-    // Elementor sekcija često viši od njega — taj višak se vidi kao bijela traka unutar bloka iznad
-    var hero = d.querySelector('.jh-hero'), hb = hero && hero.getBoundingClientRect();
-    if (hb && hb.height > 50 && hb.bottom <= r.top + 1) up = { el: hero, box: hb, hero: true };
+    // iznad je naš hero: mjeri do stvarnog (vidljivog) dna hero-a (.jh-hero). Omotač Slider Revolutiona ili
+    // Elementor sekcija često su viši od hero-a, a na telefonu ga omotač i odsiječe — višak se vidi kao bijela traka
+    var hero = d.querySelector('.jh-hero'), hv = hero && hero.getBoundingClientRect().height > 50 ? visBottom(hero) : null;
+    if (hv !== null && hv <= r.top + 2) up = { el: hero, box: { bottom: hv }, hero: true };
     if (up) {
-      gu = Math.round(r.top - up.box.bottom);
-      if (gu > 1 && gu <= (up.hero ? GAP_HERO : GAP_MAX)) { st.setProperty('margin-top', -gu + 'px', 'important'); st.setProperty('z-index', '2', 'important'); }
+      var g = r.top - up.box.bottom;   // bez zaokruživanja: i 1,4 px se vidi kao bijela linija na telefonu
+      gu = Math.round(g * 10) / 10;
+      if (g > .3 && g <= (up.hero ? GAP_HERO : GAP_MAX)) {
+        st.setProperty('margin-top', -(g + (up.hero ? 1 : 0)) + 'px', 'important');   // uz hero 1 px preklopa (iste boje), da ne ostane ni dio piksela
+        st.setProperty('z-index', '2', 'important');
+      }
     }
-    if (dn) { gd = Math.round(dn.box.top - r.bottom); if (gd > 1 && gd <= GAP_MAX) st.setProperty('margin-bottom', -gd + 'px', 'important'); }
+    if (dn) { var g2 = dn.box.top - r.bottom; gd = Math.round(g2 * 10) / 10; if (g2 > .3 && g2 <= GAP_MAX) st.setProperty('margin-bottom', -g2 + 'px', 'important'); }
     if (/[?&]jvdebug/.test(location.search)) debug(up, dn, gu, gd);
+  }
+  // dno elementa koje se stvarno vidi: roditelj sa overflow:hidden/clip ga može odsjeći ranije
+  function visBottom(el) {
+    var b = el.getBoundingClientRect().bottom;
+    for (var n = el.parentElement; n && n !== d.body && n !== d.documentElement; n = n.parentElement) {
+      var cs = getComputedStyle(n);
+      if (cs.overflowY === 'hidden' || cs.overflowY === 'clip' || cs.overflow === 'hidden') b = Math.min(b, n.getBoundingClientRect().bottom);
+    }
+    return b;
   }
   function who(el) { return el ? el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') + (el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\s+/).slice(0, 2).join('.') : '') : '—'; }
   function debug(up, dn, gu, gd) {
