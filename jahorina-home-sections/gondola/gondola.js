@@ -810,17 +810,29 @@
     }
     // šav: bijela traka između ovog bloka i tamnog bloka iznad (razmak između Elementor kontejnera/sekcija, pola piksela)
     var DARK = '#jv-vijesti,#jr-ratrak,#jsu-suvenirnica,#jb-bar,#jg-gondola,#jsd-depo,#jsb-park,#jsk-sankaliste,#jpb-brojke,.jh-hero,rs-module-wrap,rs-fullwidth-wrap';
+    // od bloka nagore: prvi nivo (widget, kolona, kontejner, sekcija) koji ima prethodnog vidljivog susjeda; ako je u tom
+    // susjedu tamni blok, zatvara se sve od dna tog bloka do vrha ovog: razmak između kontejnera (margin/gap) negativnim
+    // margin-top na tom nivou, a bijeli padding oba kontejnera negativnim margin-top na samom bloku (blok ih prekrije)
     function seam() {
-      var sh = root;
-      while (sh.parentElement && !sh.parentElement.matches('.elementor, .elementor-section-wrap, body, main, #Content, .entry-content, .the_content_wrapper')) sh = sh.parentElement;
-      if (sh === root || !sh.parentElement) return;
-      var prev = sh.previousElementSibling;
-      while (prev && !prev.offsetHeight) prev = prev.previousElementSibling;
-      if (!prev || !(prev.matches(DARK) || prev.querySelector(DARK))) return;
-      sh.style.removeProperty('margin-top');
-      var gap = sh.getBoundingClientRect().top - prev.getBoundingClientRect().bottom;
-      if (gap > .5 && gap <= 160) sh.style.setProperty('margin-top', (parseFloat(getComputedStyle(sh).marginTop) || 0) - gap + 'px', 'important');
-      root.style.boxShadow = '0 -2px 0 0 #0A1120';   // pola piksela između tamnih blokova
+      for (var el = root.parentElement; el && el.parentElement && el !== d.body && el !== d.documentElement; el = el.parentElement) {
+        var prev = el.previousElementSibling;
+        while (prev && (!prev.offsetHeight || /^(SCRIPT|STYLE|LINK)$/.test(prev.tagName))) prev = prev.previousElementSibling;
+        if (!prev) continue;
+        var dk = prev.matches(DARK) ? [prev] : [].slice.call(prev.querySelectorAll(DARK));
+        if (!dk.length) return;
+        dk = dk[dk.length - 1];
+        // povlači se omotač bloka (pe), ne sam blok: margin-top bloka mijenja fit() (širenje preko ekrana), pa bi se smjenjivali
+        var pe = root.parentElement;
+        el.style.removeProperty('margin-top');
+        if (pe !== el) pe.style.removeProperty('margin-top');
+        var gap = el.getBoundingClientRect().top - prev.getBoundingClientRect().bottom;
+        if (gap > .5 && gap <= 160) el.style.setProperty('margin-top', (parseFloat(getComputedStyle(el).marginTop) || 0) - gap + 'px', 'important');
+        // ostatak (bijeli padding kontejnera iznad i ispod) prekrije blok
+        var rest = root.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;
+        if (rest > .5 && rest <= 160) pe.style.setProperty('margin-top', (parseFloat(getComputedStyle(pe).marginTop) || 0) - rest + 'px', 'important');
+        root.style.boxShadow = '0 -2px 0 0 #0A1120';   // pola piksela između tamnih blokova
+        return;
+      }
     }
     function reseam() { clearTimeout(reseam.t); reseam.t = setTimeout(seam, 160); }
     seam();

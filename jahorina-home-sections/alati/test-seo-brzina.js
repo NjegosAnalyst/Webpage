@@ -91,7 +91,7 @@ const info = (p, id) => p.evaluate((id) => {
   // šav: tri bloka u zasebnim Elementor kontejnerima sa razmakom (margin 24 px + padding 10 px na bijeloj pozadini)
   if (!process.argv.slice(3).length || process.argv.includes('sav')) {
     console.log('\n== šav između sekcija (Elementor kontejneri sa razmakom)');
-    for (const [vw, vh] of [[1440, 900], [390, 844]]) {
+    for (const [vw, vh, wrap] of [[1440, 900, 'elementor'], [1440, 900, 'mfn-builder-content'], [390, 844, 'elementor'], [390, 844, 'mfn-builder-content']]) {
       const ctx = await browser.newContext({ viewport: { width: vw, height: vh }, isMobile: vw < 761 });
       const p = await ctx.newPage();
       await p.route('**/*', async (route) => {
@@ -100,8 +100,10 @@ const info = (p, id) => p.evaluate((id) => {
         if (u.origin === SITE && /wp-json/.test(u.pathname)) return route.fulfill({ contentType: 'application/json', body: '[]' });
         if (u.origin === SITE) {
           const box = (id, sec, attrs = '') => `<div class="e-con" style="margin-top:24px;padding:10px;background:#fff;display:flex;flex-direction:column;gap:20px"><div class="elementor-widget elementor-widget-html"><div id="${id}" ${attrs}></div><script src="${CDN}jahorina-home-sections/${sec}/${sec}.js" defer></script></div></div>`;
-          return route.fulfill({ contentType: 'text/html; charset=utf-8', body: `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#fff"><div class="elementor">
-            ${box('jsk-sankaliste', 'sankaliste')}${box('jpb-brojke', 'brojke', 'data-km="54" data-zicare="18" data-nocne="10" data-sankanje="600"')}${box('jr-ratrak', 'ratrak')}</div><div style="height:600px"></div></body></html>` });
+          return route.fulfill({ contentType: 'text/html; charset=utf-8', body: `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#fff"><div class="${wrap}"><div class="elementor-section-x">
+            ${box('jsk-sankaliste', 'sankaliste')}${box('jpb-brojke', 'brojke', 'data-km="54" data-zicare="18" data-nocne="10" data-sankanje="600"')}
+            <div class="e-con" style="margin-top:24px;padding:10px;background:#fff;display:flex;flex-direction:column;gap:20px"><div class="elementor-widget elementor-widget-html"><div id="jsd-depo"></div><script src="${CDN}jahorina-home-sections/depo/depo.js" defer></script></div>
+            <div class="elementor-widget elementor-widget-html"><div id="jr-ratrak"></div><script src="${CDN}jahorina-home-sections/ratrak/ratrak.js" defer></script></div></div></div></div><div style="height:600px"></div></body></html>` });
         }
         return route.abort();
       });
@@ -109,22 +111,30 @@ const info = (p, id) => p.evaluate((id) => {
       await p.waitForSelector('#jr-ratrak h2');
       await p.waitForTimeout(1500);
       const g = await p.evaluate(() => {
-        const a = document.getElementById('jsk-sankaliste').getBoundingClientRect(), b = document.getElementById('jpb-brojke').getBoundingClientRect(), c = document.getElementById('jr-ratrak').getBoundingClientRect();
-        return { g1: Math.round((b.top - a.bottom) * 100) / 100, g2: Math.round((c.top - b.bottom) * 100) / 100, y1: a.bottom + scrollY, y2: b.bottom + scrollY };
+        const R = (id) => document.getElementById(id).getBoundingClientRect(), a = R('jsk-sankaliste'), b = R('jpb-brojke'), dp = R('jsd-depo'), c = R('jr-ratrak');
+        const q = (x) => Math.round(x * 100) / 100;
+        return { g1: q(b.top - a.bottom), g2: q(dp.top - b.bottom), g3: q(c.top - dp.bottom), y1: a.bottom + scrollY, y2: b.bottom + scrollY, y3: dp.bottom + scrollY };
       });
-      check(vw + ' px: nema razmaka između blokova (≤ 0 px)', g.g1 <= 0.01 && g.g2 <= 0.01, g);
+      check(vw + ' px, ' + wrap + ': nema razmaka između blokova (kontejner–kontejner i widget–widget u istom kontejneru)', g.g1 <= 0.01 && g.g2 <= 0.01 && g.g3 <= 0.01, g);
+      // stabilno: i 3 s kasnije (fit() i šav se ne smjenjuju)
+      const later = [];
+      for (let k = 0; k < 6; k++) {
+        await p.waitForTimeout(500);
+        later.push(await p.evaluate(() => { const R = (id) => document.getElementById(id).getBoundingClientRect(); return Math.max(R('jpb-brojke').top - R('jsk-sankaliste').bottom, R('jsd-depo').top - R('jpb-brojke').bottom, R('jr-ratrak').top - R('jsd-depo').bottom); }));
+      }
+      check(vw + ' px, ' + wrap + ': razmak ostaje zatvoren (6 mjerenja u 3 s)', later.every((x) => x <= 0.01), later);
       // na samom spoju (lijevi rub, van kadra) mora biti jedan od naših tamnih blokova, ne bijela pozadina
       const white = [];
-      for (const y of [g.y1, g.y2]) {
+      for (const y of [g.y1, g.y2, g.y3]) {
         await p.evaluate((y) => window.scrollTo(0, y - 200), y);
         await p.waitForTimeout(200);
         const bad = await p.evaluate(() => [-1.5, -0.5, 0, 0.5, 1.5].filter((dy) => {
           const y = 200 + dy, el = document.elementFromPoint(3, y);
-          return !(el && el.closest('#jsk-sankaliste, #jpb-brojke, #jr-ratrak'));
+          return !(el && el.closest('#jsk-sankaliste, #jpb-brojke, #jsd-depo, #jr-ratrak'));
         }).map((dy) => { const el = document.elementFromPoint(3, 200 + dy); return dy + ':' + (el ? el.className || el.tagName : '-'); }));
         if (bad.length) white.push(bad);
       }
-      check(vw + ' px: na spoju je tamni blok, ne bijela pozadina', white.length === 0, white);
+      check(vw + ' px, ' + wrap + ': na spoju je tamni blok, ne bijela pozadina', white.length === 0, white);
       await ctx.close();
     }
   }
