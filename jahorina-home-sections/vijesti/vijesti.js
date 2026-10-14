@@ -426,7 +426,7 @@
     closeGaps();
   }
   // tema/Elementor između sekcija ostavljaju razmak (bijela traka); blok se primakne susjedu iznad i ispod (najviše 160 px)
-  var GAP_MAX = 160;
+  var GAP_MAX = 160, GAP_HERO = 260;
   function neighbour(dir) {   // najbliži vidljivi element prije/poslije bloka (preskače skripte, fiksni header, prazne omotače)
     for (var n = root; n && n !== d.body; n = n.parentElement) {
       for (var s = dir < 0 ? n.previousElementSibling : n.nextElementSibling; s; s = dir < 0 ? s.previousElementSibling : s.nextElementSibling) {
@@ -441,9 +441,16 @@
   }
   function closeGaps() {
     var st = root.style;
-    st.removeProperty('margin-top'); st.removeProperty('margin-bottom');
+    st.removeProperty('margin-top'); st.removeProperty('margin-bottom'); st.removeProperty('z-index');
     var r = root.getBoundingClientRect(), up = neighbour(-1), dn = neighbour(1), gu = 0, gd = 0;
-    if (up) { gu = Math.round(r.top - up.box.bottom); if (gu > 1 && gu <= GAP_MAX) st.setProperty('margin-top', -gu + 'px', 'important'); }
+    // iznad je naš hero: mjeri do stvarnog dna hero-a (.jh-hero), jer su omotač Slider Revolutiona ili
+    // Elementor sekcija često viši od njega — taj višak se vidi kao bijela traka unutar bloka iznad
+    var hero = d.querySelector('.jh-hero'), hb = hero && hero.getBoundingClientRect();
+    if (hb && hb.height > 50 && hb.bottom <= r.top + 1) up = { el: hero, box: hb, hero: true };
+    if (up) {
+      gu = Math.round(r.top - up.box.bottom);
+      if (gu > 1 && gu <= (up.hero ? GAP_HERO : GAP_MAX)) { st.setProperty('margin-top', -gu + 'px', 'important'); st.setProperty('z-index', '2', 'important'); }
+    }
     if (dn) { gd = Math.round(dn.box.top - r.bottom); if (gd > 1 && gd <= GAP_MAX) st.setProperty('margin-bottom', -gd + 'px', 'important'); }
     if (/[?&]jvdebug/.test(location.search)) debug(up, dn, gu, gd);
   }
@@ -452,7 +459,7 @@
     var box = d.getElementById('jv-debug') || d.body.appendChild(Object.assign(d.createElement('pre'), { id: 'jv-debug' }));
     box.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:2147483647;max-width:96vw;margin:0;padding:10px 12px;border-radius:10px;background:rgba(0,0,0,.85);color:#9BE6FF;font:11px/1.45 monospace;white-space:pre-wrap;pointer-events:none';
     var lines = ['jv: širina ' + Math.round(root.getBoundingClientRect().width) + ' / ' + d.documentElement.clientWidth,
-      'iznad: ' + who(up && up.el) + '  razmak ' + gu + 'px' + (gu > GAP_MAX ? ' (preveliko — nije dirano)' : ''),
+      'iznad: ' + who(up && up.el) + (up && up.hero ? ' (hero)' : '') + '  razmak ' + gu + 'px' + (gu > (up && up.hero ? GAP_HERO : GAP_MAX) ? ' (preveliko — nije dirano)' : ''),
       'ispod: ' + who(dn && dn.el) + '  razmak ' + gd + 'px' + (gd > GAP_MAX ? ' (preveliko — nije dirano)' : '')];
     for (var n = root.parentElement, i = 0; n && n !== d.body && i < 6; n = n.parentElement, i++) {
       var cs = getComputedStyle(n);

@@ -62,6 +62,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
   - Test `test-vijesti.js` sada provjerava i SEO: 0 × H1, H2 tekst, alt, lazy, dimenzije, aria-label linka, bez zamućenja na telefonu.
 - **Prelaz iz hero-a (14. 10., korisnik: bijela traka između hero-a i vijesti na HERO TEST):**
   - blok sam mjeri razmak do susjeda iznad i ispod (preskače fiksni header i skripte) i primakne se negativnom marginom, najviše 160 px (`closeGaps()` u `fit()`);
+  - **telefon na HERO TEST (14. 10.): traka je ostala**, jer je bijelo bilo *unutar* bloka iznad (omotač Slider Revolutiona / Elementor sekcija viša od hero-a). Zato blok sada mjeri do stvarnog dna `.jh-hero` (najviše 260 px) i tada dobija `z-index:2`. Simulacija to ponavlja (omotač hero-a sa 28 px bijelog): stara verzija 28 px, nova 0;
   - pozadina počinje bojom trake oko hero-a `#0C1424` i do 280 px prelazi u `#0A1120`; na vrhu je tihi cyan „horizont“ (linija 1 px, .26) sa mekim sjajem — bez šava i ivice;
   - dijagnostika: stranica sa `?jvdebug` u adresi prikaže dole lijevo izmjerene razmake, susjede i padding/margine roditelja (za screenshot ako tema ipak ostavi razmak).
 - Sve fotografije imaju istu blagu **noćnu obradu**, da dnevne slike ne iskaču iz tona hero-a. Bez slike → noćna fotografija iz hero-a.

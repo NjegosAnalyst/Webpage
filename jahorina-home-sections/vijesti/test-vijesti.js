@@ -60,7 +60,7 @@ const theme = `
 function page(boxed) {
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>${theme}</style></head><body class="home page logged-in"><div class="hero"></div>
+  <style>${theme}</style></head><body class="home page logged-in"><div class="srwrap" style="background:#fff;padding-bottom:28px"><div class="hero jh-hero"></div></div>
   <div class="${boxed ? 'boxed' : ''}"><div class="elementor-widget-html"><div id="jv-vijesti"><a href="${SITE}/category/vijesti/">Sve vijesti</a></div>
   <script src="${SITE}/__test/vijesti.js" defer></script></div></div>
   <div class="after">Trenutno nema događaja...</div></body></html>`;
