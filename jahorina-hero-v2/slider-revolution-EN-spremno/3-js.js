@@ -42,7 +42,8 @@
       'kicker ' + r(q('.jh-kicker')) + ' ta ' + c(q('.jh-kicker > span'), 'textAlign') + ' ls ' + c(q('.jh-kicker'), 'letterSpacing'),
       'title ' + r(q('.jh-title')) + ' ta ' + c(q('.jh-title'), 'textAlign') + '/' + c(q('.jh-title > span'), 'textAlign') + ' fs ' + c(q('.jh-title'), 'fontSize'),
       'ice ' + r(ice) + ' ' + c(ice, 'display') + ' ml ' + c(ice, 'marginLeft') + ' mr ' + c(ice, 'marginRight') + ' w ' + c(ice, 'width'),
-      'quick ' + r(qk) + ' l ' + c(qk, 'left') + ' r ' + c(qk, 'right') + ' w ' + c(qk, 'width') + ' ml ' + c(qk, 'marginLeft')
+      'quick ' + r(qk) + ' l ' + c(qk, 'left') + ' r ' + c(qk, 'right') + ' w ' + c(qk, 'width') + ' ml ' + c(qk, 'marginLeft'),
+      'ispod headera: pomak ' + (hero.__jhPull || 0) + ' header ' + r(document.querySelector('.jf-header')) + ' na y=40: ' + (function () { var e = document.elementFromPoint(innerWidth / 2, 40); return e ? e.tagName.toLowerCase() + (e.id ? '#' + e.id : '') + (typeof e.className === 'string' && e.className ? '.' + e.className.split(' ')[0] : '') : '-'; })()
     ];
     for (var n = hero.parentElement, i = 0; n && i < 5; n = n.parentElement, i++) L.push('^' + n.tagName.toLowerCase() + (n.className && n.className.baseVal === undefined ? '.' + String(n.className).split(' ')[0] : '') + ' ' + r(n) + ' tf ' + c(n, 'transform').slice(0, 30));
     var d = document.createElement('pre'); d.textContent = L.join('\n');
@@ -87,6 +88,29 @@
       }
     });
   }
+
+  // ===== Telefon: hero ide ispod providnog headera sve do vrha ekrana (bez šava ispod headera) =====
+  // Radi samo na sajtu (gdje postoji naš header .jf-header i Slider Revolution omotač) i samo ako je hero odmah ispod headera.
+  (function underHeader() {
+    var hdr = document.querySelector('.jf-header');
+    var wrap = hero.closest('rs-fullwidth-wrap') || hero.closest('rs-module-wrap') || hero.closest('rs-module');
+    if (!hdr || !wrap) return;
+    function fit() {
+      wrap.style.marginTop = ''; hero.__jhPull = 0;
+      if (!window.matchMedia('(max-width:760px)').matches) return;
+      var y = window.scrollY || 0;
+      var top = wrap.getBoundingClientRect().top + y, hTop = hdr.getBoundingClientRect().top + y;   // hTop = ispod admin trake, ako postoji
+      var pull = Math.round(top - hTop);
+      if (pull > 0 && pull <= hdr.offsetHeight + 90) {
+        wrap.style.marginTop = (-pull) + 'px';
+        if (getComputedStyle(wrap).position === 'static') wrap.style.position = 'relative';
+        wrap.style.zIndex = '1';
+        hero.__jhPull = pull;
+      }
+    }
+    fit(); window.addEventListener('load', fit);
+    var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(fit, 200); });
+  })();
 
   // ===== Reflektori: pale se uz stazu, tiho dišu, povremeno bljesne filmski zrak =====
   (function floodlights() {

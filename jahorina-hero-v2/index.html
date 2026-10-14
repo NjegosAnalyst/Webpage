@@ -470,7 +470,7 @@
     .jh-quick__label--word{font-size:7.9px;letter-spacing:.2px}
     .jh-quick__label{font-size:9.5px}
     .jh-quick__live{top:6px;right:7px;width:6px;height:6px}
-    h1.jh-kicker{letter-spacing:1.7px!important;font-size:9.5px!important;gap:10px;white-space:nowrap;text-align:center!important;flex-direction:column;align-items:center}
+    h1.jh-kicker{letter-spacing:1.7px!important;font-size:10.5px!important;gap:10px;white-space:nowrap;text-align:center!important;flex-direction:column;align-items:center}
     /* telefon: H1 u dva centrirana reda, prelom tačno kod "·" (tačka i razmaci se ne vide), cyan linija iznad */
     .jh-kicker .jh-sep{width:0;overflow:hidden;vertical-align:top}
     .jh-kicker .jh-sep--dot{display:block;width:100%;height:5px;font-size:0;color:transparent}
@@ -494,7 +494,7 @@
     .jh-photo{animation-name:jhZoomM}
   }
   @media (max-width:360px){
-    h1.jh-kicker{letter-spacing:1.1px!important;font-size:9px!important;gap:8px}
+    h1.jh-kicker{letter-spacing:1.1px!important;font-size:10px!important;gap:8px}
     .jh-kicker::before{width:24px}
     .jh-quick{gap:3px;padding:4px}
     .jh-quick__label--word{font-size:7.1px;letter-spacing:0}
@@ -567,7 +567,7 @@
 
     <!-- ===== DOLE DESNO: brzi linkovi ===== -->
     <div class="jh-quick">
-      <a href="https://webshop.oc-jahorina.com/" class="jh-quick__item" aria-label="Web shop" title="Web shop">
+      <a href="https://webshop.oc-jahorina.com/" class="jh-quick__item jh-quick__item--accent" aria-label="Web shop" title="Web shop">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 4 H5.5 L7.6 15 H18.5 L20.5 7.5 H6.4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="19.2" r="1.4" fill="#fff"/><circle cx="17" cy="19.2" r="1.4" fill="#fff"/></svg>
         <span class="jh-quick__label jh-quick__label--word">WEB SHOP</span>
       </a>
@@ -583,7 +583,7 @@
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.3 A8.5 8.5 0 1 1 9.7 4 A6.6 6.6 0 0 0 20 14.3 Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
         <span class="jh-quick__label jh-quick__label--word">NOĆNO</span>
       </a>
-      <a href="https://www.link.hr/vrtours/ocjahorina/" class="jh-quick__item jh-quick__item--accent" aria-label="Virtuelna tura 360°" title="Virtuelna tura 360°" target="_blank" rel="noopener">
+      <a href="https://www.link.hr/vrtours/ocjahorina/" class="jh-quick__item" aria-label="Virtuelna tura 360°" title="Virtuelna tura 360°" target="_blank" rel="noopener">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12 a8 8 0 0 1 14-5.3 M20 12 a8 8 0 0 1-14 5.3" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/><path d="M18 5 v3 h-3 M6 19 v-3 h3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span class="jh-quick__label">360°</span>
       </a>
@@ -615,7 +615,8 @@
       'kicker ' + r(q('.jh-kicker')) + ' ta ' + c(q('.jh-kicker > span'), 'textAlign') + ' ls ' + c(q('.jh-kicker'), 'letterSpacing'),
       'title ' + r(q('.jh-title')) + ' ta ' + c(q('.jh-title'), 'textAlign') + '/' + c(q('.jh-title > span'), 'textAlign') + ' fs ' + c(q('.jh-title'), 'fontSize'),
       'ice ' + r(ice) + ' ' + c(ice, 'display') + ' ml ' + c(ice, 'marginLeft') + ' mr ' + c(ice, 'marginRight') + ' w ' + c(ice, 'width'),
-      'quick ' + r(qk) + ' l ' + c(qk, 'left') + ' r ' + c(qk, 'right') + ' w ' + c(qk, 'width') + ' ml ' + c(qk, 'marginLeft')
+      'quick ' + r(qk) + ' l ' + c(qk, 'left') + ' r ' + c(qk, 'right') + ' w ' + c(qk, 'width') + ' ml ' + c(qk, 'marginLeft'),
+      'ispod headera: pomak ' + (hero.__jhPull || 0) + ' header ' + r(document.querySelector('.jf-header')) + ' na y=40: ' + (function () { var e = document.elementFromPoint(innerWidth / 2, 40); return e ? e.tagName.toLowerCase() + (e.id ? '#' + e.id : '') + (typeof e.className === 'string' && e.className ? '.' + e.className.split(' ')[0] : '') : '-'; })()
     ];
     for (var n = hero.parentElement, i = 0; n && i < 5; n = n.parentElement, i++) L.push('^' + n.tagName.toLowerCase() + (n.className && n.className.baseVal === undefined ? '.' + String(n.className).split(' ')[0] : '') + ' ' + r(n) + ' tf ' + c(n, 'transform').slice(0, 30));
     var d = document.createElement('pre'); d.textContent = L.join('\n');
@@ -660,6 +661,29 @@
       }
     });
   }
+
+  // ===== Telefon: hero ide ispod providnog headera sve do vrha ekrana (bez šava ispod headera) =====
+  // Radi samo na sajtu (gdje postoji naš header .jf-header i Slider Revolution omotač) i samo ako je hero odmah ispod headera.
+  (function underHeader() {
+    var hdr = document.querySelector('.jf-header');
+    var wrap = hero.closest('rs-fullwidth-wrap') || hero.closest('rs-module-wrap') || hero.closest('rs-module');
+    if (!hdr || !wrap) return;
+    function fit() {
+      wrap.style.marginTop = ''; hero.__jhPull = 0;
+      if (!window.matchMedia('(max-width:760px)').matches) return;
+      var y = window.scrollY || 0;
+      var top = wrap.getBoundingClientRect().top + y, hTop = hdr.getBoundingClientRect().top + y;   // hTop = ispod admin trake, ako postoji
+      var pull = Math.round(top - hTop);
+      if (pull > 0 && pull <= hdr.offsetHeight + 90) {
+        wrap.style.marginTop = (-pull) + 'px';
+        if (getComputedStyle(wrap).position === 'static') wrap.style.position = 'relative';
+        wrap.style.zIndex = '1';
+        hero.__jhPull = pull;
+      }
+    }
+    fit(); window.addEventListener('load', fit);
+    var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(fit, 200); });
+  })();
 
   // ===== Reflektori: pale se uz stazu, tiho dišu, povremeno bljesne filmski zrak =====
   (function floodlights() {
