@@ -542,7 +542,27 @@
         return;
       }
     }
-    function reseam() { clearTimeout(reseam.t); reseam.t = setTimeout(seam, 160); }
+    // dno: ako je ispod bloka footer (naš .jf-wp ili footer teme), razmak do njega (padding/margin omotača stranice) se zatvori
+    // negativnim margin-bottom na nivou čiji je sljedeći susjed footer, pa footer sjedne odmah ispod bloka
+    var FOOT = '.jf-wp, .jf-footer, #Footer, footer, .mfn-footer-tmpl, .elementor-location-footer';
+    function empty(x) {
+      return !x.offsetHeight || /^(SCRIPT|STYLE|LINK|NOSCRIPT|TEMPLATE)$/.test(x.tagName) ||
+        (x.offsetHeight <= 200 && !x.matches(DARK + ',' + FOOT) && !x.querySelector(DARK + ',' + FOOT + ',img,svg,video,iframe,canvas,input,button') && !(x.textContent || '').trim());
+    }
+    function seamDown() {
+      for (var el = root.parentElement; el && el !== d.body && el !== d.documentElement; el = el.parentElement) {
+        var nx = el.nextElementSibling;
+        while (nx && empty(nx)) nx = nx.nextElementSibling;
+        if (!nx) continue;
+        if (!(nx.matches(FOOT) || nx.querySelector('.jf-wp, .jf-footer'))) return;
+        el.style.removeProperty('margin-bottom');
+        var gap = nx.getBoundingClientRect().top - root.getBoundingClientRect().bottom;
+        if (gap > .5 && gap <= 240) el.style.setProperty('margin-bottom', (parseFloat(getComputedStyle(el).marginBottom) || 0) - gap + 'px', 'important');
+        return;
+      }
+    }
+    function reseam() { clearTimeout(reseam.t); reseam.t = setTimeout(function () { seam(); seamDown(); }, 160); }
+    seamDown();
     seam();
     w.addEventListener('load', reseam);
     w.addEventListener('resize', reseam);

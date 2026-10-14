@@ -139,6 +139,31 @@ const info = (p, id) => p.evaluate((id) => {
       await ctx.close();
     }
   }
+  // dno: zadnja sekcija i footer (Betheme #Wrapper sa bijelim paddingom, naš footer .jf-wp poslije njega, skripte između)
+  if (!process.argv.slice(3).length || process.argv.includes('sav')) {
+    console.log('\n== razmak između zadnje sekcije i footera');
+    for (const [vw, vh] of [[1440, 900], [390, 844]]) {
+      const ctx = await browser.newContext({ viewport: { width: vw, height: vh }, isMobile: vw < 761 });
+      const p = await ctx.newPage();
+      await p.route('**/*', async (route) => {
+        const url = route.request().url(), u = new URL(url);
+        if (url.startsWith(CDN)) { const f = path.join(REPO, url.slice(CDN.length).split('?')[0]); return fs.existsSync(f) ? route.fulfill({ contentType: f.endsWith('.js') ? 'application/javascript' : 'image/webp', body: fs.readFileSync(f) }) : route.fulfill({ status: 404, body: '' }); }
+        if (u.origin === SITE && /wp-json/.test(u.pathname)) return route.fulfill({ contentType: 'application/json', body: '[]' });
+        if (u.origin === SITE) return route.fulfill({ contentType: 'text/html; charset=utf-8', body: `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+          <body style="margin:0;background:#fff"><div id="Wrapper" style="padding-bottom:50px;background:#fff"><div id="Content" style="padding-bottom:20px"><div class="elementor">
+          <div class="e-con" style="padding:10px;background:#fff"><div class="elementor-widget elementor-widget-html"><div id="jsk-sankaliste"></div><script src="${CDN}jahorina-home-sections/sankaliste/sankaliste.js" defer></script></div></div>
+          </div></div><footer id="Footer" style="display:none">stari</footer></div><script>/* wpcode */</script><style>.x{}</style>
+          <div class="jf-wp" style="height:300px;background:#0a1120;color:#fff">Footer: kontakti</div></body></html>` });
+        return route.abort();
+      });
+      await p.goto(SITE + '/');
+      await p.waitForSelector('#jsk-sankaliste h2');
+      const gs = [];
+      for (let k = 0; k < 5; k++) { await p.waitForTimeout(600); gs.push(await p.evaluate(() => Math.round((document.querySelector('.jf-wp').getBoundingClientRect().top - document.getElementById('jsk-sankaliste').getBoundingClientRect().bottom) * 100) / 100)); }
+      check(vw + ' px: footer odmah ispod zadnje sekcije (5 mjerenja u 3 s)', gs.every((x) => Math.abs(x) <= 0.01), gs);
+      await ctx.close();
+    }
+  }
   await browser.close();
   console.log(fails ? `\n${fails} provjera NIJE prošlo` : '\nSve provjere su prošle');
   process.exit(fails ? 1 : 0);
