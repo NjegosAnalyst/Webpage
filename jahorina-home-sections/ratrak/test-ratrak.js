@@ -133,7 +133,7 @@ async function layout(p) {
   console.log('EN, računar, Google Tag Manager (dataLayer)');
   ({ p, ctx, errors } = await open(browser, { path: '/en/pocetna-zima/', ga: 'gtm' }));
   const en = await p.evaluate(() => ({ h: document.querySelector('#jr-ratrak h2').textContent, t: [...document.querySelectorAll('#jr-ratrak .jr-tile b')].map((e) => e.textContent).join('|') }));
-  check('engleski tekst i 4–6 pm', en.h === 'Panoramicsnowcatride' && en.t === '20 min|4–6 pm|50 KM', en);
+  check('engleski tekst i 4–6 pm', en.h === 'Panoramic snowcat ride' && en.t === '20 min|4–6 pm|50 KM', en);
   await p.click('#jr-ratrak .jr-btn--solid');
   ev = await p.evaluate(() => window.__ev);
   check('dataLayer: ratrak_rezervacija', JSON.stringify(ev) === JSON.stringify([{ event: 'ratrak_rezervacija', nacin: 'mail', jezik: 'en' }]), ev);

@@ -60,7 +60,7 @@ const info = (p, id) => p.evaluate((id) => {
   return {
     h1: document.querySelectorAll('h1').length, h2: r.querySelectorAll('h2').length,
     imgs: imgs.length, lazy: imgs.filter((i) => i.getAttribute('loading')).length, dims: imgs.filter((i) => i.getAttribute('width') && i.getAttribute('height')).length,
-    altBad: imgs.filter((i) => i.getAttribute('alt') && !/jahorin/i.test(i.alt)).map((i) => i.alt),
+    altBad: imgs.filter((i) => / — (Olimpijska planina|Olympic Mountain) Jahorina$/.test(i.alt) || (!i.getAttribute('alt') && i.getAttribute('aria-hidden') !== 'true')).map((i) => (i.src || '').split('/').pop() + ': ' + i.alt),
     loaded: imgs.filter((i) => i.complete && i.naturalWidth > 0).length, raw: imgs.filter((i) => /raw\.githubusercontent\.com/.test(i.currentSrc || i.src)).length,
     unloaded: imgs.filter((i) => !(i.complete && i.naturalWidth > 0)).map((i) => (i.currentSrc || i.src).split('/').pop()),
     blur, tint, scrollW: document.documentElement.scrollWidth,
@@ -75,7 +75,7 @@ const info = (p, id) => p.evaluate((id) => {
     let i = await info(r.p, IDS[sec]);
     check('bez JS grešaka', r.errors.length === 0, r.errors);
     check('SEO: 0 × H1, H2 postoji', i.h1 === 0 && i.h2 >= 1, [i.h1, i.h2]);
-    check('slike: lazy, width/height, alt sa „Jahorina“', i.imgs > 0 && i.lazy === i.imgs && i.dims === i.imgs && i.altBad.length === 0, i);
+    check('slike: lazy, width/height, alt opisuje sliku (bez dodatka, nije prazan osim ukrasnih)', i.imgs > 0 && i.lazy === i.imgs && i.dims === i.imgs && i.altBad.length === 0, i);
     check('jsDelivr bez slika → slike stigle sa GitHuba (raw)', i.raw > 0 && i.loaded === i.imgs, [i.loaded, i.imgs, i.raw, i.unloaded]);
     await r.ctx.close();
     r = await open(browser, sec, 390, 844);
@@ -85,7 +85,7 @@ const info = (p, id) => p.evaluate((id) => {
     await r.ctx.close();
     r = await open(browser, sec, 1440, 900, '/en/');
     i = await info(r.p, IDS[sec]);
-    check('EN: alt sa „Jahorina“', i.altBad.length === 0, i.altBad);
+    check('EN: alt bez dodatka', i.altBad.length === 0, i.altBad);
     await r.ctx.close();
   }
   // šav: tri bloka u zasebnim Elementor kontejnerima sa razmakom (margin 24 px + padding 10 px na bijeloj pozadini)

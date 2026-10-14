@@ -40,9 +40,17 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - **Samo jedan H1** na početnoj: hero (`h1.jh-kicker`, SR „Ski centar Jahorina · Olimpijska planina“, EN „Jahorina Ski Resort · Olympic Mountain“). Sekcije ispod: naslov sekcije = **H2**, stavke (vijest, događaj, kartica) = **H3**. Nijedna sekcija ne smije dodati H1.
 - Naziv u tekstovima: **„Olimpijska planina Jahorina“ / „Olympic Mountain Jahorina“**, ne „Olimpijski centar“ (izuzetak: logo i pravni naziv firme „AD Olimpijski centar Jahorina“).
 - Ključne riječi prirodno u H2/tekstu: ski centar Jahorina, skijanje, ski karte, noćno skijanje, vijesti/obavještenja.
-- Slike: smislen `alt` (šta je na slici + Jahorina), `loading="lazy"` ispod hero-a, `width`/`height` da nema pomjeranja.
+- Slike: `alt` **samo opisuje šta je na slici** (bez dodataka tipa „— Olimpijska planina Jahorina“: to je gomilanje ključnih riječi, uklonjeno 15. 10.); prazan `alt` samo za ukrasne duplikate sa `aria-hidden="true"`; `loading="lazy"` ispod hero-a, `width`/`height` da nema pomjeranja.
 - Linkovi: pravi `<a href>` sa jasnim tekstom („Pročitaj više: <naslov>“ kroz `aria-label`), EN verzija vodi na `/en/` adrese.
 - Brzina (hero je optimizovan za telefon): bez teških filtera/`backdrop-filter`/beskonačnih animacija preko velikih površina na telefonu.
+- **Naslovi od više `<span>`-ova** (red po red, iscrtani dio): između span-ova uvijek razmak (`</span> <span>`), da `textContent` (Google, čitači) bude „Olimpijska planina“, a ne „Olimpijskaplanina“. Span-ovi su `display:block`, pa razmak ne mijenja izgled.
+- **Fontovi jednom:** sve sekcije koriste isti link (Archivo 500–800 + Barlow 300–700, `display=swap`) i dodaju ga u `<head>` samo ako `link[rel=stylesheet]` sa `family=Archivo` i `family=Barlow` još ne postoji. Hero (`2-css.css`: `@import` Archivo 600–800) i header (`2-header-style.css`: `@import` Barlow 400–600) i dalje imaju svoje — to su preostala dupla učitavanja (sređuje se u hero/header kodu).
+
+## Gdje je šta (15. 10. 2026)
+- **Sve je na `main`.** Grana `claude/brojke-main` (sve sekcije ponuda, Planina u brojkama, „Kupi ski pass“, zajednički SEO/brzina, šav) je spojena u main (fast-forward na a826288), pa SEO ispravke od 15. 10.
+- Na sajtu (prije ispravki 15. 10.): skipass.js @39c4558 (isti fajl je na main), brojke.js @1f3d086, ratrak/suvenirnica/bar/gondola/depo/park/sankaliste @2e61728, vijesti.js @393b050 (na main novija 9b78c4c — zadržana).
+- Stara grana `claude/dodaci-planina-brojke` (nepovezana istorija) ostaje netaknuta kao arhiva: tamo je istorija izgleda sekcija (v1, v2… i korisnikove odluke). Na njoj su starije verzije hero-a (8. 10.) i dokumentacije; main ima novije (hero 14. 10. sadrži sve iz nje + fixDot, underHeader, stil B).
+- Redovi za Elementor: uvijek u `jahorina-home-sections/<sekcija>/elementor-html-widget.html` (pravi ih `napravi-widget.py`, puni hash + SRI).
 
 ## Sekcije početne ispod hero-a
 - Prijedlog izgleda svih sekcija: `jahorina-home-sections/index.src.html` (artifact "Jahorina početna — ispod hero-a"). Redoslijed: Danas na Jahorini → Obavještenja i vijesti → Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu. Prijedlog je polazna tačka; konačan izgled je po `TEMA.md` (premium, minimalistički, blag neumorfizam).

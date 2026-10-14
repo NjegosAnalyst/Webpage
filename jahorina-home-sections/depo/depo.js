@@ -351,7 +351,8 @@
   var st = d.getElementById('jsd-css');
   if (!st) { st = d.createElement('style'); st.id = 'jsd-css'; (d.head || d.documentElement).appendChild(st); }
   st.textContent = CSS;
-  if (!d.querySelector('link[href*="family=Archivo"]')) {
+  // fontovi jednom na stranici: isti link (Archivo 500–800 + Barlow 300–700) dodaje se u <head> samo ako ga još nema
+  if (!d.querySelector('link[rel="stylesheet"][href*="fonts.googleapis.com"][href*="family=Archivo"][href*="family=Barlow"]')) {
     var fl = d.createElement('link'); fl.rel = 'stylesheet';
     fl.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap';
     d.head.appendChild(fl);
@@ -435,7 +436,7 @@
     '<section class="jsd-wrap" aria-labelledby="jsd-h"><div class="jsd-frame">' +
       '<div class="jsd-stage">' +
         '<div class="jsd-3d" role="img" aria-label="' + esc(T.alt) + '">' +
-          '<div class="jsd-photo"><img src="' + esc(PHOTO_S) + '" srcset="' + esc(PHOTO_S) + ' 900w, ' + esc(PHOTO) + ' 1334w" sizes="(max-width:980px) 60vw, 44vw" alt="" decoding="async"></div>' +
+          '<div class="jsd-photo"><img src="' + esc(PHOTO_S) + '" srcset="' + esc(PHOTO_S) + ' 900w, ' + esc(PHOTO) + ' 1334w" sizes="(max-width:980px) 60vw, 44vw" alt="' + esc(T.photos[0]) + '" decoding="async"></div>' +
         '</div>' +
         '<div class="jsd-ov">' + coHTML('vent') + coHTML('dry') + coHTML('heat') + hsHTML() +
           '<div class="jsd-tag"><div class="jsd-tag-in"><div class="jsd-tag-b"><span class="jsd-tag-p"><b></b><i></i></span><small>' + esc(T.day) + '</small></div></div></div>' +
@@ -446,7 +447,7 @@
       '</div>' +
       '<div class="jsd-body">' +
         '<div class="jsd-kicker jsd-up" style="--d:.26s">' + esc(T.kicker) + '</div>' +
-        '<h2 id="jsd-h"><span class="jsd-up" style="--d:.36s">' + esc(T.h[0]) + '</span><span class="jsd-o jsd-up" style="--d:.46s">' + esc(T.h[1]) + '</span></h2>' +
+        '<h2 id="jsd-h"><span class="jsd-up" style="--d:.36s">' + esc(T.h[0]) + '</span> <span class="jsd-o jsd-up" style="--d:.46s">' + esc(T.h[1]) + '</span></h2>' +
         '<p class="jsd-lead jsd-up" style="--d:.6s">' + esc(T.lead) + '</p>' +
         '<div class="jsd-pack jsd-up" style="--d:.72s" role="group" aria-labelledby="jsd-pk">' +
           '<p class="jsd-pack-h" id="jsd-pk"><span class="jsd-pk-t"></span><small>' + esc(T.packSub) + '</small></p>' +
@@ -916,7 +917,6 @@
   /* ---------- SEO i brzina (pravila početne, 14. 10.; pravi ga alati/seo-brzina.py) ---------- */
   (function () {
     var SRC = (d.currentScript && d.currentScript.src) || '', DIMS = {"depo-ormaric-900.webp":[900,1349],"depo-ormaric.webp":[1334,2000]};
-    var SUF = /^\/en(\/|$)/i.test(location.pathname) ? ' — Olympic Mountain Jahorina' : ' — Olimpijska planina Jahorina';
     var CDN = /^https:\/\/cdn\.jsdelivr\.net\/gh\/([^\/]+)\/([^@\/]+)@([0-9a-f]{40})\//i, ok = CDN.test(SRC);
     function fix(im) {
       if (im.__jseo) return;
@@ -924,8 +924,6 @@
       if (!im.getAttribute('loading')) im.setAttribute('loading', 'lazy');
       var f = (im.getAttribute('src') || '').split(/[?#]/)[0].split('/').pop();
       if (!im.getAttribute('width') && DIMS[f]) { im.setAttribute('width', DIMS[f][0]); im.setAttribute('height', DIMS[f][1]); }
-      var a = im.getAttribute('alt');
-      if (a && !/jahorin/i.test(a)) im.setAttribute('alt', a + SUF);
       if (ok) im.addEventListener('error', function () {
         var u = im.currentSrc || im.src;
         if (im.__jfb || !CDN.test(u)) return;

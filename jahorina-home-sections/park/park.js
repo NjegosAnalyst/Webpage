@@ -293,7 +293,8 @@
   var st = d.getElementById('jsb-css');
   if (!st) { st = d.createElement('style'); st.id = 'jsb-css'; (d.head || d.documentElement).appendChild(st); }
   st.textContent = CSS;
-  if (!d.querySelector('link[href*="family=Archivo"]')) {
+  // fontovi jednom na stranici: isti link (Archivo 500–800 + Barlow 300–700) dodaje se u <head> samo ako ga još nema
+  if (!d.querySelector('link[rel="stylesheet"][href*="fonts.googleapis.com"][href*="family=Archivo"][href*="family=Barlow"]')) {
     var fl = d.createElement('link'); fl.rel = 'stylesheet';
     fl.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap';
     d.head.appendChild(fl);
@@ -365,7 +366,7 @@
     return '<div class="jsb-sc jsb-sc--' + k + '" id="jsb-p' + i + '" role="group" aria-labelledby="jsb-h' + i + '" style="' + LOOK[k] + '">' +
       '<div class="jsb-bg"><div class="jsb-ph">' + PHOTO[k] + '</div><span class="jsb-tint"></span><span class="jsb-scrim"></span></div>' +
       '<div class="jsb-body">' + tabsHTML(i) +
-        '<h2 id="jsb-h' + i + '"><span class="jsb-up" style="--d:.36s">' + esc(t.h[0]) + '</span><span class="jsb-o jsb-up" style="--d:.46s">' + esc(t.h[1]) + '</span></h2>' +
+        '<h2 id="jsb-h' + i + '"><span class="jsb-up" style="--d:.36s">' + esc(t.h[0]) + '</span> <span class="jsb-o jsb-up" style="--d:.46s">' + esc(t.h[1]) + '</span></h2>' +
         '<p class="jsb-lead jsb-up" style="--d:.6s">' + esc(DATA[k].lead) + '</p>' +
         '<ul class="jsb-facts jsb-up" style="--d:.72s">' + factsHTML(k) + '</ul>' +
         '<div class="jsb-acts jsb-up" style="--d:.84s">' +
@@ -856,7 +857,6 @@
   /* ---------- SEO i brzina (pravila početne, 14. 10.; pravi ga alati/seo-brzina.py) ---------- */
   (function () {
     var SRC = (d.currentScript && d.currentScript.src) || '', DIMS = {"bike-glavna-1000.webp":[1000,667],"bike-glavna.webp":[2000,1334],"bike-portret.webp":[941,2000],"park-glavna.webp":[1280,1600]};
-    var SUF = /^\/en(\/|$)/i.test(location.pathname) ? ' — Olympic Mountain Jahorina' : ' — Olimpijska planina Jahorina';
     var CDN = /^https:\/\/cdn\.jsdelivr\.net\/gh\/([^\/]+)\/([^@\/]+)@([0-9a-f]{40})\//i, ok = CDN.test(SRC);
     function fix(im) {
       if (im.__jseo) return;
@@ -864,8 +864,6 @@
       if (!im.getAttribute('loading')) im.setAttribute('loading', 'lazy');
       var f = (im.getAttribute('src') || '').split(/[?#]/)[0].split('/').pop();
       if (!im.getAttribute('width') && DIMS[f]) { im.setAttribute('width', DIMS[f][0]); im.setAttribute('height', DIMS[f][1]); }
-      var a = im.getAttribute('alt');
-      if (a && !/jahorin/i.test(a)) im.setAttribute('alt', a + SUF);
       if (ok) im.addEventListener('error', function () {
         var u = im.currentSrc || im.src;
         if (im.__jfb || !CDN.test(u)) return;

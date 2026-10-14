@@ -292,7 +292,8 @@
   var st = d.getElementById('jg-css');
   if (!st) { st = d.createElement('style'); st.id = 'jg-css'; (d.head || d.documentElement).appendChild(st); }
   st.textContent = CSS;
-  if (!d.querySelector('link[href*="family=Archivo"]')) {
+  // fontovi jednom na stranici: isti link (Archivo 500–800 + Barlow 300–700) dodaje se u <head> samo ako ga još nema
+  if (!d.querySelector('link[rel="stylesheet"][href*="fonts.googleapis.com"][href*="family=Archivo"][href*="family=Barlow"]')) {
     var fl = d.createElement('link'); fl.rel = 'stylesheet';
     fl.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap';
     d.head.appendChild(fl);
@@ -374,7 +375,7 @@
       '</div><span class="jg-sky"></span><span class="jg-tint"></span><span class="jg-scrim"></span></div>' +
       '<div class="jg-body">' +
         '<div class="jg-kicker jg-up" style="--d:.26s">' + esc(T.kicker) + '</div>' +
-        '<h2 id="jg-h"><span class="jg-up" style="--d:.36s">' + esc(T.h[0]) + '</span><span class="jg-o jg-up" style="--d:.46s">' + esc(T.h[1]) + '</span></h2>' +
+        '<h2 id="jg-h"><span class="jg-up" style="--d:.36s">' + esc(T.h[0]) + '</span> <span class="jg-o jg-up" style="--d:.46s">' + esc(T.h[1]) + '</span></h2>' +
         '<p class="jg-lead jg-up" style="--d:.62s">' + esc(T.lead) + '</p>' +
         '<div class="jg-pass jg-up" style="--d:.74s">' + passHTML() + '</div>' +
         '<div class="jg-acts jg-up" style="--d:.86s">' +
@@ -780,7 +781,6 @@
   /* ---------- SEO i brzina (pravila početne, 14. 10.; pravi ga alati/seo-brzina.py) ---------- */
   (function () {
     var SRC = (d.currentScript && d.currentScript.src) || '', DIMS = {"gondola-kabina.webp":[1600,1067],"gondola-noc.webp":[1080,675],"gondola-zdravica.webp":[1600,1067]};
-    var SUF = /^\/en(\/|$)/i.test(location.pathname) ? ' — Olympic Mountain Jahorina' : ' — Olimpijska planina Jahorina';
     var CDN = /^https:\/\/cdn\.jsdelivr\.net\/gh\/([^\/]+)\/([^@\/]+)@([0-9a-f]{40})\//i, ok = CDN.test(SRC);
     function fix(im) {
       if (im.__jseo) return;
@@ -788,8 +788,6 @@
       if (!im.getAttribute('loading')) im.setAttribute('loading', 'lazy');
       var f = (im.getAttribute('src') || '').split(/[?#]/)[0].split('/').pop();
       if (!im.getAttribute('width') && DIMS[f]) { im.setAttribute('width', DIMS[f][0]); im.setAttribute('height', DIMS[f][1]); }
-      var a = im.getAttribute('alt');
-      if (a && !/jahorin/i.test(a)) im.setAttribute('alt', a + SUF);
       if (ok) im.addEventListener('error', function () {
         var u = im.currentSrc || im.src;
         if (im.__jfb || !CDN.test(u)) return;

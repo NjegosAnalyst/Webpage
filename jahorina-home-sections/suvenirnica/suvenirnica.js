@@ -267,7 +267,8 @@
   var st = d.getElementById('jsu-css');
   if (!st) { st = d.createElement('style'); st.id = 'jsu-css'; (d.head || d.documentElement).appendChild(st); }
   st.textContent = CSS;
-  if (!d.querySelector('link[href*="family=Archivo"]')) {
+  // fontovi jednom na stranici: isti link (Archivo 500–800 + Barlow 300–700) dodaje se u <head> samo ako ga još nema
+  if (!d.querySelector('link[rel="stylesheet"][href*="fonts.googleapis.com"][href*="family=Archivo"][href*="family=Barlow"]')) {
     var fl = d.createElement('link'); fl.rel = 'stylesheet';
     fl.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap';
     d.head.appendChild(fl);
@@ -326,8 +327,8 @@
       }
       lines = [rest.slice(0, k).join(' '), rest.slice(k).join(' ')];
     } else if (rest.length) lines = [rest.join(' ')];
-    return lines.map(function (l, i) { return '<span class="jsu-up" style="--d:' + (.36 + i * .1).toFixed(2) + 's">' + esc(l) + '</span>'; }).join('') +
-      '<span class="jsu-o jsu-up" style="--d:' + (.36 + lines.length * .1).toFixed(2) + 's">' + esc(o) + '</span>';
+    return lines.map(function (l, i) { return '<span class="jsu-up" style="--d:' + (.36 + i * .1).toFixed(2) + 's">' + esc(l) + '</span>'; }).join(' ') +
+      ' <span class="jsu-o jsu-up" style="--d:' + (.36 + lines.length * .1).toFixed(2) + 's">' + esc(o) + '</span>';
   }
   // uvod: prva rečenica pasusa (i druga, ako je prva vrlo kratka)
   function leadOf(p) {
@@ -679,7 +680,6 @@
   /* ---------- SEO i brzina (pravila početne, 14. 10.; pravi ga alati/seo-brzina.py) ---------- */
   (function () {
     var SRC = (d.currentScript && d.currentScript.src) || '', DIMS = {"suvenirnica-1-1000.webp":[1000,1499],"suvenirnica-1.webp":[1334,2000],"suvenirnica-2-1000.webp":[1000,667],"suvenirnica-2.webp":[2000,1334],"suvenirnica-glavna-1000.webp":[1000,667],"suvenirnica-glavna.webp":[2000,1334]};
-    var SUF = /^\/en(\/|$)/i.test(location.pathname) ? ' — Olympic Mountain Jahorina' : ' — Olimpijska planina Jahorina';
     var CDN = /^https:\/\/cdn\.jsdelivr\.net\/gh\/([^\/]+)\/([^@\/]+)@([0-9a-f]{40})\//i, ok = CDN.test(SRC);
     function fix(im) {
       if (im.__jseo) return;
@@ -687,8 +687,6 @@
       if (!im.getAttribute('loading')) im.setAttribute('loading', 'lazy');
       var f = (im.getAttribute('src') || '').split(/[?#]/)[0].split('/').pop();
       if (!im.getAttribute('width') && DIMS[f]) { im.setAttribute('width', DIMS[f][0]); im.setAttribute('height', DIMS[f][1]); }
-      var a = im.getAttribute('alt');
-      if (a && !/jahorin/i.test(a)) im.setAttribute('alt', a + SUF);
       if (ok) im.addEventListener('error', function () {
         var u = im.currentSrc || im.src;
         if (im.__jfb || !CDN.test(u)) return;

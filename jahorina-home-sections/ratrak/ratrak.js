@@ -254,7 +254,8 @@
   var st = d.getElementById('jr-css');
   if (!st) { st = d.createElement('style'); st.id = 'jr-css'; (d.head || d.documentElement).appendChild(st); }
   st.textContent = CSS;
-  if (!d.querySelector('link[href*="family=Archivo"]')) {
+  // fontovi jednom na stranici: isti link (Archivo 500–800 + Barlow 300–700) dodaje se u <head> samo ako ga još nema
+  if (!d.querySelector('link[rel="stylesheet"][href*="fonts.googleapis.com"][href*="family=Archivo"][href*="family=Barlow"]')) {
     var fl = d.createElement('link'); fl.rel = 'stylesheet';
     fl.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap';
     d.head.appendChild(fl);
@@ -294,8 +295,8 @@
       '</figure>' +
       '<div class="jr-body">' +
         '<div class="jr-kicker jr-sl" style="--d:.3s">' + esc(T.kicker) + '</div>' +
-        '<h2 id="jr-h"><span class="jr-sl" style="--d:.4s">' + esc(T.t[0]) + '</span><span class="jr-sl" style="--d:.5s">' + esc(T.t[1]) + '</span>' +
-          '<span class="jr-o jr-sl" style="--d:.6s">' + esc(T.o) + '</span></h2>' +
+        '<h2 id="jr-h"><span class="jr-sl" style="--d:.4s">' + esc(T.t[0]) + '</span> <span class="jr-sl" style="--d:.5s">' + esc(T.t[1]) + '</span>' +
+          ' <span class="jr-o jr-sl" style="--d:.6s">' + esc(T.o) + '</span></h2>' +
         '<p class="jr-lead jr-sl" style="--d:.72s">' + esc(T.lead) + '</p>' +
         '<ul class="jr-dock jr-sl" style="--d:.84s">' + T.tiles.map(function (t, k) {
           return '<li class="jr-tile' + (k === 2 ? ' jr-tile--accent' : '') + '" style="--d:' + (1.08 + k * .09).toFixed(2) + 's">' + ICON[t[0]] + '<b>' + esc(t[1]) + '</b><small>' + esc(t[2]) + '</small></li>';
@@ -486,7 +487,6 @@
   /* ---------- SEO i brzina (pravila početne, 14. 10.; pravi ga alati/seo-brzina.py) ---------- */
   (function () {
     var SRC = (d.currentScript && d.currentScript.src) || '', DIMS = {"ratraci-tri.jpg":[399,670],"ratrak-1.webp":[640,800],"ratrak-2.webp":[399,670],"ratrak-cutout.png":[488,288],"ratrak-cutout.webp":[488,288],"ratrak-glavna-960.webp":[960,640],"ratrak-glavna.webp":[1600,1066],"ratrak-zalazak-krupno.jpg":[399,670],"ratrak-zalazak-staza.jpg":[1600,1066],"ratrak-zalazak.jpg":[640,800]};
-    var SUF = /^\/en(\/|$)/i.test(location.pathname) ? ' — Olympic Mountain Jahorina' : ' — Olimpijska planina Jahorina';
     var CDN = /^https:\/\/cdn\.jsdelivr\.net\/gh\/([^\/]+)\/([^@\/]+)@([0-9a-f]{40})\//i, ok = CDN.test(SRC);
     function fix(im) {
       if (im.__jseo) return;
@@ -494,8 +494,6 @@
       if (!im.getAttribute('loading')) im.setAttribute('loading', 'lazy');
       var f = (im.getAttribute('src') || '').split(/[?#]/)[0].split('/').pop();
       if (!im.getAttribute('width') && DIMS[f]) { im.setAttribute('width', DIMS[f][0]); im.setAttribute('height', DIMS[f][1]); }
-      var a = im.getAttribute('alt');
-      if (a && !/jahorin/i.test(a)) im.setAttribute('alt', a + SUF);
       if (ok) im.addEventListener('error', function () {
         var u = im.currentSrc || im.src;
         if (im.__jfb || !CDN.test(u)) return;

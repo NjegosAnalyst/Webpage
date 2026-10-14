@@ -46,7 +46,8 @@ const P = [
 ];
 const LEAD = 'Ukoliko sada imate mališane, ili ste se i sami uželjeli tog bezbrižnog osjećaja od prije 20, 30 ili više godina, vrijeme je da počnete da se radujete, jer je na Jahorini izgrađeno prvo Sankalište!';
 const SPEC = 'Dužina=600 m|Lokacija=Staza 7 · Poljice|Lift=Sidro Poljice|Sanke=Najam na ski kasi PoljiceSvoje ostavite kod kuće: za sidro trebaju sanke sa adapterom';
-const PRICES = SITE + '/cjenovnik-zima/#sankaliste';
+const PRICES = SITE + '/cjenovnik-zima/#sankaliste';   // stari link „OVDJE“ na WP stranici (više se ne koristi)
+const CJENOVNIK = SITE + '/cjenovnik-ski-karata-zima-2026-27/';
 const SANK = `<h3>Sankalište</h3><p>${P[0]}</p><p>${P[1]}</p><p>${P[2]}</p><p>${P[3]}</p>
 <p>Cijene karata za Sankalište pronađite <a href="${PRICES}">OVDJE</a>!</p>
 <div class="elementor-widget-video" data-settings="{&quot;youtube_url&quot;:&quot;https:\\/\\/www.youtube.com\\/watch?v=${YT}&quot;}"></div>
@@ -160,10 +161,10 @@ const rect = (p, s) => p.evaluate((s) => { const r = document.querySelector(s).g
   o = await open(browser, { park: true, attrs: 'data-sat="2026-12-20 16:30"' });
   i = await info(o.p);
   check('nadnaslov = naslov stranice', i.eye === 'Sankalište', i.eye);
-  check('naslov', i.h2 === 'Sankanjekao nekad', i.h2);
+  check('naslov', i.h2 === 'Sankanje kao nekad', i.h2);
   check('uvod sa stranice', i.lead === LEAD, i.lead);
   check('spisak iz teksta', i.spec === SPEC, i.spec);
-  check('cijene = link OVDJE', i.prices === PRICES, i.prices);
+  check('Cijene karata → cjenovnik 2026/27 (ne stari link OVDJE)', i.prices === CJENOVNIK, i.prices);
   check('više = link stranice', i.more === SITE + '/sankaliste/', i.more);
   check('video sa stranice (Elementor data-settings)', i.video);
   check('sat 16–18', i.dial === '16–18h', i.dial);
@@ -266,7 +267,7 @@ const rect = (p, s) => p.evaluate((s) => { const r = document.querySelector(s).g
   check('novo vrijeme 15–17 na satu', i.dial === '15–17h', i.dial);
   check('17:30 poslije novog vremena → ne radi', !s.open && s.s === 'otvara se sutra u 15:00', s);
   check('novi podaci (bez sidra na stranici → bez reda Lift)', i.spec === 'Dužina=450 m|Lokacija=Staza 3 · Rajska|Sanke=Najam na ski kasi Rajska', i.spec);
-  check('admin vidi: nema linka za cijene', /link za cijene/.test(i.why), i.why);
+  check('admin ne traži link za cijene (fiksni cjenovnik)', !/link za cijene/.test(i.why), i.why);
   check('bez videa nema linka za video', !i.video);
   await o.p.locator('#jsk-sankaliste .jsk-frame').screenshot({ path: path.join(OUT, '04-novo-admin.png') });
   await o.ctx.close();
@@ -277,7 +278,7 @@ const rect = (p, s) => p.evaluate((s) => { const r = document.querySelector(s).g
   await o.ctx.close();
   o = await open(browser, { wp: 'upozorenje', wait: false });
   await o.p.waitForTimeout(700);
-  check('prljav JSON (PHP upozorenje) se pročita', (await info(o.p)).prices === PRICES);
+  check('prljav JSON (PHP upozorenje) se pročita', (await info(o.p)).spec.indexOf('600 m') > -1);
   await o.ctx.close();
   o = await open(browser, { wp: 'greska', admin: true, attrs: 'data-sat="2026-12-20 16:10"', wait: false });
   await o.p.waitForTimeout(800);
@@ -291,7 +292,7 @@ const rect = (p, s) => p.evaluate((s) => { const r = document.querySelector(s).g
   o = await open(browser, { path: '/en/pocetna-zima/', wp: 'qtranslate', attrs: 'data-sat="2026-12-20 20:41"' });
   i = await info(o.p); s = await st(o.p);
   check('EN nadnaslov', i.eye === 'Sledding track', i.eye);
-  check('EN naslov', i.h2 === 'Sledding' + 'like old times', i.h2);
+  check('EN naslov', i.h2 === 'Sledding like old times', i.h2);
   check('EN uvod', /^If you have little ones/.test(i.lead), i.lead);
   check('EN podaci', /Length=600 m\|/.test(i.spec) && /Slope 7 · Poljice/.test(i.spec) && /Lift=Poljice T-bar/.test(i.spec) && /Rent at the Poljice ski desk/.test(i.spec), i.spec);
   check('EN vrijeme (4 pm to 6 pm)', i.dial === '16–18h', i.dial);

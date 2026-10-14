@@ -28,7 +28,7 @@
      data-stranica="sankaliste"   (slug WordPress stranice)
      data-sezona="15.12-31.3"     (van tih datuma status je "Ne radi · van sezone"; prazno = bez provjere sezone)
      data-status="ne-radi"        (ručno: danas ne radi, npr. vjetar; podrazumijevano "auto")
-     data-cijene="https://…"      (zamjena za link "OVDJE" sa stranice)
+     data-cijene="https://…"      (zamjena za stranicu cjenovnika /cjenovnik-ski-karata-zima-2026-27/)
      data-video="https://youtu.be/…"  (zamjena za video sa stranice)
      data-sat="2026-12-20 16:30"  (samo za probu: zamišljeno vrijeme umjesto stvarnog)
    GA: Cijene karata → sankaliste_klik (cilj: cijene), "Više o sankalištu" → sankaliste_klik (cilj: stranica),
@@ -83,10 +83,12 @@
   }
   // podaci sa stranice (ugrađeni = stranica od 10. 10. 2026); WordPress ih zamijeni kad se tekst promijeni
   var PAGE = O + (EN ? '/en/' : '/') + SLUG + '/';
+  // cijene karata: stranica cjenovnika za sezonu 2026/27 (link „OVDJE“ sa WP stranice vodi na stari PDF, pa se više ne koristi)
+  var PRICES = O + (EN ? '/en' : '') + '/cjenovnik-ski-karata-zima-2026-27/';
   var FIX = { prices: opt('cijene', ''), yt: ytId(opt('video', '')) };
   var DATA = {
     eyebrow: T.eyebrow, lead: T.lead, from: 16 * 60, to: 18 * 60, closed: false, why: '',
-    facts: [], link: PAGE, prices: FIX.prices || PAGE, yt: FIX.yt
+    facts: [], link: PAGE, prices: FIX.prices || PRICES, yt: FIX.yt
   };
   DATA.facts = factsOf({ len: '600', slope: '7', place: 'Poljice', lift: 'Poljice', rent: true, desk: 'Poljice', own: true });
 
@@ -324,7 +326,8 @@
   var st = d.getElementById('jsk-css');
   if (!st) { st = d.createElement('style'); st.id = 'jsk-css'; (d.head || d.documentElement).appendChild(st); }
   st.textContent = CSS;
-  if (!d.querySelector('link[href*="family=Archivo"]')) {
+  // fontovi jednom na stranici: isti link (Archivo 500–800 + Barlow 300–700) dodaje se u <head> samo ako ga još nema
+  if (!d.querySelector('link[rel="stylesheet"][href*="fonts.googleapis.com"][href*="family=Archivo"][href*="family=Barlow"]')) {
     var fl = d.createElement('link'); fl.rel = 'stylesheet';
     fl.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap';
     d.head.appendChild(fl);
@@ -479,7 +482,7 @@
       '<div class="jsk-clock"><div class="jsk-dial" role="img"></div><span class="jsk-sr" role="status" aria-live="polite"></span></div>' +
       '<div class="jsk-body">' +
         '<div class="jsk-eye jsk-up" style="--d:.26s"></div>' +
-        '<h2 id="jsk-h"><span class="jsk-up" style="--d:.36s">' + esc(T.h[0]) + '</span><span class="jsk-o jsk-up" style="--d:.46s">' + esc(T.h[1]) + '</span></h2>' +
+        '<h2 id="jsk-h"><span class="jsk-up" style="--d:.36s">' + esc(T.h[0]) + '</span> <span class="jsk-o jsk-up" style="--d:.46s">' + esc(T.h[1]) + '</span></h2>' +
         '<p class="jsk-lead jsk-up" style="--d:.6s"></p>' +
         '<ul class="jsk-spec jsk-up" style="--d:.72s"></ul>' +
         '<div class="jsk-acts jsk-up" style="--d:.84s">' +
@@ -925,7 +928,6 @@
     if (r.hrs) { DATA.from = r.hrs[0]; DATA.to = r.hrs[1]; } else miss.push('radno vrijeme (od … do …)');
     DATA.closed = r.closed; DATA.why = r.why;
     if (r.link) DATA.link = r.link;
-    if (!FIX.prices) { if (r.prices) DATA.prices = r.prices; else { DATA.prices = DATA.link; miss.push('link za cijene'); } }
     if (!FIX.yt) DATA.yt = r.yt || '';
     if (r.imgs.length) GAL = BASE.concat(r.imgs);
     render();
@@ -973,7 +975,6 @@
   /* ---------- SEO i brzina (pravila početne, 14. 10.; pravi ga alati/seo-brzina.py) ---------- */
   (function () {
     var SRC = (d.currentScript && d.currentScript.src) || '', DIMS = {"sank-glavna-1000.webp":[1000,667],"sank-glavna.webp":[2000,1334],"sank-noc.webp":[2000,1334],"sank-suma.webp":[1600,1066]};
-    var SUF = /^\/en(\/|$)/i.test(location.pathname) ? ' — Olympic Mountain Jahorina' : ' — Olimpijska planina Jahorina';
     var CDN = /^https:\/\/cdn\.jsdelivr\.net\/gh\/([^\/]+)\/([^@\/]+)@([0-9a-f]{40})\//i, ok = CDN.test(SRC);
     function fix(im) {
       if (im.__jseo) return;
@@ -981,8 +982,6 @@
       if (!im.getAttribute('loading')) im.setAttribute('loading', 'lazy');
       var f = (im.getAttribute('src') || '').split(/[?#]/)[0].split('/').pop();
       if (!im.getAttribute('width') && DIMS[f]) { im.setAttribute('width', DIMS[f][0]); im.setAttribute('height', DIMS[f][1]); }
-      var a = im.getAttribute('alt');
-      if (a && !/jahorin/i.test(a)) im.setAttribute('alt', a + SUF);
       if (ok) im.addEventListener('error', function () {
         var u = im.currentSrc || im.src;
         if (im.__jfb || !CDN.test(u)) return;

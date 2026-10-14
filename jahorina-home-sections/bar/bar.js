@@ -407,7 +407,8 @@
   var st = d.getElementById('jb-css');
   if (!st) { st = d.createElement('style'); st.id = 'jb-css'; (d.head || d.documentElement).appendChild(st); }
   st.textContent = CSS;
-  if (!d.querySelector('link[href*="family=Archivo"]')) {
+  // fontovi jednom na stranici: isti link (Archivo 500–800 + Barlow 300–700) dodaje se u <head> samo ako ga još nema
+  if (!d.querySelector('link[rel="stylesheet"][href*="fonts.googleapis.com"][href*="family=Archivo"][href*="family=Barlow"]')) {
     var fl = d.createElement('link'); fl.rel = 'stylesheet';
     fl.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap';
     d.head.appendChild(fl);
@@ -485,8 +486,8 @@
       }
       lines = [rest.slice(0, k).join(' '), rest.slice(k).join(' ')];
     } else if (rest.length) lines = [rest.join(' ')];
-    return lines.map(function (l, i) { return '<span class="jb-up" style="--d:' + (.36 + i * .1).toFixed(2) + 's">' + esc(l) + '</span>'; }).join('') +
-      '<span class="jb-o jb-up" style="--d:' + (.36 + lines.length * .1).toFixed(2) + 's">' + esc(o) + '</span>';
+    return lines.map(function (l, i) { return '<span class="jb-up" style="--d:' + (.36 + i * .1).toFixed(2) + 's">' + esc(l) + '</span>'; }).join(' ') +
+      ' <span class="jb-o jb-up" style="--d:' + (.36 + lines.length * .1).toFixed(2) + 's">' + esc(o) + '</span>';
   }
   // uvod: prva rečenica pasusa (i druga, ako je prva vrlo kratka); tačka u broju (1.879) ne prekida rečenicu
   function leadOf(p) {
@@ -1182,7 +1183,6 @@
   /* ---------- SEO i brzina (pravila početne, 14. 10.; pravi ga alati/seo-brzina.py) ---------- */
   (function () {
     var SRC = (d.currentScript && d.currentScript.src) || '', DIMS = {"bar-enterijer-1000.webp":[1000,674],"bar-enterijer.webp":[1336,900],"bar-glavna-1000.webp":[1000,668],"bar-glavna.webp":[2000,1336],"bar-losos-1000.webp":[1000,667],"bar-losos.webp":[1300,867],"mala-01.webp":[620,871],"mala-02.webp":[620,871],"mala-03.webp":[620,871],"mala-04.webp":[620,871],"mala-05.webp":[620,871],"mala-06.webp":[620,871],"mala-07.webp":[620,871],"mala-08.webp":[620,871],"mala-09.webp":[620,871],"mala-10.webp":[620,871],"mala-11.webp":[620,871],"mala-12.webp":[620,871],"meni-bar-01.webp":[1240,1742],"meni-bar-02.webp":[1240,1742],"meni-bar-03.webp":[1240,1742],"meni-bar-04.webp":[1240,1742],"meni-bar-05.webp":[1240,1742],"meni-bar-06.webp":[1240,1742],"meni-bar-07.webp":[1240,1742],"meni-bar-08.webp":[1240,1742],"meni-bar-09.webp":[1240,1742],"meni-bar-10.webp":[1240,1742],"meni-bar-11.webp":[1240,1742],"meni-bar-12.webp":[1240,1742]};
-    var SUF = /^\/en(\/|$)/i.test(location.pathname) ? ' — Olympic Mountain Jahorina' : ' — Olimpijska planina Jahorina';
     var CDN = /^https:\/\/cdn\.jsdelivr\.net\/gh\/([^\/]+)\/([^@\/]+)@([0-9a-f]{40})\//i, ok = CDN.test(SRC);
     function fix(im) {
       if (im.__jseo) return;
@@ -1190,8 +1190,6 @@
       if (!im.getAttribute('loading')) im.setAttribute('loading', 'lazy');
       var f = (im.getAttribute('src') || '').split(/[?#]/)[0].split('/').pop();
       if (!im.getAttribute('width') && DIMS[f]) { im.setAttribute('width', DIMS[f][0]); im.setAttribute('height', DIMS[f][1]); }
-      var a = im.getAttribute('alt');
-      if (a && !/jahorin/i.test(a)) im.setAttribute('alt', a + SUF);
       if (ok) im.addEventListener('error', function () {
         var u = im.currentSrc || im.src;
         if (im.__jfb || !CDN.test(u)) return;
