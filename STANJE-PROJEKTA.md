@@ -36,6 +36,14 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
    - **Svaka izmjena headera:** izmijeni `build-wordpress.py` → `python3 build-wordpress.py` → commit + push → u loaderu zamijeni hash commita **i** `integrity` (sha384 novog fajla: `openssl dgst -sha384 -binary 3-header-snippet.js | openssl base64 -A`) → korisniku daj novi red za WPCode.
    - Desktop: podmeniji na prelazak miša, dublji nivoi se otvaraju sa strane. Telefon: harmonika, dodir na stavku otvara podstavke, vlastita stranica stavke je prvi link.
 
+## SEO pravila za cijelu početnu (usklađeno sa hero-om, važi za svaku sekciju)
+- **Samo jedan H1** na početnoj: hero (`h1.jh-kicker`, SR „Ski centar Jahorina · Olimpijska planina“, EN „Jahorina Ski Resort · Olympic Mountain“). Sekcije ispod: naslov sekcije = **H2**, stavke (vijest, događaj, kartica) = **H3**. Nijedna sekcija ne smije dodati H1.
+- Naziv u tekstovima: **„Olimpijska planina Jahorina“ / „Olympic Mountain Jahorina“**, ne „Olimpijski centar“ (izuzetak: logo i pravni naziv firme „AD Olimpijski centar Jahorina“).
+- Ključne riječi prirodno u H2/tekstu: ski centar Jahorina, skijanje, ski karte, noćno skijanje, vijesti/obavještenja.
+- Slike: smislen `alt` (šta je na slici + Jahorina), `loading="lazy"` ispod hero-a, `width`/`height` da nema pomjeranja.
+- Linkovi: pravi `<a href>` sa jasnim tekstom („Pročitaj više: <naslov>“ kroz `aria-label`), EN verzija vodi na `/en/` adrese.
+- Brzina (hero je optimizovan za telefon): bez teških filtera/`backdrop-filter`/beskonačnih animacija preko velikih površina na telefonu.
+
 ## Sekcije početne ispod hero-a
 - Prijedlog izgleda svih sekcija: `jahorina-home-sections/index.src.html` (artifact "Jahorina početna — ispod hero-a"). Redoslijed: Danas na Jahorini → Obavještenja i vijesti → Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu. Prijedlog je polazna tačka; konačan izgled je po `TEMA.md` (premium, minimalistički, blag neumorfizam).
 
