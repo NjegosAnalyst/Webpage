@@ -475,24 +475,28 @@
     .jh-headline,.jh-intro,.jh-quick{position:relative;left:auto;right:auto;top:auto;bottom:auto}
     .jh-intro{padding:24px 24px 0;max-width:none}
     .jh-intro{align-items:center}
-    /* telefon: slika od ivice do ivice, naslov gore lijevo (ispod headera), uža vertikalna traka desno, podignuta ~15% od dna */
+    /* telefon: slika od ivice do ivice, naslov centriran (vodoravno i oko sredine visine), dugmad u vodoravnom redu ispod */
     .jh-hero{padding:0}
     .jh-frame{border-radius:0;box-shadow:none;min-height:100vh;min-height:100svh}
-    .jh-headline{position:absolute;left:22px;right:84px;top:clamp(96px,16%,140px);bottom:auto;margin:0;padding:0}
-    .jh-quick{position:absolute;right:12px;bottom:15%;flex-direction:column;gap:4px;padding:5px;border-radius:20px}
-    .jh-quick__item{width:52px;height:52px;border-radius:14px;gap:3px}
+    .jh-headline{position:absolute;left:16px;right:16px;top:42%;bottom:auto;transform:translateY(-50%);margin:0;padding:0;text-align:center}
+    .jh-title{text-align:center}
+    .jh-title > span.jh-ice{margin-left:auto;margin-right:auto}
+    .jh-quick{position:absolute;left:0;right:0;bottom:12%;margin:0 auto;width:calc(100% - 28px);max-width:440px;flex-direction:row;justify-content:space-between;gap:4px;padding:5px;border-radius:20px}
+    .jh-quick__item{flex:1 1 0;width:auto;height:60px;border-radius:14px;gap:4px}
     .jh-quick__item svg{width:18px;height:18px}
     .jh-quick__label--word{font-size:7.5px;letter-spacing:.2px}
     .jh-quick__label{font-size:9px}
     .jh-quick__live{top:6px;right:7px;width:6px;height:6px}
-    h1.jh-kicker{letter-spacing:1.7px!important;font-size:9.5px!important;gap:10px;white-space:nowrap}
-    /* duži H1 ne staje u jedan red pored vertikalne trake: prelom tačno kod "·" (tačka i razmaci se ne vide) */
+    h1.jh-kicker{letter-spacing:1.7px!important;font-size:9.5px!important;gap:10px;white-space:nowrap;text-align:center!important;flex-direction:column;align-items:center}
+    /* telefon: H1 u dva centrirana reda, prelom tačno kod "·" (tačka i razmaci se ne vide), cyan linija iznad */
     .jh-kicker .jh-sep{width:0;overflow:hidden;vertical-align:top}
     .jh-kicker .jh-sep--dot{display:block;width:100%;height:5px;font-size:0;color:transparent}
     /* telefon: kadar na stazu, jače zatamnjenje ispod teksta */
     .jh-photo{background-position:64% 40%;background-image:url('/wp-content/uploads/2026/09/jahorina-noc.webp')}   /* manja slika za telefon: 98 KB */
     .jh-scrim--bottom{background:linear-gradient(0deg,rgba(6,11,22,.7) 0%,rgba(6,11,22,.3) 30%,rgba(6,11,22,0) 55%)}   /* tekst više nije dolje: slika se vidi bolje */
-    .jh-kicker::before{width:22px}
+    .jh-kicker::before{width:28px}
+    /* centriran naslov preko svijetle staze: meko zatamnjenje iza njega umjesto lijevog prelaza */
+    .jh-scrim--left{background:radial-gradient(75% 34% at 50% 42%,rgba(6,11,22,.55) 0%,rgba(6,11,22,.25) 55%,rgba(6,11,22,0) 100%)}
   }
 
   /* ===== Raspored D: veći naslov, spušten nisko lijevo; traka ostaje dole desno ===== */
@@ -508,14 +512,14 @@
   }
   @media (max-width:360px){
     h1.jh-kicker{letter-spacing:1.1px!important;font-size:9px!important;gap:8px}
-    .jh-kicker::before{width:16px}
+    .jh-kicker::before{width:24px}
   }
   /* nizak ekran (mali telefon / horizontalno): manje pločice da traka stane */
   @media (max-width:760px) and (max-height:680px){
-    .jh-quick{gap:3px;padding:4px}
-    .jh-quick__item{width:46px;height:46px}
+    .jh-quick{gap:3px;padding:4px;bottom:8%}
+    .jh-quick__item{height:52px}
     .jh-quick__item svg{width:16px;height:16px}
-    .jh-headline{top:clamp(80px,14%,110px);right:76px}
+    .jh-headline{top:40%}
   }
 
   @media (prefers-reduced-motion:reduce){
