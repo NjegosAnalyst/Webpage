@@ -52,6 +52,14 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - Čita **samo kategoriju Vijesti** (`/category/vijesti/`) preko WP REST API-ja. Objave se dodaju u WordPressu kao i do sada.
 - Izgled (korisnik tražio): **slajder sa 5 najnovijih vijesti**, jedna u kadru preko cijele kartice: fotografija sa tamnim prelazom, datum, naslov, izvod i blago neumorfno cyan dugme „Pročitaj više“ sa strelicom u plitkom udubljenom krugu. Dole desno je tihi neumorfni panel: brojevi 01–05 u plitkom žlijebu (aktivni utisnut, cyan broj + tanka cyan linija napretka), pauza i okrugle strelice. Smjena na 7 s, staje na mišu/fokusu/van ekrana; prevlačenje prstom. Naslov sekcije: „Obavještenja *i vijesti*“ (drugi dio iscrtan linijom).
 - Korisnik je tražio da dugmad budu **suptilna**: ne pojačavati sjenke/sjaj.
+- **Usklađeno sa hero-om (14. 10.):**
+  - nadnaslov je stil malog teksta iz hero-a („NAJNOVIJE“ / „LATEST“);
+  - H2 je „Obavještenja i vijesti / *sa Jahorine*“ (EN „Notices and news / *from Jahorina*“), drugi red iscrtan kao „Jahorine“ u hero-u;
+  - „Pročitaj više“ je isto dugme kao Web shop (cyan pločica, velika slova, →);
+  - „Sve vijesti“ i donja traka (brojevi, pauza, strelice) su staklene pločice iz hero-a (stil B), ikonice `#C4EEFF`;
+  - SEO: alt slika (iz Medija ili „<naslov> — Olimpijska planina Jahorina“), sve slike `loading="lazy"` + `width`/`height`, link stavke `aria-label="Pročitaj više: <naslov>"`, „Sve vijesti“ sa `aria-label`;
+  - telefon: bez `backdrop-filter`, bez filtera i `mix-blend-mode` na slikama, skeleton bez animacije.
+  - Test `test-vijesti.js` sada provjerava i SEO: 0 × H1, H2 tekst, alt, lazy, dimenzije, aria-label linka, bez zamućenja na telefonu.
 - Sve fotografije imaju istu blagu **noćnu obradu**, da dnevne slike ne iskaču iz tona hero-a. Bez slike → noćna fotografija iz hero-a.
 - Iznad naslova je samo datum. Oznaka postoji **samo za Obavještenje** (narandžasta): kad naslov ili tekst počinje sa Obavještenje/Notice. Ako je naslov samo „Obavještenje“, kao naslov se prikazuje početak teksta.
 - Telefon: fotografija gore (54% kartice), tekst ispod; brojevi postaju tačkice; „Sve vijesti“ ide ispod slajdera.
