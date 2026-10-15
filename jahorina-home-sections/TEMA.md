@@ -36,7 +36,8 @@ da sve sekcije izgledaju kao jedna cjelina.
 
 ## SEO (pravila u `STANJE-PROJEKTA.md`, primijenjeno u vijestima)
 - Nijedan H1 u sekciji. Naslov sekcije H2, stavke H3.
-- Slike: `alt` iz Medija, a ako ga nema, „<naslov> — Olimpijska planina Jahorina“; `loading="lazy"`; `width`/`height`.
+- Slike: `alt` iz Medija, a ako ga nema, kratak opis onoga što je na slici (bez dodatka „— Olimpijska planina Jahorina“, od 15. 10.); `loading="lazy"`; `width`/`height`.
+- Naslovi iz više `<span>`-ova: između span-ova razmak, da Google ne pročita slijepljene riječi. Fontovi se učitavaju jednom (provjera prije dodavanja `<link>`).
 - Linkovi: pravi `<a href>`; link stavke ima `aria-label="Pročitaj više: <naslov>"`; „Sve vijesti“ ima `aria-label` sa ključnim riječima; EN vodi na `/en/`.
 - Naziv: „Olimpijska planina Jahorina“, ne „Olimpijski centar“ (osim pravnog naziva firme).
 
@@ -46,7 +47,23 @@ da sve sekcije izgledaju kao jedna cjelina.
 3. **Betheme nameće boje i fontove naslova sa `!important`**, pa naše boje i fontove naslova takođe zaključati sa `!important`. Za dugmad krenuti od `all:unset` + `!important` (kao `.jv-btn`).
 4. **Puna širina:** kontejner teme je uži od ekrana, pa koristiti `fit()` iz `vijesti.js` (širina = `clientWidth`, negativna lijeva margina) da nema bijelih traka sa strane.
 5. **Sadržaj iz WordPressa** kad god postoji (REST API `/wp-json/wp/v2/...`), ne kucati ručno. qTranslate oznake `[:SH]…[:en]…[:]` razdvaja `pickLang()`.
-6. **Na sajtu:** Elementor HTML widget sa jednim redom: `<div id="...">` + skripta sa jsDelivr-a zaključana na commit + SRI. Red pravi `napravi-widget.py` (kopirati i prilagoditi).
+6. **Na sajtu:** Elementor HTML widget sa jednim redom: `<div id="...">` + mali ugrađeni loader (jsDelivr zaključan na commit + SRI, rezerva githack; radi i u Elementor editoru). Red pravi `napravi-widget.py` (kopirati i prilagoditi, funkcija `loader()`).
 7. **Test:** Playwright simulacija sajta (obrazac `vijesti/test-vijesti.js`). Fontove preuzima `alati/preuzmi-fontove.sh <folder>`. Testirati SR, EN, telefon, tablet, uži kontejner i grešku.
 8. **Pregled za korisnika:** artifact samo sa sekcijom i probnim podacima (obrazac `vijesti/pregled/napravi-pregled.py`).
 9. Nakon svake izmjene: test → commit + push → novi red za widget → ažurirati `STANJE-PROJEKTA.md`.
+
+## Dizajn skillovi (`.claude/skills/`, od 15. 10.)
+Skillovi pomažu, ali **ova tema ima prednost**: kad skill predloži nešto drugačije (nove boje, fontove, Tailwind/shadcn, AI fotografije, neon), važi TEMA.md. Skill se koristi za provjeru i ideje, ne za novi stil.
+
+| Kad | Skill | Za šta ga koristimo ovdje |
+|---|---|---|
+| Nova sekcija ili redizajn | `design-taste-frontend` | Prvo „Design Read“ u jednoj rečenici (šta sekcija treba da postigne), pa provjera „AI tells“ prije predaje: bez generičnih tri iste kartice u redu, bez numerisanih nadnaslova („01 / …“), bez praznih fraza („Unleash“, „Next-gen“), bez izmišljenih „savršenih“ brojki — samo pravi podaci Jahorine. |
+| Prije svake predaje | `ui-ux-pro-max` | Kontrolna lista: kontrast teksta ≥ 4.5:1 (sekundarni tekst `--text-2` na `--bg`), vidljiv fokus (tastatura), dodirne površine ≥ 44 px na telefonu, `prefers-reduced-motion`, `width/height` na slikama (bez skakanja), dekorativne ikone `aria-hidden`, boja nije jedini nosilac informacije, sticky elementi (dugme „Kupi ski pass“) ne prekrivaju fokus. |
+| Tekst i ton | `brand` | Ton: premium, miran, konkretan; naziv „Olimpijska planina Jahorina“; srpski ijekavica, EN za `/en/`. |
+| Baneri (sajt, društvene mreže, štampa) | `banner-design` | Formati i kompozicija; boje/fontovi iz tokena gore, **prave fotografije Jahorine** (AI slike samo za skice, ne za objavu). |
+| Tokeni i dokumentacija | `design-system` | Tokeni ostaju kao gore (primitivni → semantički: `--accent`, `--text-2`…); novi token se dodaje ovdje prije upotrebe. |
+| Prezentacije | `slides` | Interne prezentacije u istoj noćnoj temi. |
+| Ne koristimo za sajt | `ui-styling` | Tailwind/shadcn ne ide u WordPress sekcije (sve je čist CSS pod id-em sekcije). Samo za zasebne alate/aplikacije. |
+| Novi skill | `find-skills` | Pronalazi dodatne skillove; nove dodati u ovu tabelu. |
+
+**Svjesni izuzeci od skillova (odobrio korisnik):** blagi cyan sjaj na akcentima (ne neon), ručno crtane SVG ilustracije (šestosjed u „Planina u brojkama“), staklene pločice kao u hero-u, ručno upisane brojke u redu widgeta.
