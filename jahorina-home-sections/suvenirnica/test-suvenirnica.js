@@ -309,7 +309,7 @@ async function state(p) {
     check('nazivi proizvoda cijeli, u jednom redu', S.whereFits);
     check('vrste poklona u dvije kolone', S.tagCols === 2, S.tagCols);
     check('tekst se ne preklapa sa izborom, izbor na svom mjestu, sve u kadru', !S.overlap && S.inFrame && S.pickPos, [S.overlap, S.inFrame, S.pickPos]);
-    if (name === 'telefon') check('telefon: oba dugmeta u jednom redu, 42px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 42, S.acts);
+    if (name === 'telefon') check('telefon: oba dugmeta u jednom redu, 44px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 44, S.acts);
     await p.locator('#jsu-suvenirnica .jsu-frame').screenshot({ path: path.join(OUT, name + '.png') });
     if (name === 'telefon') {
       const sw = await p.evaluate(() => {

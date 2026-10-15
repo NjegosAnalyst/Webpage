@@ -42,8 +42,8 @@
   // ugrađeni tekst = tekst stranice VIP gondole (9. 10. 2026); naslov je korisnikov dizajn; EN je prevod
   var T = EN ? {
     kicker: 'VIP gondola', h: ['Ride in the', 'VIP gondola'],
-    lead: 'Treat yourself to an unforgettable ride: settle into the leather seats, open a bottle of champagne and taste a fine meze platter of delicious local products, prepared for you with great care and love.',
-    pick: 'Choose your package', price: 'Package price', ride: 'Ride up to', rideX: 'Panoramic ride', ch: 'Champagne', mz: 'Meze platter',
+    lead: 'Treat yourself to a panoramic ride in a VIP cabin: settle into the leather seats, open a bottle of champagne and taste a fine meze platter of delicious local products, prepared for you with great care and love.',
+    pick: 'Choose your package', price: 'Package price', ride: 'Ride up to', rideX: 'Panoramic ride', ch: 'Champagne', mz: 'Meze platter', no: ' (not included)',
     book: 'Book', bookS: 'Book', inside: 'Gallery', insideS: 'Gallery', more: 'More about the VIP gondola',
     adv: function (n) { return 'Book by email at least ' + (n ? n + ' days' : 'a day') + ' in advance'; }, advX: 'Book by email',
     name: 'VIP gondola', subj: 'Booking: ', body: 'Hello,\n\nI would like to book the {p} package.\n\nDate:\nPreferred time:\nNumber of guests:\nName:\nPhone:\n\nThank you!',
@@ -53,8 +53,8 @@
       'Two hands toasting with champagne in front of a snowy mountain', 'Gondola Poljice at night: cabins with blue LED lights on the cable']
   } : {
     kicker: 'VIP gondola', h: ['Vožnja', 'VIP gondolom'],
-    lead: 'Priuštite sebi nezaboravnu vožnju, udobno se smjestite u kožna sjedišta, otvorite bocu šampanjca i probajte izvrsnu mezu sačinjenu od velikog broja preukusnih domaćih proizvoda, pripremljenu za vas sa velikom pažnjom i ljubavlju.',
-    pick: 'Izaberite paket', price: 'Cijena paketa', ride: 'Vožnja do', rideX: 'Panoramska vožnja', ch: 'Šampanjac', mz: 'Meze',
+    lead: 'Priuštite sebi panoramsku vožnju u VIP kabini, udobno se smjestite u kožna sjedišta, otvorite bocu šampanjca i probajte izvrsnu mezu sačinjenu od velikog broja preukusnih domaćih proizvoda, pripremljenu za vas sa velikom pažnjom i ljubavlju.',
+    pick: 'Izaberite paket', price: 'Cijena paketa', ride: 'Vožnja do', rideX: 'Panoramska vožnja', ch: 'Šampanjac', mz: 'Meze', no: ' (nije uključeno)',
     book: 'Rezerviši', bookS: 'Rezerviši', inside: 'Galerija', insideS: 'Galerija', more: 'Više o VIP gondoli',
     adv: function (n) { return 'Rezervacija e-poštom, najmanje ' + (n ? n + ' dana' : 'dan') + ' ranije'; }, advX: 'Rezervacija e-poštom',
     name: 'VIP gondola', subj: 'Rezervacija: ', body: 'Poštovani,\n\nželim da rezervišem paket {p}.\n\nDatum vožnje:\nOkvirno vrijeme:\nBroj osoba:\nIme i prezime:\nKontakt telefon:\n\nHvala!',
@@ -172,7 +172,13 @@
     '#R .jg-inc{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:14px!important}',
     '#R .jg-inc li{display:flex;align-items:center;gap:7px;font:500 13px/1.2 var(--fb);color:var(--text-2);white-space:nowrap;transition:opacity .35s,color .35s}',
     '#R .jg-inc svg{width:16px;height:16px;color:var(--accent);transition:color .35s}',
-    '#R .jg-inc li.is-off{opacity:.36}',
+    '#R .jg-tb::before{content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}',
+    '#R .jg-more{position:relative!important}',
+    '#R .jg-more::after{content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}',
+    '#R .jg-inc li.is-off span{text-decoration:line-through;text-decoration-thickness:1px}',
+    '#R .jg-no{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}',
+    '#R .jg-inc li:not(.is-off) .jg-no{display:none}',
+    '#R .jg-inc li.is-off{opacity:.62}',
     '#R .jg-inc li.is-off svg{color:var(--text-3)}',
     /* otcjepak sa cijenom; perforacija je isprekidana linija između zareza */
     '#R .jg-stub{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 8px;text-align:center}',
@@ -255,7 +261,7 @@
     '#R .jg-price b{font-size:34px}',
     '#R .jg-price i{font-size:12.5px}',
     '#R .jg-acts{gap:8px;margin-top:16px;width:100%}',
-    '#R .jg-btn{height:42px;padding:0 12px!important;font-size:13px!important}',
+    '#R .jg-btn{height:44px;padding:0 12px!important;font-size:13px!important}',
     '#R .jg-l{display:none}',
     '#R .jg-s{display:inline}',
     '#R .jg-note{flex-direction:column;align-items:flex-start;gap:12px;font-size:12px}',
@@ -350,8 +356,8 @@
   function incHTML() {
     var any = function (k) { return PK.some(function (p) { return p[k]; }); };
     return '<li data-f="dur">' + ICON.clock + '<span></span></li>' +
-      (any('ch') ? '<li data-f="ch">' + ICON.flute + '<span>' + esc(T.ch) + '</span></li>' : '') +
-      (any('mz') ? '<li data-f="mz">' + ICON.meze + '<span>' + esc(T.mz) + '</span></li>' : '');
+      (any('ch') ? '<li data-f="ch">' + ICON.flute + '<span>' + esc(T.ch) + '</span><i class="jg-no"></i></li>' : '') +
+      (any('mz') ? '<li data-f="mz">' + ICON.meze + '<span>' + esc(T.mz) + '</span><i class="jg-no"></i></li>' : '');
   }
   function passHTML() {
     var one = PK.length < 2;
@@ -416,7 +422,7 @@
     qa('.jg-tb').forEach(function (b, i) { b.setAttribute('aria-checked', i === SEL ? 'true' : 'false'); b.tabIndex = i === SEL ? 0 : -1; });
     var du = q('.jg-inc li[data-f="dur"] span');
     du.textContent = p.dur ? T.ride + ' ' + p.dur : T.rideX;
-    qa('.jg-inc li[data-f="ch"], .jg-inc li[data-f="mz"]').forEach(function (li) { li.classList.toggle('is-off', !p[li.getAttribute('data-f')]); });
+    qa('.jg-inc li[data-f="ch"], .jg-inc li[data-f="mz"]').forEach(function (li) { var off = !p[li.getAttribute('data-f')], n = li.querySelector('.jg-no'); li.classList.toggle('is-off', off); if (n) n.textContent = off ? T.no : ''; });
     priceTo(p, roll);
     var a = q('a[data-jg="rezervacija"]');
     a.setAttribute('href', mailHref(p));

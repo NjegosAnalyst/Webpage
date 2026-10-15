@@ -402,7 +402,7 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
     check('sve vidljivo poslije ulaska', S.hidden === 0, S.hidden);
     check('meni se ne preklapa sa tekstom, sve u kadru', !S.overlap && S.bookIn && S.bodyIn, [S.overlap, S.bookIn, S.bodyIn]);
     check('brojevi u jednom redu; natpisi dugmadi staju', S.factsRow && S.actsFit, [S.factsRow, S.actsFit]);
-    if (vw <= 760) check('telefon: oba dugmeta u jednom redu, 42px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 42, S.acts);
+    if (vw <= 760) check('telefon: oba dugmeta u jednom redu, 44px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 44, S.acts);
     if (vw <= 760) {   // telefon: meni veći i u sredini fotografije, ispod samo "Meni"
       const ph = await p.evaluate(() => {
         const r = document.getElementById('jb-bar'), b = r.querySelector('.jb-book').getBoundingClientRect(), f = r.querySelector('.jb-frame').getBoundingClientRect(), c = r.querySelector('.jb-cap b').getBoundingClientRect();

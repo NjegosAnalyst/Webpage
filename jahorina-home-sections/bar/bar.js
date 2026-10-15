@@ -227,6 +227,8 @@
     '#R .jb-btn--ghost:hover{color:var(--accent)!important;box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(0,185,242,.4),0 0 22px rgba(0,185,242,.35)!important}',
     '#R .jb-btn--ghost:active{box-shadow:inset 2px 2px 5px rgba(0,0,0,.4),inset -2px -2px 5px rgba(78,104,150,.13)!important}',
     /* tihi link stranice ispod dugmadi */
+    '#R .jb-more{position:relative!important}',
+    '#R .jb-more::after{content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}',
     '#R .jb-more{display:inline-flex;align-items:center;gap:8px;margin-top:20px;font:500 13.5px/1.3 var(--fb);color:var(--text-3)!important;transition:color .2s}',
     '#R .jb-more svg{width:14px;height:14px;transition:transform .25s ease}',
     '#R .jb-more:hover{color:var(--accent)!important}',
@@ -319,7 +321,7 @@
     '#R .jb-facts .jb-f-txt b{font-size:15px}',
     '#R .jb-facts small{font-size:9px;letter-spacing:1px}',
     '#R .jb-acts{grid-template-columns:1fr 1fr;gap:8px;margin-top:26px;width:100%}',
-    '#R .jb-btn{height:42px;padding:0 12px!important;font-size:13px!important}',
+    '#R .jb-btn{height:44px;padding:0 12px!important;font-size:13px!important}',
     '#R .jb-l{display:none}',
     '#R .jb-s{display:inline}',
     '#R .jb-more{margin-top:18px;font-size:13px}}',
@@ -365,7 +367,7 @@
     /* traka dolje: strelice i broj strane sa tankom linijom napretka */
     '#L .jb-r-bar{position:absolute;left:50%;bottom:clamp(14px,2.4vh,26px);z-index:6;transform:translateX(-50%);display:flex;align-items:center;gap:6px;padding:5px;border-radius:40px;',
     'background:rgba(16,25,42,.6);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.14),inset 0 0 0 1px rgba(255,255,255,.07)}',
-    '#L .jb-r-bar button{width:42px!important;height:42px!important;background:rgba(19,29,49,.9)!important}',
+    '#L .jb-r-bar button{width:44px!important;height:44px!important;background:rgba(19,29,49,.9)!important}',
     "#L .jb-r-ind{position:relative;min-width:132px;padding:0 10px;text-align:center;font:600 13px/1 'Archivo',system-ui,sans-serif;letter-spacing:1px;font-variant-numeric:tabular-nums;color:#fff}",
     '#L .jb-r-ind em{font-style:normal;color:rgba(255,255,255,.46)}',
     '#L .jb-r-ind i{position:absolute;left:18px;right:18px;bottom:-11px;height:2px;border-radius:2px;background:rgba(255,255,255,.14);overflow:hidden}',
@@ -379,7 +381,7 @@
     '#L .jb-r-zoom img{display:block;width:min(1240px,100%);height:auto;margin:0 auto 18px;border-radius:4px;box-shadow:0 30px 60px -30px rgba(0,0,0,.9);user-select:none}',
     '@media (max-width:760px){#L .jb-r-zoom{padding:72px 0 28px}#L .jb-r-zoom img{width:230%;max-width:none;margin:0 0 14px}}',
     '@media (max-width:980px){#L .jb-r-hint{display:none}}',
-    '@media (max-width:760px){#L .jb-r-title{letter-spacing:2.4px;font-size:10px;gap:9px}#L .jb-r-title::before{width:18px}#L .jb-r-title em{display:none}#L button{width:42px!important;height:42px!important}}',
+    '@media (max-width:760px){#L .jb-r-title{letter-spacing:2.4px;font-size:10px;gap:9px}#L .jb-r-title::before{width:18px}#L .jb-r-title em{display:none}#L button{width:44px!important;height:44px!important}}',
     '@media (prefers-reduced-motion:reduce){#L,#L *{transition:none!important;animation:none!important}}',
 
     /* ---------- VIDEO PREKO CIJELOG EKRANA (YouTube se učitava tek na klik) ---------- */

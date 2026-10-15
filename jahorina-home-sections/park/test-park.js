@@ -380,7 +380,7 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
     check('ivični natpis ski bike-a: vidljiv, u kadru, na fotografiji, ne preko teksta', S.edge === 'bike' && S.edgeOp === 1 && S.edgeIn && S.edgeFree && S.edgeOnPhoto, [S.edgeIn, S.edgeFree, S.edgeOnPhoto]);
     if (vw > 980) check('park: tekst lijevo', S.side === 'L', S.side);
     else check('fotografija iznad teksta', S.stageAbove, S.stageAbove);
-    if (vw <= 760 && vw > 360) check('telefon: oba dugmeta u jednom redu, 42px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 42, S.acts);
+    if (vw <= 760 && vw > 360) check('telefon: oba dugmeta u jednom redu, 44px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 44, S.acts);
     await shot(p, name + '-park');
     await drag(p, -.65); await settle(p);
     S = await state(p);

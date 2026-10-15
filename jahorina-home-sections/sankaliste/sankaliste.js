@@ -221,6 +221,8 @@
     '#R .jsk-btn--ghost:active{box-shadow:inset 2px 2px 5px rgba(0,0,0,.4),inset -2px -2px 5px rgba(78,104,150,.13)!important}',
     /* tihi linkovi ispod dugmadi: "Više o sankalištu" | video (ako ga stranica ima) */
     '#R .jsk-foot{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px;margin-top:18px;font:500 13px/1.3 var(--fb);color:var(--text-3)}',
+    '#R .jsk-link{position:relative!important}',
+    '#R .jsk-link::after{content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}',
     '#R .jsk-link{all:unset;box-sizing:border-box!important;display:inline-flex!important;align-items:center;gap:7px;padding:4px 0!important;cursor:pointer;font:500 13px/1.3 var(--fb)!important;color:rgba(255,255,255,.72)!important;transition:color .2s}',
     '#R .jsk-link svg{width:15px;height:15px;color:var(--accent)}',
     '#R .jsk-link:hover{color:var(--accent)!important}',
@@ -276,7 +278,7 @@
     '#R .jsk-spec small{font-size:12.5px}',
     '#R .jsk-spec b{font-size:14px}',
     '#R .jsk-acts{gap:8px;margin-top:22px;width:100%}',
-    '#R .jsk-btn{height:42px;padding:0 12px!important;font-size:13px!important}',
+    '#R .jsk-btn{height:44px;padding:0 12px!important;font-size:13px!important}',
     '#R .jsk-l{display:none}',
     '#R .jsk-s{display:inline}}',
     '@media (max-width:360px){#R .jsk-acts{grid-template-columns:1fr}#R .jsk-frame{--dz:136px}}',

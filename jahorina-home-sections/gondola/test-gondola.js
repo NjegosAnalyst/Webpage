@@ -132,7 +132,7 @@ async function state(p) {
       lines: [...r.querySelectorAll('h2 span')].map((s) => s.textContent), outline: r.querySelector('h2 .jg-o').textContent,
       kicker: r.querySelector('.jg-kicker').textContent, lead: r.querySelector('.jg-lead').textContent,
       tog: [...r.querySelectorAll('.jg-tb')].map((t) => t.textContent + (t.getAttribute('aria-checked') === 'true' ? '*' : '')).join('|'),
-      inc: [...r.querySelectorAll('.jg-inc li')].map((li) => li.textContent + (li.classList.contains('is-off') ? '(-)' : '')).join('|'),
+      inc: [...r.querySelectorAll('.jg-inc li')].map((li) => li.querySelector('span').textContent + (li.classList.contains('is-off') ? '(-)' : '')).join('|'),
       price: r.querySelector('.jg-price').textContent,
       rez: [decodeURIComponent(rez.getAttribute('href') || ''), rez.innerText.trim(), rez.getAttribute('target') || ''],
       note: r.querySelector('.jg-note').innerText.replace(/\s+/g, ' ').trim(),
@@ -328,7 +328,7 @@ async function lb(p) {
     check('tekst ne prekriva kabine, sve u kadru', S.cabFree && S.bodyIn, [S.cabFree, S.bodyIn]);
     check('natpisi dugmadi i izbora staju; stavke u ulaznici', S.actsFit && S.incFit, [S.actsFit, S.incFit]);
     check('ulaznica i dugmad iste širine', S.passW === S.actsW && S.passL === S.actsL, [S.passW, S.actsW]);
-    if (vw <= 760 && vw > 360) check('telefon: oba dugmeta u jednom redu, 42px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 42, S.acts);
+    if (vw <= 760 && vw > 360) check('telefon: oba dugmeta u jednom redu, 44px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 44, S.acts);
     await p.locator('#jg-gondola .jg-frame').screenshot({ path: path.join(OUT, name + '.png') });
     if (touch) {
       await p.tap('#jg-gondola .jg-tb[data-k="1"]'); await p.waitForTimeout(600);

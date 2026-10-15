@@ -113,6 +113,8 @@
 
     /* galerija: staklena pilula na fotografiji (kao dugmad u hero-u) */
     '#R .jr-shot img{cursor:zoom-in}',
+    '#R .jr-gal::after{content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}',
+    '#R a[data-jr="mail"]:not(.jr-btn),#R a[data-jr="telefon"]:not(.jr-btn){padding:13px 0!important}',
     '#R .jr-gal{all:unset;position:absolute!important;left:20px;top:20px;z-index:3;box-sizing:border-box!important;display:inline-flex!important;align-items:center;gap:9px;padding:10px 15px 10px 12px!important;margin:0!important;border:0!important;border-radius:40px!important;cursor:pointer;',
     'font:600 13px/1 var(--fd)!important;letter-spacing:.3px!important;text-transform:none!important;color:#fff!important;background:var(--nm-surface)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--nm-raised)!important;transition:color .2s,box-shadow .25s}',
     '#R .jr-gal svg{width:17px;height:17px}',
@@ -220,7 +222,7 @@
     '#R .jr-notes{flex-direction:column;gap:6px}',
     '#R .jr-acts{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:24px;width:100%}',
     '#R .jr-acts--3{display:flex;flex-wrap:wrap}',
-    '#R .jr-btn{flex:1 1 auto;height:42px;padding:0 12px!important;font-size:13px}',
+    '#R .jr-btn{flex:1 1 auto;height:44px;padding:0 12px!important;font-size:13px}',
     '#R .jr-acts:not(.jr-acts--3) .jr-l{display:none}',
     '#R .jr-acts:not(.jr-acts--3) .jr-s{display:inline}}',
     '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}',

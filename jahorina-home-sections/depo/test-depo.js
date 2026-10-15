@@ -386,7 +386,7 @@ const shot = (p, name) => p.locator('#jsd-depo .jsd-frame').screenshot({ path: p
     check('natpisi dugmadi, legende i koraka staju', S.fit && S.chFit, [S.fit, S.chFit]);
     check('brojevi 1–8 vidljivi, u kadru i na ormariću', S.hs === '11111111' && S.hsIn, [S.hs, S.hsIn]);
     check('legenda i dugmad iste širine', S.packW === S.actsW && S.packL === S.actsL, [S.packW, S.actsW]);
-    if (vw <= 760 && vw > 360) check('telefon: oba dugmeta u jednom redu, 42px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 42, S.acts);
+    if (vw <= 760 && vw > 360) check('telefon: oba dugmeta u jednom redu, 44px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 44, S.acts);
     await shot(p, name);
     if (touch) {
       await hs(p, 'boot1', true); await hs(p, 'ski0', true); await p.waitForTimeout(1400);
