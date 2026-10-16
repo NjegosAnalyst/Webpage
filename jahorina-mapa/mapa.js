@@ -21,7 +21,7 @@
     help: 'Drag to move · Ctrl + scroll to zoom · Click a run for details', helpTouch: 'Swipe sideways · pinch to zoom · full screen for more room',
     lit: 'Floodlit for night skiing', fis: 'FIS homologated', upper: 'Upper part difficult, lower part intermediate',
     gore: 'Lift to the top', dole: 'At the bottom', od: 'Branches off run', u: 'Joins run', fromTop: 'Runs from the top',
-    ride: 'ride', listLifts: 'Lifts', listRuns: 'Runs', mapLabel: 'Interactive piste map of Jahorina. Use the lists below the map to pick a run or a lift.',
+    ride: 'ride', listLifts: 'Lifts', listRuns: 'Runs', listSum: 'Lifts and runs list', nLifts: 'lifts', nRuns: 'runs', mapLabel: 'Interactive piste map of Jahorina. Use the lists below the map to pick a run or a lift.',
     tip: { gondola: 'Gondola', sestosjed: 'Six-seater chairlift', dvosjed: 'Double chairlift', tanjir: 'Platter lift', sidro: 'T-bar lift' },
     lvl: { laka: 'Easy run', srednja: 'Intermediate run', teska: 'Difficult run' },
     poi: { skikasa: 'Ski pass sales', karte24: 'Ski pass sales 24/7', parking: 'Parking', restoran: 'Restaurant', bar: 'Olimp bar',
@@ -43,7 +43,7 @@
     help: 'Prevuci za pomjeranje · Ctrl + točkić za zum · klik na stazu za detalje', helpTouch: 'Prevuci lijevo-desno · dva prsta za zum · cijeli ekran za više prostora',
     lit: 'Osvijetljena za noćno skijanje', fis: 'FIS homologovana', upper: 'Gornji dio težak, donji srednje težak',
     gore: 'Žičara do vrha', dole: 'Na dnu', od: 'Odvaja se od staze', u: 'Spaja se sa stazom', fromTop: 'Staze sa vrha',
-    ride: 'vožnje', listLifts: 'Žičare', listRuns: 'Staze', mapLabel: 'Interaktivna mapa staza Jahorine. Stazu ili žičaru možeš izabrati i iz popisa ispod mape.',
+    ride: 'vožnje', listLifts: 'Žičare', listRuns: 'Staze', listSum: 'Popis žičara i staza', nLifts: 'žičara', nRuns: 'staza', mapLabel: 'Interaktivna mapa staza Jahorine. Stazu ili žičaru možeš izabrati i iz popisa ispod mape.',
     tip: { gondola: 'Gondola', sestosjed: 'Šestosjed', dvosjed: 'Dvosjed', tanjir: 'Ski lift tanjir', sidro: 'Ski lift sidro' },
     lvl: { laka: 'Laka staza', srednja: 'Srednje teška staza', teska: 'Teška staza' },
     poi: { skikasa: 'Prodaja ski karata', karte24: 'Prodaja ski karata 0–24', parking: 'Parking', restoran: 'Restoran', bar: 'Olimp bar',
@@ -85,23 +85,24 @@
   '#jm-mapa h2.jm-title .jm-o{color:transparent!important;-webkit-text-stroke:1.6px rgba(255,255,255,.92)}' +
   '#jm-mapa .jm-lead{font:400 17px/1.55 var(--fb);color:var(--text-2);margin:0;max-width:60ch}' +
   /* traka filtera */
-  '#jm-mapa .jm-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}' +
-  '#jm-mapa .jm-chips{display:flex;flex-wrap:wrap;gap:8px}' +
+  '#jm-mapa .jm-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px}' +
+  '#jm-mapa .jm-chips{display:flex;flex-wrap:wrap;gap:6px}' +
   '#jm-mapa .jm-chip,#jm-mapa .jm-nt,#jm-mapa .jm-ctl,#jm-mapa .jm-x,#jm-mapa .jm-li,#jm-mapa .jm-rc{all:unset;box-sizing:border-box;cursor:pointer;-webkit-tap-highlight-color:transparent}' +
-  '#jm-mapa .jm-chip{display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:0 16px 0 13px;border-radius:40px;font:600 12px/1 var(--fd)!important;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-2)!important;' +
+  '#jm-mapa .jm-chip{position:relative;display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px 0 10px;border-radius:40px;font:600 10.5px/1 var(--fd)!important;letter-spacing:1.1px;text-transform:uppercase;color:var(--text-2)!important;' +
   'background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.02));box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);transition:color .2s,box-shadow .2s,opacity .2s}' +
-  '#jm-mapa .jm-chip .jm-sw{width:18px;height:4px;border-radius:2px;background:var(--sw,currentColor)}' +
+  '#jm-mapa .jm-chip .jm-sw{width:13px;height:3px;border-radius:2px;background:var(--sw,currentColor)}' +
+  '#jm-mapa .jm-chip::before,#jm-mapa .jm-nt::before{content:"";position:absolute;inset:-6px -2px}' +
   '#jm-mapa .jm-chip[aria-pressed=true]{color:#fff!important;box-shadow:inset 0 0 0 1px rgba(0,185,242,.55),0 0 14px rgba(0,185,242,.12)}' +
   '#jm-mapa .jm-chip[aria-pressed=false]{opacity:.55}' +
   '#jm-mapa .jm-chip[aria-pressed=false] .jm-sw{background:transparent!important;box-shadow:inset 0 0 0 1.5px currentColor!important}' +
-  '#jm-mapa .jm-chip b{font:700 12px/1 var(--fd);color:var(--text-3);letter-spacing:0}' +
-  '#jm-mapa .jm-nt{display:inline-flex;align-items:center;gap:12px;min-height:44px;padding:0 8px 0 16px;border-radius:40px;font:600 12px/1 var(--fd)!important;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-2)!important;' +
+  '#jm-mapa .jm-chip b{font:700 10.5px/1 var(--fd);color:var(--text-3);letter-spacing:0}' +
+  '#jm-mapa .jm-nt{position:relative;display:inline-flex;align-items:center;gap:9px;height:32px;padding:0 5px 0 12px;border-radius:40px;font:600 10.5px/1 var(--fd)!important;letter-spacing:1.1px;text-transform:uppercase;color:var(--text-2)!important;' +
   'background:linear-gradient(180deg,rgba(18,27,45,.78),rgba(9,14,26,.88));box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}' +
-  '#jm-mapa .jm-nt i{position:relative;width:46px;height:28px;border-radius:20px;background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);transition:background .25s}' +
-  '#jm-mapa .jm-nt i::after{content:"";position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;background:#dfe9f5;transition:transform .25s,background .25s,box-shadow .25s}' +
+  '#jm-mapa .jm-nt i{position:relative;width:34px;height:22px;border-radius:20px;background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);transition:background .25s}' +
+  '#jm-mapa .jm-nt i::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#dfe9f5;transition:transform .25s,background .25s,box-shadow .25s}' +
   '#jm-mapa .jm-nt[aria-checked=true]{color:#fff!important}' +
   '#jm-mapa .jm-nt[aria-checked=true] i{background:rgba(255,210,122,.22)}' +
-  '#jm-mapa .jm-nt[aria-checked=true] i::after{transform:translateX(18px);background:var(--warm);box-shadow:0 0 12px rgba(255,210,122,.7)}' +
+  '#jm-mapa .jm-nt[aria-checked=true] i::after{transform:translateX(12px);background:var(--warm);box-shadow:0 0 10px rgba(255,210,122,.7)}' +
   /* okvir mape */
   '#jm-mapa .jm-frame{position:relative;border-radius:28px;overflow:hidden;background:#0c1424;height:clamp(420px,62vw,860px);max-height:82vh;' +
   'box-shadow:6px 6px 16px rgba(0,0,0,.55),-5px -5px 14px rgba(60,84,128,.14),inset 0 0 0 1px var(--line);isolation:isolate}' +
@@ -207,58 +208,64 @@
   '#jm-mapa .jm-tt{position:absolute;left:0;top:0;padding:7px 11px;border-radius:9px;background:rgba(9,14,26,.92);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);color:#fff;font:600 13px/1 var(--fd);pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .15s;z-index:4}' +
   '#jm-mapa .jm-tt.on{opacity:1}' +
   /* kartica */
-  '#jm-mapa .jm-card{position:absolute;left:16px;bottom:16px;width:min(340px,calc(100% - 92px));padding:20px 20px 18px;border-radius:22px;z-index:5;' +
+  '#jm-mapa .jm-card{position:absolute;left:14px;bottom:14px;width:min(286px,calc(100% - 84px));max-height:calc(100% - 28px);overflow:auto;overscroll-behavior:contain;padding:14px 14px 12px;border-radius:18px;z-index:5;' +
   'background:linear-gradient(180deg,rgba(18,27,45,.9),rgba(9,14,26,.94));box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),0 14px 34px rgba(0,0,0,.45);' +
   'backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transform:translateY(8px);opacity:0;visibility:hidden;transition:opacity .22s,transform .22s,visibility .22s}' +
   '#jm-mapa .jm-card.on{opacity:1;transform:none;visibility:visible}' +
-  '#jm-mapa .jm-x{position:absolute;right:10px;top:10px;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:var(--text-2)!important}' +
+  '#jm-mapa .jm-x{position:absolute;right:6px;top:6px;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:var(--text-2)!important}#jm-mapa .jm-x::before{content:"";position:absolute;inset:-4px}' +
   '#jm-mapa .jm-x:hover{color:#fff!important;background:rgba(255,255,255,.06)}' +
-  '#jm-mapa .jm-x svg{width:16px;height:16px}' +
-  '#jm-mapa .jm-ch{display:flex;align-items:center;gap:13px;padding-right:40px}' +
-  '#jm-mapa .jm-ch .jm-pm{flex:none;cursor:default;width:40px;height:40px;font-size:18px!important}' +
-  '#jm-mapa .jm-ch .jm-pm small{font-size:12px}' +
-  '#jm-mapa .jm-ch .jm-lb{flex:none;cursor:default;height:40px;padding:0 12px 0 9px;font-size:17px!important;border-radius:12px}' +
-  '#jm-mapa .jm-ch .jm-lb svg{width:22px;height:22px}' +
+  '#jm-mapa .jm-x svg{width:14px;height:14px}' +
+  '#jm-mapa .jm-ch{display:flex;align-items:center;gap:10px;padding-right:32px}' +
+  '#jm-mapa .jm-ch .jm-pm{flex:none;cursor:default;width:32px;height:32px;font-size:15px!important}' +
+  '#jm-mapa .jm-ch .jm-pm small{font-size:10.5px}' +
+  '#jm-mapa .jm-ch .jm-lb{flex:none;cursor:default;height:32px;padding:0 9px 0 7px;font-size:14px!important;border-radius:10px}' +
+  '#jm-mapa .jm-ch .jm-lb svg{width:18px;height:18px}' +
   '#jm-mapa .jm-ct{min-width:0}' +
-  '#jm-mapa .jm-ct h3{font:800 20px/1.1 var(--fd)!important;color:#fff!important;margin:0!important;padding:0!important;letter-spacing:-.3px!important;text-transform:none!important}' +
-  '#jm-mapa .jm-ct p{margin:5px 0 0;font:500 14px/1.3 var(--fb);color:var(--text-2)}' +
-  '#jm-mapa .jm-cl{list-style:none;margin:16px 0 0;padding:14px 0 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:9px}' +
-  '#jm-mapa .jm-cl li{display:flex;gap:10px;align-items:baseline;font:400 14px/1.4 var(--fb);color:var(--text-2)}' +
-  '#jm-mapa .jm-cl li span{flex:none;min-width:112px;font:600 11px/1.6 var(--fd);letter-spacing:1.2px;text-transform:uppercase;color:var(--text-3)}' +
+  '#jm-mapa .jm-ct h3{font:800 16px/1.15 var(--fd)!important;color:#fff!important;margin:0!important;padding:0!important;letter-spacing:-.2px!important;text-transform:none!important}' +
+  '#jm-mapa .jm-ct p{margin:3px 0 0;font:500 13px/1.3 var(--fb);color:var(--text-2)}' +
+  '#jm-mapa .jm-cl{list-style:none;margin:10px 0 0;padding:10px 0 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:7px}' +
+  '#jm-mapa .jm-cl li{display:flex;gap:8px;align-items:baseline;font:400 13px/1.35 var(--fb);color:var(--text-2)}' +
+  '#jm-mapa .jm-cl li span{flex:none;min-width:92px;font:600 9.5px/1.9 var(--fd);letter-spacing:1px;text-transform:uppercase;color:var(--text-3)}' +
   '#jm-mapa .jm-cl li strong{color:#fff;font-weight:600}' +
   '#jm-mapa .jm-cl li>div{flex:1;min-width:0}' +
-  '#jm-mapa .jm-inf{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}#jm-mapa .jm-inf .jm-tags{margin-top:0}' +
-  '#jm-mapa .jm-inf-l{display:block;margin-bottom:10px;font:600 11px/1 var(--fd);letter-spacing:1.2px;text-transform:uppercase;color:var(--text-3)}' +
-  '#jm-mapa .jm-inf .jm-tag{text-transform:none;letter-spacing:.1px;font:500 13.5px/1 var(--fb);padding:7px 11px}' +
-  '#jm-mapa .jm-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}' +
+  '#jm-mapa .jm-inf{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}#jm-mapa .jm-inf .jm-tags{margin-top:0}' +
+  '#jm-mapa .jm-inf-l{display:block;margin-bottom:7px;font:600 9.5px/1 var(--fd);letter-spacing:1px;text-transform:uppercase;color:var(--text-3)}' +
+  '#jm-mapa .jm-inf .jm-tag{text-transform:none;letter-spacing:.1px;font:500 12.5px/1 var(--fb);padding:5px 9px}' +
+  '#jm-mapa .jm-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}' +
   '#jm-mapa .jm-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:30px;font:600 11px/1 var(--fd);letter-spacing:1px;text-transform:uppercase;color:var(--ice);background:rgba(196,238,255,.08);box-shadow:inset 0 0 0 1px rgba(196,238,255,.16)}' +
   '#jm-mapa .jm-tag.w{color:var(--warm);background:rgba(255,210,122,.08);box-shadow:inset 0 0 0 1px rgba(255,210,122,.22)}' +
-  '#jm-mapa .jm-stats{display:flex;gap:22px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}' +
-  '#jm-mapa .jm-stats div{display:flex;flex-direction:column;gap:4px}' +
-  '#jm-mapa .jm-stats strong{font:800 24px/1 var(--fd);color:#fff;font-variant-numeric:tabular-nums}' +
-  '#jm-mapa .jm-stats strong small{font:600 13px/1 var(--fd);color:var(--text-2);margin-left:3px}' +
-  '#jm-mapa .jm-stats span{font:600 10.5px/1 var(--fd);letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3)}' +
-  '#jm-mapa .jm-rcs{display:flex;flex-wrap:wrap;gap:6px}' +
-  '#jm-mapa .jm-rc{display:inline-grid;place-items:center;min-width:30px;height:26px;padding:0 7px;border-radius:13px;color:#fff!important;font:800 12px/1 var(--fd)!important}' +
+  '#jm-mapa .jm-stats{display:flex;gap:18px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}' +
+  '#jm-mapa .jm-stats div{display:flex;flex-direction:column;gap:3px}' +
+  '#jm-mapa .jm-stats strong{font:800 19px/1 var(--fd);color:#fff;font-variant-numeric:tabular-nums}' +
+  '#jm-mapa .jm-stats strong small{font:600 11.5px/1 var(--fd);color:var(--text-2);margin-left:3px}' +
+  '#jm-mapa .jm-stats span{font:600 9.5px/1 var(--fd);letter-spacing:1.2px;text-transform:uppercase;color:var(--text-3)}' +
+  '#jm-mapa .jm-rcs{display:flex;flex-wrap:wrap;gap:5px}' +
+  '#jm-mapa .jm-rc{position:relative;display:inline-grid;place-items:center;min-width:26px;height:22px;padding:0 7px;border-radius:11px;color:#fff!important;font:800 11px/1 var(--fd)!important}' +
   '#jm-mapa .jm-rc.t-laka{background:var(--c-laka)}#jm-mapa .jm-rc.t-srednja{background:var(--c-srednja)}#jm-mapa .jm-rc.t-teska{background:var(--c-teska);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}' +
   '#jm-mapa .jm-rc.z{background:rgba(196,238,255,.1);color:var(--ice)!important;box-shadow:inset 0 0 0 1px rgba(196,238,255,.2)}' +
   '#jm-mapa .jm-help{font:500 13px/1.4 var(--fb);color:var(--text-3);margin:0}' +
   /* popis ispod mape */
-  '#jm-mapa .jm-lists{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:28px;margin-top:10px}' +
-  '#jm-mapa .jm-lists h3{font:600 11px/1 var(--fd)!important;letter-spacing:5px!important;text-transform:uppercase!important;color:rgba(255,255,255,.75)!important;margin:0 0 14px!important;padding:0!important}' +
-  '#jm-mapa .jm-lifts{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px}' +
-  '#jm-mapa .jm-li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;width:100%;min-height:48px;padding:6px 10px 6px 6px;border-radius:13px;transition:background .2s}' +
+  '#jm-mapa .jm-pop{border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));box-shadow:inset 0 0 0 1px var(--line)}' +
+  '#jm-mapa .jm-pop>summary{list-style:none;display:flex;align-items:center;gap:12px;min-height:44px;padding:0 16px;cursor:pointer;font:600 11px/1 var(--fd);letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.8);border-radius:16px}' +
+  '#jm-mapa .jm-pop>summary::-webkit-details-marker{display:none}#jm-mapa .jm-pop>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}' +
+  '#jm-mapa .jm-pop>summary b{font:500 13px/1 var(--fb);letter-spacing:0;text-transform:none;color:var(--text-3)}' +
+  '#jm-mapa .jm-pop>summary i{margin-left:auto;width:8px;height:8px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .2s}' +
+  '#jm-mapa .jm-pop[open]>summary i{transform:rotate(-135deg) translateY(-2px)}' +
+  '#jm-mapa .jm-lists{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:22px;padding:6px 16px 16px}' +
+  '#jm-mapa .jm-lists h3{font:600 10px/1 var(--fd)!important;letter-spacing:3px!important;text-transform:uppercase!important;color:var(--text-3)!important;margin:0 0 8px!important;padding:0!important}' +
+  '#jm-mapa .jm-lifts{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:0 12px}' +
+  '#jm-mapa .jm-li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:9px;width:100%;min-height:36px;padding:3px 7px 3px 3px;border-radius:10px;transition:background .2s}' +
   '#jm-mapa .jm-li:hover,#jm-mapa .jm-li.on{background:rgba(255,255,255,.05)}' +
-  '#jm-mapa .jm-li .jm-lb{cursor:pointer;height:32px}' +
+  '#jm-mapa .jm-li .jm-lb{cursor:pointer;height:24px;min-width:42px;justify-content:center;padding:0 6px 0 5px;border-radius:7px;font-size:11.5px!important;gap:4px}#jm-mapa .jm-li .jm-lb svg{width:14px;height:14px}' +
   '#jm-mapa .jm-li-n{min-width:0}' +
-  '#jm-mapa .jm-li-n strong{display:block;font:700 15px/1.2 var(--fd);color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
-  '#jm-mapa .jm-li-n span{display:block;font:400 13px/1.3 var(--fb);color:var(--text-3)}' +
-  '#jm-mapa .jm-li-m{font:600 13px/1.2 var(--fd);color:var(--text-2);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}' +
-  '#jm-mapa .jm-li-m small{display:block;font:500 12px/1.3 var(--fb);color:var(--text-3)}' +
-  '#jm-mapa .jm-runs{display:flex;flex-direction:column;gap:16px}' +
-  '#jm-mapa .jm-rg{display:flex;flex-direction:column;gap:8px}' +
-  '#jm-mapa .jm-rg>span{font:500 13px/1 var(--fb);color:var(--text-3)}' +
-  '#jm-mapa .jm-runs .jm-rc{min-width:44px;height:36px;border-radius:18px;font-size:14px!important}' +
+  '#jm-mapa .jm-li-n strong{display:block;font:600 13px/1.2 var(--fd);color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
+  '#jm-mapa .jm-li-n span{display:block;font:400 11.5px/1.25 var(--fb);color:var(--text-3)}' +
+  '#jm-mapa .jm-li-m{font:600 12px/1.2 var(--fd);color:var(--text-2);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}' +
+  '#jm-mapa .jm-li-m small{display:block;font:500 11px/1.25 var(--fb);color:var(--text-3)}' +
+  '#jm-mapa .jm-runs{display:flex;flex-direction:column;gap:10px}' +
+  '#jm-mapa .jm-rg{display:flex;flex-direction:column;gap:6px}' +
+  '#jm-mapa .jm-rg>span{font:500 12px/1 var(--fb);color:var(--text-3)}' +
+  '#jm-mapa .jm-runs .jm-rc{min-width:34px;height:28px;border-radius:14px;font-size:12.5px!important}' +
   '#jm-mapa .jm-runs .jm-rc.on{box-shadow:0 0 0 2px #fff,0 0 0 5px rgba(0,185,242,.5)}' +
   /* cijeli ekran */
   '#jm-mapa.jm-fs .jm-frame{position:fixed;inset:0;height:auto;max-height:none;border-radius:0;z-index:2147483000;box-shadow:none}' +
@@ -270,13 +277,13 @@
   '#jm-mapa .jm-fsbar .jm-chip,#jm-mapa .jm-fsbar .jm-nt{background:linear-gradient(180deg,rgba(18,27,45,.88),rgba(9,14,26,.92))}' +
   '@media (max-width:900px){#jm-mapa .jm-head{grid-template-columns:1fr}#jm-mapa .jm-lists{grid-template-columns:1fr}}' +
   '@media (max-width:760px){' +
-  '#jm-mapa{padding-left:0;padding-right:0}#jm-mapa .jm-head,#jm-mapa .jm-bar,#jm-mapa .jm-lists,#jm-mapa .jm-help{padding-left:16px;padding-right:16px}' +
+  '#jm-mapa{padding-left:0;padding-right:0}#jm-mapa .jm-head,#jm-mapa .jm-bar,#jm-mapa .jm-help{padding-left:16px;padding-right:16px}#jm-mapa .jm-pop{margin:0 16px}' +
   '#jm-mapa .jm-frame{border-radius:0;height:min(78vh,560px);box-shadow:inset 0 1px 0 var(--line),inset 0 -1px 0 var(--line)}' +
   '#jm-mapa .jm-bar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;justify-content:flex-start}#jm-mapa .jm-bar::-webkit-scrollbar{display:none}' +
   '#jm-mapa .jm-chips{flex-wrap:nowrap}#jm-mapa .jm-chip,#jm-mapa .jm-nt{flex:none}' +
-  '#jm-mapa .jm-card{left:10px;right:10px;bottom:10px;width:auto;backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(9,14,26,.95)}' +
-  '#jm-mapa .jm-lifts{grid-template-columns:1fr}' +
-  '#jm-mapa .jm-runs .jm-rc{min-width:48px;height:44px;border-radius:22px}#jm-mapa .jm-card .jm-rc{height:40px;padding:0 12px;border-radius:20px}' +
+  '#jm-mapa .jm-card{left:8px;right:8px;bottom:8px;width:auto;max-height:46%;padding:12px 12px 10px;border-radius:16px;backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(9,14,26,.95)}' +
+  '#jm-mapa .jm-lifts{grid-template-columns:1fr}#jm-mapa .jm-lists{padding:4px 10px 14px}' +
+  '#jm-mapa .jm-runs .jm-rc{min-width:38px;height:32px;border-radius:16px}#jm-mapa .jm-card .jm-rc{height:28px;padding:0 10px;border-radius:14px}#jm-mapa .jm-rc::before{content:"";position:absolute;inset:-6px -3px}' +
   '#jm-mapa .jm-ctls{right:10px;top:10px}' +
   '#jm-mapa.jm-fs .jm-fsbar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}' +
   '}' +
@@ -350,7 +357,8 @@
         '<div class="jm-card" role="dialog" aria-live="polite"><button class="jm-x" type="button" aria-label="' + T.close + '">' + I.x + '</button><div class="jm-cb"></div></div>' +
       '</div>' +
       '<p class="jm-help">' + (isTouch ? T.helpTouch : T.help) + '</p>' +
-      '<div class="jm-lists"><div><h3>' + T.listLifts + '</h3><ul class="jm-lifts"></ul></div><div><h3>' + T.listRuns + '</h3><div class="jm-runs"></div></div></div>' +
+      '<details class="jm-pop"><summary>' + T.listSum + '<b></b><i aria-hidden="true"></i></summary>' +
+      '<div class="jm-lists"><div><h3>' + T.listLifts + '</h3><ul class="jm-lifts"></ul></div><div><h3>' + T.listRuns + '</h3><div class="jm-runs"></div></div></div></details>' +
     '</div>';
 
   var $ = function (s) { return root.querySelector(s); };
@@ -482,6 +490,7 @@
         '<span class="jm-li-n"><strong>' + esc(z.ime) + '</strong><span>' + (z.tip ? T.tip[z.tip] : T.lift) + '</span></span>' +
         '<span class="jm-li-m">' + z.m + ' m<small>' + fmt(z.min) + ' min</small></span></button></li>';
     }).join('');
+    $('.jm-pop summary b').textContent = D.zicare.length + ' ' + T.nLifts + ' · ' + D.staze.length + ' ' + T.nRuns;
     $('.jm-runs').innerHTML = ['laka', 'srednja', 'teska'].map(function (k) {
       return '<div class="jm-rg"><span>' + T.lvl[k] + '</span><div class="jm-rcs">' + runs.filter(function (r) { return r.tez === k; }).map(function (r) {
         return '<button type="button" class="jm-rc t-' + k + '" data-run="' + r.id + '" aria-label="' + esc(T.run + ' ' + r.id) + '">' + esc(r.id) + '</button>';

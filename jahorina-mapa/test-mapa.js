@@ -75,11 +75,21 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
     const frame = await page.$('#jm-mapa .jm-frame');
     await frame.screenshot({ path: path.join(OUT, `${v.name}-2-mapa.png`) });
 
+    // zbijen prikaz: filteri niski, popis zatvoren dok se ne klikne
+    const kompakt = await page.evaluate(() => ({
+      chip: document.querySelector('#jm-mapa .jm-bar .jm-chip').getBoundingClientRect().height,
+      open: document.querySelector('#jm-mapa .jm-pop').open,
+    }));
+    ok(kompakt.chip <= 34 && !kompakt.open, `${v.name}: filteri ${kompakt.chip}px, popis zatvoren`);
+    await page.click('#jm-mapa .jm-pop summary'); await sleep(200);
+
     // izbor staze iz popisa
     await page.click('#jm-mapa .jm-runs .jm-rc[data-run="4a"]');
     await sleep(800);
     const card = await page.evaluate(() => { const c = document.querySelector('#jm-mapa .jm-card'); return c.classList.contains('on') && c.textContent; });
     ok(card && /4a/.test(card), `${v.name}: kartica staze 4a (${(card || '').slice(0, 80)})`);
+    const cw = await page.evaluate(() => { const c = document.querySelector('#jm-mapa .jm-card').getBoundingClientRect(), f = document.querySelector('#jm-mapa .jm-frame').getBoundingClientRect(); return { w: Math.round(c.width), h: Math.round(c.height), fh: Math.round(f.height) }; });
+    ok(v.touch ? cw.h <= cw.fh * 0.47 : cw.w <= 290, `${v.name}: kartica ${cw.w}×${cw.h}px (okvir ${cw.fh}px)`);
     await frame.screenshot({ path: path.join(OUT, `${v.name}-3-staza-4a.png`) });
 
     // izbor žičare
