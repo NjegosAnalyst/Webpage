@@ -30,8 +30,14 @@ Staze se ne crtaju ručno: za svaku stazu u `ulaz.py` stoji nekoliko tačaka red
 pronalazi put po liniji te boje u PSD-u (crvena/plava/crna) i izgladi ga. Nova ili izmijenjena staza = dopuni tačke
 (koordinate PSD-a 3543 × 1996) i ponovo pokreni skriptu.
 
-## Otvoreno (provjeriti sa korisnikom)
-- Tip žičara 7, 11, 13, 14 (ikonica „dvije osobe“ nije u vidljivom dijelu legende) — u kartici se tip ne prikazuje dok se ne potvrdi.
-- Noćno skijanje je iz skrivenog sloja „osvetljena staza“: osvijetljene ispadaju 1, 1a, 1b, 1c, 6, 7, 8, 9.
-- Dužine i nazivi staza nisu u PSD-u (samo brojevi i težina) — mogu se dodati u `ulaz.py` kad stignu.
-- Ugradnja na sajt (red za Elementor HTML widget sa loaderom, kao ostale sekcije) — poslije odobrenja pregleda.
+## Usklađeno sa zvaničnom slikom mape (16. 10.)
+Korisnik je poslao sliku mape (novija verzija od PSD-a, sa cijelom legendom). Staze, brojevi, vezne staze, žičare i osvijetljene
+staze su isti. Prenesene razlike: žičare 7, 11, 13, 14 = ski lift sidro (iz legende); bez 24h prodaje kod gondole 8; pomjereni
+parking kod WC-a i hotel ispod njega; nova ski kasa kod smještaja; uprava (2) i natpis „Upravna zgrada“; snowboard park, ski bike,
+pasarele, pješačke staze, staza za ski sanke (bijela linija); topovi za osnježavanje (67, filter „Osnježavanje“); oznake FIS;
+okviri sa uslugama (Gondola Poljice, Olimp bar, Ski poligon) su u kartici te ikonice. Nazivi iz legende: ambulanta, ski renta.
+Na slici nema oznaka „NEW!“ — ni na mapi.
+
+## Otvoreno
+- Dužine i nazivi staza nisu ni u PSD-u ni na slici (samo brojevi i težina) — mogu se dodati u `ulaz.py` kad stignu.
+- Gdje ide na sajtu (posebna stranica ili početna), pa red za Elementor HTML widget sa loaderom, kao ostale sekcije.

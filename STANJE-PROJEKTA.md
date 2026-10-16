@@ -109,7 +109,9 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - Korisnik: mapa skijališta iz PSD-a na sajt, „ne kao slika, profesionalna i interaktivna“. PSD (85 MB) je na GitHub Release-u `mapa-psd` (preko pretraživača GitHub prima samo 25 MB po fajlu u repo).
 - Kod i detalji: `jahorina-mapa/README.md`. Podloga je naslikani pejzaž iz PSD-a (dan + noćna obrada), a staze, žičare, oznake i usluge su vektor (SVG/HTML) iz sloja `Layer 30`: 25 staza (7 lakih, 16 srednjih, 2 teške), vezne staze, 14 žičara sa podacima iz legende (dužina, vrijeme vožnje), ~60 usluga.
 - Funkcije: zum/pomjeranje (računar: prevlačenje, Ctrl + točkić; telefon: prevlačenje lijevo-desno, dva prsta za zum; cijeli ekran), klik na stazu/žičaru → kartica (težina, osvijetljena, FIS, žičara do vrha, žičare na dnu, odvajanje/spajanje), filteri po težini/žičare/usluge, noćni prikaz (osvijetljene staze), popis žičara i staza ispod mape (SEO tekst), SR/EN.
-- Otvoreno: tip žičara 7/11/13/14, potvrda osvijetljenih staza (skriven sloj PSD-a), dužine/nazivi staza, gdje ide na sajtu (posebna stranica ili početna), pa red za Elementor.
+- **Usklađeno sa zvaničnom slikom mape** (korisnik poslao 16. 10., novija od PSD-a): staze/žičare/osvijetljene staze iste; prenesene razlike u ikonicama (detalji u README), žičare 7/11/13/14 = ski lift sidro, dodati topovi za osnježavanje, staza za ski sanke, FIS oznake, okviri usluga (Gondola Poljice, Olimp bar, Ski poligon) u karticama.
+- Pregled (artifact): https://claude.ai/artifact/X8xC3r94DjZxFT5KZGsX99
+- Otvoreno: dužine/nazivi staza, gdje ide na sajtu (posebna stranica ili početna), pa red za Elementor.
 
 ## Linkovi
 - Repo: https://github.com/NjegosAnalyst/Webpage (grana `main`, javan)

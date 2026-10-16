@@ -22,12 +22,17 @@
     lit: 'Floodlit for night skiing', fis: 'FIS homologated', upper: 'Upper part difficult, lower part intermediate',
     gore: 'Lift to the top', dole: 'At the bottom', od: 'Branches off run', u: 'Joins run', fromTop: 'Runs from the top',
     ride: 'ride', listLifts: 'Lifts', listRuns: 'Runs', mapLabel: 'Interactive piste map of Jahorina. Use the lists below the map to pick a run or a lift.',
-    tip: { gondola: 'Gondola', sestosjed: 'Six-seater chairlift', dvosjed: 'Double chairlift', tanjir: 'Platter lift' },
+    tip: { gondola: 'Gondola', sestosjed: 'Six-seater chairlift', dvosjed: 'Double chairlift', tanjir: 'Platter lift', sidro: 'T-bar lift' },
     lvl: { laka: 'Easy run', srednja: 'Intermediate run', teska: 'Difficult run' },
     poi: { skikasa: 'Ski pass sales', karte24: 'Ski pass sales 24/7', parking: 'Parking', restoran: 'Restaurant', bar: 'Olimp bar',
       hotel: 'Hotel', smjestaj: 'Resort accommodation', skola: 'Ski school booking', poligon: 'Ski practice area', snowboard: 'Snowboard park',
-      sankaliste: 'Sledding area', gondola: 'Poljice gondola', rent: 'Equipment rental', wc: 'Toilets', gss: 'Mountain rescue',
-      hitna: 'First aid', policija: 'Police', snowfactory: 'Snow factory' },
+      sankaliste: 'Sledding area', gondola: 'Poljice gondola', rent: 'Ski rental', wc: 'Toilets', gss: 'Mountain rescue',
+      hitna: 'Medical station', policija: 'Police', snowfactory: 'Snow factory', uprava: 'Administration', snowboardpark: 'Snowboard park',
+      skibike: 'Ski bike', sanke: 'Snowmobile trail', pjesacka: 'Walking trail', pasarela: 'Footbridge' },
+    info: { gondola: ['Ski pass office', 'Ski storage', 'Currency exchange', 'Souvenir shop', 'Ski pass sales 24/7', 'Ski school booking', 'Toilets'],
+      bar: ['Restaurant', 'Outdoor bar', 'Souvenir shop', 'Reservoir lake'],
+      poligon: ['Practice slope', 'Magic carpet', 'Tubing', 'Kids playground', 'Ski school booking', 'Practice area ticket office'] },
+    here: 'On site', snow: 'Snowmaking', fisOn: 'FIS',
     peak: 'Ogorjelica', and: ', ', km: 'm'
   } : {
     kicker: 'Ski mapa', h1: 'Mapa staza', h2: 'Jahorine',
@@ -39,12 +44,17 @@
     lit: 'Osvijetljena za noćno skijanje', fis: 'FIS homologovana', upper: 'Gornji dio težak, donji srednje težak',
     gore: 'Žičara do vrha', dole: 'Na dnu', od: 'Odvaja se od staze', u: 'Spaja se sa stazom', fromTop: 'Staze sa vrha',
     ride: 'vožnje', listLifts: 'Žičare', listRuns: 'Staze', mapLabel: 'Interaktivna mapa staza Jahorine. Stazu ili žičaru možeš izabrati i iz popisa ispod mape.',
-    tip: { gondola: 'Gondola', sestosjed: 'Šestosjed', dvosjed: 'Dvosjed', tanjir: 'Ski lift tanjir' },
+    tip: { gondola: 'Gondola', sestosjed: 'Šestosjed', dvosjed: 'Dvosjed', tanjir: 'Ski lift tanjir', sidro: 'Ski lift sidro' },
     lvl: { laka: 'Laka staza', srednja: 'Srednje teška staza', teska: 'Teška staza' },
     poi: { skikasa: 'Prodaja ski karata', karte24: 'Prodaja ski karata 0–24', parking: 'Parking', restoran: 'Restoran', bar: 'Olimp bar',
       hotel: 'Hotel', smjestaj: 'Smještaj ski centra', skola: 'Booking ski škole', poligon: 'Ski poligon', snowboard: 'Snowboard poligon',
-      sankaliste: 'Sankalište', gondola: 'Gondola Poljice', rent: 'Iznajmljivanje opreme', wc: 'Toalet', gss: 'Gorska služba spasavanja',
-      hitna: 'Prva pomoć', policija: 'Policija', snowfactory: 'Snow factory' },
+      sankaliste: 'Sankalište', gondola: 'Gondola Poljice', rent: 'Ski renta', wc: 'Toalet', gss: 'Gorska služba spasavanja Jahorina',
+      hitna: 'Ambulanta', policija: 'Policija', snowfactory: 'Snow factory', uprava: 'Uprava', snowboardpark: 'Snowboard park',
+      skibike: 'Ski bike', sanke: 'Staza za ski sanke', pjesacka: 'Pješačka staza', pasarela: 'Pasarela' },
+    info: { gondola: ['Ski kasa', 'Ski depo', 'Mjenjačnica', 'Suvenirnica', 'Prodaja ski karata 0–24', 'Booking ski škole', 'Toalet'],
+      bar: ['Restoran', 'Vanjski šank', 'Suvenirnica', 'Akumulaciono jezero'],
+      poligon: ['Ski staza', 'Pokretna traka', 'Tjubing', 'Dječije igralište', 'Booking ski škole', 'Ski kasa za poligon'] },
+    here: 'Ovdje', snow: 'Osnježavanje', fisOn: 'FIS',
     peak: 'Ogorjelica', and: ', ', km: 'm'
   };
   var NAZ_TEZ = { laka: EN ? 'easy' : 'laka', srednja: EN ? 'intermediate' : 'srednja', teska: EN ? 'difficult' : 'teška' };
@@ -141,7 +151,14 @@
   '#jm-mapa.f-laka .jm-ve.t-laka,#jm-mapa.f-laka .jm-ve-k.t-laka,#jm-mapa.f-srednja .jm-ve.t-srednja,#jm-mapa.f-srednja .jm-ve-k.t-srednja,#jm-mapa.f-teska .jm-ve.t-teska,#jm-mapa.f-teska .jm-ve-k.t-teska{display:none}' +
   '#jm-mapa.f-laka .jm-rb.t-laka,#jm-mapa.f-srednja .jm-rb.t-srednja,#jm-mapa.f-teska .jm-rb.t-teska{display:none}' +
   '#jm-mapa.f-zicare .jm-l,#jm-mapa.f-zicare .jm-world .jm-lb,#jm-mapa.f-zicare .jm-lh{display:none}' +
-  '#jm-mapa.f-usluge .jm-poi{display:none}' +
+  '#jm-mapa.f-usluge .jm-poi,#jm-mapa.f-usluge .jm-sks,#jm-mapa.f-usluge .jm-nat{display:none}#jm-mapa.f-topovi .jm-top{display:none}' +
+  '#jm-mapa .jm-skc{stroke:rgba(11,18,34,.35);stroke-width:calc(var(--lw)*6px)}#jm-mapa .jm-sk{stroke:#fff;stroke-width:calc(var(--lw)*3.4px)}' +
+  '#jm-mapa .jm-top{width:18px;height:18px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s,visibility .25s}#jm-mapa .jm-top svg{width:18px;height:18px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}' +
+  '#jm-mapa .jm-fis{padding:3px 5px;border-radius:5px;background:#fff;box-shadow:0 0 0 1.2px #E3343C,0 2px 4px rgba(0,0,0,.25);font:800 9px/1 var(--fd);letter-spacing:.5px;color:#1E8FE6;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s,visibility .25s}#jm-mapa .jm-fis i{font-style:normal;color:#E3343C}' +
+  '#jm-mapa .jm-nat{font:600 11px/1.15 var(--fd);letter-spacing:.6px;color:#0B3550;text-shadow:0 0 3px #fff,0 0 6px #fff;white-space:nowrap;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}' +
+  '#jm-mapa.jm-z2 .jm-top,#jm-mapa.jm-z2 .jm-fis,#jm-mapa.jm-z2 .jm-nat{opacity:1;visibility:visible}' +
+  '#jm-mapa.jm-sel .jm-top,#jm-mapa.jm-sel .jm-fis{opacity:.35}#jm-mapa.jm-night .jm-top{opacity:.5}#jm-mapa.jm-night .jm-nat{color:#E4F1FF;text-shadow:0 0 4px #0A1120}' +
+  '#jm-mapa .jm-poi.k-snowboardpark{background:rgba(10,17,32,.88)}#jm-mapa .jm-poi.k-pasarela{width:22px;height:18px;border-radius:6px}' +
   /* oznake (HTML u svijetu, stalna veličina na ekranu) */
   '#jm-mapa .jm-world .jm-mk{position:absolute;left:0;top:0;transform:translate(-50%,-50%) scale(calc(var(--inv)*var(--ms)));transform-origin:50% 50%}' +
   '#jm-mapa .jm-pm{all:unset;box-sizing:border-box;cursor:pointer;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:800 14px/1 var(--fd)!important;letter-spacing:-.5px;color:#fff!important;' +
@@ -209,6 +226,10 @@
   '#jm-mapa .jm-cl li{display:flex;gap:10px;align-items:baseline;font:400 14px/1.4 var(--fb);color:var(--text-2)}' +
   '#jm-mapa .jm-cl li span{flex:none;min-width:112px;font:600 11px/1.6 var(--fd);letter-spacing:1.2px;text-transform:uppercase;color:var(--text-3)}' +
   '#jm-mapa .jm-cl li strong{color:#fff;font-weight:600}' +
+  '#jm-mapa .jm-cl li>div{flex:1;min-width:0}' +
+  '#jm-mapa .jm-inf{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}#jm-mapa .jm-inf .jm-tags{margin-top:0}' +
+  '#jm-mapa .jm-inf-l{display:block;margin-bottom:10px;font:600 11px/1 var(--fd);letter-spacing:1.2px;text-transform:uppercase;color:var(--text-3)}' +
+  '#jm-mapa .jm-inf .jm-tag{text-transform:none;letter-spacing:.1px;font:500 13.5px/1 var(--fb);padding:7px 11px}' +
   '#jm-mapa .jm-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}' +
   '#jm-mapa .jm-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:30px;font:600 11px/1 var(--fd);letter-spacing:1px;text-transform:uppercase;color:var(--ice);background:rgba(196,238,255,.08);box-shadow:inset 0 0 0 1px rgba(196,238,255,.16)}' +
   '#jm-mapa .jm-tag.w{color:var(--warm);background:rgba(255,210,122,.08);box-shadow:inset 0 0 0 1px rgba(255,210,122,.22)}' +
@@ -269,6 +290,7 @@
     sestosjed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5l18-2"/><path d="M12 3.4V8"/><path d="M5 8h14"/><path d="M5 8v5h14V8"/><path d="M5 17h14M5 13v4M19 13v4M9.7 13v4M14.3 13v4"/></svg>',
     dvosjed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5l18-2"/><path d="M12 3.4V9"/><path d="M8 9h8v6H8z"/><path d="M8 15v4M16 15v4M8 19h8"/></svg>',
     tanjir: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3l16 4"/><path d="M13 5.3l-2 7"/><circle cx="10.4" cy="13.4" r="1.6"/><circle cx="14.5" cy="11" r="1.6"/><path d="M14 12.6l-1.4 4.4 2.4 2.4M12.6 17l-3 1.2"/><path d="M5 21l14-3"/></svg>',
+    sidro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4l18 3"/><path d="M12 5.5V10M8 10h8"/><circle cx="8" cy="12.6" r="1.5"/><circle cx="16" cy="12.6" r="1.5"/><path d="M8 14.2v4M16 14.2v4M6 21h4M14 21h4"/></svg>',
     lift: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5l18-2"/><path d="M12 3.4V9"/><circle cx="9.5" cy="11.5" r="1.5"/><circle cx="14.5" cy="11.5" r="1.5"/><path d="M7 14h10v4M7 14v4"/></svg>',
     plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
     minus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg>',
@@ -291,6 +313,13 @@
     gss: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20l7-11 4 6 2.5-3.5L22 20z"/><path d="M15 2.5h2v2h2v2h-2v2h-2v-2h-2v-2h2z"/></svg>',
     hitna: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 4h4v6h6v4h-6v6h-4v-6H4v-4h6z"/></svg>',
     policija: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 7.7-8 9-4.6-1.3-8-4.5-8-9V6z"/><path d="M12 8l1.2 2.5 2.7.3-2 1.8.6 2.7-2.5-1.4-2.5 1.4.6-2.7-2-1.8 2.7-.3z" fill="currentColor" stroke="none"/></svg>',
+    uprava: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M6.5 16l4-6 2.5 3.5 1.5-2 3 4.5z" fill="currentColor" stroke="none"/></svg>',
+    snowboardpark: '<svg viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="6" rx="3" fill="#F26A21"/></svg>',
+    skibike: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19l7-1.5M13 17l8-1.5"/><path d="M7 18l3-6h5l2 4M10 12l1-4h3"/><circle cx="15" cy="5" r="1.4"/></svg>',
+    sanke: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h13l3-3h2"/><path d="M5 17l1-4h7l2-3h3"/><circle cx="10" cy="7" r="1.5"/><path d="M3 20h16"/></svg>',
+    pjesacka: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="4.5" r="1.6"/><path d="M9 7v6l-2 7M9 13l3 3 1 4M9 9l-3 3M9 9l3 2"/><circle cx="17" cy="6.5" r="1.4"/><path d="M17 9v5l-1.5 6M17 14l2 2v4"/></svg>',
+    pasarela: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 18c2-7 14-7 16 0"/></svg>',
+    top: '<svg viewBox="0 0 24 24"><path d="M5 9l9-5 2 4-8 4z" fill="#F2C14E"/><path d="M9 12l2 9h-3l1-9z" fill="#1a2233"/><circle cx="18" cy="6" r="1" fill="#C4EEFF"/><circle cx="20" cy="9" r="1" fill="#C4EEFF"/><circle cx="21" cy="5" r=".8" fill="#C4EEFF"/></svg>',
     snowfactory: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/></svg>'
   };
   var L1 = { skikasa: 1, karte24: 1, gondola: 1, bar: 1 };
@@ -365,6 +394,8 @@
     s.push('<svg class="jm-svg" viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true">');
     s.push('<g>' + D.granica.map(function (d) { return '<path class="jm-gr" d="' + d + '"/>'; }).join('') + '</g>');
     s.push('<g>' + D.pjesacke.map(function (d) { return '<path class="jm-pj" d="' + d + '"/>'; }).join('') + '</g>');
+    s.push('<g class="jm-sks">' + (D.sanke || []).map(function (d) { return '<path class="jm-skc" d="' + d + '"/>'; }).join('') +
+      (D.sanke || []).map(function (d) { return '<path class="jm-sk" d="' + d + '"/>'; }).join('') + '</g>');
     s.push('<g class="jm-nls">' + D.nocne.map(function (d) { return '<path class="jm-nl jm-nl-a" d="' + d + '"/><path class="jm-nl jm-nl-b" d="' + d + '"/>'; }).join('') + '</g>');
     s.push('<g class="jm-ves">' + D.veze.map(function (v) { return '<path class="jm-ve-k t-' + v.t + '" d="' + v.d + '"/>'; }).join('') +
       D.veze.map(function (v) { return '<path class="jm-ve t-' + v.t + '" d="' + v.d + '"/>'; }).join('') + '</g>');
@@ -392,11 +423,14 @@
     /* --- HTML oznake --- */
     var m = [];
     var pos = function (x, y) { return 'style="left:' + x + 'px;top:' + y + 'px"'; };
+    (D.topovi || []).forEach(function (t) { m.push('<span class="jm-mk jm-top" ' + pos(t[0], t[1]) + ' aria-hidden="true">' + P.top + '</span>'); });
+    (D.fis || []).forEach(function (f) { m.push('<span class="jm-mk jm-fis" ' + pos(f[0], f[1]) + ' aria-hidden="true">F<i>I</i>S</span>'); });
+    (D.natpisi || []).forEach(function (n) { m.push('<span class="jm-mk jm-nat" ' + pos(n.x, n.y) + '>' + esc(n.t) + '</span>'); });
     D.usluge.forEach(function (u) {
       var g = P[u.k] || '•', name = T.poi[u.k] || u.k;
       var inner = g.charAt(0) === '<' ? g : esc(g);
       if (u.k === 'bar') inner = g + '<span>' + esc(name) + '</span>';
-      m.push('<button type="button" tabindex="-1" class="jm-mk jm-poi k-' + u.k + (L1[u.k] ? ' l1' : '') + '" ' + pos(u.x, u.y) + ' data-poi="' + u.k + '" aria-label="' + esc(name) + '" title="' + esc(name) + '">' + inner + '</button>');
+      m.push('<button type="button" tabindex="-1" class="jm-mk jm-poi k-' + u.k + (L1[u.k] ? ' l1' : '') + '" ' + pos(u.x, u.y) + ' data-poi="' + u.k + '"' + (u.i ? ' data-info="' + u.i + '"' : '') + ' aria-label="' + esc(name) + '" title="' + esc(name) + '">' + inner + '</button>');
     });
     D.romboidi.forEach(function (r) { m.push('<span class="jm-mk jm-rb t-' + r.t + '" ' + pos(r.x, r.y) + ' aria-hidden="true"><span>' + esc(r.l) + '</span></span>'); });
     D.vrhovi.forEach(function (v) { m.push('<span class="jm-mk jm-pk" ' + pos(v.x, v.y) + '><span>' + esc(v.ime) + ' <b>' + v.v + ' m</b></span><i></i></span>'); });
@@ -421,6 +455,7 @@
       }).join('') +
       '<button type="button" class="jm-chip" data-f="zicare" aria-pressed="true"><span class="jm-sw" style="--sw:#0B1222;height:2px;box-shadow:0 0 0 1.5px rgba(255,255,255,.85)"></span>' + T.zicare + '<b>' + D.zicare.length + '</b></button>' +
       '<button type="button" class="jm-chip" data-f="usluge" aria-pressed="true"><span class="jm-sw" style="--sw:rgba(10,17,32,.9);width:13px;height:13px;border-radius:4px;box-shadow:inset 0 0 0 1px rgba(196,238,255,.6)"></span>' + T.usluge + '</button>' +
+      ((D.topovi || []).length ? '<button type="button" class="jm-chip" data-f="topovi" aria-pressed="true"><span class="jm-sw" style="--sw:#F2C14E;width:8px;height:12px;border-radius:2px 2px 4px 4px"></span>' + T.snow + '<b>' + D.topovi.length + '</b></button>' : '') +
       '<button type="button" class="jm-nt" role="switch" aria-checked="false">' + T.noc + '<i></i></button>';
     }
     $('.jm-chips').innerHTML = chipsHTML();
@@ -460,8 +495,10 @@
     function clamp() {
       k = Math.max(kMin, Math.min(kMax, k));
       var w = W * k, h = H * k;
-      tx = w <= vw ? (vw - w) / 2 : Math.min(0, Math.max(vw - w, tx));
-      ty = h <= vh ? (vh - h) / 2 : Math.min(0, Math.max(vh - h, ty));
+      // dok je kartica otvorena, mapa smije ići dalje za njenu veličinu (da izabrano ne ostane ispod kartice)
+      var open = card.classList.contains('on'), eb = open && vw < 700 ? card.offsetHeight + 10 : 0, el = open && vw >= 700 ? card.offsetWidth + 24 : 0;
+      tx = w <= vw ? (vw - w) / 2 : Math.min(el, Math.max(vw - w, tx));
+      ty = h <= vh ? (vh - h) / 2 : Math.min(0, Math.max(vh - h - eb, ty));
     }
     var lastK = -1;
     function apply() {
@@ -522,9 +559,11 @@
     /* --- izbor --- */
     var sel = null;
     function clearSel() {
+      var wasOpen = card.classList.contains('on');
       sel = null; root.classList.remove('jm-sel');
       [].forEach.call(root.querySelectorAll('.on'), function (e) { if (!e.classList.contains('jm-card')) e.classList.remove('on'); });
       card.classList.remove('on');
+      if (wasOpen) goTo(k, tx, ty, 250); // vrati mapu u granice
     }
     function mark(selector) { [].forEach.call(root.querySelectorAll(selector), function (e) { e.classList.add('on'); }); }
     function liftChip(id) { var z = byLift[id]; return z ? '<button type="button" class="jm-rc z" data-lift="' + id + '">' + id + ' · ' + esc(z.ime) + '</button>' : ''; }
@@ -558,11 +597,20 @@
       card.classList.add('on');
       if (focus !== false) fitBox(Math.min(z.a[0], z.b[0]), Math.min(z.a[1], z.b[1]), Math.max(z.a[0], z.b[0]), Math.max(z.a[1], z.b[1]), 520, .9);
     }
-    function selectPoi(btn) {
+    function selectPoi(btn, focus) {
       clearSel();
+
       var name = btn.getAttribute('aria-label'); btn.classList.add('on');
-      cardBody.innerHTML = '<div class="jm-ch"><span class="jm-poi k-' + btn.getAttribute('data-poi') + '" style="opacity:1;visibility:visible;width:40px;height:40px;border-radius:11px" aria-hidden="true">' + btn.innerHTML + '</span><div class="jm-ct"><h3>' + esc(name) + '</h3></div></div>';
+      var inf = T.info[btn.getAttribute('data-info')];
+      cardBody.innerHTML = '<div class="jm-ch"><span class="jm-poi k-' + btn.getAttribute('data-poi') + '" style="opacity:1;visibility:visible;min-width:40px;height:40px;border-radius:11px" aria-hidden="true">' + btn.innerHTML + '</span><div class="jm-ct"><h3>' + esc(name) + '</h3></div></div>' +
+        (inf ? '<div class="jm-inf"><span class="jm-inf-l">' + T.here + '</span><div class="jm-tags">' + inf.map(function (x) { return '<span class="jm-tag">' + esc(x) + '</span>'; }).join('') + '</div></div>' : '');
       card.classList.add('on');
+      // usluga u slobodan dio kadra (pored kartice na računaru, iznad nje na telefonu)
+      var px = parseFloat(btn.style.left), py = parseFloat(btn.style.top), sx = tx + px * k, sy = ty + py * k;
+      var narrow = vw < 700, x0 = narrow ? 0 : card.offsetWidth + 24, y1 = narrow ? vh - card.offsetHeight - 10 : vh;
+      if (focus !== false && (sx < x0 + 30 || sy < 30 || sx > vw - 70 || sy > y1 - 30)) {
+        var nk = Math.max(k, .55); goTo(nk, (x0 + vw) / 2 - px * nk, y1 / 2 - py * nk, 450);
+      }
     }
     $('.jm-x').addEventListener('click', function () { clearSel(); view.focus({ preventScroll: true }); });
 

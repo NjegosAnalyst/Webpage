@@ -87,6 +87,15 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
     await sleep(800);
     await frame.screenshot({ path: path.join(OUT, `${v.name}-4-zicara-2.png`) });
 
+    // žičara sidro i usluga sa popisom (usklađeno sa zvaničnom slikom mape)
+    await page.click('#jm-mapa .jm-lifts .jm-li[data-lift="11"]'); await sleep(600);
+    const sidro = await page.evaluate(() => document.querySelector('#jm-mapa .jm-card').textContent);
+    ok(/sidro/.test(sidro), `${v.name}: žičara 11 je ski lift sidro`);
+    await page.evaluate(() => document.querySelector('#jm-mapa .jm-poi[data-info="gondola"]').click()); await sleep(400);
+    const gond = await page.evaluate(() => document.querySelector('#jm-mapa .jm-card').textContent);
+    ok(/Ski depo/.test(gond) && /Mjenjačnica/.test(gond), `${v.name}: kartica Gondola Poljice sa uslugama`);
+    await frame.screenshot({ path: path.join(OUT, `${v.name}-4b-gondola.png`) });
+
     // noćni prikaz
     await page.click('#jm-mapa .jm-x');
     await page.click('#jm-mapa .jm-bar .jm-nt');

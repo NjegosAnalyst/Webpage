@@ -20,7 +20,7 @@ from skimage.graph import route_through_array
 from skimage.morphology import dilation, opening, disk, skeletonize
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-from ulaz import STAZE, OZNAKE, NEIMENOVANE, VEZE_RUCNO, ROMBOIDI, ZICARE, USLUGE, FIS, VRHOVI
+from ulaz import STAZE, OZNAKE, NEIMENOVANE, VEZE_RUCNO, ROMBOIDI, ZICARE, USLUGE, USLUGE_INFO, FIS, VRHOVI, SANKE, NATPISI
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 W, H = 3543, 1996
@@ -78,13 +78,14 @@ M = {
  'black': op & (r < 55) & (g < 55) & (b < 55),
  'yellow':op & (r > 200) & (g > 160) & (b < 100),
  'green': op & (g > r + 30) & (g > b + 10) & (r < 170),
+ 'white': op & (r > 235) & (g > 235) & (b > 235),
 }
-CL = {'red': M['red'], 'blue': M['blue'] | M['teal'], 'black': M['black']}
+CL = {'red': M['red'], 'blue': M['blue'] | M['teal'], 'black': M['black'], 'white': M['white']}
 cijena = {}
 for k, m in CL.items():
     md = dilation(m, disk(1)); dt = ndi.distance_transform_edt(md)
     c = np.where(md, 1.0 + 1.5 / (1.0 + dt), 30.0)
-    if k != 'black':                       # žičare su nacrtane preko staza
+    if k in ('red', 'blue'):               # žičare su nacrtane preko staza
         c = np.where(~md & dilation(M['black'], disk(1)), 4.0, c)
     cijena[k] = c
 
@@ -267,6 +268,20 @@ nocne = [put(rdp(izgladi(izgladi(p, 15), 15), 1.2)) for p in trag(la, 40)]
 # ---------- žičare, usluge ----------
 def projekcija(a, b, o):
     a, b, o = map(np.array, (a, b, o)); t = np.clip(np.dot(o - a, b - a) / np.dot(b - a, b - a), .08, .92); return np.round(a + t * (b - a), 1).tolist()
+# topovi za osnježavanje: žute ikonice (glava i tijelo topa se spoje), bez ikonica koje su takođe žute (24h, policija, poligon, snow factory)
+lab, n = ndi.label(ndi.binary_closing(M['yellow'], iterations=2), np.ones((3, 3)))
+ar = ndi.sum(M['yellow'], lab, range(1, n + 1)); sl = ndi.find_objects(lab); topovi = []
+zute = [p for k in ('karte24', 'policija', 'poligon', 'snowfactory', 'skibike') for p in USLUGE.get(k, [])]
+for a_, s_ in zip(ar, sl):
+    h_, w_ = s_[0].stop - s_[0].start, s_[1].stop - s_[1].start
+    if 70 <= a_ <= 700 and 8 <= w_ <= 40 and 8 <= h_ <= 40:
+        c = ((s_[1].start + s_[1].stop) / 2, (s_[0].start + s_[0].stop) / 2)
+        if min((np.hypot(c[0] - x, c[1] - y) for x, y in zute), default=99) < 28: continue
+        if any(np.hypot(c[0] - x, c[1] - y) < 22 for x, y in topovi): continue
+        topovi.append(c)
+sanke = [put(ruta('white', t)) for t in SANKE]
+info = {k: min(((x, y) for x, y in USLUGE[k]), key=lambda q: np.hypot(q[0] - p[0], q[1] - p[1])) for k, p in USLUGE_INFO.items()}
+
 zicare = [{'id': i, 'ime': ime, 'tip': tip, 'm': m, 'min': mn, 'a': list(a), 'b': list(b_), 'o': projekcija(a, b_, o)}
           for i, ime, tip, m, mn, a, b_, o in ZICARE]
 
@@ -275,12 +290,14 @@ podaci = {
  'staze': staze, 'neimenovane': neimenovane, 'veze': veze,
  'romboidi': [{'x': x, 'y': y, 'l': l, 't': TEZ[b]} for l, b, (x, y) in ROMBOIDI],
  'zicare': zicare,
- 'usluge': [{'k': k, 'x': x, 'y': y} for k, v in USLUGE.items() for x, y in v],
+ 'usluge': [dict({'k': k, 'x': x, 'y': y}, **({'i': k} if info.get(k) == (x, y) else {})) for k, v in USLUGE.items() for x, y in v],
+ 'topovi': [[round(x), round(y)] for x, y in topovi], 'sanke': sanke, 'fis': [list(p) for p in FIS],
+ 'natpisi': [{'t': t, 'x': x, 'y': y} for t, (x, y) in NATPISI],
  'granica': granica, 'pjesacke': pjesacke, 'nocne': nocne,
  'vrhovi': [{'ime': n, 'v': v, 'x': x, 'y': y} for n, v, (x, y) in VRHOVI],
 }
 (ROOT / 'podaci').mkdir(exist_ok=True)
 (ROOT / 'podaci' / 'mapa.json').write_text(json.dumps(podaci, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
-print('staza', len(staze), '| veza', len(veze), '| noćne linije', len(nocne), '| osvijetljene staze:',
+print('topova', len(topovi), '| staza', len(staze), '| veza', len(veze), '| noćne linije', len(nocne), '| osvijetljene staze:',
       ' '.join(s['id'] for s in staze if s['noc']), '| FIS:', ' '.join(s['id'] for s in staze if s['fis']))
 print('podaci', round((ROOT / 'podaci' / 'mapa.json').stat().st_size / 1024), 'KB')
