@@ -71,12 +71,15 @@
     var list = crumbsFromSchema();
     if (!list || list.length < 2) list = [HOME, { name: title.textContent.trim(), url: '' }];
 
+    // posljednja stavka je ista stranica čiji je naslov (H1) odmah ispod — ne ponavljamo je
+    var norm = function (s) { return String(s).replace(/\s+/g, ' ').trim().toLowerCase(); };
+    if (list.length > 1 && norm(list[list.length - 1].name) === norm(title.textContent)) list = list.slice(0, -1);
+
     var html = list.map(function (c, i) {
-      var last = i === list.length - 1;
       var name = (i === 0) ? HOME.name : c.name;
-      if (last || !c.url) return '<span aria-current="page">' + esc(name) + '</span>';
+      if (!c.url && i !== 0) return '<span>' + esc(name) + '</span>';
       return '<a href="' + esc(i === 0 ? HOME.url : c.url) + '">' + esc(name) + '</a>';
-    }).join('<span class="jsh-sep" aria-hidden="true">›</span>');
+    }).join('<span class="jsh-sep" aria-hidden="true">›</span>') + '<span class="jsh-sep" aria-hidden="true">›</span>';
 
     var nav = document.createElement('nav');
     nav.className = 'jsh-bc';
