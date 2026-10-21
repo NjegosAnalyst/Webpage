@@ -15,17 +15,12 @@ IMG = HERE / 'img'
 IMG.mkdir(exist_ok=True)
 
 # video ID sa sajta → (probna sličica iz foto galerije, probni naslov SR, EN)
-VIDEO = [
-    ('7pQYZeP2DFc', 31303, 'Noćno skijanje na Jahorini', 'Night skiing on Jahorina'),
-    ('ag2t0kbQ94E', 28936, 'Vožnja gondolom kroz zaleđenu šumu', 'Gondola ride through the frosted forest'),
-    ('JbX0lYckAws', 31423, 'More oblaka sa vrha staze', 'Sea of clouds from the top of the slope'),
-    ('_FS3hxNT_LE', 31422, 'Ratraci pripremaju staze', 'Snow groomers preparing the slopes'),
-    ('kOlJQVRwrwY', 31270, 'Zalazak sunca na Olimpijskoj planini', 'Sunset on Olympic Mountain'),
-    ('ndaLqKm_ogg', 31421, 'Porodični dan na snijegu', 'Family day on the snow'),
-    ('T7tpfIE99es', 29840, 'Jahorina iz vazduha', 'Jahorina from the air'),
+VIDEO = [   # spisak videa od korisnika (21. 10.), ovim redoslijedom — prvi je istaknut
+    ('5Gt2nuFdaGQ', 31303, 'Noćno skijanje na Jahorini', 'Night skiing on Jahorina'),
     ('atZBt4H14xY', 31414, 'Skijanje po sunčanom danu', 'Skiing on a sunny day'),
-    ('_HYLTOes3pQ', 29847, 'Žičara šestosjed kroz zaleđenu šumu', 'Six-seater chairlift through the frosted forest'),
-    ('UwASyqLOglE', 31300, 'Osvijetljene staze iz vazduha', 'Floodlit slopes from the air'),
+    ('7hppyf-WdJg', 28936, 'Vožnja gondolom kroz zaleđenu šumu', 'Gondola ride through the frosted forest'),
+    ('7qo0-fAx5CI', 29840, 'Jahorina iz vazduha', 'Jahorina from the air'),
+    ('JbX0lYckAws', 31423, 'More oblaka sa vrha staze', 'Sea of clouds from the top of the slope'),
 ]
 for vid, foto, *_ in VIDEO:
     out = IMG / f'{vid}.jpg'

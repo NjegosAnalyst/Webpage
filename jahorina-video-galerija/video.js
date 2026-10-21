@@ -105,6 +105,7 @@
       '#R .jvg-follow{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px 28px;margin-top:clamp(52px,6.4vw,88px);padding:clamp(20px,2.4vw,28px) clamp(20px,2.6vw,32px);border-radius:22px;',
       'background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015));box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.1)}',
       '#R .jvg-follow p{font:600 clamp(17px,1.6vw,21px)/1.3 var(--fd);color:#fff;max-width:36ch}',
+      '#R .jvg-grid--2{grid-template-columns:repeat(2,minmax(0,1fr))}',
       '@media (max-width:1100px){#R .jvg-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}',
       '@media (max-width:860px){#R .jvg-feat{grid-template-columns:minmax(0,1fr);gap:18px}}',
       '@media (max-width:760px){',
@@ -253,7 +254,9 @@
       if (!items.length) return;
       var name = g.title || (groups.length > 1 ? T.group : T.all);
       h += '<section class="jvg-group" aria-labelledby="jvg-h-' + gi + '"><div class="jvg-head"><h2 id="jvg-h-' + gi + '">' + esc(name) + '</h2><span class="jvg-rule" aria-hidden="true"></span>' +
-        '<span class="jvg-count">' + items.length + ' ' + (EN ? (items.length === 1 ? 'video' : 'videos') : 'video') + '</span></div><ul class="jvg-grid">' +
+        '<span class="jvg-count">' + items.length + ' ' + (EN ? (items.length === 1 ? 'video' : 'videos') : 'video') + '</span></div>' +
+        // 2 ili 4 videa: dvije kolone (da posljednji ne ostane sam u redu)
+        '<ul class="jvg-grid' + (items.length === 2 || items.length === 4 ? ' jvg-grid--2' : '') + '">' +
         items.map(function (it) {
           return '<li class="jvg-item">' + thumb(it, false, false) + '<h3><a href="https://www.youtube.com/watch?v=' + it.id + '" data-k="' + list.indexOf(it) + '">' + titleHtml(it) + '</a></h3></li>';
         }).join('') + '</ul></section>';
