@@ -25,8 +25,16 @@
     });
   }
 
+  // nazivi iz schema oznake dolaze sa HTML entitetima (npr. &#8211; za crticu)
+  function decode(s) {
+    var t = document.createElement('textarea');
+    t.innerHTML = s;
+    return t.value;
+  }
+
   // qTranslate ponekad ostavi oznake [:SH]…[:en]…[:] u nazivima
   function pickLang(s) {
+    s = decode(s);
     if (!/\[:[a-zA-Z]{2}\]/.test(s)) return s;
     var want = isEN ? 'en' : 'sh', out = '', m, re = /\[:([a-zA-Z]{2})\]([\s\S]*?)(?=\[:[a-zA-Z]{0,2}\]|$)/g;
     while ((m = re.exec(s))) { if (m[1].toLowerCase() === want) out = m[2]; }
