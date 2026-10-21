@@ -158,6 +158,165 @@
   })();
   // <<< rano
 
+  // ===== Vremenska prognoza: gore desno, odmah ispod menija (vodoravna traka u stilu dugmadi) =====
+  // Podaci: MET Norway (Locationforecast 2.0, besplatno i za komercijalne sajtove, uz navođenje izvora).
+  // Svaki posjetilac pita najviše jednom u 30 min (keš u pregledniku). Ako ne uspije — widget se ne prikazuje.
+  (function weather() {
+    var LAT = 43.733, LON = 18.567, ALT = 1600;   // Jahorina; ALT = visina (m) za koju se računa temperatura
+    var frame = hero.querySelector('.jh-frame');
+    if (!frame || !window.fetch || hero.querySelector('.jh-wx')) return;
+    var en = /^en/i.test(document.documentElement.lang || '') || /^\/en(\/|$)/.test(location.pathname) ||
+      /Olympic/.test(hero.getAttribute('aria-label') || '');   // EN modul hero-a
+    var L = en ? {
+      label: 'Weather forecast for Jahorina', wind: 'Wind', src: 'MET Norway', srcS: 'met.no',
+      d: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
+      k: { clear: 'Clear', fair: 'Mostly clear', partly: 'Partly cloudy', cloudy: 'Cloudy', fog: 'Fog', lrain: 'Light rain', rain: 'Rain', hrain: 'Heavy rain',
+        rshow: 'Showers', sleet: 'Sleet', lsnow: 'Light snow', snow: 'Snow', hsnow: 'Heavy snow', sshow: 'Snow showers', thunder: 'Thunder' }
+    } : {
+      label: 'Vremenska prognoza za Jahorinu', wind: 'Vjetar', src: 'MET Norway', srcS: 'met.no',
+      d: ['NED', 'PON', 'UTO', 'SRI', 'ČET', 'PET', 'SUB'],
+      k: { clear: 'Vedro', fair: 'Pretežno vedro', partly: 'Djelimično oblačno', cloudy: 'Oblačno', fog: 'Magla', lrain: 'Slaba kiša', rain: 'Kiša', hrain: 'Jaka kiša',
+        rshow: 'Pljuskovi', sleet: 'Susnježica', lsnow: 'Slab snijeg', snow: 'Snijeg', hsnow: 'Jak snijeg', sshow: 'Snježni pljuskovi', thunder: 'Grmljavina' }
+    };
+    var t0 = performance.now(), box = document.createElement('div'), shown = false, tries = 0;
+    box.className = 'jh-wx'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', L.label);
+    frame.appendChild(box);
+
+    // MET simbol (npr. "lightsnowshowers_night") → vrsta vremena
+    function kind(code) {
+      var c = String(code || '').replace(/_(day|night|polartwilight)$/, '');
+      if (/thunder/.test(c)) return 'thunder';
+      if (/sleet/.test(c)) return 'sleet';
+      if (/snowshowers/.test(c)) return 'sshow';
+      if (/snow/.test(c)) return /^heavy/.test(c) ? 'hsnow' : /^light/.test(c) ? 'lsnow' : 'snow';
+      if (/rainshowers/.test(c)) return 'rshow';
+      if (/rain/.test(c)) return /^heavy/.test(c) ? 'hrain' : /^light/.test(c) ? 'lrain' : 'rain';
+      if (c === 'fog') return 'fog';
+      if (c === 'cloudy') return 'cloudy';
+      if (c === 'partlycloudy') return 'partly';
+      if (c === 'fair') return 'fair';
+      return 'clear';
+    }
+    // ikonice: tanke linije kao dugmad (svaki element ima stroke — tako ga štite i pravila za SR)
+    function P(d) { return '<path d="' + d + '" stroke="currentColor"/>'; }
+    function D(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="1.1" fill="currentColor" stroke="none"/>'; }
+    var CLOUD = P('M7.2 19h10.3a4 4 0 0 0 .5-8 6 6 0 0 0-11.5 1.6A3.2 3.2 0 0 0 7.2 19Z'),
+      CLOUD_HI = P('M7.2 15h10.3a3.6 3.6 0 0 0 .4-7.2 5.4 5.4 0 0 0-10.4 1.4A2.9 2.9 0 0 0 7.2 15Z'),
+      CLOUD_SM = P('M9.6 20h8.2a3.3 3.3 0 0 0 .4-6.6 4.9 4.9 0 0 0-9.4 1.3A2.7 2.7 0 0 0 9.6 20Z'),
+      SUN = '<circle cx="12" cy="12" r="4.2" stroke="currentColor"/>' + P('M12 2.6v2.3M12 19.1v2.3M2.6 12h2.3M19.1 12h2.3M5.4 5.4 7 7M17 17l1.6 1.6M5.4 18.6 7 17M17 7l1.6-1.6'),
+      MOON = P('M19.5 14.6A7.8 7.8 0 1 1 9.4 4.5a6.1 6.1 0 0 0 10.1 10.1Z'),
+      SUN_SM = '<circle cx="8" cy="7.6" r="2.6" stroke="currentColor"/>' + P('M8 2.4v1.3M2.4 7.6h1.3M4 3.6l.9.9M12 3.6l-.9.9M4 11.6l.9-.9'),
+      MOON_SM = P('M11.6 9.8A4.6 4.6 0 1 1 5.7 3.9a3.6 3.6 0 0 0 5.9 5.9Z');
+    function icon(k, night) {
+      var g;
+      if (k === 'clear') g = night ? MOON : SUN;
+      else if (k === 'fair' || k === 'partly') g = (night ? MOON_SM : SUN_SM) + CLOUD_SM;
+      else if (k === 'cloudy') g = CLOUD;
+      else if (k === 'fog') g = P('M4 8.5h16M6.5 12.5h11M4 16.5h16');
+      else if (k === 'sleet') g = CLOUD_HI + P('M8.8 18 7.8 20.6') + D(13, 19.2) + P('M17.2 18l-1 2.6');
+      else if (k === 'thunder') g = CLOUD_HI + P('M12.8 15.6 10.6 19h3.2l-2 3.2');
+      else if (/snow|sshow/.test(k)) g = CLOUD_HI + D(8, 18.4) + D(12, 20.6) + D(16, 18.4);
+      else g = CLOUD_HI + P('M8.5 18 7.5 20.6M12.5 18l-1 2.6M16.5 18l-1 2.6');
+      return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' + g + '</svg>';
+    }
+    function deg(t) { var r = Math.round(t); return (r < 0 ? '−' + (-r) : String(r)) + '°'; }
+
+    // datum, sat i dan u sedmici po vremenu na Jahorini (CET/CEST po pravilu EU), i kad je posjetilac u drugoj zoni.
+    // Bez Intl.DateTimeFormat: njegovo pokretanje sa vremenskom zonom je na telefonu sporo (~20 ms) i pada usred ulaska.
+    function lastSun(y, m) { var e = new Date(Date.UTC(y, m + 1, 0)); return Date.UTC(y, m, e.getUTCDate() - e.getUTCDay(), 1); }
+    function parts(d) {
+      var ms = d.getTime(), y = d.getUTCFullYear(), dst = ms >= lastSun(y, 2) && ms < lastSun(y, 9);
+      var l = new Date(ms + (dst ? 2 : 1) * 3600000);   // lokalno vrijeme, čita se UTC poljima
+      return { k: l.getUTCFullYear() + '-' + l.getUTCMonth() + '-' + l.getUTCDate(), h: l.getUTCHours(), wd: l.getUTCDay() };
+    }
+    function sym(x) {
+      return (x.next_1_hours && x.next_1_hours.summary.symbol_code) || (x.next_6_hours && x.next_6_hours.summary.symbol_code) ||
+        (x.next_12_hours && x.next_12_hours.summary.symbol_code) || '';
+    }
+    // odgovor MET-a → sada + sljedeća 3 dana (najviša/najniža temperatura i vrijeme oko podneva)
+    function parse(j) {
+      var ts = j && j.properties && j.properties.timeseries;
+      if (!ts || !ts.length || !ts[0].data || !ts[0].data.instant) return null;
+      var f = ts[0].data, now = { t: f.instant.details.air_temperature, w: f.instant.details.wind_speed, code: sym(f) };
+      var today = parts(new Date()).k, days = {}, order = [];
+      ts.forEach(function (e) {
+        var p = parts(new Date(e.time)); if (p.k === today) return;
+        var o = days[p.k];
+        if (!o) { o = days[p.k] = { wd: p.wd, hi: -99, lo: 99, code: '', dist: 99 }; order.push(p.k); }
+        var t = e.data.instant.details.air_temperature, n6 = e.data.next_6_hours;
+        if (t != null) { o.hi = Math.max(o.hi, t); o.lo = Math.min(o.lo, t); }
+        if (n6 && n6.details) {
+          if (n6.details.air_temperature_max != null) o.hi = Math.max(o.hi, n6.details.air_temperature_max);
+          if (n6.details.air_temperature_min != null) o.lo = Math.min(o.lo, n6.details.air_temperature_min);
+        }
+        var s = (n6 && n6.summary.symbol_code) || (e.data.next_12_hours && e.data.next_12_hours.summary.symbol_code) || '';
+        if (s && Math.abs(p.h - 12) < o.dist) { o.dist = Math.abs(p.h - 12); o.code = s; }
+      });
+      var out = order.slice(0, 3).map(function (k) { var o = days[k]; return { wd: o.wd, hi: o.hi, lo: o.lo, code: o.code }; })
+        .filter(function (o) { return o.hi > -99; });
+      return now.t == null ? null : { now: now, days: out };
+    }
+
+    function render(d) {
+      var k = kind(d.now.code), night = /_night$/.test(d.now.code);
+      box.innerHTML =
+        '<div class="jh-wx__now"><span class="jh-wx__ico">' + icon(k, night) + '</span>' +
+        '<span class="jh-wx__t">' + deg(d.now.t) + '</span>' +
+        '<span class="jh-wx__meta"><span class="jh-wx__desc">' + L.k[k] + '</span>' +
+        (d.now.w != null ? '<span class="jh-wx__wind">' + L.wind + ' ' + Math.round(d.now.w * 3.6) + ' km/h</span>' : '') + '</span></div>' +
+        '<div class="jh-wx__days">' + d.days.map(function (x) {
+          var kk = kind(x.code);
+          return '<div class="jh-wx__day" title="' + L.k[kk] + '"><span class="jh-wx__dn">' + L.d[x.wd] + '</span>' +
+            '<span class="jh-wx__di">' + icon(kk, false) + '</span><span class="jh-wx__mm">' + deg(x.hi) + '<i>' + deg(x.lo) + '</i></span></div>';
+        }).join('') + '</div>' +
+        '<a class="jh-wx__src" href="https://www.met.no/en" target="_blank" rel="noopener" title="' + (en ? 'Forecast data' : 'Podaci o prognozi') + ': MET Norway (CC BY 4.0)">' +
+        '<span class="jh-wx__src-l">' + L.src + '</span><span class="jh-wx__src-s">' + L.srcS + '</span></a>';
+      shown = true; place(topPx);
+    }
+
+    // tačno ispod menija: na telefonu je slika ispod providnog headera, pa widget mora ispod dugmadi headera.
+    // Položaj se mjeri unaprijed (dok sve miruje), da dolazak podataka usred animacije ne traži novo mjerenje.
+    var topPx = measure();
+    function measure() {
+      var hdr = document.querySelector('.jf-header') || hero.querySelector('.jh-header');
+      if (!hdr && document.querySelector('script[src*="header-snippet"]') && performance.now() < 8000) return null;   // naš header još stiže sa CDN-a
+      var y = window.scrollY || 0, top = 0;
+      if (hdr && hdr.offsetHeight) {
+        var hcs = getComputedStyle(hdr), hb = hdr.getBoundingClientRect().bottom + (hcs.position === 'fixed' ? 0 : y);
+        if (hcs.transform && hcs.transform !== 'none' && window.DOMMatrix) hb -= new DOMMatrix(hcs.transform).m42;   // header koji upravo "ulazi" animacijom
+        top = Math.round(hb - (frame.getBoundingClientRect().top + y) + 12);
+      }
+      return Math.max(top, window.matchMedia('(max-width:760px)').matches ? 12 : 22);
+    }
+    function place(px) {
+      if (!shown) return;
+      if (px == null) px = measure();
+      if (px == null) { if (tries++ < 50) setTimeout(function () { place(); }, 150); return; }
+      box.style.top = px + 'px';
+      if (!box.classList.contains('is-on')) {
+        box.style.setProperty('--wx-d', Math.max(0, 1.7 - (performance.now() - t0) / 1000).toFixed(2) + 's');   // ulazi zajedno sa trakom dugmadi
+        box.classList.add('is-on');
+      }
+    }
+    window.addEventListener('load', function () { place(); });
+    var rw, lw = window.innerWidth;
+    window.addEventListener('resize', function () { if (window.innerWidth === lw) return; lw = window.innerWidth; clearTimeout(rw); rw = setTimeout(function () { place(); }, 220); });
+
+    var KEY = 'jhWx1', MAX = 30 * 60 * 1000, c = null;
+    try { c = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+    if (c && c.d && Date.now() - c.t < MAX) { render(c.d); return; }
+    var ctl = window.AbortController ? new AbortController() : null;
+    if (ctl) setTimeout(function () { ctl.abort(); }, 8000);
+    fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=' + LAT + '&lon=' + LON + '&altitude=' + ALT, ctl ? { signal: ctl.signal } : {})
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (j) {
+        var d = parse(j); if (!d) return;
+        try { localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), d: d })); } catch (e) {}
+        render(d);
+      })
+      .catch(function () { box.remove(); });
+  })();
+
   // ===== Reflektori: pale se uz stazu, tiho dišu, povremeno bljesne filmski zrak =====
   (function floodlights() {
     var photo = hero.querySelector('.jh-photo'), cv = photo.querySelector('.jh-lights'), ctx = cv.getContext('2d');

@@ -58,6 +58,8 @@ SR_RESET = """
 .jh-hero .jh-intro p{line-height:1.55!important}
 .jh-hero .jh-rating,.jh-hero .jh-rating *{line-height:1!important}
 .jh-hero .jh-quick__label{line-height:1.1!important}
+.jh-hero .jh-wx,.jh-hero .jh-wx *{line-height:1.1!important;white-space:nowrap!important}   /* prognoza: SR daje line-height 25px */
+.jh-hero .jh-wx a{text-decoration:none!important}
 .jh-hero .jh-nav__link,.jh-hero .jh-btn{align-items:center!important}
 """
 

@@ -27,6 +27,8 @@
 .jh-hero .jh-intro p{line-height:1.55!important}
 .jh-hero .jh-rating,.jh-hero .jh-rating *{line-height:1!important}
 .jh-hero .jh-quick__label{line-height:1.1!important}
+.jh-hero .jh-wx,.jh-hero .jh-wx *{line-height:1.1!important;white-space:nowrap!important}   /* prognoza: SR daje line-height 25px */
+.jh-hero .jh-wx a{text-decoration:none!important}
 .jh-hero .jh-nav__link,.jh-hero .jh-btn{align-items:center!important}
 /* ============================================================
      Jahorina Hero v2 — samostalna verzija (bez DC/Tweaks omotača)
@@ -459,6 +461,36 @@
   .jh-quick__live::after{content:"";position:absolute;inset:0;border-radius:50%;background:#ff4d4d;animation:jhLive 2s ease-out infinite}
   @keyframes jhLive{0%{transform:scale(1);opacity:.75}100%{transform:scale(3);opacity:0}}
 
+  /* ---------- gore desno: vremenska prognoza (JS je napravi i postavi tačno ispod menija) ---------- */
+  .jh-wx{
+    position:absolute;right:clamp(24px,3vw,52px);top:22px;z-index:6;
+    display:flex;align-items:center;gap:14px;padding:8px 14px 8px 12px;border-radius:18px;
+    background:linear-gradient(180deg,rgba(18,27,45,.74),rgba(9,14,26,.86));
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.09),0 18px 40px -20px rgba(0,0,0,.9);
+    color:#C4EEFF;font-family:'Archivo',sans-serif;line-height:1.1;white-space:nowrap;text-align:left;
+    opacity:0;visibility:hidden;
+  }
+  .jh-wx.is-on{opacity:1;visibility:visible;animation:jhCardIn .8s cubic-bezier(.2,.7,.2,1) var(--wx-d,0s) both}
+  .jh-wx svg{display:block;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+  .jh-wx__now{display:flex;align-items:center;gap:10px}
+  .jh-wx__ico svg{width:30px;height:30px}
+  .jh-wx__t{font-size:28px;font-weight:700;color:#fff;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+  .jh-wx__meta{display:flex;flex-direction:column;gap:4px}
+  .jh-wx__desc{font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+  .jh-wx__wind{font-size:10.5px;font-weight:600;letter-spacing:.3px;color:rgba(196,238,255,.72)}
+  .jh-wx__days{display:flex;gap:2px;padding-left:12px;box-shadow:inset 1px 0 0 rgba(255,255,255,.1)}
+  .jh-wx__day{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:46px}
+  .jh-wx__dn{font-size:9px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,.62)}
+  .jh-wx__di svg{width:18px;height:18px}
+  .jh-wx__mm{font-size:11px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+  .jh-wx__mm i{font-style:normal;font-weight:600;color:rgba(196,238,255,.58);padding-left:4px}
+  /* izvor podataka (obavezno navesti — licenca CC BY 4.0): sitno ispod trake (telefon: na kraju trake) */
+  .jh-wx__src{position:absolute;right:14px;top:100%;margin-top:5px;
+    font-size:8px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.4);text-decoration:none}
+  .jh-wx__src:hover{color:#6FDBFF}
+  .jh-wx__src-s{display:none}
+
   /* ---------- mobilni meni (hamburger) ---------- */
   .jh-burger{
     display:none;width:44px;height:44px;border-radius:50%;
@@ -562,7 +594,7 @@
     .jh-quick{gap:3px;padding:4px;bottom:8%}
     .jh-quick__item{height:55px}
     .jh-quick__item svg{width:17px;height:17px}
-    .jh-headline{top:40%}
+    .jh-headline{top:42%}   /* malo niže: iznad je traka prognoze */
   }
 
   /* ===== Dugmad B (telefon): Web shop preko cijelog reda, ispod 5 pločica ===== */
@@ -582,6 +614,28 @@
   @media (max-width:760px) and (max-height:680px){
     .jh-quick__item{height:52px}
     .jh-quick__item--accent{height:40px}
+  }
+  /* ===== Prognoza (telefon): kompaktna vodoravna traka ispod dugmadi headera — sada + 3 dana, bez zamućenja pozadine ===== */
+  @media (max-width:760px){
+    .jh-wx{right:14px;gap:9px;padding:6px 10px 6px 9px;border-radius:15px;
+      -webkit-backdrop-filter:none;backdrop-filter:none;background:linear-gradient(180deg,rgba(18,27,45,.84),rgba(9,14,26,.92))}
+    .jh-wx__now{gap:5px}
+    .jh-wx__ico svg{width:21px;height:21px}
+    .jh-wx__t{font-size:18px;letter-spacing:-.3px}
+    .jh-wx__meta{display:none}
+    .jh-wx__days{gap:0;padding-left:5px}
+    .jh-wx__day{flex-direction:row;gap:3px;min-width:0;padding:0 4px}
+    .jh-wx__dn{font-size:7.5px;letter-spacing:.6px}
+    .jh-wx__di svg{width:15px;height:15px}
+    .jh-wx__mm{font-size:10.5px}
+    .jh-wx__mm i{display:none}
+    .jh-wx__src{position:static;margin:0;align-self:stretch;display:flex;align-items:center;padding-left:7px;
+      box-shadow:inset 1px 0 0 rgba(255,255,255,.08);font-size:6.5px;letter-spacing:.3px;text-transform:none}
+    .jh-wx__src-l{display:none}
+    .jh-wx__src-s{display:inline}
+  }
+  @media (max-width:360px){
+    .jh-wx__day:nth-child(3){display:none}
   }
 
   @media (prefers-reduced-motion:reduce){
