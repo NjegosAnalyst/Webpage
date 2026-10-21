@@ -4,7 +4,7 @@
    (osnovna galerija). Svaki takav widget je jedan album; naziv albuma je Naslov (Heading)
    widget iznad njega (dva jezika: [:SH]Skijanje[:en]Skiing[:]). Kod pročita fotografije,
    iz Medija uzme alt tekst, dimenzije i manje verzije slika (REST API) i prikaže ih:
-   albumi (H2), mreža bez sječenja, pregled preko cijelog ekrana.
+   albumi (H2) jedan ispod drugog, mreža bez sječenja, pregled preko cijelog ekrana.
    H1 je naslov stranice u traci iznad (4-naslov) — ovdje se ne dodaje.
    Ugradnja: Elementor HTML widget na vrhu stranice: <div id="jfg-galerija"></div> + ovaj fajl.
    Opcije na <div id="jfg-galerija">: data-uvod="[:SH]…[:en]…[:]" (rečenica ispod naslova),
@@ -19,12 +19,12 @@
     var O = location.origin;
     var EN = /^\/en(\/|$)/i.test(location.pathname) || (root && root.getAttribute('data-lang') === 'en');
     var T = EN ? {
-      photos: ['photo', 'photos', 'photos'], albums: ['album', 'albums', 'albums'], all: 'All', nav: 'Photo albums',
+      photos: ['photo', 'photos', 'photos'], albums: ['album', 'albums', 'albums'],
       intro: 'Winter on Olympic Mountain Jahorina: slopes, lifts, the sea of clouds at sunset and night skiing.',
       album: 'Photos from Jahorina', viewer: 'Photo viewer', close: 'Close', prev: 'Previous photo', next: 'Next photo',
       noAlt: 'No alt text', of: 'of'
     } : {
-      photos: ['fotografija', 'fotografije', 'fotografija'], albums: ['album', 'albuma', 'albuma'], all: 'Sve', nav: 'Albumi fotografija',
+      photos: ['fotografija', 'fotografije', 'fotografija'], albums: ['album', 'albuma', 'albuma'],
       intro: 'Zima na Olimpijskoj planini Jahorina: staze, žičare, more oblaka u zalazak sunca i noćno skijanje.',
       album: 'Fotografije sa Jahorine', viewer: 'Pregled fotografija', close: 'Zatvori', prev: 'Prethodna fotografija', next: 'Sljedeća fotografija',
       noAlt: 'Bez alt teksta', of: 'od'
@@ -47,25 +47,14 @@
       '#R li::before,#R li::after{content:none}',
       '#R img{display:block;max-width:none;border:0;border-radius:0;box-shadow:none}',
       '#R svg{display:block;flex-shrink:0}',
-      '#R a:focus-visible,#R button:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
+      '#R a:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
       '#R .jfg-wrap{max-width:1240px;margin:0 auto;padding:clamp(36px,4.5vw,64px) clamp(16px,4vw,48px) clamp(56px,7vw,100px)}',
 
       /* vrh: broj fotografija (stil malog teksta iz hero-a) + uvod */
       '#R .jfg-eyebrow{display:flex;align-items:center;gap:14px;font:600 11px/1 var(--fd);letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:16px;font-variant-numeric:tabular-nums}',
       '#R .jfg-eyebrow::before{content:"";width:34px;height:1.5px;flex-shrink:0;background:linear-gradient(90deg,var(--accent),#fff,var(--accent));box-shadow:0 0 10px rgba(0,185,242,.8)}',
       '#R .jfg-intro{max-width:62ch;color:var(--text-2);font-size:clamp(16px,1.3vw,18px);line-height:1.6;text-wrap:pretty}',
-
-      /* albumi: staklene pločice kao dugmad u hero-u (stil B) */
-      '#R .jfg-nav{margin:clamp(24px,2.8vw,34px) 0 clamp(40px,4.6vw,60px)}',
-      '#R .jfg-tabs{display:flex;flex-wrap:wrap;gap:8px}',
-      '#R .jfg-tab{all:unset;cursor:pointer;box-sizing:border-box!important;display:inline-flex!important;align-items:center;gap:10px;height:44px!important;padding:0 16px!important;margin:0!important;border:0!important;border-radius:14px!important;',
-      'font:600 12px/1 var(--fd)!important;letter-spacing:1.4px!important;text-transform:uppercase!important;white-space:nowrap;color:rgba(255,255,255,.8)!important;',
-      'background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.02))!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.11)!important;transition:box-shadow .25s,transform .2s,color .2s}',
-      '#R .jfg-tab span{font-variant-numeric:tabular-nums;letter-spacing:.5px;color:rgba(196,238,255,.55)}',
-      '#R .jfg-tab:hover{color:#fff!important;transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(111,219,255,.38),inset 0 1px 0 rgba(255,255,255,.14),0 0 18px -4px rgba(0,185,242,.45)!important}',
-      '#R .jfg-tab:active{transform:scale(.96)}',
-      '#R .jfg-tab.is-on{color:#9BE6FF!important;box-shadow:inset 0 0 0 1px rgba(111,219,255,.42),inset 0 1px 0 rgba(255,255,255,.14),0 0 16px -6px rgba(0,185,242,.5)!important}',
-      '#R .jfg-tab.is-on span{color:#9BE6FF}',
+      '#R .jfg-top{margin-bottom:clamp(40px,4.6vw,60px)}',
 
       /* album: H2 — linija — broj fotografija */
       '#R .jfg-albums{display:flex;flex-direction:column;gap:clamp(52px,6.4vw,88px)}',
@@ -92,12 +81,7 @@
       '#R .jfg-link{border-radius:9px}',
       '#R .jfg-ahead{gap:12px}',
       '#R h2{font-size:22px!important}',
-      '#R .jfg-eyebrow{letter-spacing:4px;font-size:10.5px}',
-      /* pločice albuma u jednom redu koji se pomjera prstom */
-      '#R .jfg-tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -16px;padding:4px 16px 6px}',
-      '#R .jfg-tabs::-webkit-scrollbar{display:none}',
-      '#R .jfg-tab{height:44px!important;padding:0 14px!important;font-size:11.5px!important}',
-      '#R .jfg-tab:hover{transform:none}}',
+      '#R .jfg-eyebrow{letter-spacing:4px;font-size:10.5px}}',
       '@media (prefers-reduced-motion:reduce){#R *,#R *::before,#R *::after{transition:none!important;animation:none!important}}'
     ].join('\n').replace(/#R/g, '#jfg-galerija');
 
@@ -311,7 +295,7 @@
     }
 
     /* ---------- 3. prikaz ---------- */
-    var list = [], sections = [], tabs = [];
+    var list = [];
     var ADMIN = d.body.classList.contains('logged-in') || !!d.getElementById('wpadminbar');
     function render(map) {
       var used = {};
@@ -326,13 +310,6 @@
       var h = '<div class="jfg-wrap"><div class="jfg-top">' +
         '<div class="jfg-eyebrow">' + total + ' ' + plural(total, T.photos) + (multi ? ' · ' + albums.length + ' ' + plural(albums.length, T.albums) : '') + '</div>' +
         '<p class="jfg-intro">' + esc(intro) + '</p></div>';
-      if (multi) {
-        h += '<nav class="jfg-nav" aria-label="' + esc(T.nav) + '"><div class="jfg-tabs">' +
-          '<button type="button" class="jfg-tab is-on" data-a="*" aria-pressed="true">' + esc(T.all) + ' <span>' + total + '</span></button>' +
-          albums.map(function (al) {
-            return '<button type="button" class="jfg-tab" data-a="' + esc(al.slug) + '" aria-pressed="false">' + esc(al.name) + ' <span>' + al.items.length + '</span></button>';
-          }).join('') + '</div></nav>';
-      }
       h += '<div class="jfg-albums">';
       albums.forEach(function (al) {
         var hid = 'jfg-h-' + al.slug;
@@ -363,13 +340,9 @@
 
       albums.forEach(function (al) { al.src.forEach(function (n) { n.classList.add('jfg-izvor'); }); });
       d.body.classList.add('jfg-page');
-      sections = [].slice.call(root.querySelectorAll('.jfg-album'));
-      tabs = [].slice.call(root.querySelectorAll('.jfg-tab'));
       [].forEach.call(root.querySelectorAll('.jfg-link img'), function (img) {
         if (img.complete && img.naturalWidth) loaded(img);
       });
-      var want = decodeURIComponent(location.hash.slice(1));
-      if (want && albums.some(function (al) { return al.slug === want; })) filter(want, true);
       fit();
       layout();
     }
@@ -424,14 +397,7 @@
       img.__jfgErr = true; img.removeAttribute('srcset'); img.src = img.parentNode.getAttribute('href');   // rezerva: originalna slika
     }, true);
 
-    function filter(slug, fromHash) {
-      tabs.forEach(function (b) { var on = b.getAttribute('data-a') === slug; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
-      sections.forEach(function (s) { s.hidden = slug !== '*' && s.id !== 'jfg-' + slug; });
-      if (!fromHash) try { history.replaceState(history.state, '', slug === '*' ? location.pathname + location.search : '#' + slug); } catch (e) {}
-    }
     root.addEventListener('click', function (e) {
-      var b = e.target.closest('.jfg-tab');
-      if (b) { filter(b.getAttribute('data-a')); return; }
       var a = e.target.closest('.jfg-link');
       if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button > 0) return;
       e.preventDefault(); e.stopPropagation();   // ne Elementorov/Betheme lightbox
@@ -523,15 +489,13 @@
     function open(k) {
       if (!lb) build();
       clearTimeout(closing);
-      seq = list.filter(function (it) { return !it.el.closest('[hidden]'); });
-      var start = seq.indexOf(list[k]);
-      if (start < 0) { seq = list; start = k; }
+      seq = list;
       lb.classList.toggle('is-one', seq.length < 2);
       var sb = w.innerWidth - d.documentElement.clientWidth;
       d.documentElement.classList.add('jfg-lock');
       if (sb > 0) d.body.style.paddingRight = sb + 'px';
       lb.hidden = false;
-      show(start, 0);
+      show(k, 0);
       requestAnimationFrame(function () { lb.classList.add('is-open'); });
       btnClose.focus({ preventScroll: true });
       d.addEventListener('keydown', onKey);
