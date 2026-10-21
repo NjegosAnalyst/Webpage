@@ -55,6 +55,12 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - Stara grana `claude/dodaci-planina-brojke` (nepovezana istorija) ostaje netaknuta kao arhiva: tamo je istorija izgleda sekcija (v1, v2… i korisnikove odluke). Na njoj su starije verzije hero-a (8. 10.) i dokumentacije; main ima novije (hero 14. 10. sadrži sve iz nje + fixDot, underHeader, stil B).
 - Redovi za Elementor: uvijek u `jahorina-home-sections/<sekcija>/elementor-html-widget.html` (pravi ih `napravi-widget.py`, puni hash + SRI).
 
+4. **Naslov unutrašnjih stranica (21. 10.)** — `jahorina-header-footer/wordpress/4-naslov-*`
+   - Umjesto velikog Betheme banera (#Subheader sa fotografijom): niska tamna traka #0A1120 (kao footer), H1 (.title) lijevo, breadcrumbs iznad, centrirana cyan linija pri dnu (ista kao vrh footera). Početna se ne dira.
+   - Na sajtu: WPCode JavaScript snippet „Jahorina naslov stranice“ (Site Wide Header) = `4-naslov-loader.js` (CSS u redu + skripta sa jsDelivr, commit + SRI).
+   - Breadcrumbs čita iz Rank Math BreadcrumbList schema (Rank Math → Breadcrumbs uključeno); bez nje „Početna › naslov“.
+   - Izmjena: `4-naslov-style.css` / `4-naslov-stranice.js` → commit + push → u loaderu novi hash + integrity.
+
 ## Sekcije početne ispod hero-a
 - Prijedlog izgleda svih sekcija: `jahorina-home-sections/index.src.html` (artifact "Jahorina početna — ispod hero-a"). Redoslijed: Danas na Jahorini → Obavještenja i vijesti → Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu. Prijedlog je polazna tačka; konačan izgled je po `TEMA.md` (premium, minimalistički, blag neumorfizam).
 
