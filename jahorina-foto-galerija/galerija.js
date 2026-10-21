@@ -6,7 +6,7 @@
    iz Medija uzme alt tekst, dimenzije i manje verzije slika (REST API) i prikaže ih:
    albumi (H2) jedan ispod drugog, mreža bez sječenja, pregled preko cijelog ekrana.
    H1 je naslov stranice u traci iznad (4-naslov) — ovdje se ne dodaje.
-   Ugradnja: Elementor HTML widget na vrhu stranice: <div id="jfg-galerija"></div> + ovaj fajl.
+   Ugradnja: Elementor HTML widget na vrhu stranice (red iz elementor-html-widget.html: napravi-widget.py).
    Opcije na <div id="jfg-galerija">: data-uvod="[:SH]…[:en]…[:]" (rečenica ispod naslova),
    data-lang="en" (jezik, ako nije /en/ adresa).
    ===================================================================== */
@@ -15,6 +15,14 @@
   function main() {
     var root = d.getElementById('jfg-galerija');
     if (root && root.__jfg) return;
+    // red widgeta sakrije originalne galerije dok se ovo ne prikaže (<style id="jfg-skrij">)
+    function unhide() { var s = d.getElementById('jfg-skrij'); if (s) s.parentNode.removeChild(s); }
+    // Elementor editor: originalni widgeti ostaju vidljivi, da se albumi mogu uređivati
+    if (d.body.classList.contains('elementor-editor-active') || /[?&]elementor-preview=/.test(location.search)) {
+      if (root) root.innerHTML = '<p style="margin:0;padding:14px 18px;border-radius:12px;background:#0A1120;color:#C4EEFF;font:500 14px/1.5 Barlow,system-ui,sans-serif">' +
+        'Foto galerija: ovdje uređuješ albume (Naslov + Basic Gallery ispod). Novi izgled se vidi na stranici.</p>';
+      return;
+    }
 
     var O = location.origin;
     var EN = /^\/en(\/|$)/i.test(location.pathname) || (root && root.getAttribute('data-lang') === 'en');
@@ -48,7 +56,7 @@
       '#R img{display:block;max-width:none;border:0;border-radius:0;box-shadow:none}',
       '#R svg{display:block;flex-shrink:0}',
       '#R a:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
-      '#R .jfg-wrap{max-width:1240px;margin:0 auto;padding:clamp(36px,4.5vw,64px) clamp(16px,4vw,48px) clamp(56px,7vw,100px)}',
+      '#R .jfg-wrap{max-width:1240px;margin:0 auto;padding:clamp(20px,2.4vw,34px) clamp(16px,4vw,48px) clamp(56px,7vw,100px)}',   /* gore: tema već daje ~45 px ispod trake naslova */
 
       /* vrh: broj fotografija (stil malog teksta iz hero-a) + uvod */
       '#R .jfg-eyebrow{display:flex;align-items:center;gap:14px;font:600 11px/1 var(--fd);letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:16px;font-variant-numeric:tabular-nums}',
@@ -220,7 +228,7 @@
       return out;
     }
     var albums = collect();
-    if (!albums.length) return;
+    if (!albums.length) { unhide(); return; }
     if (!root) {   // bez HTML widgeta: galerija ide na mjesto prve
       root = d.createElement('div'); root.id = 'jfg-galerija';
       albums[0].src[albums[0].src.length - 1].parentNode.insertBefore(root, albums[0].src[albums[0].src.length - 1]);
@@ -340,6 +348,7 @@
 
       albums.forEach(function (al) { al.src.forEach(function (n) { n.classList.add('jfg-izvor'); }); });
       d.body.classList.add('jfg-page');
+      unhide();
       [].forEach.call(root.querySelectorAll('.jfg-link img'), function (img) {
         if (img.complete && img.naturalWidth) loaded(img);
       });
@@ -456,8 +465,8 @@
       var s = Math.min(sw / W, sh / H), bw = Math.max(1, Math.round(W * s)), bh = Math.max(1, Math.round(H * s));
       fig.style.width = bw + 'px'; fig.style.height = bh + 'px';
       fig.style.left = Math.round((sw - bw) / 2) + 'px'; fig.style.top = Math.round((sh - bh) / 2) + 'px';
-      // telefon: najviše ~1080 px (brže), računar do ~2100 px
-      var dpr = w.devicePixelRatio || 1, cap = w.innerWidth <= 760 ? 1080 : 2100;
+      // telefon: najviše verzija od 1024 px (brže), računar do ~2100 px
+      var dpr = w.devicePixelRatio || 1, cap = w.innerWidth <= 760 ? 1024 : 2100;
       hi.sizes = Math.round(Math.min(bw * dpr, cap) / dpr) + 'px';
     }
     function show(k, dir) {
