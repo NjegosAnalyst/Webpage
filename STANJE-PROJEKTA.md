@@ -8,7 +8,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - Elementor je **besplatna verzija** (Posts, Loop Grid i ostali Pro widgeti su zaključani).
 - Početna stranica: **Početna zima** (`/pocetna-zima/`, EN `/en/pocetna-zima/`).
 - **Firewall hostinga (ModSecurity)** vraća "Forbidden" kad se u WPCode snima veći kod (HTML sa formom/SVG, veći JS). Zato se veći kod drži na GitHubu i učitava preko jsDelivr (vidi Header).
-- Iz cloud okruženja **ne možemo otvoriti oc-jahorina.com** (mreža blokirana) — sve se testira na simulacijama (Playwright), a korisnik šalje screenshotove.
+- Iz cloud okruženja **`oc-jahorina.com` (bez www) je blokiran, ali `https://www.oc-jahorina.com` radi** (21. 10.: HTML stranica i REST API se mogu čitati). Izgled se i dalje testira na simulacijama (Playwright), a korisnik šalje screenshotove.
 
 ## Vizuelni stil (tema hero-a)
 - Noćna fotografija Jahorine, tamne neumorfne površine, jedan akcenat **#00B9F2** (cyan).
@@ -60,6 +60,15 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
    - Na sajtu: WPCode JavaScript snippet „Jahorina naslov stranice“ (Site Wide Header) = `4-naslov-loader.js` (CSS u redu + skripta sa jsDelivr, commit + SRI).
    - Breadcrumbs čita iz Rank Math BreadcrumbList schema (Rank Math → Breadcrumbs uključeno); bez nje „Početna › naslov“.
    - Izmjena: `4-naslov-style.css` / `4-naslov-stranice.js` → commit + push → u loaderu novi hash + integrity.
+
+5. **Foto galerija (u izradi, 21. 10.)** — `jahorina-foto-galerija/` (prefiks `jfg-`, `#jfg-galerija`, pregled `#jfg-lb`)
+   - **Kako je bilo:** stranica `/foto-galerija/` (EN `/en/foto-galerija/`, Elementor stranica ID 935): jedan Elementor widget **„Basic Gallery“** (Betheme ga ispisuje kao `sc_gallery`, 8 kolona, isječeni kvadrati 150×150, siva ivica, bijela pozadina), Elementorov lightbox. **62 fotografije** (2024/11–2025/02), bez albuma; **svi alt-ovi prazni**, nazivi su imena fajlova („WhatsApp slika…“, „IMG-2025…“, „default“). H1 „Foto galerija“ / „Photo gallery“ već daje naša traka naslova (4-naslov) — galerija ne dodaje H1. Za EN „Photo **G**allery“ treba promijeniti EN naslov stranice u WordPressu.
+   - **Sajt se iz kontejnera može čitati preko `https://www.oc-jahorina.com`** (sa `www.`; bez `www.` proxy odbija). REST `/wp-json/wp/v2/media` radi; ugniježđeni `_fields` (npr. `media_details.sizes`) ne radi na ovom WP-u → traži se `_fields=id,alt_text,media_details`.
+   - **Kako radi novi kod (`galerija.js`):** fotografije se i dalje dodaju u Elementor „Basic Gallery“. Svaki takav widget = jedan album; naziv albuma = Elementor „Naslov“ (Heading) widget iznad njega (`[:SH]Skijanje[:en]Skiing[:]`). Kod pročita stavke (ID priloga iz Elementorovog `data-e-action-hash`), jednim REST pozivom uzme alt, dimenzije i verzije slika (samo verzije istog oblika: 480 `mobile-srcset`, 768, 1024, 1536, original), sakrije originalne widgete (`.jfg-izvor`) i prikaže: broj fotografija (nadnaslov iz hero-a), uvod (`data-uvod` ili ugrađen), staklene pločice albuma (filter, `#slug` u adresi), albumi kao **H2** (H2 — cyan linija — „8 fotografija“), mreža **bez sječenja** (redovi puni, visine ujednačene: `layout()` dijeli album u redove, širine u % reda, računa se samo kad se promijeni širina). Prve 4 slike bez lazy (iznad pregiba, LCP), ostale `loading="lazy"`; sve `width/height` + `srcset/sizes` (telefon dobija 480/768). Alt: iz Medija → iz HTML-a → naziv ako nije ime fajla → „<album>, Jahorina“; **prijavljeni admin** vidi narandžastu oznaku „Bez alt teksta“ na fotografijama bez alt-a u Medijima. Bez REST-a radi sa onim što je na stranici.
+   - **Pregled preko cijelog ekrana:** pun tamni sloj (#050912, bez blur-a), gore album + „3 / 62“ + zatvori, strelice (računar sa strane, telefon dole uz opis), opis = alt. Tastatura ← → Home End Esc, fokus ostaje u pregledu i vraća se na sličicu; prevlačenje lijevo/desno, prevuci dolje = zatvori, dodir van fotografije = zatvori; dugme „nazad“ na telefonu zatvara pregled (`history.pushState`). Prvo se pokaže već učitana sličica, pa oštra verzija; susjedne se učitavaju unaprijed; telefon najviše ~1080 px. Samo `transform/opacity` animacije, bez `backdrop-filter`, ništa beskonačno.
+   - **Prijedlog albuma i alt tekstova:** `albumi.json` (5 albuma: Skijanje 8, Gondola i žičare 8, Izlasci i zalasci sunca 28, Noćno skijanje 7, Panorame i staze 11; alt SR + EN za svih 62 ID-a). Alt-ove treba jednom upisati u Medije (plan: mali jednokratni PHP snippet ili ručno).
+   - **Pregled (artifact):** https://claude.ai/artifact/87m6WYwwAmfBJVU7fzxa5R — `python3 pregled/napravi-pregled.py` (prave fotografije u `pregled/img/`, nisu u gitu; ako fale, skine ih sa sajta), objaviti `pregled/index.html` + `img/*.jpg` na isti URL. Pregled je stranica kao na sajtu (traka naslova + Elementor widgeti) sa pravim `galerija.js` i simuliranim REST-om; SR/EN prekidač.
+   - **Sljedeće:** korisnikovi komentari na pregled → red za Elementor HTML widget (jsDelivr + SRI kao sekcije; stil koji sakriva originalnu galeriju dok kod ne stigne) + uputstvo (podjela na albume u Elementoru, alt u Medije) → test na sajtu (screenshot računar + telefon).
 
 ## Sekcije početne ispod hero-a
 - Prijedlog izgleda svih sekcija: `jahorina-home-sections/index.src.html` (artifact "Jahorina početna — ispod hero-a"). Redoslijed: Danas na Jahorini → Obavještenja i vijesti → Događaji → Uživaj i van staze → Planina u brojkama → Pratite Jahorinu. Prijedlog je polazna tačka; konačan izgled je po `TEMA.md` (premium, minimalistički, blag neumorfizam).
@@ -117,4 +126,5 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 ## Linkovi
 - Repo: https://github.com/NjegosAnalyst/Webpage (grana `main`, javan)
 - Pregled vijesti (artifact): https://claude.ai/artifact/YVHQy2joUTm9avVS1mP3Wv
+- Pregled foto galerije (artifact): https://claude.ai/artifact/87m6WYwwAmfBJVU7fzxa5R
 - Društvene mreže: FB https://www.facebook.com/JahorinaOC/?locale=sr_RS · YT https://www.youtube.com/@jahorinaoc · IG https://www.instagram.com/jahorina/ · TikTok https://www.tiktok.com/@jahorinaoc
