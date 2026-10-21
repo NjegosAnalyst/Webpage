@@ -25,14 +25,14 @@
     var PREGLED = !!(root && root.hasAttribute('data-pregled'));
     var CHANNEL = 'https://www.youtube.com/@jahorinaoc';
     var T = EN ? {
-      eyebrow: 'Jahorina in motion', all: 'All videos', latest: 'Latest video', group: 'Videos from Jahorina',
-      intro: 'Videos from Olympic Mountain Jahorina: the slopes, the lifts, events and the atmosphere of the mountain.',
+      eyebrow: 'Jahorina in motion', all: 'Videos', group: 'Videos from Jahorina',
+      intro: 'Experience Jahorina through videos that bring the best moments from the mountain – from skiing on groomed slopes and panoramic lift rides to summer adventures, sports events and the unique atmosphere of Olympic Centre Jahorina.',
       watch: 'Watch video', yt: 'YouTube channel', more: 'More videos on our YouTube channel', follow: 'Follow us on YouTube',
       play: 'Play video', video: 'Video', viewer: 'Video player', close: 'Close', prev: 'Previous video', next: 'Next video', of: 'of',
       noPlay: 'Preview: the YouTube video plays here on the website.'
     } : {
-      eyebrow: 'Jahorina u pokretu', all: 'Svi video zapisi', latest: 'Najnoviji video', group: 'Video zapisi sa Jahorine',
-      intro: 'Video zapisi sa Olimpijske planine Jahorina: staze, žičare, događaji i atmosfera planine.',
+      eyebrow: 'Jahorina u pokretu', all: 'Video', group: 'Video zapisi sa Jahorine',
+      intro: 'Doživite Jahorinu kroz video zapise koji donose najbolje trenutke sa planine – od skijanja na uređenim stazama i panoramskih vožnji žičarama do ljetnjih avantura, sportskih događaja i jedinstvene atmosfere Olimpijskog centra Jahorina.',
       watch: 'Pogledaj video', yt: 'YouTube kanal', more: 'Više video zapisa na našem YouTube kanalu', follow: 'Pratite nas na YouTube-u',
       play: 'Pusti video', video: 'Video', viewer: 'Video plejer', close: 'Zatvori', prev: 'Prethodni video', next: 'Sljedeći video', of: 'od',
       noPlay: 'Pregled: ovdje se na sajtu pušta YouTube video.'
@@ -82,8 +82,7 @@
       '#R .jvg-feat .jvg-thumb{border-radius:20px}',
       '#R .jvg-feat .jvg-play{width:76px;height:76px;margin:-38px 0 0 -38px}',
       '#R .jvg-feat .jvg-play svg{width:28px;height:28px}',
-      '#R .jvg-feat h2{font-size:clamp(24px,2.4vw,32px)!important;line-height:1.15!important;margin-top:14px!important}',
-      '#R .jvg-kick{font:600 11px/1 var(--fd);letter-spacing:3px;text-transform:uppercase;color:#9BE6FF}',
+      '#R .jvg-feat h2{font-size:clamp(24px,2.4vw,32px)!important;line-height:1.15!important}',
       '#R .jvg-acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}',
       /* dugmad iz hero-a: glavno cyan, sporedno staklo */
       '#R .jvg-cta,#R .jvg-more{all:unset;box-sizing:border-box!important;display:inline-flex!important;align-items:center;gap:10px;height:48px;padding:0 18px!important;border-radius:16px!important;cursor:pointer;',
@@ -111,7 +110,7 @@
       '@media (max-width:760px){',
       '#R .jvg-eyebrow{letter-spacing:4px;font-size:10.5px}',
       '#R h2{font-size:22px!important}',
-      '#R .jvg-feat h2{font-size:21px!important;margin-top:10px!important}',
+      '#R .jvg-feat h2{font-size:21px!important}',
       '#R .jvg-feat .jvg-thumb{border-radius:14px}',
       '#R .jvg-feat .jvg-play{width:62px;height:62px;margin:-31px 0 0 -31px}',
       '#R .jvg-acts{margin-top:18px}',
@@ -246,7 +245,7 @@
     var intro = clean(pickLang(root.getAttribute('data-uvod') || '')) || T.intro;
     var h = '<div class="jvg-wrap"><div class="jvg-top"><div class="jvg-eyebrow">' + esc(T.eyebrow) + '</div><p class="jvg-intro">' + esc(intro) + '</p></div>' +
       '<section class="jvg-feat" aria-labelledby="jvg-h-feat">' + thumb(feat, true, true) +
-      '<div><div class="jvg-kick">' + esc(T.latest) + '</div><h2 id="jvg-h-feat">' + titleHtml(feat) + '</h2>' +
+      '<div><h2 id="jvg-h-feat">' + titleHtml(feat) + '</h2>' +
       '<div class="jvg-acts"><button type="button" class="jvg-cta" data-k="0">' + esc(T.watch) + '</button>' +
       '<a class="jvg-more" href="' + CHANNEL + '" target="_blank" rel="noopener">' + ICON.yt + esc(T.yt) + '</a></div></div></section><div class="jvg-groups">';
     groups.forEach(function (g, gi) {
