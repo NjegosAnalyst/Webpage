@@ -596,13 +596,14 @@
   }
   /* ===== Prognoza (telefon): kompaktna vodoravna traka ispod dugmadi headera — sada + 3 dana, bez zamućenja pozadine ===== */
   @media (max-width:760px){
-    .jh-wx{right:14px;gap:9px;padding:6px 10px 6px 9px;border-radius:15px;
+    /* iste širine kao traka dugmadi dole: naslov je uokviren sa dvije jednake trake */
+    .jh-wx{left:max(14px,calc(50% - 220px));right:max(14px,calc(50% - 220px));justify-content:space-between;gap:8px;padding:7px 11px 7px 10px;border-radius:18px;
       -webkit-backdrop-filter:none;backdrop-filter:none;background:linear-gradient(180deg,rgba(18,27,45,.84),rgba(9,14,26,.92))}
     .jh-wx__now{gap:5px}
     .jh-wx__ico svg{width:21px;height:21px}
     .jh-wx__t{font-size:18px;letter-spacing:-.3px}
     .jh-wx__meta{display:none}
-    .jh-wx__days{gap:0;padding-left:5px}
+    .jh-wx__days{flex:1 1 auto;justify-content:space-evenly;gap:0;padding-left:4px}
     .jh-wx__day{flex-direction:row;gap:3px;min-width:0;padding:0 4px}
     .jh-wx__dn{font-size:7.5px;letter-spacing:.6px}
     .jh-wx__di svg{width:15px;height:15px}
@@ -613,7 +614,7 @@
     .jh-wx__src-l{display:none}
     .jh-wx__src-s{display:inline}
   }
-  @media (max-width:360px){
+  @media (max-width:340px){
     .jh-wx__day:nth-child(3){display:none}
   }
 

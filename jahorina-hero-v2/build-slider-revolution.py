@@ -80,6 +80,7 @@ SR_LAYOUT = """
   .jh-hero .jh-kicker,.jh-hero .jh-kicker > span,.jh-hero .jh-title,.jh-hero .jh-title > span{text-align:center!important}
   .jh-hero .jh-title > span.jh-ice{display:table!important;width:auto!important;margin-left:auto!important;margin-right:auto!important;left:auto!important;right:auto!important;float:none!important}
   .jh-hero .jh-quick{left:max(14px,calc(50% - 220px))!important;right:max(14px,calc(50% - 220px))!important;width:auto!important;max-width:none!important;margin:0!important}
+  .jh-hero .jh-wx{left:max(14px,calc(50% - 220px))!important;right:max(14px,calc(50% - 220px))!important;width:auto!important;margin:0!important}   /* prognoza: ista širina kao traka dugmadi */
   .jh-hero .jh-quick__item svg{width:19px;height:19px}
   .jh-hero .jh-quick__item--accent .jh-quick__l2{display:inline!important}   /* telefon: "WEB SHOP · SKI KARTE" u jednom redu */
 }
