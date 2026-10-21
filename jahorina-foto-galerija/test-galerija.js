@@ -17,6 +17,12 @@ fs.mkdirSync(OUT, { recursive: true });
 
 // stranica kao poslije snippeta: jedan Basic Gallery → HTML widget + 5 × (Naslov + Basic Gallery)
 function preuredi(html) {
+  // stranica je već preuređena snippetom (21. 10.): samo se red widgeta zamijeni probnim
+  const i0 = html.indexOf('<style id="jfg-skrij">');
+  if (i0 > -1) {
+    const i1 = html.indexOf('</script>', i0) + 9;
+    return { html: html.slice(0, i0) + LINE + html.slice(i1), count: (html.match(/<dl class='gallery-item'/g) || []).length };
+  }
   const mark = 'elementor-widget elementor-widget-image-gallery';
   const at = html.indexOf(mark);
   if (at < 0) throw new Error('na stranici nema Basic Gallery widgeta');
@@ -83,7 +89,7 @@ function ok(cond, msg) { if (!cond) fails.push(msg); console.log((cond ? '  ✓ 
         n: imgs.length, alt: imgs.filter(i => i.alt.trim().length > 8).length, rawTags: imgs.filter(i => /\[:/.test(i.alt)).length,
         lazy: imgs.filter(i => i.loading === 'lazy').length, dim: imgs.filter(i => +i.getAttribute('width') > 0 && +i.getAttribute('height') > 0).length,
         srcset: imgs.filter(i => /480w/.test(i.srcset)).length, alt0: imgs[0] && imgs[0].alt,
-        izvor: document.querySelectorAll('.jfg-izvor').length, skrij: !!document.getElementById('jfg-skrij'),
+        srcLeft: document.querySelectorAll('.elementor-widget-image-gallery, .elementor-widget-heading').length, skrij: !!document.getElementById('jfg-skrij'),
         visibleSrc: [...document.querySelectorAll('.elementor-widget-image-gallery, .elementor-widget-heading')].filter(e => e.offsetParent).length,
         overflow: document.documentElement.scrollWidth - innerWidth, left: Math.round(g.left), width: Math.round(g.width), vw: document.documentElement.clientWidth,
         bg: getComputedStyle(document.getElementById('Content') || document.body).backgroundColor,
@@ -97,7 +103,7 @@ function ok(cond, msg) { if (!cond) fails.push(msg); console.log((cond ? '  ✓ 
     ok(!s.h2out.length, 'nema drugih vidljivih H2 van galerije ' + JSON.stringify(s.h2out));
     ok(s.n === 62 && s.alt === 62 && !s.rawTags, 'svih 62 slika sa alt-om (bez [: oznaka): ' + s.alt + ' · „' + s.alt0 + '“');
     ok(s.lazy === 58 && s.dim === 62 && s.srcset === 62, 'lazy ' + s.lazy + '/58 (prve 4 odmah), width/height ' + s.dim + ', srcset ' + s.srcset + ' · ' + s.first.join(', '));
-    ok(s.izvor === 10 && !s.skrij && !s.visibleSrc, 'originalni widgeti sakriveni, #jfg-skrij uklonjen');
+    ok(!s.srcLeft && !s.skrij, 'originalni widgeti uklonjeni iz stranice, #jfg-skrij uklonjen');
     ok(s.overflow <= 0 && Math.abs(s.left) <= 1 && Math.abs(s.width - s.vw) <= 1, 'puna širina, bez bočnog skrolovanja (' + s.left + ', ' + s.width + '/' + s.vw + ')');
     ok(s.rowsFull, 'svi redovi puni do desne ivice');
     ok(s.bg === 'rgb(10, 17, 32)', 'pozadina sadržaja tamna: ' + s.bg);

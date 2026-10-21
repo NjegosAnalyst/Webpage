@@ -117,15 +117,15 @@ __WIDGETS__
 <script>
 (function () {
   var d = document, KOD = d.getElementById('pg-kod').textContent;
+  var WRAP = d.querySelector('.elementor-widget-wrap'), IZVOR = WRAP.innerHTML;   // galerija.js ukloni originalne widgete — za drugi jezik se vrate
   var TXT = { sr: { h1: 'Foto galerija', home: 'Početna', note: 'Pregled: prave fotografije sa sajta, albumi i alt tekstovi su prijedlog. Na sajtu fotografije i dalje dodaješ u Elementor widget „Basic Gallery“.' },
               en: { h1: 'Photo Gallery', home: 'Home', note: 'Preview: real photos from the site; albums and alt texts are a proposal.' } };
   function run(lang) {
-    var old = d.getElementById('jfg-galerija'), lb = d.getElementById('jfg-lb');
+    var lb = d.getElementById('jfg-lb');
     if (lb) lb.remove();
-    [].forEach.call(d.querySelectorAll('.jfg-izvor'), function (n) { n.classList.remove('jfg-izvor'); });
-    var root = d.createElement('div'); root.id = 'jfg-galerija';
+    WRAP.innerHTML = IZVOR;
+    var root = d.getElementById('jfg-galerija');
     if (lang === 'en') root.setAttribute('data-lang', 'en');
-    old.replaceWith(root);
     d.documentElement.lang = lang === 'en' ? 'en' : 'sr';
     d.getElementById('pg-h1').textContent = TXT[lang].h1;
     d.getElementById('pg-home').textContent = TXT[lang].home;

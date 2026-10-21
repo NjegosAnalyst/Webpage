@@ -27,13 +27,13 @@
     var O = location.origin;
     var EN = /^\/en(\/|$)/i.test(location.pathname) || (root && root.getAttribute('data-lang') === 'en');
     var T = EN ? {
-      photos: ['photo', 'photos', 'photos'], albums: ['album', 'albums', 'albums'],
-      intro: 'Winter on Olympic Mountain Jahorina: slopes, lifts, the sea of clouds at sunset and night skiing.',
+      photos: ['photo', 'photos', 'photos'], eyebrow: 'Winter magic of Jahorina',
+      intro: 'Experience the winter magic of Jahorina through photos of snowy slopes, panoramic lift rides, a sea of clouds above the mountain peaks and the special atmosphere of night skiing.',
       album: 'Photos from Jahorina', viewer: 'Photo viewer', close: 'Close', prev: 'Previous photo', next: 'Next photo',
       noAlt: 'No alt text', of: 'of'
     } : {
-      photos: ['fotografija', 'fotografije', 'fotografija'], albums: ['album', 'albuma', 'albuma'],
-      intro: 'Zima na Olimpijskoj planini Jahorina: staze, žičare, more oblaka u zalazak sunca i noćno skijanje.',
+      photos: ['fotografija', 'fotografije', 'fotografija'], eyebrow: 'Zimska čarolija Jahorine',
+      intro: 'Doživite zimsku čaroliju Jahorine kroz fotografije koje prikazuju snježne staze, panoramske vožnje žičarama, more oblaka iznad planinskih vrhova i posebnu atmosferu noćnog skijanja.',
       album: 'Fotografije sa Jahorine', viewer: 'Pregled fotografija', close: 'Zatvori', prev: 'Prethodna fotografija', next: 'Sljedeća fotografija',
       noAlt: 'Bez alt teksta', of: 'od'
     };
@@ -56,9 +56,9 @@
       '#R img{display:block;max-width:none;border:0;border-radius:0;box-shadow:none}',
       '#R svg{display:block;flex-shrink:0}',
       '#R a:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
-      '#R .jfg-wrap{max-width:1240px;margin:0 auto;padding:clamp(20px,2.4vw,34px) clamp(16px,4vw,48px) clamp(56px,7vw,100px)}',   /* gore: tema već daje ~45 px ispod trake naslova */
+      '#R .jfg-wrap{max-width:1240px;margin:0 auto;padding:clamp(20px,2.4vw,34px) clamp(16px,4vw,48px) clamp(40px,5vw,72px)}',   /* gore: tema već daje ~45 px ispod trake naslova */
 
-      /* vrh: broj fotografija (stil malog teksta iz hero-a) + uvod */
+      /* vrh: nadnaslov (stil malog teksta iz hero-a) + uvod */
       '#R .jfg-eyebrow{display:flex;align-items:center;gap:14px;font:600 11px/1 var(--fd);letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:16px;font-variant-numeric:tabular-nums}',
       '#R .jfg-eyebrow::before{content:"";width:34px;height:1.5px;flex-shrink:0;background:linear-gradient(90deg,var(--accent),#fff,var(--accent));box-shadow:0 0 10px rgba(0,185,242,.8)}',
       '#R .jfg-intro{max-width:62ch;color:var(--text-2);font-size:clamp(16px,1.3vw,18px);line-height:1.6;text-wrap:pretty}',
@@ -237,7 +237,9 @@
 
     if (!d.getElementById('jfg-css')) {
       var st = d.createElement('style'); st.id = 'jfg-css'; st.textContent = CSS + '\n' + LCSS +
-        '\n.jfg-izvor{display:none!important}\nbody.jfg-page #Content{background:#0A1120!important}';
+        '\n.jfg-izvor{display:none!important}' +
+      // bijela traka iznad footera: tema ispod sadržaja pokazuje bijelu pozadinu #Wrapper / html
+      '\nhtml.jfg-page,html.jfg-page body,body.jfg-page #Wrapper,body.jfg-page #Content{background:#0A1120!important}';
       (d.head || d.documentElement).appendChild(st);
     }
     if (!d.querySelector('link[href*="family=Archivo"][href*="family=Barlow"]')) {
@@ -313,10 +315,10 @@
         while (used[s]) s += '-2';
         used[s] = 1; al.slug = s;
       });
-      var total = albums.reduce(function (n, al) { return n + al.items.length; }, 0), multi = albums.length > 1, first = true;
+      var first = true;
       var intro = clean(pickLang(root.getAttribute('data-uvod') || '')) || T.intro;
       var h = '<div class="jfg-wrap"><div class="jfg-top">' +
-        '<div class="jfg-eyebrow">' + total + ' ' + plural(total, T.photos) + (multi ? ' · ' + albums.length + ' ' + plural(albums.length, T.albums) : '') + '</div>' +
+        '<div class="jfg-eyebrow">' + esc(T.eyebrow) + '</div>' +
         '<p class="jfg-intro">' + esc(intro) + '</p></div>';
       h += '<div class="jfg-albums">';
       albums.forEach(function (al) {
@@ -346,8 +348,9 @@
       root.innerHTML = h;
       list.forEach(function (it, i) { it.el = root.querySelector('.jfg-link[data-k="' + i + '"]'); });
 
-      albums.forEach(function (al) { al.src.forEach(function (n) { n.classList.add('jfg-izvor'); }); });
-      d.body.classList.add('jfg-page');
+      // originalni widgeti se uklone (ne samo sakriju): bez duplih H2 i duplih linkova na slike za Google
+      albums.forEach(function (al) { al.src.forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); }); });
+      d.body.classList.add('jfg-page'); d.documentElement.classList.add('jfg-page');
       unhide();
       [].forEach.call(root.querySelectorAll('.jfg-link img'), function (img) {
         if (img.complete && img.naturalWidth) loaded(img);
