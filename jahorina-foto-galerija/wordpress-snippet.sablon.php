@@ -6,6 +6,7 @@
    3) upiše alt tekstove (SR + EN) fotografijama koje ga nemaju (postojeći alt se ne dira),
    4) EN naslov „Photo gallery“ → „Photo Gallery“.
    Podaci se čitaju sa GitHuba (commit __COMMIT__), provjereni SHA-256.
+   Ako su albumi obrisani sa stranice, napravi ih ponovo iz rezervne kopije (verzija 2).
    Kad se pojavi zelena poruka „Foto galerija: urađeno“, snippet DEAKTIVIRAJ.
    Vraćanje stranice na staro: $jfg_vrati = true; → Save → otvori admin → deaktiviraj. */
 $jfg_vrati  = false;
@@ -54,12 +55,12 @@ add_action( 'admin_init', function () use ( $jfg_vrati, $jfg_commit, $jfg_sha ) 
 			$msg( 'stranica je već vraćena na staro. Snippet deaktiviraj.' );
 		} else {
 			$save( $old );
-			delete_option( 'jfg_galerija_v1' );
+			delete_option( 'jfg_galerija_v2' );
 			$msg( 'stranica vraćena na staro (jedna galerija). Snippet deaktiviraj.' );
 		}
 		return;
 	}
-	if ( get_option( 'jfg_galerija_v1' ) ) {
+	if ( get_option( 'jfg_galerija_v2' ) ) {
 		return;
 	}
 
@@ -91,8 +92,13 @@ add_action( 'admin_init', function () use ( $jfg_vrati, $jfg_commit, $jfg_sha ) 
 	$page_ok = false;   // dok stranica nije preuređena, snippet pokušava ponovo pri svakom otvaranju admina
 
 	/* 1–2) stranica: Basic Gallery → HTML widget + albumi (Naslov H2 + Basic Gallery) */
+	// ako su albumi (Basic Gallery widgeti) obrisani sa stranice, kreće se od rezervne kopije (originalna galerija)
+	$has_gal = false !== strpos( $json, '"image-gallery"' );
+	if ( ! $has_gal && get_option( 'jfg_rezerva_elementor' ) ) {
+		$json = (string) get_option( 'jfg_rezerva_elementor' );
+	}
 	$doc = json_decode( $json, true );
-	if ( false !== strpos( $json, 'jfg-galerija' ) ) {
+	if ( $has_gal && false !== strpos( $json, 'jfg-galerija' ) ) {
 		$done[]  = 'stranica je već preuređena';
 		$page_ok = true;
 	} elseif ( ! is_array( $doc ) ) {
@@ -189,7 +195,7 @@ add_action( 'admin_init', function () use ( $jfg_vrati, $jfg_commit, $jfg_sha ) 
 	}
 
 	if ( $page_ok ) {
-		update_option( 'jfg_galerija_v1', current_time( 'mysql' ), false );
+		update_option( 'jfg_galerija_v2', current_time( 'mysql' ), false );
 		$msg( 'urađeno — ' . implode( ', ', $done ) . '. Snippet sada deaktiviraj, pa otvori stranicu Foto galerija.' );
 	}
 } );

@@ -90,12 +90,21 @@ ok( $before === $meta && ! $fetched && '' === trim( $out ), 'bez promjena, bez p
 echo "pogrešan SHA (podmetnut fajl)\n";
 $m2 = $meta; $o2 = $options; $options = array(); $meta[935]['_elementor_data'] = $orig;
 $out = run( str_replace( hash( 'sha256', $FILES['albumi.json'] ), str_repeat( '0', 64 ), $src ) );
-ok( $meta[935]['_elementor_data'] === $orig && false !== strpos( $out, 'nisu stigli' ) && ! isset( $options['jfg_galerija_v1'] ), 'stranica nije mijenjana, poruka o grešci, pokušaće ponovo' );
+ok( $meta[935]['_elementor_data'] === $orig && false !== strpos( $out, 'nisu stigli' ) && ! isset( $options['jfg_galerija_v2'] ), 'stranica nije mijenjana, poruka o grešci, pokušaće ponovo' );
 $meta = $m2; $options = $o2;
+
+echo "albumi obrisani u Elementoru (ostao samo HTML widget) → ponovo iz rezerve\n";
+$only = array( array( 'id' => 'c83dac7', 'elType' => 'section', 'settings' => array(), 'elements' => array( array( 'id' => 'aaa1111', 'elType' => 'column', 'settings' => array(),
+	'elements' => array( $col[0] ), 'isInner' => false ) ), 'isInner' => false ) );
+$meta[935]['_elementor_data'] = json_encode( $only ); unset( $options['jfg_galerija_v2'] );
+$out = run( $src );
+$c2  = json_decode( $meta[935]['_elementor_data'], true )[0]['elements'][0]['elements'];
+ok( 13 === count( $c2 ) && 'html' === $c2[0]['widgetType'] && 'image-gallery' === $c2[2]['widgetType'] && $options['jfg_rezerva_elementor'] === $orig && false !== strpos( $out, 'urađeno' ),
+	'albumi ponovo napravljeni iz rezerve (' . count( $c2 ) . ' widgeta), rezerva ostala originalna' );
 
 echo "vraćanje na staro\n";
 $out = run( str_replace( '$jfg_vrati  = false;', '$jfg_vrati  = true;', $src ) );
-ok( $meta[935]['_elementor_data'] === $orig && false !== strpos( $out, 'vraćena' ) && ! isset( $options['jfg_galerija_v1'] ), 'stranica vraćena na original' );
+ok( $meta[935]['_elementor_data'] === $orig && false !== strpos( $out, 'vraćena' ) && ! isset( $options['jfg_galerija_v2'] ), 'stranica vraćena na original' );
 
 echo $fails ? "\nNEUSPJELO: $fails\n" : "\nSVE OK\n";
 exit( $fails ? 1 : 0 );

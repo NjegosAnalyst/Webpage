@@ -5,14 +5,15 @@
    2) Basic Gallery podijeli u 5 albuma (Naslov H2 + Basic Gallery), a na vrh doda HTML widget galerije,
    3) upiše alt tekstove (SR + EN) fotografijama koje ga nemaju (postojeći alt se ne dira),
    4) EN naslov „Photo gallery“ → „Photo Gallery“.
-   Podaci se čitaju sa GitHuba (commit 1166bfec9e5344d30afaf1269f21745761d1ae7b), provjereni SHA-256.
+   Podaci se čitaju sa GitHuba (commit a96ba20bd4a92ef119f802278f435d3a306cd115), provjereni SHA-256.
+   Ako su albumi obrisani sa stranice, napravi ih ponovo iz rezervne kopije (verzija 2).
    Kad se pojavi zelena poruka „Foto galerija: urađeno“, snippet DEAKTIVIRAJ.
    Vraćanje stranice na staro: $jfg_vrati = true; → Save → otvori admin → deaktiviraj. */
 $jfg_vrati  = false;
-$jfg_commit = '1166bfec9e5344d30afaf1269f21745761d1ae7b';
+$jfg_commit = 'a96ba20bd4a92ef119f802278f435d3a306cd115';
 $jfg_sha    = array(
 	'albumi' => '7cf9a524a847b362100e43b88f1c608b4a6639108c936c487ec5a040553d8146',
-	'red'    => '155d1a3600a898b01e80fee4767b883eaeb7b1c7cadd06846f6f0585b6f0f0a7',
+	'red'    => '659145f72ce1c74daf623946e973511d8f03895f5ef5d32ce4b7e15718d99069',
 );
 
 add_action( 'admin_init', function () use ( $jfg_vrati, $jfg_commit, $jfg_sha ) {
@@ -54,12 +55,12 @@ add_action( 'admin_init', function () use ( $jfg_vrati, $jfg_commit, $jfg_sha ) 
 			$msg( 'stranica je već vraćena na staro. Snippet deaktiviraj.' );
 		} else {
 			$save( $old );
-			delete_option( 'jfg_galerija_v1' );
+			delete_option( 'jfg_galerija_v2' );
 			$msg( 'stranica vraćena na staro (jedna galerija). Snippet deaktiviraj.' );
 		}
 		return;
 	}
-	if ( get_option( 'jfg_galerija_v1' ) ) {
+	if ( get_option( 'jfg_galerija_v2' ) ) {
 		return;
 	}
 
@@ -91,8 +92,13 @@ add_action( 'admin_init', function () use ( $jfg_vrati, $jfg_commit, $jfg_sha ) 
 	$page_ok = false;   // dok stranica nije preuređena, snippet pokušava ponovo pri svakom otvaranju admina
 
 	/* 1–2) stranica: Basic Gallery → HTML widget + albumi (Naslov H2 + Basic Gallery) */
+	// ako su albumi (Basic Gallery widgeti) obrisani sa stranice, kreće se od rezervne kopije (originalna galerija)
+	$has_gal = false !== strpos( $json, '"image-gallery"' );
+	if ( ! $has_gal && get_option( 'jfg_rezerva_elementor' ) ) {
+		$json = (string) get_option( 'jfg_rezerva_elementor' );
+	}
 	$doc = json_decode( $json, true );
-	if ( false !== strpos( $json, 'jfg-galerija' ) ) {
+	if ( $has_gal && false !== strpos( $json, 'jfg-galerija' ) ) {
 		$done[]  = 'stranica je već preuređena';
 		$page_ok = true;
 	} elseif ( ! is_array( $doc ) ) {
@@ -189,7 +195,7 @@ add_action( 'admin_init', function () use ( $jfg_vrati, $jfg_commit, $jfg_sha ) 
 	}
 
 	if ( $page_ok ) {
-		update_option( 'jfg_galerija_v1', current_time( 'mysql' ), false );
+		update_option( 'jfg_galerija_v2', current_time( 'mysql' ), false );
 		$msg( 'urađeno — ' . implode( ', ', $done ) . '. Snippet sada deaktiviraj, pa otvori stranicu Foto galerija.' );
 	}
 } );
