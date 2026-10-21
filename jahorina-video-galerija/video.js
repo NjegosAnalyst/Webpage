@@ -26,13 +26,13 @@
     var CHANNEL = 'https://www.youtube.com/@jahorinaoc';
     var T = EN ? {
       eyebrow: 'Jahorina in motion', all: 'Videos', group: 'Videos from Jahorina',
-      intro: 'Experience Jahorina through videos that bring the best moments from the mountain – from skiing on groomed slopes and panoramic lift rides to summer adventures, sports events and the unique atmosphere of Olympic Centre Jahorina.',
+      intro: 'Experience Jahorina through videos that bring the best moments from the mountain – from skiing on groomed slopes and panoramic lift rides to summer adventures, sports events and the unique atmosphere of Olympic Mountain Jahorina.',
       watch: 'Watch video', yt: 'YouTube channel', more: 'More videos on our YouTube channel', follow: 'Follow us on YouTube',
       play: 'Play video', video: 'Video', viewer: 'Video player', close: 'Close', prev: 'Previous video', next: 'Next video', of: 'of',
       noPlay: 'Preview: the YouTube video plays here on the website.'
     } : {
       eyebrow: 'Jahorina u pokretu', all: 'Video', group: 'Video zapisi sa Jahorine',
-      intro: 'Doživite Jahorinu kroz video zapise koji donose najbolje trenutke sa planine – od skijanja na uređenim stazama i panoramskih vožnji žičarama do ljetnjih avantura, sportskih događaja i jedinstvene atmosfere Olimpijskog centra Jahorina.',
+      intro: 'Doživite Jahorinu kroz video zapise koji donose najbolje trenutke sa planine – od skijanja na uređenim stazama i panoramskih vožnji žičarama do ljetnjih avantura, sportskih događaja i jedinstvene atmosfere Olimpijske planine Jahorina.',
       watch: 'Pogledaj video', yt: 'YouTube kanal', more: 'Više video zapisa na našem YouTube kanalu', follow: 'Pratite nas na YouTube-u',
       play: 'Pusti video', video: 'Video', viewer: 'Video plejer', close: 'Zatvori', prev: 'Prethodni video', next: 'Sljedeći video', of: 'od',
       noPlay: 'Pregled: ovdje se na sajtu pušta YouTube video.'
