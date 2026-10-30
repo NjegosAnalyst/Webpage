@@ -140,12 +140,12 @@ const info = (p) => p.evaluate(() => {
   return {
     h1: document.querySelectorAll('h1').length, h3: r.querySelectorAll('h3').length, vHidden: [...r.querySelectorAll('.jpb-v')].every((v) => v.getAttribute('aria-hidden') === 'true'),
     alt: q('.jpb-ph img').alt, lazy: window.__lazy, dims: q('.jpb-ph img').getAttribute('width') + 'x' + q('.jpb-ph img').getAttribute('height'),
-    eyeLs: cs(q('.jpb-eye')).letterSpacing, eyeCol: cs(q('.jpb-eye')).color,
+    eye: !!q('.jpb-eye'), subFs: cs(q('.jpb-s')).fontSize, subTt: cs(q('.jpb-s')).textTransform,
     backBlur: cs(q('.jpb-back')).backdropFilter || cs(q('.jpb-back')).webkitBackdropFilter || 'none', imgFilter: cs(q('.jpb-ph img')).filter, tintBlend: cs(q('.jpb-tint')).mixBlendMode,
-    nums, eyebrow: q('.jpb-eye').textContent, h2: q('h2').textContent, lead: q('.jpb-lead').textContent,
+    nums, h2: q('h2').textContent, lead: q('.jpb-lead').textContent,
     why: q('.jpb-why') ? q('.jpb-why').textContent : '', link: q('.jpb-link') ? q('.jpb-link').textContent.trim() : '',
     rootW: r.getBoundingClientRect().width, rootL: r.getBoundingClientRect().left, docW: document.documentElement.clientWidth, scrollW: document.documentElement.scrollWidth,
-    frameL: fr.left, frameW: fr.width, frameH: fr.height, frameTop: fr.top - r.getBoundingClientRect().top, bodyL: q('.jpb-eye').getBoundingClientRect().left, bodyR: body.right, bodyB: body.bottom, frameB: fr.bottom, phL: ph.left, phTop: ph.top, phH: ph.height,
+    frameL: fr.left, frameW: fr.width, frameH: fr.height, frameTop: fr.top - r.getBoundingClientRect().top, bodyL: q('h2').getBoundingClientRect().left, bodyR: body.right, bodyB: body.bottom, frameB: fr.bottom, phL: ph.left, phTop: ph.top, phH: ph.height,
     h2Color: cs(q('h2 span')).color, h2Font: cs(q('h2')).fontFamily, oStroke: cs(q('h2 .jpb-o')).webkitTextStrokeWidth,
     vFont: cs(q('.jpb-v')).fontFamily, vSize: parseFloat(cs(q('.jpb-v')).fontSize), liStyle: cs(q('.jpb-num')).listStyleType,
     lamp: [q('.jpb-ph').style.getPropertyValue('--lx'), q('.jpb-ph').style.getPropertyValue('--ly')], lampOp: +cs(q('.jpb-lamp')).opacity,
@@ -181,8 +181,8 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   check('SEO: 0 × H1, H2 „Olimpijska planina“, 4 × H3, cifre u sjedištu aria-hidden', i.h1 === 0 && i.h2 === 'Olimpijska planina' && i.h3 === 4 && i.vHidden, [i.h1, i.h2, i.h3, i.vHidden]);
   check('SEO: slika alt (Olimpijska planina Jahorina), lazy u HTML-u (predučitavanje ga prebaci), width/height', /Olimpijskoj planini Jahorina/.test(i.alt) && /loading="lazy"/.test(fs.readFileSync(path.join(__dirname, 'brojke.js'), 'utf8')) && i.dims === '2000x1334', [i.alt, i.lazy, i.dims]);
   check('SEO: uvod sa „ski centra Jahorina“', /ski centra Jahorina/.test(i.lead), i.lead);
-  check('nadnaslov = mali tekst hero-a (5 px, .75)', i.eyeLs === '5px' && /0\.75\)$/.test(i.eyeCol), [i.eyeLs, i.eyeCol]);
-  check('nadnaslov i naslov', i.eyebrow === 'Planina u brojkama' && i.h2 === 'Olimpijska planina', [i.eyebrow, i.h2]);
+  check('bez nadnaslova (kao novi hero / vijesti), naslov „Olimpijska planina“', !i.eye && i.h2 === 'Olimpijska planina', [i.eye, i.h2]);
+  check('natpisi ispod brojki obična slova, ≥ 12 px', i.subTt === 'none' && parseFloat(i.subFs) >= 12, [i.subTt, i.subFs]);
   check('uvod bez brojki (ne ponavlja podatke)', !/\d/.test(i.lead), i.lead);
   check('puna širina ekrana bez horizontalnog skrola', Math.abs(i.rootW - i.docW) < 1 && i.rootL === 0 && i.scrollW <= i.docW, [i.rootW, i.docW, i.scrollW]);
   check('kadar: rub kao hero (22 px)', Math.abs(i.frameL - 22) < 1.5, i.frameL);
@@ -283,7 +283,7 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   console.log('\n8) EN (/en/), qTranslate');
   r = await open(browser, { path: '/en/pocetna-zima/', wp: 'en' });
   i = await info(r.p);
-  check('EN tekst', i.eyebrow === 'The mountain in numbers' && i.h2 === 'An Olympic mountain', [i.eyebrow, i.h2]);
+  check('EN tekst', i.h2 === 'An Olympic mountain', i.h2);
   check('EN brojke iz /en/wp-json', NUMS(i) === '54 km | 18 | 10 | 600 m' && r.rest[0].startsWith('/en/wp-json/'), [NUMS(i), r.rest[0]]);
   await r.ctx.close();
   r = await open(browser, { path: '/en/pocetna-zima/', wp: 'qtranslate' });

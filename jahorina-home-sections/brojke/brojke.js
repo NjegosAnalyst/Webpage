@@ -49,7 +49,7 @@
 
   // naslov, uvod i natpisi su dizajn (brojke su sa stranice); EN je prevod
   var T = EN ? {
-    aria: 'The mountain in numbers', eyebrow: 'The mountain in numbers', h: ['An Olympic', 'mountain'],
+    aria: 'The mountain in numbers', h: ['An Olympic', 'mountain'],
     lead: 'Jahorina ski resort slopes are groomed to FIS standards, from the first morning run to night skiing under the floodlights.',
     km: { u: 'km', l: 'of alpine ski slopes', s: 'Groomed to FIS standards' },
     zicare: { u: '', l: 'lifts and ski tows', s: 'Vertical transport' },
@@ -58,7 +58,7 @@
     photo: 'Night skiing on Olympic Mountain Jahorina: a snowboarder on a floodlit slope between snow-covered spruces',
     why: 'WordPress', whyTail: 'showing built-in numbers'
   } : {
-    aria: 'Planina u brojkama', eyebrow: 'Planina u brojkama', h: ['Olimpijska', 'planina'],
+    aria: 'Planina u brojkama', h: ['Olimpijska', 'planina'],
     lead: 'Staze ski centra Jahorina uređene su po FIS standardima, od prvog jutarnjeg spusta do noćnog skijanja pod reflektorima.',
     km: { u: 'km', l: 'alpskih skijaških staza', s: 'Uređene po FIS standardima' },
     zicare: { u: '', l: 'žičara i ski liftova', s: 'Vertikalni transport' },
@@ -122,8 +122,6 @@
     'linear-gradient(180deg,rgba(6,11,22,.4) 0%,rgba(6,11,22,0) 22%),radial-gradient(140% 100% at 60% 40%,transparent 56%,rgba(4,8,18,.5) 100%)}',
 
     '#R .jpb-body{position:relative;z-index:2;padding:clamp(56px,6vw,92px) var(--side) 0;max-width:calc(700px + var(--side))}',
-    '#R .jpb-eye{display:flex;align-items:center;gap:14px;margin-bottom:22px;font:600 11px/1 var(--fd);letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.75)}',
-    '#R .jpb-eye::before{content:"";width:34px;height:1.5px;flex-shrink:0;background:linear-gradient(90deg,var(--accent),#fff,var(--accent));box-shadow:0 0 10px rgba(0,185,242,.8)}',
     '#R h2{font-size:clamp(48px,5.6vw,92px);font-weight:800;line-height:.93;letter-spacing:-.03em}',
     '#R h2 > span{display:block;filter:drop-shadow(0 6px 30px rgba(0,0,0,.45))}',
     '@supports (-webkit-text-stroke:1px #fff){#R h2 > span.jpb-o{color:transparent!important;-webkit-text-fill-color:transparent!important;-webkit-text-stroke:1.6px rgba(255,255,255,.94)!important}}',
@@ -158,7 +156,7 @@
     '#R .jpb-reel{display:flex;flex-direction:column;transform:translateY(calc(var(--v) * -5%))}',
     '#R .jpb-reel i{display:block;height:1em;margin:0;padding:0;line-height:1;font-style:normal!important;text-align:center;color:inherit!important}',
     '#R h3.jpb-l{display:block;margin:clamp(8px,1vw,14px) 0 0!important;padding:0!important;border:0;background:none!important;font:500 15.5px/1.35 var(--fb)!important;letter-spacing:0!important;text-transform:none!important;color:#fff!important;-webkit-text-fill-color:currentColor!important;text-shadow:none!important}',
-    '#R .jpb-s{display:block;margin-top:5px;font:600 10px/1.3 var(--fd);letter-spacing:1.8px;text-transform:uppercase;color:var(--text-3)}',
+    '#R .jpb-s{display:block;margin-top:4px;font:500 13px/1.35 var(--fb);letter-spacing:0;color:var(--text-3)}',   // ranije VELIKA slova 10 / 9 / 8.5 px
     /* sjedišta se blago njišu kao na vjetru (samo dok je blok na ekranu); prelaz mišem ih zaljulja */
     '#R .jpb-sw,#R .jpb-hit{position:absolute;inset:0;transform-origin:50% 1.6%}',
     '#R.jpb-vis .jpb-num.is-on .jpb-sw,#R.jpb-vis:not(.jpb-anim) .jpb-sw{animation:jpbSway var(--sw,5.6s) ease-in-out var(--swd,0s) infinite}',
@@ -170,8 +168,7 @@
     /* tih link ispod naslova (samo ako je zadan) */
     '#R .jpb-foot{margin-top:22px}',
     '#R .jpb-link{all:unset;box-sizing:border-box!important;display:inline-flex!important;align-items:center;gap:8px;padding:4px 0!important;cursor:pointer;font:500 13.5px/1.3 var(--fb)!important;color:rgba(255,255,255,.76)!important;transition:color .2s}',
-    '#R .jpb-link svg{width:15px;height:15px;color:var(--accent)}',
-    '#R .jpb-link:hover{color:var(--accent)!important}',
+    '#R .jpb-link:hover,#R .jpb-link:focus-visible{color:var(--accent)!important}',
     '#R .jpb-why{display:block;margin-top:16px;font:500 11.5px/1.4 var(--fb);color:#FFB547}',
 
     /* ulazak (jednom): klase jpb-anim/jpb-on dodaje skripta samo kad postoji IntersectionObserver i nije uključeno smanjeno kretanje */
@@ -185,8 +182,6 @@
     '#R.jpb-anim.jpb-on .jpb-beam{opacity:1;transition:opacity 1.2s ease .8s}',
     '#R.jpb-anim .jpb-up{opacity:0;transform:translateY(20px)}',
     '#R.jpb-anim.jpb-on .jpb-up{opacity:1;transform:none;transition:opacity .7s ease var(--d,0s),transform .95s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
-    '#R.jpb-anim .jpb-eye::before{transform:scaleX(0);transform-origin:left center}',
-    '#R.jpb-anim.jpb-on .jpb-eye::before{transform:none;transition:transform .6s cubic-bezier(.2,.7,.2,1) .5s}',
     /* uže se iscrta, pa sjedišta jedno za drugim doklize po užetu i zaljuljaju se kad stanu; brojka u naslonu se zavrti */
     '#R.jpb-anim .jpb-wire,#R.jpb-anim .jpb-wire2{stroke-dasharray:1;stroke-dashoffset:1}',
     '#R.jpb-anim.jpb-on .jpb-wire,#R.jpb-anim.jpb-on .jpb-wire2{stroke-dashoffset:0;transition:stroke-dashoffset .9s cubic-bezier(.4,0,.2,1) .25s}',
@@ -211,14 +206,12 @@
     '#R .jpb-lead{max-width:56ch}',
     '#R .jpb-stats{margin-top:clamp(36px,6vw,52px);padding:0 clamp(22px,6vw,56px) clamp(38px,6vw,56px)}',
     '#R h3.jpb-l{font-size:14px!important}',
-    '#R .jpb-s{font-size:9px;letter-spacing:1.4px}}',
+    '#R .jpb-s{font-size:12.5px}}',
     /* telefon: dva reda po dva sjedišta, svaki red na svom užetu */
     '@media (max-width:760px){',
     '#R .jpb-frame{--mh:min(96vw,420px);border-radius:24px}',
     '#R .jpb-ph img{object-position:66% 62%}',
     '#R .jpb-body{padding:10px 20px 0}',
-    '#R .jpb-eye{gap:10px;margin-bottom:16px;font-size:10px;letter-spacing:3px}',
-    '#R .jpb-eye::before{width:22px}',
     '#R h2{font-size:clamp(38px,11.4vw,54px)}',
     '#R .jpb-lead{margin-top:16px}',
     '#R .jpb-stats{margin-top:34px;padding:0 16px 34px}',
@@ -230,7 +223,7 @@
     '#R .jpb-ph img,#R.jpb-anim .jpb-ph img,#R.jpb-anim.jpb-on .jpb-ph img{filter:none}',
     '#R .jpb-tint{mix-blend-mode:normal;opacity:1;background:rgba(14,38,78,.32)}',
     '#R .jpb-lamp,#R .jpb-beam{mix-blend-mode:normal;opacity:.6}',
-    '#R .jpb-s{font-size:8.5px;letter-spacing:1.2px}}',
+    '#R .jpb-s{font-size:12px}}',
     '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}'
   ].join('\n').replace(/#R/g, '#jpb-brojke');
 
@@ -246,7 +239,6 @@
   }
 
   /* ---------- pomoćno ---------- */
-  var ARROW = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function clean(s) { return String(s || '').replace(/\s+/g, ' ').trim(); }
   function f1(x) { return Math.round(x * 100) / 100; }
@@ -315,10 +307,9 @@
         '<span class="jpb-beam"></span><span class="jpb-lamp"></span>' +
       '</div><span class="jpb-tint"></span><span class="jpb-scrim"></span></div>' +
       '<div class="jpb-body">' +
-        '<div class="jpb-eye jpb-up" style="--d:.26s">' + esc(T.eyebrow) + '</div>' +
         '<h2 id="jpb-h"><span class="jpb-up" style="--d:.36s">' + esc(T.h[0]) + '</span> <span class="jpb-o jpb-up" style="--d:.46s">' + esc(T.h[1]) + '</span></h2>' +
         '<p class="jpb-lead jpb-up" style="--d:.58s">' + esc(T.lead) + '</p>' +
-        (LINK ? '<div class="jpb-foot jpb-up" style="--d:.7s"><a class="jpb-link" href="' + esc(LINK) + '" data-jpb="link">' + esc(LINKT) + ' ' + ARROW + '</a></div>' : '') +
+        (LINK ? '<div class="jpb-foot jpb-up" style="--d:.7s"><a class="jpb-link" href="' + esc(LINK) + '" data-jpb="link">' + esc(LINKT) + '</a></div>' : '') +
       '</div>' +
       '<div class="jpb-stats"><svg class="jpb-cable" aria-hidden="true" focusable="false"></svg><ul class="jpb-nums"></ul></div>' +
     '</div></section>';
