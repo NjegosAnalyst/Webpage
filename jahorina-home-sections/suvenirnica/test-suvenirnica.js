@@ -175,7 +175,7 @@ async function state(p) {
   check('link = stranica iz WP-a', S.page === SITE + '/suvenirnica/', S.page);
   check('galerija: 3 fotografije vitrine + 3 sa stranice (bez ikone i duplikata)', S.gal === '6', S.gal);
   check('jedan poziv WP-u (stranica), bez media jer tekst ima slike', rest.length === 1 && /pages\?slug=suvenirnica/.test(rest[0]), rest);
-  check('dugmad: isti red i ista visina (46px)', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 46 && S.acts[1][2] === 46, S.acts);
+  check('dugmad: isti red i ista visina (48px, kao „Kupi ski kartu“)', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 48 && S.acts[1][2] === 48, S.acts);
   check('sve vidljivo poslije ulaska', S.hidden === 0, S.hidden);
   check('fotografije učitane', S.imgOk);
   check('admin poruka se ne vidi', S.why === '', S.why);
@@ -309,7 +309,7 @@ async function state(p) {
     check('nazivi proizvoda cijeli, u jednom redu', S.whereFits);
     check('vrste poklona u dvije kolone', S.tagCols === 2, S.tagCols);
     check('tekst se ne preklapa sa izborom, izbor na svom mjestu, sve u kadru', !S.overlap && S.inFrame && S.pickPos, [S.overlap, S.inFrame, S.pickPos]);
-    if (name === 'telefon') check('telefon: oba dugmeta u jednom redu, 44px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 44, S.acts);
+    if (name === 'telefon') check('telefon: oba dugmeta u jednom redu, 46px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 46 && S.acts[1][2] === 46, S.acts);
     await p.locator('#jsu-suvenirnica .jsu-frame').screenshot({ path: path.join(OUT, name + '.png') });
     if (name === 'telefon') {
       const sw = await p.evaluate(() => {
