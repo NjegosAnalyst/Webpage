@@ -92,10 +92,11 @@ async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900
       }
       if (/wp\/v2\/pages/.test(u.pathname + u.search)) {
         if (wp === 'nema') return route.fulfill({ contentType: 'application/json', body: '[]' });
-        return route.fulfill({ contentType: 'application/json', body: JSON.stringify([{
+        // 'prljav': kao na sajtu (30. 10.) — Elementor ubaci <style id="elementor-post-…"> ispred JSON-a
+        return route.fulfill({ contentType: 'application/json', body: (wp === 'prljav' ? '<style id="elementor-post-12">.elementor-widget-text-editor{font-family:var( --e-global-typography-text-font-family ), Sans-serif}</style>' : '') + JSON.stringify([{
           id: 12, link: SITE + '/suvenirnica/',
           title: { rendered: wp === 'qtranslate' ? '[:SH]Suvenirnica[:en]Souvenir shop[:]' : 'Suvenirnica' },
-          content: { rendered: CONTENT[wp] },
+          content: { rendered: CONTENT[wp === 'prljav' ? 'izmijenjeno' : wp] },
         }]) });
       }
       return route.fulfill({ status: 404, body: '' });
@@ -245,6 +246,13 @@ async function state(p) {
   S = await state(p);
   check('novi naslov i uvod', S.lines.join('|') === 'Zimski pokloni|sa planine' && S.outline === 'sa planine' && S.lead === 'Nova kolekcija kapa i šalova stigla je u obje suvenirnice. Navratite i pogledajte.', [S.lines, S.lead]);
   check('sve vidljivo', S.hidden === 0, S.hidden);
+  check('bez grešaka u konzoli', errors.length === 0, errors);
+  await ctx.close();
+
+  console.log('Elementor ubaci <style> ispred JSON-a (kao na sajtu) → podaci se ipak pročitaju');
+  ({ p, ctx, errors } = await open(browser, { wp: 'prljav', admin: true }));
+  S = await state(p);
+  check('naslov sa stranice i bez poruke za admina', S.lines.join('|') === 'Zimski pokloni|sa planine' && !S.why, [S.lines, S.why]);
   check('bez grešaka u konzoli', errors.length === 0, errors);
   await ctx.close();
 

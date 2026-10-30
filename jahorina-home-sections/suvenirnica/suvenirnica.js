@@ -571,13 +571,29 @@
   /* ---------- sadržaj iz WordPressa (REST API): stranica Suvenirnica ---------- */
   // EN stranice prvo pitaju /en/wp-json (qTranslate tada vraća engleski), pa obični put, pa ?rest_route= rezerva
   var bases = (EN ? [O + '/en/wp-json/'] : []).concat([O + '/wp-json/', O + '/?rest_route=/']);
+  // JSON iz odgovora; kad WordPress ili dodatak ispiše tekst prije ili poslije podataka (na sajtu: Elementor ubaci
+  // <style id="elementor-post-…"> ispred stranice Suvenirnica → Safari: "The string did not match the expected pattern"),
+  // podaci se izvade iz sredine (isto kao u ostalim blokovima)
+  function json(t, path) {
+    try { return JSON.parse(t); } catch (e) {}
+    var ss = [t.indexOf('[{"'), t.indexOf('{"'), t.indexOf('[]')].filter(function (x) { return x >= 0; }).sort(function (a, b) { return a - b; });
+    var es = [t.lastIndexOf(']'), t.lastIndexOf('}')].sort(function (a, b) { return b - a; });
+    for (var i = 0; i < ss.length; i++) for (var k = 0; k < es.length; k++)
+      if (es[k] > ss[i]) try { return JSON.parse(t.slice(ss[i], es[k] + 1)); } catch (e) {}
+    var snip = clean(String(t).replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]*>/g, ' ')).slice(0, 110);
+    throw new Error('odgovor nije JSON · ' + path + (snip ? ': „' + snip + '“' : ' (prazan)'));
+  }
   function api(path, query) {
-    var i = 0;
+    var i = 0, first = null;
     function attempt(err) {
-      if (i >= bases.length) return Promise.reject(err);
+      if (err && !first && err.message !== 'REST') first = err;   // admin vidi prvi (najkorisniji) razlog
+      if (i >= bases.length) return Promise.reject(first || err);
       var b = bases[i++], url = b + 'wp/v2/' + path + (b.indexOf('?') > -1 ? '&' : '?') + query;
       return fetch(url, { credentials: 'same-origin', headers: { Accept: 'application/json' } })
-        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status + ' · ' + path); return r.json(); })
+        .then(function (r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status + ' · ' + path);
+          return r.text().then(function (t) { return json(t, path); });
+        })
         .then(function (j) { bases = [b].concat(bases.filter(function (x) { return x !== b; })); return j; }, attempt);
     }
     return attempt(new Error('REST'));
@@ -596,14 +612,20 @@
     var big = c.filter(function (x) { return x.w <= 2048; }).pop() || c[c.length - 1];
     var full = big ? big.u : src;
     if (!full || /^data:|\.svg(\?|$)/i.test(full)) return null;
-    return { full: abs(full), alt: clean(at('alt')) };
+    return { full: abs(full), alt: realAlt(at('alt'), full) };
+  }
+  // alt koji je samo ime fajla ("JD_05286", "IMG-2025…") nije opis — tada ostaje prazan i koristi se opis iz galerije
+  function realAlt(a, u) {
+    a = clean(a);
+    var stem = String(u || '').split('/').pop().replace(/\.[a-z0-9]+(\?.*)?$/i, '').replace(/-\d+x\d+$/, '').replace(/-scaled$/, '');
+    return !a || a.toLowerCase() === stem.toLowerCase() || /^(img|dsc|jd|whatsapp)[\s_-]*[\w\s.-]*\d{3,}$/i.test(a) ? '' : a;
   }
   // slika priložena uz stranicu (media?parent=) → { full, alt }
   function fromMedia(m) {
     if (!m || !m.source_url) return null;
     var sz = (m.media_details && m.media_details.sizes) || {};
     var big = sz['2048x2048'] || sz['1536x1536'] || sz.large || sz.full;
-    return { full: big && big.source_url || m.source_url, alt: clean(m.alt_text) };
+    return { full: big && big.source_url || m.source_url, alt: realAlt(m.alt_text, m.source_url) };
   }
   function parse(pg) {
     var html = pickLang(pg.content && pg.content.rendered || '');
