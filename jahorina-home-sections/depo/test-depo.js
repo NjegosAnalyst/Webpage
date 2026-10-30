@@ -130,7 +130,7 @@ async function state(p) {
     return {
       h1: document.querySelectorAll('h1').length, h2: q('h2').textContent.replace(/\s+/g, ' ').trim(), h3: [...r.querySelectorAll('h3')].map((e) => e.textContent),
       kicker: q('.jsd-kicker').textContent, lead: q('.jsd-lead').textContent,
-      price: q('.jsd-price b').textContent + ' ' + q('.jsd-price i').textContent, priceA: q('.jsd-price').getAttribute('aria-label'),
+      price: q('.jsd-pv').textContent + ' ' + q('.jsd-price i').textContent, priceA: q('.jsd-price').getAttribute('aria-label'),
       sets: q('.jsd-sets b').textContent, setsSub: q('.jsd-sets span').textContent,
       feat: [...r.querySelectorAll('.jsd-feat li')].filter((e) => cs(e).display !== 'none').map((e) => e.textContent).join('|'),
       steps: [...r.querySelectorAll('.jsd-steps li')].map((e) => e.textContent.replace(/\s+/g, ' ').trim()).join(' | '),
@@ -163,7 +163,7 @@ async function state(p) {
   check('vrata: sušenje, grijanje, ventilacija', S.feat === 'Sušenje|Grijanje|Ventilacija', S.feat);
   check('koraci redom, mjesto i depozit iz teksta', S.steps === '1Ski kasana polazu gondole Poljice | 2Kartica depoadepozit 10 KM | 3Skenirajte karticuu polaznoj stanici', S.steps);
   check('linkovi: stranica i mapa', /\/ski-depo\/$/.test(S.more) && /google\.com\/maps/.test(S.map), [S.more, S.map]);
-  check('vrata su bijela (svijetla površina)', /rgb\(242, 245, 248\)/.test(S.doorBg), S.doorBg);
+  check('vrata su svijetla (biser-bijela površina)', /rgb\(249, 251, 252\)/.test(S.doorBg), S.doorBg);
   check('ulazak: vrata se zatvore', S.on && !S.ajar && (S.doorT === 'none' || /matrix3d\(1, 0, -?0, 0, 0, 1, 0, 0, -?0, 0, 1, 0/.test(S.doorT) || S.doorT === 'matrix(1, 0, 0, 1, 0, 0)'), [S.on, S.ajar, S.doorT]);
   // loading: SEO blok postavi lazy, a test (i predučitavanje ~2 ekrana ranije) ga prebaci na eager
   check('fotografija: alt, lazy (prebačeno na eager), dimenzije, učitana', /ormarić|depo 61/i.test(S.alt) && /^(lazy|eager)$/.test(S.lazy) && S.dims === '900x1349' && S.imgOk, [S.alt, S.lazy, S.dims, S.imgOk]);

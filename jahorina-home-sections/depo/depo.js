@@ -101,11 +101,13 @@
     '#R .jsd-frame{position:relative;display:grid;grid-template-columns:minmax(0,44fr) minmax(0,56fr);min-height:clamp(620px,48vw,760px);border-radius:26px;overflow:hidden;isolation:isolate;',
     'background:radial-gradient(80% 90% at 70% 40%,#121c30 0,#0b1322 60%,#080e1a 100%);box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22)}',
     '#R .jsd-frame::after{content:"";position:absolute;inset:0;z-index:6;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.08)}',
-    '#R .jsd-shot{position:relative;margin:0;min-height:100%;overflow:hidden}',
-    '#R .jsd-shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:46% 30%;filter:saturate(.78) brightness(.82) contrast(1.06)}',
-    /* noćna obrada + prelaz u kadar (desno i dolje), da bijeli ormarići ne "svijetle" jače od vrata */
-    '#R .jsd-shot::after{content:"";position:absolute;inset:0;pointer-events:none;',
-    'background:linear-gradient(90deg,rgba(11,19,34,0) 55%,rgba(11,19,34,.7) 88%,#0b1322 100%),linear-gradient(0deg,rgba(8,14,26,.55) 0%,rgba(8,14,26,0) 30%),linear-gradient(rgba(14,38,78,.22),rgba(14,38,78,.22))}',
+    '#R .jsd-shot{position:relative;margin:16px 0 16px 16px;min-height:calc(100% - 32px);border-radius:20px;overflow:hidden;background:#0b1322}',
+    '#R .jsd-shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:46% 38%;filter:saturate(.42) brightness(.6) contrast(1.22)}',
+    /* premium obrada: hladni noćni ton, tamni rubovi, tiho svjetlo iz otvorenog ormarića, tanka svijetla ivica panela */
+    '#R .jsd-shot::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;',
+    'background:radial-gradient(38% 30% at 47% 40%,rgba(150,220,255,.16),rgba(150,220,255,0) 100%),radial-gradient(120% 90% at 50% 45%,rgba(6,11,22,0) 50%,rgba(6,11,22,.62) 100%),',
+    'linear-gradient(0deg,rgba(6,11,22,.6) 0%,rgba(6,11,22,0) 34%),linear-gradient(rgba(18,44,92,.3),rgba(18,44,92,.3));',
+    'box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.1)}',
 
     '#R .jsd-body{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-width:0;padding:clamp(48px,5vw,84px) var(--side) clamp(48px,5vw,84px) clamp(28px,3.4vw,56px)}',
     /* mali tekst = naziv usluge (kao novi mali tekst hero-a: obična slova, cyan linija) */
@@ -116,29 +118,37 @@
     '@supports (-webkit-text-stroke:1px #fff){#R h2 > span.jsd-o{color:transparent!important;-webkit-text-fill-color:transparent!important;-webkit-text-stroke:1.6px rgba(255,255,255,.94)!important}}',
     '#R .jsd-lead{margin-top:20px;font-size:clamp(15.5px,1.15vw,17px);line-height:1.6;color:var(--text-2)!important;max-width:46ch;text-wrap:pretty}',
 
-    /* VRATA: šarke lijevo; iza njih unutrašnjost ormarića (svjetlo se vidi samo dok su odškrinuta) */
-    '#R .jsd-hinge{position:relative;width:min(100%,540px);margin-top:32px;perspective:1600px}',
-    '#R .jsd-hinge::before{content:"";position:absolute;inset:6px 0 6px 6px;border-radius:12px;pointer-events:none;',
-    'background:linear-gradient(90deg,#0a0f18 0%,#121a28 60%,#1d2a40 100%);box-shadow:inset -18px 0 26px -10px rgba(200,236,255,.5);opacity:var(--open,0);transition:opacity .5s ease}',
-    '#R .jsd-door{position:relative;display:grid;grid-template-columns:clamp(34px,3.2vw,42px) minmax(0,1fr);column-gap:clamp(20px,2.2vw,30px);padding:22px clamp(20px,2.4vw,30px) 24px clamp(14px,1.4vw,20px);border-radius:12px;',
-    'color:var(--ink);background:linear-gradient(180deg,var(--door) 0%,var(--door-2) 100%);transform-origin:0 50%;transform:rotateY(calc(var(--open,0) * -16deg));',
-    'box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(13,21,36,.08),inset -1px 0 0 rgba(13,21,36,.06),0 34px 60px -34px rgba(0,0,0,.95),0 0 0 1px rgba(255,255,255,.04);',
+    /* VRATA (kartica): šarke lijevo; iza njih unutrašnjost ormarića (svjetlo se vidi samo dok su odškrinuta).
+       Na računaru kartica malo prelazi preko fotografije (dubina) */
+    '#R .jsd-hinge{--ov:clamp(36px,4.6vw,84px);position:relative;width:calc(100% + var(--ov));max-width:calc(600px + var(--ov));margin:34px 0 0 calc(-1 * var(--ov));perspective:1800px}',
+    '#R .jsd-hinge::before{content:"";position:absolute;inset:8px 0 8px 8px;border-radius:18px;pointer-events:none;',
+    'background:linear-gradient(90deg,#070b13 0%,#101828 60%,#1b2840 100%);box-shadow:inset -22px 0 30px -12px rgba(190,232,255,.55);opacity:var(--open,0);transition:opacity .5s ease}',
+    '#R .jsd-door{position:relative;overflow:hidden;display:grid;grid-template-columns:auto 1px minmax(0,1fr);align-items:center;column-gap:clamp(22px,2.6vw,34px);padding:clamp(26px,2.6vw,34px) clamp(26px,2.8vw,38px);border-radius:18px;',
+    'color:var(--ink);background:repeating-linear-gradient(90deg,rgba(255,255,255,.2) 0 1px,rgba(255,255,255,0) 1px 4px),linear-gradient(160deg,#F9FBFC 0%,#ECF0F4 48%,#DCE3EA 100%);',
+    'transform-origin:0 50%;transform:rotateY(calc(var(--open,0) * -16deg));',
+    'box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(13,21,36,.1),0 46px 80px -40px rgba(0,0,0,.95),0 18px 36px -22px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.05);',
     'transition:transform .7s cubic-bezier(.2,.7,.2,1)}',
-    /* crna gumena traka kao na pravim vratima; gore čitač kartice sa cyan svjetlom (depo se otvara skeniranjem kartice) */
-    '#R .jsd-strip{position:relative;grid-row:1 / span 4;align-self:stretch;border-radius:8px;background:linear-gradient(180deg,#1b2029 0%,#111419 100%);box-shadow:inset 0 1px 2px rgba(0,0,0,.6),inset 0 -1px 0 rgba(255,255,255,.06)}',
-    '#R .jsd-strip::before{content:"";position:absolute;left:22%;right:22%;top:14px;aspect-ratio:1;border-radius:6px;background:#0b0e13;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}',
-    '#R .jsd-strip::after{content:"";position:absolute;left:50%;top:14px;width:6px;height:6px;margin:calc(28% - 3px) 0 0 -3px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(0,185,242,.9)}',   /* sredina čitača (margin u % = širina trake) */
-    '#R .jsd-no{grid-column:2;justify-self:end;font:600 14px/1 var(--fd);letter-spacing:.06em;color:#7E8A9B;margin-bottom:6px}',
-    '#R .jsd-price{grid-column:2;display:flex;align-items:baseline;flex-wrap:wrap;column-gap:10px;padding-bottom:16px;border-bottom:1px solid rgba(13,21,36,.12)}',
-    '#R .jsd-price b{font:800 clamp(48px,4.6vw,62px)/.9 var(--fd);letter-spacing:-.03em;color:var(--ink);font-variant-numeric:tabular-nums}',
-    '#R .jsd-price i{font:700 21px/1 var(--fd);font-style:normal;color:var(--ink-acc)}',
-    '#R .jsd-price span{font:500 16px/1 var(--fb);color:var(--ink-2)}',
-    '#R .jsd-sets{grid-column:2;padding:15px 0;border-bottom:1px solid rgba(13,21,36,.12)}',
+    /* dvije šarke na lijevoj ivici */
+    '#R .jsd-door::before{content:"";position:absolute;left:9px;top:22%;width:3px;height:56%;border-radius:2px;pointer-events:none;',
+    'background:linear-gradient(180deg,rgba(13,21,36,.14) 0 14%,transparent 14% 86%,rgba(13,21,36,.14) 86% 100%)}',
+    /* tihi odsjaj koji jednom pređe preko kartice kad se vrata zatvore */
+    '#R .jsd-door::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:30%;pointer-events:none;transform:skewX(-18deg);opacity:0;',
+    'background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0))}',
+    '#R .jsd-hinge.is-shine .jsd-door::after{animation:jsdShine 1.3s cubic-bezier(.3,.6,.2,1) .1s}',
+    '@keyframes jsdShine{0%{left:-40%;opacity:0}15%{opacity:1}100%{left:120%;opacity:0}}',
+    /* pločica sa brojem kao na ormariću */
+    '#R .jsd-no{position:absolute;top:14px;right:16px;padding:4px 8px;border-radius:6px;font:600 12px/1 var(--fd);letter-spacing:.04em;color:#6F7C8E;box-shadow:inset 0 0 0 1px rgba(13,21,36,.14),inset 0 1px 0 rgba(255,255,255,.8)}',
+    '#R .jsd-price{display:flex;flex-direction:column;gap:8px}',
+    '#R .jsd-price b{display:flex;align-items:baseline;gap:8px;font:700 clamp(54px,5vw,70px)/.85 var(--fd);letter-spacing:-.035em;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}',
+    '#R .jsd-price b i{font:600 20px/1 var(--fd);font-style:normal;letter-spacing:0;color:var(--ink-acc)}',
+    '#R .jsd-price > span{font:500 15px/1 var(--fb);color:var(--ink-2)}',
+    '#R .jsd-rule{align-self:stretch;background:linear-gradient(180deg,rgba(13,21,36,0),rgba(13,21,36,.16) 20%,rgba(13,21,36,.16) 80%,rgba(13,21,36,0))}',
+    '#R .jsd-info{min-width:0}',
     '#R .jsd-sets b{display:block;font:700 18px/1.25 var(--fd);color:var(--ink)}',
-    '#R .jsd-sets span{display:block;margin-top:4px;font:500 14.5px/1.4 var(--fb);color:var(--ink-2)}',
-    '#R .jsd-feat{grid-column:2;display:flex;flex-wrap:wrap;gap:8px 20px;padding-top:15px}',
-    '#R .jsd-feat li{display:flex;align-items:center;gap:7px;font:600 14.5px/1.2 var(--fd);color:var(--ink)}',
-    '#R .jsd-feat svg{width:19px;height:19px;color:var(--ink-acc)}',
+    '#R .jsd-sets span{display:block;margin-top:4px;font:500 14.5px/1.45 var(--fb);color:var(--ink-2)}',
+    '#R .jsd-feat{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px!important}',
+    '#R .jsd-feat li{display:flex;align-items:center;gap:7px;font:600 14px/1.2 var(--fd);color:var(--ink)}',
+    '#R .jsd-feat svg{width:18px;height:18px;color:var(--ink-acc)}',
     '#R .jsd-feat li.is-off{display:none}',
     /* mišem ili fokusom (tastatura) vrata se malo odškrinu */
     '@media (hover:hover){#R .jsd-hinge:hover{--open:.32}}',
@@ -184,24 +194,23 @@
     /* tablet i telefon: fotografija gore (uska traka ormarića), tekst ispod */
     '@media (max-width:860px){',
     '#R .jsd-frame{grid-template-columns:1fr;min-height:0}',
-    '#R .jsd-shot{height:min(70vw,440px);min-height:0}',
-    '#R .jsd-shot img{object-position:44% 34%}',
-    '#R .jsd-shot::after{background:linear-gradient(0deg,#0b1322 0%,rgba(11,19,34,.6) 28%,rgba(11,19,34,0) 58%),linear-gradient(rgba(14,38,78,.22),rgba(14,38,78,.22))}',
-    '#R .jsd-body{margin-top:-64px;padding:0 clamp(22px,6vw,56px) clamp(30px,5vw,52px)}}',
+    '#R .jsd-shot{height:min(70vw,460px);min-height:0;margin:14px 14px 0}',
+    '#R .jsd-shot img{object-position:44% 40%}',
+    '#R .jsd-hinge{--ov:0px}',
+    '#R .jsd-body{padding:30px clamp(22px,6vw,56px) clamp(30px,5vw,52px)}}',
     '@media (max-width:760px){',
     '#R .jsd-frame{border-radius:24px}',
-    '#R .jsd-shot{height:min(96vw,420px)}',
+    '#R .jsd-shot{height:min(92vw,400px);margin:10px 10px 0;border-radius:16px}',
+    '#R .jsd-body{padding-top:24px}',
     '#R .jsd-body{padding:0 20px 30px}',
     '#R .jsd-kicker{font-size:13.5px;gap:10px;margin-bottom:14px}',
     '#R .jsd-kicker::before{width:22px}',
     '#R h2{font-size:clamp(38px,11.4vw,54px)}',
     '#R .jsd-lead{margin-top:16px}',
     '#R .jsd-hinge{margin-top:26px}',
-    '#R .jsd-door{grid-template-columns:28px minmax(0,1fr);column-gap:16px;padding:18px 18px 20px 12px;border-radius:11px}',
-    '#R .jsd-strip{border-radius:6px}',
-    '#R .jsd-strip::before{top:10px;border-radius:4px}',
-    '#R .jsd-strip::after{top:10px;width:5px;height:5px;margin:calc(28% - 2.5px) 0 0 -2.5px}',
-    '#R .jsd-price b{font-size:50px}',
+    '#R .jsd-door{grid-template-columns:1fr;row-gap:16px;padding:24px 22px 22px 26px;border-radius:16px}',
+    '#R .jsd-rule{height:1px;background:linear-gradient(90deg,rgba(13,21,36,.16),rgba(13,21,36,.16) 70%,rgba(13,21,36,0))}',
+    '#R .jsd-price b{font-size:54px}',
     '#R .jsd-sets b{font-size:17px}',
     '#R .jsd-sets span{font-size:14px}',
     '#R .jsd-feat{gap:8px 16px}',
@@ -290,11 +299,11 @@
         '<h2 id="jsd-h"><span class="jsd-up" style="--d:.12s">' + esc(T.h[0]) + '</span> <span class="jsd-o jsd-up" style="--d:.19s">' + esc(T.h[1]) + '</span></h2>' +
         '<p class="jsd-lead jsd-up" style="--d:.28s">' + esc(T.lead) + '</p>' +
         '<div class="jsd-hinge jsd-up" style="--d:.34s"><div class="jsd-door" role="group" aria-label="' + esc(T.door) + '">' +
-          '<span class="jsd-strip" aria-hidden="true"></span>' +
           '<span class="jsd-no" aria-hidden="true">61</span>' +
-          '<p class="jsd-price"><b></b><i></i><span>' + esc(T.day) + '</span></p>' +
-          '<p class="jsd-sets"><b></b><span></span></p>' +
-          '<ul class="jsd-feat">' + featHTML() + '</ul>' +
+          '<p class="jsd-price"><b><span class="jsd-pv"></span><i></i></b><span>' + esc(T.day) + '</span></p>' +
+          '<span class="jsd-rule" aria-hidden="true"></span>' +
+          '<div class="jsd-info"><p class="jsd-sets"><b></b><span></span></p>' +
+          '<ul class="jsd-feat">' + featHTML() + '</ul></div>' +
         '</div></div>' +
         '<div class="jsd-how jsd-up" style="--d:.44s"><h3 id="jsd-hw">' + esc(T.how) + '</h3><ol class="jsd-steps" aria-labelledby="jsd-hw"></ol></div>' +
         '<div class="jsd-acts jsd-up" style="--d:.52s">' +
@@ -309,7 +318,7 @@
   /* ---------- podaci na vratima i u koracima ---------- */
   function renderData() {
     var p = money(DATA.price);
-    q('.jsd-price b').textContent = p;
+    q('.jsd-pv').textContent = p;
     q('.jsd-price i').textContent = DATA.cur;
     q('.jsd-price').setAttribute('aria-label', T.priceA + ': ' + p + ' ' + DATA.cur);
     q('.jsd-sets b').textContent = T.sets(DATA.sets);
@@ -504,7 +513,7 @@
       // vrata se zatvore kad se pojave (tekst iznad je već na mjestu)
       setTimeout(function () {
         hinge.classList.add('is-closing'); hinge.classList.remove('is-ajar');
-        setTimeout(function () { hinge.classList.remove('is-closing'); }, 1200);
+        setTimeout(function () { hinge.classList.remove('is-closing'); hinge.classList.add('is-shine'); }, 1100);   // jedan tihi odsjaj kad se zatvore
       }, 650);
     }, { rootMargin: '0px 0px -12% 0px' });
     io.observe(frame);
