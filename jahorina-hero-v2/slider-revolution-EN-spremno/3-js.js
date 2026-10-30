@@ -169,12 +169,12 @@
       /Olympic/.test(hero.getAttribute('aria-label') || '');   // EN modul hero-a
     var L = en ? {
       label: 'Weather forecast for Jahorina', wind: 'Wind', src: 'MET Norway', srcS: 'met.no',
-      d: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
+      d: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
       k: { clear: 'Clear', fair: 'Mostly clear', partly: 'Partly cloudy', cloudy: 'Cloudy', fog: 'Fog', lrain: 'Light rain', rain: 'Rain', hrain: 'Heavy rain',
         rshow: 'Showers', sleet: 'Sleet', lsnow: 'Light snow', snow: 'Snow', hsnow: 'Heavy snow', sshow: 'Snow showers', thunder: 'Thunder' }
     } : {
       label: 'Vremenska prognoza za Jahorinu', wind: 'Vjetar', src: 'MET Norway', srcS: 'met.no',
-      d: ['NED', 'PON', 'UTO', 'SRI', 'ČET', 'PET', 'SUB'],
+      d: ['Ned', 'Pon', 'Uto', 'Sri', 'Čet', 'Pet', 'Sub'],
       k: { clear: 'Vedro', fair: 'Pretežno vedro', partly: 'Djelimično oblačno', cloudy: 'Oblačno', fog: 'Magla', lrain: 'Slaba kiša', rain: 'Kiša', hrain: 'Jaka kiša',
         rshow: 'Pljuskovi', sleet: 'Susnježica', lsnow: 'Slab snijeg', snow: 'Snijeg', hsnow: 'Jak snijeg', sshow: 'Snježni pljuskovi', thunder: 'Grmljavina' }
     };
@@ -539,18 +539,18 @@
     window.addEventListener('resize', function () {
       if (window.innerWidth === lw) return;   // veličina slova zavisi samo od širine ekrana
       lw = window.innerWidth;
-      clearTimeout(rz); rz = setTimeout(function () { if (!dot.classList.contains('is-flying')) placeDot(); }, 150);
+      clearTimeout(rz); rz = setTimeout(placeDot, 150);
     });
 
-    // kicker (H1): slovo po slovo, uz blago treperenje; " · " je mjesto preloma na telefonu
+    // kicker (H1): slovo po slovo, uz blago treperenje; ", " je mjesto preloma na telefonu
     var kick = hero.querySelector('.jh-kicker'), ktxt = kick.textContent.replace(/\s+/g, ' ').trim();
     kick.setAttribute('aria-label', ktxt); kick.textContent = '';
     var kwrap = document.createElement('span'); kick.appendChild(kwrap);
-    var sepAt = ktxt.indexOf(' \u00b7 ');
+    var sepAt = ktxt.indexOf(', ');
     ktxt.split('').forEach(function (c, i) {
       var sp = document.createElement('span');
       sp.className = 'jh-type';
-      if (sepAt >= 0 && i >= sepAt && i <= sepAt + 2) sp.className += i === sepAt + 1 ? ' jh-sep jh-sep--dot' : ' jh-sep';
+      if (sepAt >= 0 && i >= sepAt && i <= sepAt + 1) sp.className += i === sepAt + 1 ? ' jh-sep jh-sep--dot' : ' jh-sep';
       sp.setAttribute('aria-hidden', 'true'); sp.textContent = c;
       sp.style.animationDelay = (0.55 + i * 0.022) + 's';
       kwrap.appendChild(sp);
@@ -637,11 +637,8 @@
         setTimeout(el.remove.bind(el), life);
       }
 
-      // tačka kreće kad je "h" nacrtano, a doskoči tačno na početak zamrzavanja
-      skiJump(m, 900, function land(cx, cy) {
-        fx('jh-ring', 'left:' + cx + 'px;top:' + cy + 'px;--s:' + (m.dot.h * 1.6) + 'px', 900);
-        freeze();
-      });
+      // tačka padne na "ı" tačno kad počinje zamrzavanje (isti trenutak kao ranije: 2,26 s od početka crtanja)
+      dropDot(m, 2260, freeze);
 
       function freeze() {
         [].forEach.call(svg.querySelectorAll('.jh-pen'), function (t) { t.remove(); });
@@ -670,90 +667,20 @@
       }
     }
 
-    // ---- skok tačke: uleti slijeva, klizi preko "h" i "o", odskoči, preleti "r" i doskoči na "ı" ----
-    function skiJump(m, startDelay, onLand) {
-      var fs = m.fs, R = m.dot.h / 2, fx0 = m.dot.cx, fy0 = m.dot.cy;
-      var hC = m.chars[2], oC = m.chars[3], aC = m.chars[1];
-      // profil vrhova slova: najviša tačka "mastila" po svakom pikselu širine
-      var top = m.profile, Wp = top.length, Rr = Math.max(R * 2.2, fs * 0.12);
-      function surf(x) { // centar tačke koja klizi po slovima (kotrljajuća kugla, zaglađuje procjepe)
-        var best = Infinity;
-        for (var dx = -Rr; dx <= Rr; dx++) {
-          var xi = Math.round(x + dx); if (xi < 0 || xi >= Wp) continue;
-          var c = top[xi] - Math.sqrt(Rr * Rr - dx * dx); if (c < best) best = c;
-        }
-        return best + (Rr - R);
-      }
-      var xs = hC.x + R * 1.2, xe = oC.x + oC.w * 0.72;   // odraz sa zaobljenja "o", let preko "r"
-      var P0 = { x: aC.x - fs * 0.15, y: m.baseY - m.asc - fs * 0.62 };
-      var P1 = { x: hC.x - fs * 0.02, y: m.baseY - m.asc - fs * 0.62 };
-      var P2 = { x: xs, y: surf(xs) };
-      var L = { x: xe, y: surf(xe) }, D = { x: fx0, y: fy0 };
-      var C = { x: (L.x + D.x) / 2, y: D.y - fs * 0.5 };
-      var T1 = 260, T2 = 480, T3 = 620, T4 = 380, TOTAL = T1 + T2 + T3;
-      function qb(a, b, c, t) { var u = 1 - t; return { x: u * u * a.x + 2 * u * t * b.x + t * t * c.x, y: u * u * a.y + 2 * u * t * b.y + t * t * c.y }; }
-
-      // svjetleći trag iza tačke
-      var NS = 'http://www.w3.org/2000/svg', tsvg = document.createElementNS(NS, 'svg'), segs = [], hist = [];
-      tsvg.setAttribute('class', 'jh-trailsvg'); tsvg.setAttribute('width', m.box.width); tsvg.setAttribute('height', m.box.height);
-      for (var i = 0; i < 22; i++) {
-        var ln = document.createElementNS(NS, 'line');
-        ln.setAttribute('stroke-linecap', 'round');
-        ln.setAttribute('stroke', i > 16 ? '#E8FBFF' : '#39CFFF');
-        if (!phone) ln.style.filter = 'drop-shadow(0 0 4px rgba(0,185,242,.9))';   // telefon: bez sjaja na 22 dijela traga (skupo u svakom kadru)
-        tsvg.appendChild(ln); segs.push(ln);
-      }
-      ice.appendChild(tsvg);
-
-      function drawTrail() {
-        for (var i = 0; i < segs.length; i++) {
-          var a = hist[hist.length - 1 - (segs.length - i)], b = hist[hist.length - (segs.length - i)];
-          if (!a || !b) { segs[i].setAttribute('stroke-opacity', 0); continue; }
-          var k = i / segs.length;
-          segs[i].setAttribute('x1', a.x); segs[i].setAttribute('y1', a.y);
-          segs[i].setAttribute('x2', b.x); segs[i].setAttribute('y2', b.y);
-          segs[i].setAttribute('stroke-width', (0.5 + k * R * 1.1).toFixed(2));
-          segs[i].setAttribute('stroke-opacity', (k * k * 0.9).toFixed(3));
-        }
-      }
-      function place(p, rot, sx, sy) {
-        dot.style.transform = 'translate(' + (p.x - fx0) + 'px,' + (p.y - fy0) + 'px) rotate(' + rot + 'deg) scale(' + sx + ',' + sy + ')';
-      }
-
+    // ---- tačka: jednom tiho padne odozgo na "ı" i legne (bez traga i odskoka) ----
+    function dropDot(m, landAt, onLand) {
+      var T = 560;
       setTimeout(function () {
-        dot.classList.remove('is-waiting'); dot.classList.add('is-flying');
-        var s0 = performance.now(), prev = P0;
-        (function frame() {
-          var t = performance.now() - s0, p, rot = 0, sx = 1, sy = 1;
-          if (t < T1) {                                   // 1) uleti odozgo slijeva i spusti se na "h"
-            var u = t / T1; p = qb(P0, P1, P2, u * u);
-            sx = 1.2; sy = 0.85;
-            rot = Math.atan2(p.y - prev.y, p.x - prev.x) * 57.3;
-          } else if (t < T1 + T2) {                       // 2) klizi po vrhovima slova, sve brže
-            var v = (t - T1) / T2, e = v * v * (1.6 - 0.6 * v);
-            var x = xs + (xe - xs) * e; p = { x: x, y: surf(x) };
-            var ang = Math.atan2(p.y - prev.y, Math.max(0.01, p.x - prev.x)) * 57.3;
-            rot = Math.max(-40, Math.min(40, ang)); sx = 1.25; sy = 0.8;
-          } else if (t < TOTAL) {                         // 3) odskok sa "r": luk kroz vazduh uz jedan okret
-            var w = (t - T1 - T2) / T3; p = qb(L, C, D, w);
-            rot = 360 * (1 - Math.pow(1 - w, 2.2));
-            var st = 1 + 0.25 * Math.sin(w * Math.PI); sx = 1 / st; sy = st;
-          } else if (t < TOTAL + T4) {                    // 4) doskok: ugib i povratak, kao skijaš
-            if (!frame.landed) { frame.landed = true; dot.classList.remove('is-flying'); onLand(fx0, fy0); }
-            var q = (t - TOTAL) / T4, d = Math.exp(-6 * q) * Math.cos(q * 14);
-            p = D; sx = 1 + 0.35 * d; sy = 1 - 0.35 * d;
-          } else {
-            dot.style.transform = ''; dot.classList.add('is-set'); setTimeout(fixDot, 50);
-            tsvg.style.transition = 'opacity .4s'; tsvg.style.opacity = 0;
-            setTimeout(tsvg.remove.bind(tsvg), 450);
-            return;
-          }
-          if (t < TOTAL) { hist.push(p); if (hist.length > 60) hist.shift(); }
-          else if (hist.length) hist.shift();
-          drawTrail(); place(p, rot, sx, sy); prev = p;
-          requestAnimationFrame(frame);
-        })();
-      }, startDelay);
+        dot.classList.remove('is-waiting');
+        var fall = dot.animate ? dot.animate([
+          { transform: 'translateY(' + (-m.fs * 0.42) + 'px)', opacity: 0 },
+          { transform: 'translateY(0)', opacity: 1, offset: 0.8 },
+          { transform: 'translateY(0) scale(1.08,.92)', opacity: 1, offset: 0.9 },
+          { transform: 'none', opacity: 1 }
+        ], { duration: T, easing: 'cubic-bezier(.3,0,.25,1)' }) : null;
+        function done() { dot.classList.add('is-set'); onLand(); setTimeout(fixDot, 50); }
+        if (fall) fall.onfinish = done; else done();
+      }, Math.max(0, landAt - T));
     }
 
     // crta tek kad se font učita (da obris tačno legne na slova), najranije u 1.1 s
