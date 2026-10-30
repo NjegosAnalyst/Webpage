@@ -174,24 +174,24 @@
 
     /* ulazak (jednom): klase jpb-anim/jpb-on dodaje skripta samo kad postoji IntersectionObserver i nije uključeno smanjeno kretanje */
     '#R.jpb-anim .jpb-frame{opacity:0;transform:translateY(28px)}',
-    '#R.jpb-anim.jpb-on .jpb-frame{opacity:1;transform:none;transition:opacity .8s ease,transform 1s cubic-bezier(.2,.7,.2,1)}',
+    '#R.jpb-anim.jpb-on .jpb-frame{opacity:1;transform:none;transition:opacity .5s ease,transform .7s cubic-bezier(.2,.7,.2,1)}',
     '#R.jpb-anim .jpb-ph img{opacity:0;filter:saturate(.8) brightness(.2) contrast(1.06) blur(6px)}',
-    '#R.jpb-anim.jpb-on .jpb-ph img{opacity:1;filter:saturate(.8) brightness(var(--lum,.86)) contrast(1.06) blur(0);transition:opacity .7s ease .1s,filter .9s ease .1s}',
+    '#R.jpb-anim.jpb-on .jpb-ph img{opacity:1;filter:saturate(.8) brightness(var(--lum,.86)) contrast(1.06) blur(0);transition:opacity .5s ease,filter .6s ease}',
     /* reflektor se upali poslije fotografije: kratko, kao da se lampa zagrije */
     '#R.jpb-anim .jpb-lamp,#R.jpb-anim .jpb-beam{opacity:0}',
-    '#R.jpb-anim.jpb-on .jpb-lamp{opacity:1;transition:opacity 1s cubic-bezier(.3,0,.2,1) .6s}',
-    '#R.jpb-anim.jpb-on .jpb-beam{opacity:1;transition:opacity 1.2s ease .8s}',
+    '#R.jpb-anim.jpb-on .jpb-lamp{opacity:1;transition:opacity .8s cubic-bezier(.3,0,.2,1) .3s}',
+    '#R.jpb-anim.jpb-on .jpb-beam{opacity:1;transition:opacity .9s ease .45s}',
     '#R.jpb-anim .jpb-up{opacity:0;transform:translateY(20px)}',
     '#R.jpb-anim.jpb-on .jpb-up{opacity:1;transform:none;transition:opacity .7s ease var(--d,0s),transform .95s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
     /* uže se iscrta, pa sjedišta jedno za drugim doklize po užetu i zaljuljaju se kad stanu; brojka u naslonu se zavrti */
     '#R.jpb-anim .jpb-wire,#R.jpb-anim .jpb-wire2{stroke-dasharray:1;stroke-dashoffset:1}',
-    '#R.jpb-anim.jpb-on .jpb-wire,#R.jpb-anim.jpb-on .jpb-wire2{stroke-dashoffset:0;transition:stroke-dashoffset .9s cubic-bezier(.4,0,.2,1) .25s}',
+    '#R.jpb-anim.jpb-on .jpb-wire,#R.jpb-anim.jpb-on .jpb-wire2{stroke-dashoffset:0;transition:stroke-dashoffset .7s cubic-bezier(.4,0,.2,1) .15s}',
     '#R.jpb-anim .jpb-num:not(.is-on) .jpb-chair{opacity:0}',
-    '#R.jpb-anim .jpb-num.is-on .jpb-chair{animation:jpbRide 1.5s cubic-bezier(.22,.7,.25,1) both}',
+    '#R.jpb-anim .jpb-num.is-on .jpb-chair{animation:jpbRide 1.15s cubic-bezier(.22,.7,.25,1) both}',
     '@keyframes jpbRide{0%{opacity:0;transform:translateX(var(--ride,-160px))}12%{opacity:1}48%{transform:translateX(0) rotate(0)}64%{transform:rotate(2.6deg)}79%{transform:rotate(-1.5deg)}91%{transform:rotate(.5deg)}100%{opacity:1;transform:none}}',
     '#R.jpb-anim .jpb-num:not(.is-on) .jpb-reel{transform:none}',
-    '#R.jpb-anim .jpb-reel{transition:transform var(--t,1.6s) cubic-bezier(.16,.8,.22,1) .45s}',
-    '#R.jpb-anim .jpb-num .jpb-l,#R.jpb-anim .jpb-num .jpb-s,#R.jpb-anim .jpb-num .jpb-v em{opacity:0;transform:translateY(8px);transition:opacity .5s ease .6s,transform .7s cubic-bezier(.2,.7,.2,1) .6s}',
+    '#R.jpb-anim .jpb-reel{transition:transform var(--t,1.2s) cubic-bezier(.16,.8,.22,1) .3s}',
+    '#R.jpb-anim .jpb-num .jpb-l,#R.jpb-anim .jpb-num .jpb-s,#R.jpb-anim .jpb-num .jpb-v em{opacity:0;transform:translateY(8px);transition:opacity .5s ease .4s,transform .6s cubic-bezier(.2,.7,.2,1) .4s}',
     '#R.jpb-anim .jpb-num.is-on .jpb-l,#R.jpb-anim .jpb-num.is-on .jpb-s,#R.jpb-anim .jpb-num.is-on .jpb-v em{opacity:1;transform:none}',
 
     /* manji laptop */
@@ -273,7 +273,7 @@
       var strip = '';
       for (var r = 0; r < 20; r++) strip += '<i>' + (r % 10) + '</i>';
       // desne cifre se vrte duže, kao na mehaničkom brojaču
-      o += '<span class="jpb-d"><span class="jpb-reel" style="--v:' + (10 + +ch) + ';--t:' + (.9 + di++ * .2).toFixed(2) + 's;--d:' + D.toFixed(2) + 's">' + strip + '</span></span>';
+      o += '<span class="jpb-d"><span class="jpb-reel" style="--v:' + (10 + +ch) + ';--t:' + (.7 + di++ * .15).toFixed(2) + 's;--d:' + D.toFixed(2) + 's">' + strip + '</span></span>';
     }
     return '<span class="jpb-ds" aria-hidden="true">' + o + '</span>';
   }
@@ -308,9 +308,9 @@
         '<span class="jpb-beam"></span><span class="jpb-lamp"></span>' +
       '</div><span class="jpb-tint"></span><span class="jpb-scrim"></span></div>' +
       '<div class="jpb-body">' +
-        '<h2 id="jpb-h"><span class="jpb-up" style="--d:.36s">' + esc(T.h[0]) + '</span> <span class="jpb-o jpb-up" style="--d:.46s">' + esc(T.h[1]) + '</span></h2>' +
-        '<p class="jpb-lead jpb-up" style="--d:.58s">' + esc(T.lead) + '</p>' +
-        (LINK ? '<div class="jpb-foot jpb-up" style="--d:.7s"><a class="jpb-link" href="' + esc(LINK) + '" data-jpb="link">' + esc(LINKT) + '</a></div>' : '') +
+        '<h2 id="jpb-h"><span class="jpb-up" style="--d:.1s">' + esc(T.h[0]) + '</span> <span class="jpb-o jpb-up" style="--d:.18s">' + esc(T.h[1]) + '</span></h2>' +
+        '<p class="jpb-lead jpb-up" style="--d:.26s">' + esc(T.lead) + '</p>' +
+        (LINK ? '<div class="jpb-foot jpb-up" style="--d:.34s"><a class="jpb-link" href="' + esc(LINK) + '" data-jpb="link">' + esc(LINKT) + '</a></div>' : '') +
       '</div>' +
       '<div class="jpb-stats"><svg class="jpb-cable" aria-hidden="true" focusable="false"></svg><ul class="jpb-nums"></ul></div>' +
     '</div></section>';
@@ -366,7 +366,7 @@
   }
   // sjedišta stižu jedno za drugim
   function ride() {
-    KEYS.forEach(function (k, i) { setTimeout(function () { light(i); }, i * 200); });
+    KEYS.forEach(function (k, i) { setTimeout(function () { light(i); }, i * 150); });
   }
   function now() { return w.performance && performance.now ? performance.now() : Date.now(); }
   render();
@@ -584,15 +584,24 @@
   // Bez IntersectionObservera ili uz smanjeno kretanje sve je odmah upaljeno.
   if ('IntersectionObserver' in w && !reduced) {
     root.classList.add('jpb-anim');
+    // ranije je cijeli kadar čekao red sa brojkama (dno bloka) — gornji dio je dugo stajao prazan dok se skroluje
+    var onAt = 0;
     var io = new IntersectionObserver(function (es) {
       if (es.some(function (e) { return e.isIntersecting; })) {
         io.disconnect();
         void root.offsetWidth;
-        root.classList.add('jpb-on');
-        setTimeout(ride, 650);
+        root.classList.add('jpb-on'); onAt = now();
+      }
+    }, { rootMargin: '0px 0px -10% 0px' });
+    io.observe(frame);
+    var io2 = new IntersectionObserver(function (es) {
+      if (es.some(function (e) { return e.isIntersecting; })) {
+        io2.disconnect();
+        if (!onAt) { root.classList.add('jpb-on'); onAt = now(); }
+        setTimeout(ride, Math.max(150, 450 - (now() - onAt)));   // uže se prvo iscrta
       }
     }, { rootMargin: '0px 0px -8% 0px' });
-    io.observe(stats);
+    io2.observe(stats);
   } else light(KEYS.length - 1);
   // njihanje samo dok je blok na ekranu
   if ('IntersectionObserver' in w) new IntersectionObserver(function (es) { root.classList.toggle('jpb-vis', es[es.length - 1].isIntersecting); }).observe(stats);

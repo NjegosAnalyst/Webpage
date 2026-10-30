@@ -217,10 +217,12 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   console.log('\n2) Ulazak: koluti kreću od nule, pa se zavrte');
   r = await open(browser, { wait: false, sank: true });
   await r.p.evaluate(() => window.scrollTo(0, 0));
-  const pre = await r.p.evaluate(() => { const r = document.getElementById('jpb-brojke'); return { anim: r.classList.contains('jpb-anim'), on: r.classList.contains('jpb-on') }; });
-  check('prije ulaska: animacija spremna, nije pokrenuta', pre.anim && !pre.on, pre);
-  await r.p.locator('#jpb-brojke .jpb-frame').scrollIntoViewIfNeeded();
-  await r.p.waitForTimeout(1050);
+  const pre = await r.p.evaluate(() => { const r = document.getElementById('jpb-brojke'), f = r.querySelector('.jpb-frame').getBoundingClientRect(), s = r.querySelector('.jpb-stats').getBoundingClientRect();
+    return { anim: r.classList.contains('jpb-anim'), on: r.classList.contains('jpb-on'), frameVis: f.top < innerHeight * .9, statsVis: s.top < innerHeight * .92, seats: r.querySelectorAll('.jpb-num.is-on').length }; });
+  // od 30. 10.: kadar (slika + naslov) se pali čim se vidi vrh bloka; sjedišta tek kad je red sa brojkama na ekranu
+  check('prije ulaska: kadar upaljen samo ako se vidi, sjedišta čekaju red sa brojkama', pre.anim && pre.on === pre.frameVis && !pre.statsVis && pre.seats === 0, pre);
+  await r.p.locator('#jpb-brojke .jpb-stats').scrollIntoViewIfNeeded();
+  await r.p.waitForTimeout(380);
   const mid = await r.p.evaluate(() => document.querySelectorAll('#jpb-brojke .jpb-num.is-on').length);
   check('sjedišta stižu jedno za drugim', mid >= 1 && mid < 4, mid);
   await r.p.screenshot({ path: path.join(OUT, '2-ulazak-sjedista.png') });
