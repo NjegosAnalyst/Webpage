@@ -1,29 +1,25 @@
 /* =====================================================================
-   JAHORINA — SKI DEPO (početna, ispod VIP gondole) · v1 "3D ormarić"
-   Tema hero-a i ostalih blokova (noćni ton, jedan cyan akcenat, Archivo/Barlow, kadar preko cijele širine, scena u
-   pozadini kadra, naslov sa iscrtanim krajem, staklo i blagi neumorfizam), sa svojim detaljima:
-     · cik-cak sa VIP gondolom iznad (tamo tekst lijevo): ovdje je tekst desno, a lijevo u kadru 3D ormarić;
-     · 3D ORMARIĆ (three.js, depo-3d.js): noćni red ormarića, broj 61 se otvori i osvijetljen je iznutra; unutra nosači
-       za sušenje sa perforiranim rozetama i ventilacija na plafonu (po fotografiji pravog depoa). Prevlačenjem se okreće;
-     · SPAKUJTE DEPO: dva reda (set 1, set 2) × skije, pancerice, kaciga, rukavice; klik dodaje/uklanja opremu u
-       ormariću (infografika "dva puna seta"); kad su pancerice i rukavice na nosačima, rupice rozeta tiho zažare;
-     · INFOGRAFIKA NA ORMARIĆU: tanke linije do ventilacije, sušenja i grijanja; privjesak sa cijenom na vratima;
-     · KORACI 01–03 "Kako do depoa" (ski kasa → kartica sa depozitom → skeniranje u stanici).
-   Bez WebGL-a (ili dok 3D ne stigne) stoji fotografija pravog ormarića, a infografika ostaje kao tekst.
+   JAHORINA — SKI DEPO (početna, ispod VIP gondole) · v2 "Bijela vrata" (30. 10. 2026)
+   Tema hero-a (noćni kadar, jedan cyan akcenat, Archivo/Barlow), a jedina svijetla površina u sekciji su VRATA ORMARIĆA:
+   bijela kao pravi ormarići u depou (crna gumena traka, broj 61 kao na fotografiji), na njima ono što posjetilac treba
+   da zna — cijena po danu, koliko opreme stane i šta ormarić radi (sušenje, grijanje, ventilacija).
+     · lijevo prava fotografija otvorenog ormarića 61 (telefon: gore), desno tekst, vrata, koraci i dugmad;
+     · jedan pokret: kad sekcija uđe u ekran, odškrinuta vrata se zatvore (svjetlo iz ormarića se ugasi);
+       mišem/fokusom se vrata malo odškrinu;
+     · koraci 1–3 "Kako do depoa" (pravi redoslijed): ski kasa → kartica depoa (depozit) → skeniranje u stanici.
+   Zamijenio je v1 "3D ormarić" (three.js, slaganje opreme) — korisnik: "hoću potpuno da izmijenim".
 
    SADRŽAJ JE IZ WORDPRESSA (stranica ski depoa, data-stranica = slug; ako slug ne postoji, traži se stranica sa "depo"):
-     nadnaslov = naslov stranice (dio prije crte); uvod = prva rečenica; cijena za jedan dan, broj setova, depozit za
+     mali tekst = naslov stranice (dio prije crte); uvod = prva rečenica; cijena za jedan dan, broj setova, depozit za
      kartu, mjesto (gondola …) i oprema depoa (ventilacija, sušenje, grijanje) iz teksta; "Više o ski depou" = link stranice.
      Dok WordPress ne odgovori, stoji ugrađeni tekst (isti kao na stranici 9. 10. 2026). Prijavljeni admin vidi razlog.
 
-   Ugradnja: Elementor HTML widget sa <div id="jsd-depo"></div> + ovaj fajl sa jsDelivr-a (depo-3d.js i slike/ se
-   učitavaju iz istog commita, 3D tek kad se sekcija približi).
+   Ugradnja: Elementor HTML widget sa <div id="jsd-depo"></div> + ovaj fajl sa jsDelivr-a (fotografija iz istog commita).
    Podešavanja na <div id="jsd-depo"> (sva su neobavezna):
      data-stranica="ski-depo"      (slug WordPress stranice)
      data-mapa="https://…"         (link dugmeta Lokacija; podrazumijevano Google Maps: gondola Poljice, Jahorina)
-     data-galerija="url1, url2"    (zamjena za fotografije depoa)
-   GA: oprema → depo_oprema (predmet, set, akcija), okretanje → depo_okretanje (jednom), "Više o ski depou" i
-       Lokacija → depo_klik (cilj: stranica | mapa), fotografije → depo_galerija.
+     data-slika="https://…"        (zamjena za fotografiju ormarića)
+   GA: "Više o ski depou" i Lokacija → depo_klik (cilj: stranica | mapa).
    ===================================================================== */
 (function (w, d) {
   'use strict';
@@ -35,79 +31,56 @@
   var O = location.origin;
   var SCRIPT = d.currentScript && d.currentScript.src || '';
   var HERE = SCRIPT.replace(/[^\/]*$/, '');
-  // SRI za depo-3d.js (upisuje ga napravi-3d.mjs; isti commit kao ovaj fajl)
-  var SRI3D = 'sha384-gyz0fmzOIXtdyy6dwO+Fd7BWnelNnCkeThNo1hUdVJDFW8j57pwqJZYSq0XJJfyS';
   function opt(k, def) { var v = root.getAttribute('data-' + k); return v == null || !v.trim() ? def : v.trim(); }
   var SLUG = opt('stranica', 'ski-depo').replace(/^\/+|\/+$/g, '');
   var PAGE = O + (EN ? '/en/' : '/') + SLUG + '/';
   var MAP = opt('mapa', 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Gondola Poljice, Jahorina'));
   var reduced = w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var touch = w.matchMedia && w.matchMedia('(hover: none)').matches;
-  // slabiji uređaji (do 2 GB memorije ili 2 jezgra) crtaju 3D bez sjenki i zaglađivanja; __JSD_LOW služi testovima
-  var nav = w.navigator || {};
-  var LOW = w.__JSD_LOW != null ? !!w.__JSD_LOW : ((nav.deviceMemory || 8) <= 2 || (nav.hardwareConcurrency || 8) <= 2);
 
-  // ugrađeni tekst = tekst stranice ski depoa (9. 10. 2026); naslov i kratki natpisi infografike su korisnikov dizajn; EN je prevod
+  // ugrađeni tekst = tekst stranice ski depoa (9. 10. 2026); kratki natpisi na vratima su dizajn; EN je prevod
   var T = EN ? {
     kicker: 'Ski lockers', h: ['Leave your gear', 'on the mountain'],
     lead: 'One of the best and most practical ways to look after your gear is to use a ski locker.',
-    pack: function (n) { return 'One locker fits ' + n + ' full sets'; }, packSub: 'Tap the numbers in the locker to pack your gear.', packFlat: 'Skis, helmets, gloves and boots for two people.',
-    sets: { 2: 'two', 3: 'three', 4: 'four' },
-    names: { ski: 'Skis', helmet: 'Helmet', glove: 'Gloves', boot: 'Boots' }, legend: { ski: 'Skis', helmet: 'Helmets', glove: 'Gloves', boot: 'Boots' },
-    items: { ski: 'skis and poles', boot: 'ski boots', helmet: 'helmet', glove: 'gloves' }, set: 'set', full: 'The locker is full: two complete sets',
-    add: 'Add', rem: 'Remove', fill: function (n, m) { return 'Filled ' + n + ' / ' + m; },
-    feat: { vent: ['Ventilation', 'keeps gear fresh'], dry: ['Drying', 'dry and ready to go'], heat: ['Heating', 'warm and comfortable'] },
-    day: 'per day', tagA: 'Price per locker per day',
+    day: 'per day', priceA: 'Price per locker per day',
+    sets: function (n) { return n + ' full sets of gear'; },
+    setsSub: function (n) { return 'Skis, boots, helmets and gloves for ' + ({ 1: 'one person', 2: 'two people', 3: 'three people', 4: 'four people' }[n] || n + ' people'); },
+    feat: { dry: 'Drying', heat: 'Heating', vent: 'Ventilation' },
+    door: 'Ski locker at a glance',
     how: 'How to get a locker',
     steps: [['Ski ticket office', 'at the {g} gondola base'], ['Locker card', '{d} deposit'], ['Scan your card', 'inside the base station']],
     more: 'More about ski lockers', moreS: 'More', map: 'Location', mapS: 'Location',
-    hint: touch ? 'Swipe to rotate' : 'Drag to rotate', photo: 'Locker photo',
-    alt: '3D view of the ski lockers: open locker 61 with drying holders, skis, ski boots, helmet and gloves',
-    gal: 'Ski locker photos', photoN: 'Photo', prev: 'Previous photo', next: 'Next photo', close: 'Close',
-    photos: ['Open ski locker 61 with drying holders, gloves, skis and poles'],
+    photo: 'Open ski locker 61 with drying holders, gloves, skis and poles',
     why: 'WordPress', whyTail: 'showing built-in content'
   } : {
     kicker: 'Ski depo', h: ['Ostavite opremu', 'na planini'],
     lead: 'Jedan od najboljih i najpraktičnijih načina da očuvate vašu opremu jeste korištenje ski depoa.',
-    pack: function (n) { return 'U jedan depo stanu ' + n + ' puna seta'; }, packSub: 'Kliknite na brojeve u ormariću i složite opremu.', packFlat: 'Skije, kacige, rukavice i pancerice za dvije osobe.',
-    sets: { 2: 'dva', 3: 'tri', 4: 'četiri' },
-    names: { ski: 'Skije', helmet: 'Kaciga', glove: 'Rukavice', boot: 'Pancerice' }, legend: { ski: 'Skije', helmet: 'Kacige', glove: 'Rukavice', boot: 'Pancerice' },
-    items: { ski: 'skije i štapove', boot: 'pancerice', helmet: 'kacigu', glove: 'rukavice' }, set: 'set', full: 'Depo je pun: dva kompletna seta',
-    add: 'Dodaj', rem: 'Ukloni', fill: function (n, m) { return 'Popunjeno ' + n + ' / ' + m; },
-    feat: { vent: ['Ventilacija', 'za svježinu opreme'], dry: ['Sušenje', 'oprema suva i spremna'], heat: ['Grijanje', 'udobnost i toplina'] },
-    day: 'po danu', tagA: 'Cijena po depou za jedan dan',
+    day: 'po danu', priceA: 'Cijena po depou za jedan dan',
+    sets: function (n) { return n + ' kompletna seta opreme'; },
+    setsSub: function (n) { return 'Skije, pancerice, kacige i rukavice za ' + ({ 1: 'jednu osobu', 2: 'dvije osobe', 3: 'tri osobe', 4: 'četiri osobe' }[n] || n + ' osoba'); },
+    feat: { dry: 'Sušenje', heat: 'Grijanje', vent: 'Ventilacija' },
+    door: 'Ski depo ukratko',
     how: 'Kako do depoa',
-    steps: [['Ski kasa', 'na polazu gondole {g}'], ['Kartica depoa', 'depozit {d}'], ['Skenirajte kartu', 'u polaznoj stanici']],
+    steps: [['Ski kasa', 'na polazu gondole {g}'], ['Kartica depoa', 'depozit {d}'], ['Skenirajte karticu', 'u polaznoj stanici']],
     more: 'Više o ski depou', moreS: 'Više', map: 'Lokacija', mapS: 'Lokacija',
-    hint: touch ? 'Prevucite za okretanje' : 'Povucite za okretanje', photo: 'Fotografija depoa',
-    alt: '3D prikaz ski depoa: otvoren ormarić 61 sa nosačima za sušenje, skijama, pancericama, kacigom i rukavicama',
-    gal: 'Fotografije ski depoa', photoN: 'Fotografija', prev: 'Prethodna fotografija', next: 'Sljedeća fotografija', close: 'Zatvori',
-    photos: ['Otvoren ski depo 61 sa nosačima za sušenje, rukavicama, skijama i štapovima'],
+    photo: 'Otvoren ski depo 61 sa nosačima za sušenje, rukavicama, skijama i štapovima',
     why: 'WordPress', whyTail: 'prikazan je ugrađeni sadržaj'
   };
   // podaci sa stranice (9. 10. 2026); WordPress ih zamijeni kad se promijene
-  var DATA = { price: '15', cur: 'KM', dep: '10', depCur: 'KM', sets: 2, place: 'Poljice', feat: { vent: true, dry: true, heat: true } };
-  var KINDS = ['ski', 'boot', 'helmet', 'glove'];
-  // brojevi 1–8 u ormariću: skije, kacige (gore), rukavice, pancerice (dolje); po dva mjesta (dva seta)
-  var ORDER = ['ski0', 'ski1', 'helmet0', 'helmet1', 'glove0', 'glove1', 'boot0', 'boot1'];
-  var STATE = {};   // ormarić je na početku prazan
-
-  var PHOTO = HERE + 'slike/depo-ormaric.webp', PHOTO_S = HERE + 'slike/depo-ormaric-900.webp';
-  var FIXED_GAL = !!opt('galerija', '');
-  var BASE = [{ full: PHOTO, alt: T.photos[0] }];
-  var GAL = FIXED_GAL ? opt('galerija', '').split(',').map(function (x) { x = x.trim(); return x && { full: x }; }).filter(Boolean) : BASE.slice();
+  var DATA = { price: '15', cur: 'KM', dep: '10', depCur: 'KM', sets: 2, place: 'Poljice', feat: { dry: true, heat: true, vent: true } };
+  var PHOTO = opt('slika', HERE + 'slike/depo-ormaric.webp'), PHOTO_S = opt('slika', HERE + 'slike/depo-ormaric-900.webp');
 
   /* ---------- izgled ---------- */
   var CSS = [
-    '#R{--bg:#0A1120;--line:rgba(255,255,255,.1);--text:#fff;--text-2:rgba(255,255,255,.8);--text-3:rgba(255,255,255,.56);--accent:#00B9F2;--accent-2:#2CCBF8;',
-    '--surface:#111A2C;--nm-surface:rgba(16,25,42,.62);--nm-dark:rgba(0,0,0,.42);--nm-light:rgba(78,104,150,.16);',
-    '--nm-raised:4px 4px 10px var(--nm-dark),-3px -3px 9px var(--nm-light),inset 1px 1px 0 rgba(255,255,255,.05);',
+    '#R{--bg:#0A1120;--text:#fff;--text-2:rgba(255,255,255,.8);--text-3:rgba(255,255,255,.58);--accent:#00B9F2;--accent-2:#2CCBF8;',
+    '--nm-surface:rgba(16,25,42,.62);--nm-raised:4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16),inset 1px 1px 0 rgba(255,255,255,.05);',
+    /* vrata: bijeli plastificirani lim kao pravi ormarići; tekst na njima tamno-plav, akcenat tamniji cyan (kontrast na bijelom) */
+    '--door:#F2F5F8;--door-2:#DFE6ED;--ink:#0D1524;--ink-2:#46546A;--ink-acc:#0083BD;',
     "--fd:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;--fb:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;",
     'display:block;background:var(--bg);color:var(--text);font:400 16px/1.55 var(--fb);text-align:left;color-scheme:dark}',
     '#R.jsd--boxed{border-radius:28px;overflow:hidden}',
     '#R *,#R *::before,#R *::after{box-sizing:border-box}',
     '#R a{color:inherit;text-decoration:none;box-shadow:none}',
-    '#R h2{font-family:var(--fd)!important;color:var(--text)!important;-webkit-text-fill-color:currentColor!important;opacity:1!important;background:none!important;text-shadow:none!important;margin:0;padding:0;text-transform:none!important;border:0}',
+    '#R h2,#R h3{font-family:var(--fd)!important;color:var(--text)!important;-webkit-text-fill-color:currentColor!important;opacity:1!important;background:none!important;text-shadow:none!important;margin:0;padding:0;text-transform:none!important;letter-spacing:0;border:0}',
     '#R p{margin:0;padding:0}',
     '#R ol,#R ul,#R li{list-style:none!important;margin:0!important;padding:0!important;background:none}',
     '#R li::marker{content:none!important}',
@@ -115,7 +88,7 @@
     '#R svg{display:block;flex-shrink:0}',
     '#R svg[fill="none"],#R svg[fill="none"] *:not([fill]){fill:none!important}',
     '#R svg [stroke="currentColor"]{stroke:currentColor!important}',
-    '#R a:focus-visible,#R button:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
+    '#R a:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
     /* puna širina ekrana, isti rub kao kadar hero-a; --in poravnava sadržaj sa mrežom 1240px; --gap = ritam između blokova.
        Kad je VIP gondola odmah iznad (.jsd--join), ona već daje cijeli razmak ispod sebe, pa ovdje ostaje samo rub */
     '#R .jsd-wrap{--g:clamp(14px,1.6vw,22px);--gap:clamp(56px,7vw,100px);--pt:calc(var(--gap) / 2 + var(--g));--in:max(0px,calc((100vw - 1240px) / 2 + 48px - var(--g)));position:relative;padding:var(--pt) var(--g) var(--gap)}',
@@ -124,231 +97,127 @@
     '@supports (width:1cqw){#R .jsd-wrap{--in:max(0px,calc((100cqw - 1240px) / 2 + 48px - var(--g)))}}',
     '#R .jsd-wrap{--side:max(clamp(26px,3.2vw,52px),var(--in))}',
 
-    /* kadar kao u hero-u; 3D scena (red ormarića u noći) je pozadina cijelog kadra */
-    '#R .jsd-frame{position:relative;transform-origin:50% 0;display:flex;align-items:center;justify-content:flex-end;min-height:clamp(700px,54vw,860px);border-radius:26px;overflow:hidden;isolation:isolate;',
-    'background:radial-gradient(70% 90% at 28% 60%,#111b2e 0,#0b1322 55%,#080e1a 100%);box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22)}',
+    /* kadar: fotografija lijevo (uspravna, kao ormarić), tekst desno */
+    '#R .jsd-frame{position:relative;display:grid;grid-template-columns:minmax(0,44fr) minmax(0,56fr);min-height:clamp(620px,48vw,760px);border-radius:26px;overflow:hidden;isolation:isolate;',
+    'background:radial-gradient(80% 90% at 70% 40%,#121c30 0,#0b1322 60%,#080e1a 100%);box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22)}',
     '#R .jsd-frame::after{content:"";position:absolute;inset:0;z-index:6;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.08)}',
-    /* tanak hladno-bijeli odsjaj na gornjoj ivici iznad otvorenog ormarića (jedini izvor svjetla) */
-    '#R .jsd-frame::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;z-index:6;pointer-events:none;opacity:var(--lamp,1);background:linear-gradient(90deg,transparent calc(var(--fx,.3) * 100% - 22%),rgba(214,228,255,.42) calc(var(--fx,.3) * 100%),transparent calc(var(--fx,.3) * 100% + 24%))}',
-    '#R .jsd-stage{position:absolute;inset:0;z-index:0}',
-    '#R .jsd-3d{position:absolute;inset:0;z-index:0;touch-action:pan-y;cursor:grab;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}',
-    '#R .jsd-3d.is-drag{cursor:grabbing}',
-    '#R .jsd-3d canvas{position:absolute;inset:0;display:block;width:100%!important;height:100%!important;opacity:0;transition:opacity .9s ease}',
-    '#R .jsd-3d.is-ready canvas{opacity:1}',
-    /* fotografija pravog ormarića: dok 3D ne stigne i kad WebGL ne radi */
-    '#R .jsd-photo{position:absolute;top:0;bottom:0;left:calc(var(--fx,.3) * 100% - min(22vw,300px));width:min(44vw,600px);transition:opacity .9s ease;',
-    '-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%,#000 70%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 22%,#000 70%,transparent 100%)}',
-    '#R .jsd-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 40%;filter:saturate(.7) brightness(.62) contrast(1.06)}',
-    '#R .jsd-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(160deg,#1E4F96 0%,#0E2A55 100%);mix-blend-mode:soft-light;opacity:.42}',
-    '#R .jsd-3d.is-ready .jsd-photo{opacity:0}',
-    /* tamni prelaz zdesna ispod teksta (cik-cak: tekst desno), blagi odozdo i vinjeta */
-    '#R .jsd-scrim{position:absolute;inset:0;z-index:1;pointer-events:none;',
-    'background:linear-gradient(270deg,rgba(6,11,22,.93) 0,rgba(6,11,22,.84) calc(var(--side) + 440px),rgba(6,11,22,.45) calc(var(--side) + 620px),rgba(6,11,22,0) calc(var(--side) + 780px)),',
-    'linear-gradient(0deg,rgba(6,11,22,.42) 0%,rgba(6,11,22,0) 22%),radial-gradient(120% 100% at 30% 50%,transparent 60%,rgba(4,8,18,.5) 100%)}',
+    '#R .jsd-shot{position:relative;margin:0;min-height:100%;overflow:hidden}',
+    '#R .jsd-shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:46% 30%;filter:saturate(.78) brightness(.82) contrast(1.06)}',
+    /* noćna obrada + prelaz u kadar (desno i dolje), da bijeli ormarići ne "svijetle" jače od vrata */
+    '#R .jsd-shot::after{content:"";position:absolute;inset:0;pointer-events:none;',
+    'background:linear-gradient(90deg,rgba(11,19,34,0) 55%,rgba(11,19,34,.7) 88%,#0b1322 100%),linear-gradient(0deg,rgba(8,14,26,.55) 0%,rgba(8,14,26,0) 30%),linear-gradient(rgba(14,38,78,.22),rgba(14,38,78,.22))}',
 
-    /* infografika na ormariću: tačka, tanka linija i natpis; položaj računa 3D scena (--x, --y, --len) */
-    '#R .jsd-ov{position:absolute;inset:0;z-index:2;pointer-events:none}',
-    '#R .jsd-co{position:absolute;left:0;top:0;transform:translate3d(var(--x,0),var(--y,0),0);opacity:0;transition:opacity .5s ease}',
-    '#R .jsd-co.is-on{opacity:1}',
-    '#R .jsd-co.is-off{opacity:0!important}',
-    '#R .jsd-co i{position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(0,185,242,.22),0 0 12px rgba(0,185,242,.9)}',
-    '#R .jsd-co s{position:absolute;left:6px;top:-.5px;height:1px;width:var(--len,80px);text-decoration:none;transform-origin:0 50%;transform:scaleX(0);transition:transform .55s cubic-bezier(.2,.7,.2,1) .1s;',
-    'background:linear-gradient(90deg,rgba(0,185,242,.85),rgba(255,255,255,.55) 40%,rgba(255,255,255,.4))}',
-    '#R .jsd-co.is-on s{transform:none}',
-    '#R .jsd-co s::after{content:"";position:absolute;right:-2px;top:-2px;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.8)}',
-    '#R .jsd-co span{position:absolute;left:calc(var(--len,80px) + 16px);top:0;transform:translate(-6px,-50%);opacity:0;transition:opacity .45s ease .45s,transform .6s cubic-bezier(.2,.7,.2,1) .45s;white-space:nowrap}',
-    '#R .jsd-co.is-on span{opacity:1;transform:translate(0,-50%)}',
-    '#R .jsd-co b{display:flex;align-items:center;gap:8px;font:600 11px/1 var(--fd);letter-spacing:2.4px;text-transform:uppercase;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.8)}',
-    '#R .jsd-co b svg{width:16px;height:16px;color:var(--accent)}',
-    '#R .jsd-co small{display:block;margin:6px 0 0 24px;font:400 13px/1.2 var(--fb);color:var(--text-2);text-shadow:0 1px 10px rgba(0,0,0,.9)}',
-    /* privjesak sa cijenom: visi sa ivice otvorenih vrata (konac + stakleni listić sa rupicom) */
-    '#R .jsd-tag{position:absolute;left:0;top:0;transform:translate3d(var(--x,0),var(--y,0),0);opacity:0;transition:opacity .6s ease}',
-    '#R .jsd-tag.is-on{opacity:1}',
-    /* bez 3D: privjesak stoji pored fotografije */
-    '#R .jsd--flat .jsd-tag{opacity:1;transform:none;left:calc(var(--fx,.3) * 100% + min(15vw,190px));top:22%}',
-    '#R .jsd-tag-in{position:absolute;left:0;top:0;transform-origin:50% 0;transform:translate(-50%,0) rotate(var(--sw,0deg));transition:transform 1.2s cubic-bezier(.3,1.6,.4,1)}',
-    '#R .jsd-tag-in::before{content:"";position:absolute;left:50%;top:0;width:1px;height:26px;background:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,.35))}',
-    '#R .jsd-tag-b{position:relative;margin-top:24px;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:86px;padding:22px 14px 12px;border-radius:14px 14px 16px 16px;text-align:center;',
-    'background:linear-gradient(150deg,rgba(28,41,68,.82),rgba(12,20,36,.86));-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 14px 26px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.1),inset 0 1px 0 rgba(255,255,255,.08)}',
-    '#R .jsd-tag-b::before{content:"";position:absolute;left:50%;top:8px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:#070c17;box-shadow:inset 0 1px 2px rgba(0,0,0,.9),0 0 0 1.5px rgba(255,255,255,.22)}',
-    '#R .jsd-tag-p{display:flex;align-items:baseline;gap:4px;white-space:nowrap}',
-    '#R .jsd-tag-p b{font:800 26px/1 var(--fd);letter-spacing:-.02em;color:#fff;font-variant-numeric:tabular-nums}',
-    '#R .jsd-tag-p i{font:700 12px/1 var(--fd);font-style:normal;color:var(--accent-2)}',
-    '#R .jsd-tag-b small{font:600 9px/1.2 var(--fd);letter-spacing:1.6px;text-transform:uppercase;color:var(--text-3)}',
-    /* BROJEVI 1–8 na mjestima opreme u ormariću: klik stavi opremu; kad je oprema unutra, broj nestane (klik na opremu je vadi) */
-    '#R .jsd-hs{all:unset;position:absolute!important;left:0;top:0;z-index:2;box-sizing:border-box!important;width:32px!important;height:32px!important;margin:-16px 0 0 -16px!important;border-radius:50%!important;',
-    'display:grid!important;place-items:center;cursor:pointer;pointer-events:auto;transform:translate3d(var(--x,0px),var(--y,0px),0);',
-    'font:700 13px/1 var(--fd)!important;color:#fff!important;font-variant-numeric:tabular-nums;background:rgba(9,16,30,.66)!important;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);',
-    'box-shadow:0 0 0 1.5px rgba(0,185,242,.9),0 0 18px rgba(0,185,242,.5),0 6px 14px rgba(0,0,0,.5)!important;opacity:0;scale:.5;visibility:hidden;',
-    'transition:opacity .35s ease,scale .5s cubic-bezier(.3,1.6,.4,1),background .2s,color .2s,visibility 0s .35s}',
-    '#R .jsd-hs::after{content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%);border-radius:50%}',
-    '#R .jsd-hs.is-shown{opacity:1;scale:1;visibility:visible;transition:opacity .35s ease,scale .5s cubic-bezier(.3,1.6,.4,1),background .2s,color .2s,visibility 0s}',
-    '#R .jsd-hs::before{content:"";position:absolute;inset:-1px;border-radius:50%;box-shadow:0 0 0 1.5px rgba(0,185,242,.8);opacity:0;pointer-events:none}',
-    '#R .jsd-hs.is-shown::before{animation:jsdPing 1.4s cubic-bezier(.2,.7,.2,1) .2s 1}',
-    '@keyframes jsdPing{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(2.1)}}',
-    '#R .jsd-hs:hover,#R .jsd-hs:focus-visible{background:var(--accent)!important;color:#06101e!important}',
-    '#R .jsd-hs span{position:absolute;left:40px;top:50%;transform:translate(-4px,-50%);opacity:0;pointer-events:none;white-space:nowrap;font:600 10.5px/1 var(--fd);letter-spacing:1.8px;text-transform:uppercase;color:#fff;',
-    'text-shadow:0 1px 8px rgba(0,0,0,.95),0 0 2px rgba(0,0,0,.9);transition:opacity .2s,transform .3s}',
-    '#R .jsd-hs:hover span,#R .jsd-hs:focus-visible span{opacity:1;transform:translate(0,-50%)}',
-    /* oprema unutra: broj se sakrije, ali ostaje za tastaturu (fokus ga pokaže, Enter vadi opremu) */
-    '#R .jsd-hs[aria-pressed="true"]{opacity:0;scale:.5;pointer-events:none}',
-    '#R .jsd-hs[aria-pressed="true"]:focus-visible{opacity:1;scale:1}',
-    '#R .jsd-3d.is-pick{cursor:pointer}',
-    /* tiha uputa za okretanje i link na fotografiju, dolje lijevo na sceni */
-    '#R .jsd-meta{position:absolute;left:calc(var(--side));bottom:clamp(20px,2.4vw,32px);z-index:3;display:flex;align-items:center;gap:16px;font:500 12.5px/1.2 var(--fb);color:var(--text-3)}',
-    '#R .jsd-hint{display:inline-flex;align-items:center;gap:8px;transition:opacity .6s ease}',
-    '#R .jsd-hint svg{width:18px;height:18px;color:var(--accent)}',
-    '#R .jsd-hint.is-gone{opacity:0}',
-    '#R .jsd-hint.is-gone + .jsd-ph{border-left-color:transparent}',
-    '#R .jsd-3d:not(.is-ready) ~ .jsd-meta .jsd-hint{display:none}',
-    '#R .jsd-ph{position:relative!important}',
-    '#R .jsd-ph::after{content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}',
-    '#R .jsd-ph{all:unset;display:inline-flex!important;align-items:center;gap:8px;padding-left:16px!important;border-left:1px solid rgba(255,255,255,.14);cursor:pointer;color:var(--text-3)!important;font:500 12.5px/1.2 var(--fb)!important;transition:color .2s}',
-    '#R .jsd-3d:not(.is-ready) ~ .jsd-meta .jsd-ph{padding-left:0!important;border-left:0}',
-    '#R .jsd-ph svg{width:16px;height:16px}',
-    '#R .jsd-ph:hover{color:var(--accent)!important}',
-
-    /* tekst desno (cik-cak sa VIP gondolom), poravnat sa desnom ivicom mreže 1240px */
-    '#R .jsd-body{position:relative;z-index:3;width:min(calc(var(--side) + 500px),52%);padding:clamp(56px,6vw,88px) var(--side) clamp(56px,6vw,88px) 0}',
-    '#R .jsd-kicker{display:flex;align-items:center;gap:14px;font:600 11px/1 var(--fd);letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.78);margin-bottom:22px}',
+    '#R .jsd-body{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-width:0;padding:clamp(48px,5vw,84px) var(--side) clamp(48px,5vw,84px) clamp(28px,3.4vw,56px)}',
+    /* mali tekst = naziv usluge (kao novi mali tekst hero-a: obična slova, cyan linija) */
+    '#R .jsd-kicker{display:flex;align-items:center;gap:14px;font:600 15px/1.2 var(--fd);letter-spacing:.2px;color:rgba(255,255,255,.82);margin-bottom:20px}',
     '#R .jsd-kicker::before{content:"";width:34px;height:1.5px;flex-shrink:0;background:linear-gradient(90deg,var(--accent),#fff,var(--accent));box-shadow:0 0 10px rgba(0,185,242,.8)}',
-    '#R h2{font-size:clamp(42px,4.4vw,68px);font-weight:800;line-height:.96;letter-spacing:-.025em}',
-    '#R h2 > span{display:block;filter:drop-shadow(0 6px 30px rgba(0,0,0,.45))}',
+    '#R h2{font-size:clamp(42px,4.4vw,68px);font-weight:800;line-height:.94;letter-spacing:-.022em!important}',
+    '#R h2 > span{display:block}',
     '@supports (-webkit-text-stroke:1px #fff){#R h2 > span.jsd-o{color:transparent!important;-webkit-text-fill-color:transparent!important;-webkit-text-stroke:1.6px rgba(255,255,255,.94)!important}}',
-    '#R .jsd-lead{margin-top:20px;font-size:clamp(15.5px,1.15vw,17px);line-height:1.6;color:var(--text-2)!important;max-width:44ch;text-wrap:pretty}',
+    '#R .jsd-lead{margin-top:20px;font-size:clamp(15.5px,1.15vw,17px);line-height:1.6;color:var(--text-2)!important;max-width:46ch;text-wrap:pretty}',
 
-    /* SPAKUJTE DEPO: dva reda (set 1, set 2) × četiri vrste opreme; prazno mjesto = isprekidan obris sa +, puno = ispupčeno */
-    '#R .jsd-pack{margin-top:28px;width:min(100%,460px)}',
-    '#R .jsd-pack-h{font:500 15px/1.35 var(--fb);color:#fff}',
-    '#R .jsd-pack-h small{display:block;margin-top:3px;font:400 13px/1.35 var(--fb);color:var(--text-3)}',
-    '#R .jsd-pack-h small b{font-weight:600;color:var(--accent-2)}',
-    /* legenda brojeva (nije dugme): 1–2 skije, 3–4 kacige, 5–6 rukavice, 7–8 pancerice */
-    '#R .jsd-leg{display:grid;grid-template-columns:repeat(4,auto);justify-content:start;gap:8px 22px;margin-top:14px!important}',
-    '#R .jsd-leg li{display:flex;align-items:center;gap:8px;font:500 13px/1.2 var(--fb);color:var(--text-2);white-space:nowrap}',
-    '#R .jsd-leg em{font:700 11px/1 var(--fd);font-style:normal;letter-spacing:.5px;color:var(--accent-2);font-variant-numeric:tabular-nums}',
-    '#R .jsd--flat .jsd-fill,#R .jsd--flat .jsd-leg em{display:none}',
-    '#R .jsd-fill{display:flex;align-items:center;gap:12px;margin-top:14px;font:500 12px/1 var(--fb);color:var(--text-3);font-variant-numeric:tabular-nums;white-space:nowrap}',
-    '#R .jsd-fill i{position:relative;flex:1;height:2px;border-radius:2px;background:rgba(255,255,255,.1)}',
-    '#R .jsd-fill i::after{content:"";position:absolute;left:0;top:0;bottom:0;width:calc(var(--f,.5) * 100%);border-radius:2px;background:var(--accent);box-shadow:0 0 8px rgba(0,185,242,.7);transition:width .6s cubic-bezier(.2,.7,.2,1)}',
+    /* VRATA: šarke lijevo; iza njih unutrašnjost ormarića (svjetlo se vidi samo dok su odškrinuta) */
+    '#R .jsd-hinge{position:relative;width:min(100%,540px);margin-top:32px;perspective:1600px}',
+    '#R .jsd-hinge::before{content:"";position:absolute;inset:6px 0 6px 6px;border-radius:12px;pointer-events:none;',
+    'background:linear-gradient(90deg,#0a0f18 0%,#121a28 60%,#1d2a40 100%);box-shadow:inset -18px 0 26px -10px rgba(200,236,255,.5);opacity:var(--open,0);transition:opacity .5s ease}',
+    '#R .jsd-door{position:relative;display:grid;grid-template-columns:clamp(34px,3.2vw,42px) minmax(0,1fr);column-gap:clamp(20px,2.2vw,30px);padding:22px clamp(20px,2.4vw,30px) 24px clamp(14px,1.4vw,20px);border-radius:12px;',
+    'color:var(--ink);background:linear-gradient(180deg,var(--door) 0%,var(--door-2) 100%);transform-origin:0 50%;transform:rotateY(calc(var(--open,0) * -16deg));',
+    'box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(13,21,36,.08),inset -1px 0 0 rgba(13,21,36,.06),0 34px 60px -34px rgba(0,0,0,.95),0 0 0 1px rgba(255,255,255,.04);',
+    'transition:transform .7s cubic-bezier(.2,.7,.2,1)}',
+    /* crna gumena traka kao na pravim vratima; gore čitač kartice sa cyan svjetlom (depo se otvara skeniranjem kartice) */
+    '#R .jsd-strip{position:relative;grid-row:1 / span 4;align-self:stretch;border-radius:8px;background:linear-gradient(180deg,#1b2029 0%,#111419 100%);box-shadow:inset 0 1px 2px rgba(0,0,0,.6),inset 0 -1px 0 rgba(255,255,255,.06)}',
+    '#R .jsd-strip::before{content:"";position:absolute;left:22%;right:22%;top:14px;aspect-ratio:1;border-radius:6px;background:#0b0e13;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}',
+    '#R .jsd-strip::after{content:"";position:absolute;left:50%;top:14px;width:6px;height:6px;margin:calc(28% - 3px) 0 0 -3px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(0,185,242,.9)}',   /* sredina čitača (margin u % = širina trake) */
+    '#R .jsd-no{grid-column:2;justify-self:end;font:600 14px/1 var(--fd);letter-spacing:.06em;color:#7E8A9B;margin-bottom:6px}',
+    '#R .jsd-price{grid-column:2;display:flex;align-items:baseline;flex-wrap:wrap;column-gap:10px;padding-bottom:16px;border-bottom:1px solid rgba(13,21,36,.12)}',
+    '#R .jsd-price b{font:800 clamp(48px,4.6vw,62px)/.9 var(--fd);letter-spacing:-.03em;color:var(--ink);font-variant-numeric:tabular-nums}',
+    '#R .jsd-price i{font:700 21px/1 var(--fd);font-style:normal;color:var(--ink-acc)}',
+    '#R .jsd-price span{font:500 16px/1 var(--fb);color:var(--ink-2)}',
+    '#R .jsd-sets{grid-column:2;padding:15px 0;border-bottom:1px solid rgba(13,21,36,.12)}',
+    '#R .jsd-sets b{display:block;font:700 18px/1.25 var(--fd);color:var(--ink)}',
+    '#R .jsd-sets span{display:block;margin-top:4px;font:500 14.5px/1.4 var(--fb);color:var(--ink-2)}',
+    '#R .jsd-feat{grid-column:2;display:flex;flex-wrap:wrap;gap:8px 20px;padding-top:15px}',
+    '#R .jsd-feat li{display:flex;align-items:center;gap:7px;font:600 14.5px/1.2 var(--fd);color:var(--ink)}',
+    '#R .jsd-feat svg{width:19px;height:19px;color:var(--ink-acc)}',
+    '#R .jsd-feat li.is-off{display:none}',
+    /* mišem ili fokusom (tastatura) vrata se malo odškrinu */
+    '@media (hover:hover){#R .jsd-hinge:hover{--open:.32}}',
+    '#R .jsd-hinge:focus-within{--open:.32}',
 
-    /* KORACI 01–03: tanka linija sa tačkama, broj, naziv i kratko objašnjenje */
-    '#R .jsd-how{margin-top:28px;width:min(100%,460px)}',
-    '#R .jsd-lab{display:block;font:600 9.5px/1.2 var(--fd);letter-spacing:1.8px;text-transform:uppercase;color:var(--text-3)}',
-    '#R .jsd-steps{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px!important;padding-top:16px!important}',
-    '#R .jsd-steps::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,rgba(0,185,242,.7),rgba(255,255,255,.14) 34%,rgba(255,255,255,.14))}',
-    '#R .jsd-steps li{position:relative}',
-    '#R .jsd-steps li::before{content:"";position:absolute;left:0;top:-19.5px;width:7px;height:7px;border-radius:50%;background:#0b1322;box-shadow:0 0 0 1.5px rgba(255,255,255,.4)}',
-    '#R .jsd-steps li:first-child::before{background:var(--accent);box-shadow:0 0 0 3px rgba(0,185,242,.22),0 0 10px rgba(0,185,242,.8)}',
-    '#R .jsd-steps em{display:block;font:700 11px/1 var(--fd);font-style:normal;letter-spacing:1.5px;color:var(--accent-2)}',
-    '#R .jsd-steps b{display:block;margin-top:8px;font:600 14.5px/1.25 var(--fd);color:#fff}',
-    '#R .jsd-steps small{display:block;margin-top:4px;font:400 13px/1.35 var(--fb);color:var(--text-3)}',
+    /* koraci (pravi redoslijed): broj u krugu, tanka linija između */
+    '#R .jsd-how{margin-top:32px;width:min(100%,560px)}',
+    '#R .jsd-how h3{font-size:15px!important;font-weight:600!important;line-height:1.2!important;color:rgba(255,255,255,.82)!important}',
+    '#R .jsd-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:16px!important}',
+    '#R .jsd-steps li{position:relative;min-width:0}',
+    '#R .jsd-steps li::after{content:"";position:absolute;left:40px;right:-8px;top:14px;height:1px;background:linear-gradient(90deg,rgba(0,185,242,.5),rgba(255,255,255,.12))}',
+    '#R .jsd-steps li:last-child::after{display:none}',
+    '#R .jsd-steps em{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;font:700 13px/1 var(--fd);font-style:normal;color:var(--accent-2);box-shadow:inset 0 0 0 1px rgba(0,185,242,.5)}',
+    '#R .jsd-steps b{display:block;margin-top:12px;font:600 15px/1.3 var(--fd);color:#fff}',
+    '#R .jsd-steps small{display:block;margin-top:3px;font:500 14px/1.4 var(--fb);color:var(--text-3)}',
 
-    /* dugmad kao u ostalim blokovima: bijelo glavno + stakleno sporedno, iste širine i visine */
-    '#R .jsd-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:30px;width:min(100%,460px)}',
-    '#R .jsd-btn{all:unset;position:relative!important;isolation:isolate;box-sizing:border-box!important;display:inline-flex!important;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px!important;border-radius:40px!important;cursor:pointer;',
-    'white-space:nowrap;font:600 13.5px/1 var(--fb)!important;letter-spacing:.2px!important}',
-    '#R .jsd-btn svg{width:15px;height:15px}',
+    /* dugmad kao u hero-u i ostalim blokovima: cyan pločica + staklena pločica */
+    '#R .jsd-acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}',
+    '#R .jsd-cta,#R .jsd-pill{display:inline-flex;align-items:center;justify-content:center;gap:9px;height:48px;padding:0 22px!important;border-radius:16px;white-space:nowrap;font:600 15px/1 var(--fd);letter-spacing:0;color:#fff!important;transition:transform .2s ease,box-shadow .25s ease,filter .2s,color .2s}',
+    '#R .jsd-cta{font-weight:700;background:linear-gradient(160deg,#45D6FF 0%,#00AEE6 50%,#008BC7 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.18),0 10px 24px -10px rgba(0,185,242,.95)}',
+    '#R .jsd-cta:hover,#R .jsd-cta:focus-visible{filter:brightness(1.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.3),0 12px 28px -8px rgba(0,185,242,1)}',
+    '#R .jsd-pill{background:var(--nm-surface);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(255,255,255,.08)}',
+    '#R .jsd-pill svg{width:16px;height:16px;color:var(--accent)}',
+    '#R .jsd-pill:hover,#R .jsd-pill:focus-visible{color:var(--accent)!important;box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(0,185,242,.4),0 0 22px rgba(0,185,242,.3)}',
+    '#R .jsd-cta:active,#R .jsd-pill:active{transform:scale(.96)}',
     '#R .jsd-s{display:none}',
-    '#R .jsd-btn--solid{overflow:hidden;color:#0d1524!important;background:linear-gradient(145deg,#fff,#E6EEF6)!important;transition:transform .2s,box-shadow .2s;',
-    'box-shadow:inset -2px -2px 4px rgba(13,21,36,.1),inset 2px 2px 3px #fff,4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16)!important}',
-    '#R .jsd-btn--solid::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:45%;pointer-events:none;transform:skewX(-20deg);',
-    'background:linear-gradient(100deg,transparent,rgba(0,185,242,.35),rgba(255,255,255,.9),rgba(0,185,242,.35),transparent)}',
-    '#R .jsd-btn--solid:hover{transform:translateY(-2px);box-shadow:inset -2px -2px 4px rgba(13,21,36,.1),inset 2px 2px 3px #fff,0 0 0 1px rgba(0,185,242,.5),0 0 26px rgba(0,185,242,.55)!important}',
-    '#R .jsd-btn--solid:hover::after{animation:jsdShine 1.6s ease-in-out}',
-    '@keyframes jsdShine{0%{left:-60%}35%,100%{left:130%}}',
-    '#R .jsd-btn--solid:active{transform:none;box-shadow:inset 3px 3px 7px rgba(13,21,36,.25),inset -3px -3px 6px #fff!important}',
-    '#R .jsd-btn--ghost{color:#fff!important;background:var(--nm-surface)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(255,255,255,.08)!important;transition:color .2s,box-shadow .25s}',
-    '#R .jsd-btn--ghost svg{color:var(--accent)}',
-    '#R .jsd-btn--ghost:hover{color:var(--accent)!important;box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(0,185,242,.4),0 0 22px rgba(0,185,242,.35)!important}',
-    '#R .jsd-btn--ghost:active{box-shadow:inset 2px 2px 5px rgba(0,0,0,.4),inset -2px -2px 5px rgba(78,104,150,.13)!important}',
-    '#R .jsd-why{display:block;margin-top:14px;font:500 11.5px/1.4 var(--fb);color:#FFB547}',
+    '#R .jsd-why{display:block;margin-top:14px;font:500 12px/1.4 var(--fb);color:#FFB547}',
 
-    /* ulazak (jednom): klase jsd-anim/jsd-on dodaje skripta samo kad postoji IntersectionObserver i nije uključeno smanjeno kretanje */
-    '#R.jsd-anim .jsd-frame{opacity:0;transform:translateY(28px)}',
-    '#R.jsd-anim.jsd-on .jsd-frame{opacity:1;transform:none;transition:opacity .8s ease,transform 1s cubic-bezier(.2,.7,.2,1)}',
-    '#R.jsd-anim .jsd-up{opacity:0;transform:translateY(20px)}',
-    '#R.jsd-anim.jsd-on .jsd-up{opacity:1;transform:none;transition:opacity .7s ease var(--d,0s),transform .95s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
-    '#R.jsd-anim .jsd-kicker::before{transform:scaleX(0);transform-origin:left center}',
-    '#R.jsd-anim.jsd-on .jsd-kicker::before{transform:none;transition:transform .6s cubic-bezier(.2,.7,.2,1) .5s}',
-    '#R.jsd-anim .jsd-steps::before{transform:scaleX(0);transform-origin:left center}',
-    '#R.jsd-anim.jsd-on .jsd-steps::before{transform:none;transition:transform 1.1s cubic-bezier(.2,.7,.2,1) 1.2s}',
+    /* ulazak (jednom): kadar i tekst se pojave, a odškrinuta vrata se zatvore (jedini veći pokret u sekciji) */
+    '#R.jsd-anim .jsd-frame{opacity:0;transform:translateY(24px)}',
+    '#R.jsd-anim.jsd-on .jsd-frame{opacity:1;transform:none;transition:opacity .5s ease,transform .7s cubic-bezier(.2,.7,.2,1)}',
+    '#R.jsd-anim .jsd-shot img{opacity:0;transform:scale(1.04)}',
+    '#R.jsd-anim.jsd-on .jsd-shot img{opacity:1;transform:none;transition:opacity .7s ease,transform 1.2s cubic-bezier(.2,.7,.2,1)}',
+    '#R.jsd-anim .jsd-up{opacity:0;transform:translateY(16px)}',
+    '#R.jsd-anim.jsd-on .jsd-up{opacity:1;transform:none;transition:opacity .55s ease var(--d,0s),transform .75s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
+    /* odškrinuta dok sekcija ne uđe (pravilo je poslije :hover, pa ima prednost dok traje ulazak) */
+    '#R .jsd-hinge.is-ajar{--open:1}',
+    '#R .jsd-hinge.is-closing .jsd-door{transition-duration:1.1s}',
+    '#R .jsd-hinge.is-closing::before{transition-duration:.9s}',
 
-    /* manji laptop */
-    '@media (max-width:1180px){#R .jsd-body{width:min(calc(var(--side) + 470px),54%)}#R .jsd-btn{padding:0 12px!important}}',
-    '@media (max-width:1180px) and (min-width:981px){#R .jsd-co small{display:none}}',
-    /* tablet i telefon: 3D scena gore (utapa se nadolje), tekst ispod */
-    '@media (max-width:980px){',
-    '#R .jsd-frame{flex-direction:column;align-items:stretch;min-height:0}',
-    '#R .jsd-stage{position:relative;height:min(84vw,620px)}',
-    '#R .jsd-3d{-webkit-mask-image:linear-gradient(180deg,#000 80%,transparent 100%);mask-image:linear-gradient(180deg,#000 80%,transparent 100%)}',
-    '#R .jsd-scrim{background:radial-gradient(120% 100% at 50% 40%,transparent 60%,rgba(4,8,18,.5) 100%)}',
-    '#R .jsd-photo{left:calc(50% - min(30vw,260px));width:min(60vw,520px)}',
-    '#R .jsd-meta{left:clamp(22px,6vw,56px);bottom:14px}',
-    '#R .jsd-body{width:auto;padding:clamp(18px,3vw,30px) clamp(22px,6vw,56px) clamp(32px,5vw,52px)}',
-    '#R h2{font-size:clamp(40px,7.2vw,62px)}',
-    '#R .jsd-lead{max-width:56ch}',
-    '#R .jsd-pack,#R .jsd-how,#R .jsd-acts{width:min(100%,520px)}}',
+    /* manji laptop / tablet uspravno */
+    '@media (max-width:1060px){#R .jsd-frame{grid-template-columns:minmax(0,36fr) minmax(0,64fr)}#R .jsd-steps{gap:12px}}',
+    /* tablet i telefon: fotografija gore (uska traka ormarića), tekst ispod */
+    '@media (max-width:860px){',
+    '#R .jsd-frame{grid-template-columns:1fr;min-height:0}',
+    '#R .jsd-shot{height:min(70vw,440px);min-height:0}',
+    '#R .jsd-shot img{object-position:44% 34%}',
+    '#R .jsd-shot::after{background:linear-gradient(0deg,#0b1322 0%,rgba(11,19,34,.6) 28%,rgba(11,19,34,0) 58%),linear-gradient(rgba(14,38,78,.22),rgba(14,38,78,.22))}',
+    '#R .jsd-body{margin-top:-64px;padding:0 clamp(22px,6vw,56px) clamp(30px,5vw,52px)}}',
     '@media (max-width:760px){',
     '#R .jsd-frame{border-radius:24px}',
-    '#R .jsd-stage{height:min(132vw,560px)}',
-    '#R .jsd-co b{font-size:10px;letter-spacing:1.8px;gap:6px}',
-    '#R .jsd-co small{display:none}',
-    '#R .jsd-co b svg{width:14px;height:14px}',
-    '#R .jsd-co span{left:calc(var(--len,40px) + 10px)}',
-    '#R .jsd-tag-b{min-width:70px;padding:19px 10px 10px;border-radius:12px 12px 14px 14px}',
-    '#R .jsd-tag-p b{font-size:21px}',
-    '#R .jsd-tag-in::before{height:20px}',
-    '#R .jsd-tag-b{margin-top:18px}',
-    '#R .jsd-meta{gap:12px;font-size:12px}',
-    '#R .jsd-ph{font-size:12px!important;padding-left:12px!important}',
-    '#R .jsd-body{padding:4px 20px 30px}',
-    '#R .jsd-kicker{letter-spacing:2.6px;font-size:10px;gap:10px;margin-bottom:16px}',
+    '#R .jsd-shot{height:min(96vw,420px)}',
+    '#R .jsd-body{padding:0 20px 30px}',
+    '#R .jsd-kicker{font-size:13.5px;gap:10px;margin-bottom:14px}',
     '#R .jsd-kicker::before{width:22px}',
-    '#R h2{font-size:clamp(34px,10.4vw,50px)}',
+    '#R h2{font-size:clamp(38px,11.4vw,54px)}',
     '#R .jsd-lead{margin-top:16px}',
-    '#R .jsd-pack{margin-top:24px}',
-    '#R .jsd-pack-h{font-size:14.5px}',
-    '#R .jsd-leg{grid-template-columns:repeat(2,auto);gap:8px 26px}',
-    '#R .jsd-hs{width:30px!important;height:30px!important;margin:-15px 0 0 -15px!important;font-size:12px!important}',
-    '#R .jsd-hs span{display:none}',
-    '#R .jsd-steps{grid-template-columns:1fr;gap:14px;padding:0 0 0 22px!important}',
-    '#R .jsd-steps::before{left:3px;right:auto;top:4px;bottom:4px;width:1px;height:auto;background:linear-gradient(180deg,rgba(0,185,242,.7),rgba(255,255,255,.14) 40%)}',
-    '#R .jsd-steps li::before{left:-22px;top:1px}',
-    '#R .jsd-steps li{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:baseline}',
-    '#R .jsd-steps em{grid-row:span 2}',
-    '#R .jsd-steps b{margin-top:0}',
-    '#R.jsd-anim .jsd-steps::before{transform:scaleY(0);transform-origin:center top}',
-    '#R .jsd-acts{gap:8px;margin-top:26px;width:100%}',
-    '#R .jsd-btn{height:44px;padding:0 12px!important;font-size:13px!important}',
+    '#R .jsd-hinge{margin-top:26px}',
+    '#R .jsd-door{grid-template-columns:28px minmax(0,1fr);column-gap:16px;padding:18px 18px 20px 12px;border-radius:11px}',
+    '#R .jsd-strip{border-radius:6px}',
+    '#R .jsd-strip::before{top:10px;border-radius:4px}',
+    '#R .jsd-strip::after{top:10px;width:5px;height:5px;margin:calc(28% - 2.5px) 0 0 -2.5px}',
+    '#R .jsd-price b{font-size:50px}',
+    '#R .jsd-sets b{font-size:17px}',
+    '#R .jsd-sets span{font-size:14px}',
+    '#R .jsd-feat{gap:8px 16px}',
+    '#R .jsd-feat li{font-size:14px}',
+    '#R .jsd-how{margin-top:28px}',
+    '#R .jsd-steps{grid-template-columns:1fr;gap:0}',
+    '#R .jsd-steps li{display:grid;grid-template-columns:28px minmax(0,1fr);column-gap:14px;padding-bottom:16px!important}',
+    '#R .jsd-steps li::after{left:13.5px;right:auto;top:32px;bottom:2px;width:1px;height:auto;background:linear-gradient(180deg,rgba(0,185,242,.5),rgba(255,255,255,.12))}',
+    '#R .jsd-steps em{grid-row:1 / span 2}',
+    '#R .jsd-steps b{margin-top:4px}',
+    '#R .jsd-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:22px;width:100%}',
+    '#R .jsd-cta,#R .jsd-pill{height:46px;padding:0 14px!important;font-size:14px}',
     '#R .jsd-l{display:none}',
     '#R .jsd-s{display:inline}}',
-    '@media (max-width:360px){#R .jsd-acts{grid-template-columns:1fr}}',
-    '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}',
-
-    /* fotografije preko cijelog ekrana (iste kao u ostalim blokovima) */
-    '#L{position:fixed;inset:0;z-index:2147483000;display:none;place-items:center;padding:clamp(16px,4vw,56px);background:rgba(6,11,22,.92);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);',
-    "opacity:0;transition:opacity .3s ease;color:#fff;font:400 16px/1.5 'Barlow',system-ui,sans-serif;color-scheme:dark}",
-    '#L.is-shown{display:grid}',
-    '#L.is-open{opacity:1}',
-    '#L *{box-sizing:border-box}',
-    '#L figure{position:relative;margin:0;display:flex;flex-direction:column;align-items:center;gap:16px;max-width:min(1400px,100%);transform:scale(.97);transition:transform .35s cubic-bezier(.2,.7,.2,1);touch-action:pan-y}',
-    '#L.is-open figure{transform:none}',
-    '#L img{display:block;max-width:100%;max-height:calc(100vh - 150px);width:auto;height:auto;border:0;border-radius:18px;user-select:none;-webkit-user-drag:none;',
-    'box-shadow:0 40px 80px -30px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.06)}',
-    "#L figcaption{font:600 11.5px/1 'Archivo',system-ui,sans-serif;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.6);font-variant-numeric:tabular-nums}",
-    '#L button{all:unset;position:absolute!important;box-sizing:border-box!important;width:48px!important;height:48px!important;padding:0!important;margin:0!important;border:0!important;border-radius:50%!important;display:grid!important;place-items:center;cursor:pointer;',
-    'color:rgba(255,255,255,.82)!important;background:#131D31!important;box-shadow:3px 3px 7px rgba(0,0,0,.45),-2px -2px 6px rgba(70,96,142,.1)!important;transition:color .2s}',
-    '#L button svg{display:block;width:20px;height:20px}',
-    '#L button:hover{color:#00B9F2!important}',
-    '#L button:active{box-shadow:inset 2px 2px 5px rgba(0,0,0,.55),inset -2px -2px 4px rgba(70,96,142,.1)!important}',
-    '#L button:focus-visible{outline:2px solid #00B9F2!important;outline-offset:3px!important}',
-    '#L .jsd-lb-close{top:clamp(12px,2vw,24px);right:clamp(12px,2vw,24px)}',
-    '#L .jsd-lb-prev{left:clamp(10px,2vw,28px);top:50%;transform:translateY(-50%)}',
-    '#L .jsd-lb-next{right:clamp(10px,2vw,28px);top:50%;transform:translateY(-50%)}',
-    '#L.is-one .jsd-lb-prev,#L.is-one .jsd-lb-next{display:none!important}',
-    '@media (max-width:760px){#L img{max-height:calc(100vh - 210px);border-radius:14px}#L .jsd-lb-prev,#L .jsd-lb-next{top:auto;bottom:22px;transform:none}#L .jsd-lb-prev{left:calc(50% - 60px)}#L .jsd-lb-next{right:calc(50% - 60px)}}',
-    '@media (prefers-reduced-motion:reduce){#L,#L figure{transition:none!important}}'
-  ].join('\n').replace(/#R/g, '#jsd-depo').replace(/#L/g, '#jsd-lb');
+    '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}'
+  ].join('\n').replace(/#R/g, '#jsd-depo');
 
   // stil se uvijek osvježi: Elementor editor ne učitava stranicu ponovo kad se widget izmijeni, pa bi ostao stil stare verzije
   var st = d.getElementById('jsd-css');
@@ -358,27 +227,17 @@
   if (!d.querySelector('link[rel="stylesheet"][href*="fonts.googleapis.com"][href*="family=Archivo"][href*="family=Barlow"]')) {
     var fl = d.createElement('link'); fl.rel = 'stylesheet';
     fl.href = 'https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap';
-    d.head.appendChild(fl);
+    (d.head || d.documentElement).appendChild(fl);
   }
 
   /* ---------- pomoćno ---------- */
-  function svg(p, vb) { return '<svg width="22" height="22" viewBox="' + (vb || '0 0 24 24') + '" fill="none" aria-hidden="true">' + p + '</svg>'; }
+  function svg(p) { return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">' + p + '</svg>'; }
   var S = 'stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"';
   var ICON = {
-    ski: svg('<path d="M4.6 20.6 L16.9 6 C17.7 5 19.2 5.1 19.5 6.4 M19.4 20.6 L7.1 6 C6.3 5 4.8 5.1 4.5 6.4 M9.6 16.6 L11.2 18 M14.4 16.6 L12.8 18" ' + S + '/>'),
-    boot: svg('<path d="M7.6 3.4 H14.2 L14.9 10.6 L19.2 12.6 C20.2 13.1 20.8 14 20.8 15.1 V17.6 H5.2 V15.2 L6.8 12 Z M4.4 20.4 H21.4 M8.9 7.2 H14.4 M8.4 10.4 H14.8 M15.2 13.6 L16.6 12" ' + S + '/>'),
-    helmet: svg('<path d="M3.6 15.8 C3.6 9.6 7.8 5.4 13 5.4 C17.8 5.4 20.8 9 20.8 13.6 V15.4 H11.4 L9.6 18.6 H5 C4.2 18.6 3.6 18 3.6 17.2 Z M11.4 15.4 V12.2 H20.8 M9.8 8.2 L11.2 10.4 M13.8 7.4 L14.6 9.8" ' + S + '/>'),
-    glove: svg('<path d="M7.4 21 V13 L5.3 10 C4.7 9.1 5.7 8 6.7 8.6 L8.5 9.9 V5.4 C8.5 4.3 10.1 4.3 10.1 5.4 V9.6 V4 C10.1 2.9 11.7 2.9 11.7 4 V9.6 V4.6 C11.7 3.5 13.3 3.5 13.3 4.6 V10 V6 C13.3 4.9 14.9 4.9 14.9 6 V13.4 C14.9 15.5 14.1 17 13.3 17.6 V21 M7.4 18.4 H13.3" ' + S + '/>'),
     vent: svg('<path d="M3.5 8.5 H13 C15 8.5 16.2 6.8 15.4 5.2 C14.7 3.8 12.7 3.8 12.2 5.3 M3.5 12 H18.4 C20.4 12 21.4 14.1 20.4 15.6 C19.6 16.8 17.8 16.6 17.4 15.3 M3.5 15.5 H11" ' + S + '/>'),
     dry: svg('<path d="M12 3.6 C12 3.6 6.8 9.6 6.8 13.4 C6.8 16.3 9.1 18.6 12 18.6 C14.9 18.6 17.2 16.3 17.2 13.4 C17.2 9.6 12 3.6 12 3.6 Z M5 21 H19 M9.6 13.8 C9.8 15.2 10.8 16.1 12.1 16.3" ' + S + '/>'),
     heat: svg('<path d="M7.8 20 C6.2 17.6 9.4 15.6 7.8 13.2 C6.2 10.8 9.4 8.8 7.8 6.4 M12.2 20 C10.6 17.6 13.8 15.6 12.2 13.2 C10.6 10.8 13.8 8.8 12.2 6.4 M16.6 20 C15 17.6 18.2 15.6 16.6 13.2 C15 10.8 18.2 8.8 16.6 6.4" ' + S + '/>'),
-    turn: svg('<path d="M4.6 10.4 C3.6 11 3 11.7 3 12.5 C3 15 7 17 12 17 C17 17 21 15 21 12.5 C21 11.7 20.4 11 19.4 10.4 M9.6 19.4 L12 17 L9.6 14.6 M12 4 V12" ' + S + '/>'),
-    photos: svg('<rect x="3.5" y="6" width="13.5" height="12" rx="2.2" ' + S + '/><path d="M7 3.8 H18.3 C19.5 3.8 20.5 4.8 20.5 6 V14.6 M3.9 15.6 L8 11.6 L11 14.4 L12.8 12.8 L16.8 16.4" ' + S + '/><circle cx="12.6" cy="9.6" r="1.1" ' + S + '/>'),
-    pin: svg('<path d="M12 21 C12 21 5.5 14.6 5.5 9.8 C5.5 6.2 8.4 3.4 12 3.4 C15.6 3.4 18.5 6.2 18.5 9.8 C18.5 14.6 12 21 12 21 Z" ' + S + '/><circle cx="12" cy="9.8" r="2.4" ' + S + '/>'),
-    arrow: svg('<path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
-    prev: svg('<path d="M19 12 H5 M11 6 L5 12 L11 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
-    next: svg('<path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
-    close: svg('<path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>')
+    pin: svg('<path d="M12 21 C12 21 5.5 14.6 5.5 9.8 C5.5 6.2 8.4 3.4 12 3.4 C15.6 3.4 18.5 6.2 18.5 9.8 C18.5 14.6 12 21 12 21 Z" ' + S + '/><circle cx="12" cy="9.8" r="2.4" ' + S + '/>')
   };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   // dugi natpis (računar) i kratki (telefon)
@@ -414,114 +273,51 @@
   function money(s) { return String(s).replace(/[.,]0{1,2}$/, ''); }
 
   /* ---------- crtanje ---------- */
-  function setWord(n) { return T.sets[n] || String(n); }
   function stepsHTML() {
     return T.steps.map(function (s, k) {
-      return '<li><em>' + ('0' + (k + 1)) + '</em><b>' + esc(s[0]) + '</b><small>' +
+      return '<li><em>' + (k + 1) + '</em><b>' + esc(s[0]) + '</b><small>' +
         esc(s[1].replace('{g}', DATA.place).replace('{d}', money(DATA.dep) + ' ' + DATA.depCur)) + '</small></li>';
     }).join('');
   }
-  function legendHTML() {
-    return ['ski', 'helmet', 'glove', 'boot'].map(function (k, i) {
-      return '<li><em>' + (i * 2 + 1) + '–' + (i * 2 + 2) + '</em>' + esc(T.legend[k]) + '</li>';
-    }).join('');
-  }
-  function hsHTML() {
-    return ORDER.map(function (key, i) {
-      return '<button type="button" class="jsd-hs" data-key="' + key + '" aria-pressed="false" tabindex="-1">' + (i + 1) + '<span>' + esc(T.names[key.slice(0, -1)]) + '</span></button>';
-    }).join('');
-  }
-  function coHTML(k) {
-    var f = T.feat[k];
-    return '<div class="jsd-co" data-co="' + k + '"><i></i><s></s><span><b>' + ICON[k] + esc(f[0]) + '</b><small>' + esc(f[1]) + '</small></span></div>';
+  function featHTML() {
+    return ['dry', 'heat', 'vent'].map(function (k) { return '<li data-f="' + k + '">' + ICON[k] + esc(T.feat[k]) + '</li>'; }).join('');
   }
   root.innerHTML =
     '<section class="jsd-wrap" aria-labelledby="jsd-h"><div class="jsd-frame">' +
-      '<div class="jsd-stage">' +
-        '<div class="jsd-3d" role="img" aria-label="' + esc(T.alt) + '">' +
-          '<div class="jsd-photo"><img src="' + esc(PHOTO_S) + '" srcset="' + esc(PHOTO_S) + ' 900w, ' + esc(PHOTO) + ' 1334w" sizes="(max-width:980px) 60vw, 44vw" alt="' + esc(T.photos[0]) + '" decoding="async"></div>' +
-        '</div>' +
-        '<div class="jsd-ov">' + coHTML('vent') + coHTML('dry') + coHTML('heat') + hsHTML() +
-          '<div class="jsd-tag"><div class="jsd-tag-in"><div class="jsd-tag-b"><span class="jsd-tag-p"><b></b><i></i></span><small>' + esc(T.day) + '</small></div></div></div>' +
-        '</div>' +
-        '<span class="jsd-scrim"></span>' +
-        '<div class="jsd-meta"><span class="jsd-hint">' + ICON.turn + esc(T.hint) + '</span>' +
-          '<button type="button" class="jsd-ph" data-jsd="galerija" aria-haspopup="dialog">' + ICON.photos + esc(T.photo) + '</button></div>' +
-      '</div>' +
+      '<figure class="jsd-shot"><img src="' + esc(PHOTO_S) + '" srcset="' + esc(PHOTO_S) + ' 900w, ' + esc(PHOTO) + ' 1334w" sizes="(max-width:860px) 100vw, 44vw" alt="' + esc(T.photo) + '" decoding="async"></figure>' +
       '<div class="jsd-body">' +
-        '<div class="jsd-kicker jsd-up" style="--d:.26s">' + esc(T.kicker) + '</div>' +
-        '<h2 id="jsd-h"><span class="jsd-up" style="--d:.36s">' + esc(T.h[0]) + '</span> <span class="jsd-o jsd-up" style="--d:.46s">' + esc(T.h[1]) + '</span></h2>' +
-        '<p class="jsd-lead jsd-up" style="--d:.6s">' + esc(T.lead) + '</p>' +
-        '<div class="jsd-pack jsd-up" style="--d:.72s" role="group" aria-labelledby="jsd-pk">' +
-          '<p class="jsd-pack-h" id="jsd-pk"><span class="jsd-pk-t"></span><small>' + esc(T.packSub) + '</small></p>' +
-          '<ul class="jsd-leg">' + legendHTML() + '</ul>' +
-          '<div class="jsd-fill"><i></i><span aria-live="polite"></span></div>' +
-        '</div>' +
-        '<div class="jsd-how jsd-up" style="--d:.84s"><span class="jsd-lab" id="jsd-hw">' + esc(T.how) + '</span><ol class="jsd-steps" aria-labelledby="jsd-hw">' + stepsHTML() + '</ol></div>' +
-        '<div class="jsd-acts jsd-up" style="--d:.96s">' +
-          '<a class="jsd-btn jsd-btn--solid" href="' + esc(PAGE) + '" data-jsd="stranica">' + ICON.arrow + lbl(T.more, T.moreS) + '</a>' +
-          '<a class="jsd-btn jsd-btn--ghost" href="' + esc(MAP) + '" target="_blank" rel="noopener" data-jsd="mapa">' + ICON.pin + lbl(T.map, T.mapS) + '</a>' +
+        '<div class="jsd-kicker jsd-up" style="--d:.05s">' + esc(T.kicker) + '</div>' +
+        '<h2 id="jsd-h"><span class="jsd-up" style="--d:.12s">' + esc(T.h[0]) + '</span> <span class="jsd-o jsd-up" style="--d:.19s">' + esc(T.h[1]) + '</span></h2>' +
+        '<p class="jsd-lead jsd-up" style="--d:.28s">' + esc(T.lead) + '</p>' +
+        '<div class="jsd-hinge jsd-up" style="--d:.34s"><div class="jsd-door" role="group" aria-label="' + esc(T.door) + '">' +
+          '<span class="jsd-strip" aria-hidden="true"></span>' +
+          '<span class="jsd-no" aria-hidden="true">61</span>' +
+          '<p class="jsd-price"><b></b><i></i><span>' + esc(T.day) + '</span></p>' +
+          '<p class="jsd-sets"><b></b><span></span></p>' +
+          '<ul class="jsd-feat">' + featHTML() + '</ul>' +
+        '</div></div>' +
+        '<div class="jsd-how jsd-up" style="--d:.44s"><h3 id="jsd-hw">' + esc(T.how) + '</h3><ol class="jsd-steps" aria-labelledby="jsd-hw"></ol></div>' +
+        '<div class="jsd-acts jsd-up" style="--d:.52s">' +
+          '<a class="jsd-cta" href="' + esc(PAGE) + '" data-jsd="stranica">' + lbl(T.more, T.moreS) + '</a>' +
+          '<a class="jsd-pill" href="' + esc(MAP) + '" target="_blank" rel="noopener" data-jsd="mapa">' + ICON.pin + lbl(T.map, T.mapS) + '</a>' +
         '</div>' +
       '</div>' +
     '</div></section>';
   function q(s) { return root.querySelector(s); }
-  function qa(s) { return [].slice.call(root.querySelectorAll(s)); }
-  var frame = q('.jsd-frame'), host = q('.jsd-3d'), ov = q('.jsd-ov');
+  var frame = q('.jsd-frame');
 
-  /* ---------- podaci u tekstu (cijena na privjesku, setovi, koraci) ---------- */
+  /* ---------- podaci na vratima i u koracima ---------- */
   function renderData() {
-    q('.jsd-tag-p b').textContent = money(DATA.price);
-    q('.jsd-tag-p i').textContent = DATA.cur;
-    q('.jsd-tag').setAttribute('aria-label', T.tagA + ': ' + money(DATA.price) + ' ' + DATA.cur);
-    q('.jsd-pk-t').textContent = T.pack(setWord(DATA.sets));
+    var p = money(DATA.price);
+    q('.jsd-price b').textContent = p;
+    q('.jsd-price i').textContent = DATA.cur;
+    q('.jsd-price').setAttribute('aria-label', T.priceA + ': ' + p + ' ' + DATA.cur);
+    q('.jsd-sets b').textContent = T.sets(DATA.sets);
+    q('.jsd-sets span').textContent = T.setsSub(DATA.sets);
+    ['dry', 'heat', 'vent'].forEach(function (k) { q('.jsd-feat [data-f="' + k + '"]').classList.toggle('is-off', !DATA.feat[k]); });
     q('.jsd-steps').innerHTML = stepsHTML();
-    ['vent', 'dry', 'heat'].forEach(function (k) { q('.jsd-co[data-co="' + k + '"]').classList.toggle('is-off', !DATA.feat[k]); });
   }
-
-  /* ---------- SPAKUJTE DEPO: brojevi 1–8 u ormariću ↔ oprema; klik na broj stavi opremu, klik na opremu je izvadi ---------- */
-  var api = null, flat = false, hsOn = false;
-  function itemLabel(key) { return T.items[key.slice(0, -1)] + ' (' + T.set + ' ' + (+key.slice(-1) + 1) + ')'; }
-  function syncHs() {
-    var n = 0;
-    qa('.jsd-hs').forEach(function (b, i) {
-      var key = b.getAttribute('data-key'), on = !!STATE[key];
-      if (on) n++;
-      b.setAttribute('aria-pressed', on ? 'true' : 'false');
-      b.setAttribute('aria-label', (i + 1) + ': ' + (on ? T.rem : T.add) + ' ' + itemLabel(key));
-      b.tabIndex = hsOn && !flat ? 0 : -1;
-    });
-    q('.jsd-fill').style.setProperty('--f', (n / 8).toFixed(3));
-    q('.jsd-fill span').textContent = n === 8 ? T.full : T.fill(n, 8);
-    if (flat) q('.jsd-pack-h small').textContent = T.packFlat;
-  }
-  function toggle(key, how) {
-    if (!api || flat) return;
-    var on = !STATE[key]; STATE[key] = on; syncHs();
-    api.set(key.slice(0, -1), +key.slice(-1), on, true);
-    track('depo_oprema', { predmet: key.slice(0, -1), set: +key.slice(-1) + 1, akcija: on ? 'dodaj' : 'ukloni', nacin: how });
-  }
-  ov.addEventListener('click', function (e) {
-    var b = e.target.closest && e.target.closest('.jsd-hs');
-    if (b) { toggle(b.getAttribute('data-key'), 'broj'); if (STATE[b.getAttribute('data-key')] && b === d.activeElement && !b.matches(':focus-visible')) b.blur(); }
-  });
-  // klik (bez prevlačenja) na opremu u ormariću je vadi; iznad opreme kursor je ruka
-  var down = null;
-  host.addEventListener('pointerdown', function (e) { down = { x: e.clientX, y: e.clientY }; });
-  host.addEventListener('click', function (e) {
-    if (!api || !down || Math.abs(e.clientX - down.x) > 5 || Math.abs(e.clientY - down.y) > 5) return;
-    var r = host.getBoundingClientRect(), key = api.pick(e.clientX - r.left, e.clientY - r.top);
-    if (key) toggle(key, 'oprema');
-  });
-  var hov = 0;
-  host.addEventListener('pointermove', function (e) {
-    if (!api || e.pointerType === 'touch' || hov) return;
-    hov = w.requestAnimationFrame(function () {
-      hov = 0;
-      var r = host.getBoundingClientRect();
-      host.classList.toggle('is-pick', !host.classList.contains('is-drag') && !!api.pick(e.clientX - r.left, e.clientY - r.top));
-    });
-  });
-  renderData(); syncHs();
+  renderData();
 
   // blok uvijek ide preko cijele širine ekrana, i kad je kontejner teme/Elementora uži (isto kao ostali blokovi)
   function fit() {
@@ -549,7 +345,6 @@
     var gn = d.getElementById('jg-gondola');
     root.classList.toggle('jsd--join', !boxed && !!gn && !gn.classList.contains('jg--boxed') &&
       Math.abs(gn.getBoundingClientRect().bottom - root.getBoundingClientRect().top) < 3);
-    layout();
   }
   // najviši Elementor element (kontejner ili sekcija) oko bloka, samo ako je blok jedini vidljivi widget u njemu
   function shell() {
@@ -565,122 +360,6 @@
   }
   function refit() { clearTimeout(fit.t); fit.t = setTimeout(fit, 120); }
 
-  /* ---------- raspored scene: ormarić 61 na sredini lijevog dijela kadra (računar) ili scene (tablet/telefon) ---------- */
-  var FX = .3, stacked = false;
-  function layout() {
-    var fw = frame.clientWidth || 1;
-    stacked = w.getComputedStyle(frame).flexDirection === 'column';
-    var bw = q('.jsd-body').offsetWidth;
-    // računar: sredina prostora lijevo od teksta (malo ulijevo, da desno stanu natpisi); telefon: malo lijevo od sredine
-    FX = stacked ? (fw < 761 ? .36 : .4) : Math.max(.2, (fw - bw) * .44 / fw);
-    frame.style.setProperty('--fx', FX.toFixed(3));
-    if (api) { api.setLayout({ fx: FX, minWidth: stacked ? 1.05 : 1.3 }); }
-  }
-
-  /* ---------- infografika na ormariću: prati 3D (tačke, linije do zajedničke kolone natpisa, privjesak) ---------- */
-  var coOn = false;
-  function place(a) {
-    if (!a || !a.r) return;
-    var hw = host.clientWidth, col = Math.min(a.r.x + (stacked ? 26 : 56), hw - (stacked ? 110 : 190));
-    ['vent', 'dry', 'heat'].forEach(function (k) {
-      var el = q('.jsd-co[data-co="' + k + '"]'), p = a[k];
-      el.style.setProperty('--x', p.x.toFixed(1) + 'px');
-      el.style.setProperty('--y', p.y.toFixed(1) + 'px');
-      el.style.setProperty('--len', Math.max(14, col - p.x).toFixed(1) + 'px');
-    });
-    qa('.jsd-hs').forEach(function (b) {
-      var p = a['h_' + b.getAttribute('data-key')];
-      if (!p) return;
-      b.style.setProperty('--x', p.x.toFixed(1) + 'px');
-      b.style.setProperty('--y', p.y.toFixed(1) + 'px');
-    });
-    var tg = q('.jsd-tag'), t = a.tag;
-    tg.style.setProperty('--x', t.x.toFixed(1) + 'px');
-    tg.style.setProperty('--y', t.y.toFixed(1) + 'px');
-    tg.classList.toggle('is-on', coOn && a.door > .85 && t.z < 1);
-  }
-  // brojevi se pojave jedan za drugim (1 → 8), kad su vrata otvorena
-  function showHs() {
-    hsOn = true; syncHs();
-    qa('.jsd-hs').forEach(function (b, i) { setTimeout(function () { b.classList.add('is-shown'); }, reduced ? 0 : i * 110); });
-  }
-  function showCallouts() {
-    coOn = true;
-    qa('.jsd-co').forEach(function (el, i) { setTimeout(function () { el.classList.add('is-on'); }, reduced ? 0 : i * 170); });
-    if (api) place(api.anchors());
-    // privjesak se jednom lagano zanjiše kad se pojavi
-    var tin = q('.jsd-tag-in');
-    if (!reduced) { tin.style.setProperty('--sw', '9deg'); setTimeout(function () { tin.style.setProperty('--sw', '0deg'); }, 80); }
-  }
-
-  /* ---------- 3D: učitava se tek kad se sekcija približi; bez WebGL-a ostaje fotografija ---------- */
-  function webgl() { try { var c = d.createElement('canvas'); return !!(w.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); } catch (e) { return false; } }
-  var loading = null;
-  function load3d() {
-    if (loading) return loading;
-    loading = new Promise(function (res, rej) {
-      if (!webgl()) return rej(new Error('WebGL'));
-      if (w.JSD3D) return res(w.JSD3D);
-      var s = d.createElement('script');
-      s.src = HERE + 'depo-3d.js'; s.async = true;
-      if (/^sha384-[A-Za-z0-9+\/=]{40,}$/.test(SRI3D) && /^https:/.test(s.src)) { s.integrity = SRI3D; s.crossOrigin = 'anonymous'; }
-      s.onload = function () { w.JSD3D ? res(w.JSD3D) : rej(new Error('3D')); };
-      s.onerror = function () { rej(new Error('depo-3d.js')); };
-      d.head.appendChild(s);
-    }).then(function (lib) {
-      api = lib.create(host, {
-        reduced: reduced, low: LOW, font: "'Barlow', Arial, sans-serif",
-        onFrame: place,
-        onDrag: function () {
-          host.classList.add('is-drag'); q('.jsd-hint').classList.add('is-gone');
-          if (!load3d.turned) { load3d.turned = true; track('depo_okretanje', {}); }
-        }
-      });
-      root.__jsd3d = api;   // za testove i provjeru u konzoli
-      layout();
-      // prije ulaska vrata su zatvorena i ormarić prazan
-      if (entered) start(); else api.setOpen(0);
-      host.classList.add('is-ready');
-      return api;
-    });
-    loading.catch(function (e) {
-      flat = true; frame.classList.add('jsd--flat'); syncHs();
-      if (w.console) console.warn('[Jahorina Ski depo] 3D', e);
-    });
-    return loading;
-  }
-  function up() { host.classList.remove('is-drag'); }
-  host.addEventListener('pointerup', up); host.addEventListener('pointercancel', up);
-
-  // ulazak: vrata se otvore (svjetlo iz ormarića), pojave se brojevi 1–8 na praznim mjestima, pa se iscrta infografika
-  var entered = false, started = false;
-  function start() {
-    if (started || !api) return; started = true;
-    if (reduced) { api.setOpen(1); showHs(); showCallouts(); return; }
-    // brojevi i infografika čekaju da se vrata stvarno otvore (i na sporim uređajima)
-    setTimeout(function () {
-      api.open().then(function () { showHs(); setTimeout(showCallouts, 8 * 110 + 250); });
-    }, 650);
-  }
-
-  /* ---------- dolazak kadra: dok ulazi u ekran, iz malo manjeg „sjedne“ na svoje mjesto (prelaz iz teme, kao ratrak) ---------- */
-  (function rise() {
-    if (!('scale' in frame.style) || reduced) return;
-    var raf = 0, last = -1;
-    function upd() {
-      raf = 0;
-      var vh = w.innerHeight || d.documentElement.clientHeight, t = frame.parentNode.getBoundingClientRect().top + frame.offsetTop;
-      var k = Math.min(1, Math.max(0, (vh - t) / (vh * .62))); k = 1 - Math.pow(1 - k, 3);
-      if (Math.abs(k - last) < .002) return; last = k;
-      frame.style.scale = k < 1 ? String(1 - (d.documentElement.clientWidth < 761 ? .03 : .06) * (1 - k)) : '';
-      frame.style.willChange = k > 0 && k < 1 ? 'scale' : '';
-    }
-    function req() { if (!raf) raf = w.requestAnimationFrame(upd); }
-    w.addEventListener('scroll', req, { passive: true });
-    w.addEventListener('resize', req);
-    req();
-  })();
-
   /* ---------- Google Analytics: gtag (GA4) ili dataLayer (Google Tag Manager); bez njih ništa se ne šalje ---------- */
   function track(name, params) {
     params = params || {}; params.jezik = EN ? 'en' : 'sr';
@@ -693,71 +372,8 @@
   }
   root.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-jsd]');
-    if (!b) return;
-    var k = b.getAttribute('data-jsd');
-    if (k === 'galerija') lbOpen(0);
-    else track('depo_klik', { cilj: k });
+    if (b) track('depo_klik', { cilj: b.getAttribute('data-jsd') });
   });
-
-  /* ---------- fotografije preko cijelog ekrana ---------- */
-  var lb, lbImg, lbCap, lbCur = 0, lbBack = null, lbOverflow = '';
-  function lbBuild() {
-    lb = d.createElement('div'); lb.id = 'jsd-lb';
-    lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', T.gal);
-    lb.innerHTML = '<figure><img alt="" decoding="async"><figcaption aria-live="polite"></figcaption></figure>' +
-      '<button type="button" class="jsd-lb-close" aria-label="' + esc(T.close) + '">' + ICON.close + '</button>' +
-      '<button type="button" class="jsd-lb-prev" aria-label="' + esc(T.prev) + '">' + ICON.prev + '</button>' +
-      '<button type="button" class="jsd-lb-next" aria-label="' + esc(T.next) + '">' + ICON.next + '</button>';
-    d.body.appendChild(lb);
-    lbImg = lb.querySelector('img'); lbCap = lb.querySelector('figcaption');
-    lb.querySelector('.jsd-lb-close').addEventListener('click', lbClose);
-    lb.querySelector('.jsd-lb-prev').addEventListener('click', function () { lbShow(lbCur - 1); });
-    lb.querySelector('.jsd-lb-next').addEventListener('click', function () { lbShow(lbCur + 1); });
-    lb.addEventListener('click', function (e) { if (e.target === lb) lbClose(); });   // klik pored fotografije zatvara
-    var sx = 0, sy = 0, down = false, fig = lb.querySelector('figure');
-    fig.addEventListener('pointerdown', function (e) { down = true; sx = e.clientX; sy = e.clientY; });
-    fig.addEventListener('pointerup', function (e) {
-      if (!down) return; down = false;
-      var dx = e.clientX - sx, dy = e.clientY - sy;
-      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) lbShow(lbCur + (dx < 0 ? 1 : -1));
-    });
-    fig.addEventListener('pointercancel', function () { down = false; });
-  }
-  function lbShow(k) {
-    var n = GAL.length; lbCur = (k % n + n) % n;
-    lbImg.src = GAL[lbCur].full;
-    lbImg.alt = GAL[lbCur].alt || (T.photoN + ' ' + (lbCur + 1) + ' / ' + n + ': ' + T.kicker);
-    lbCap.textContent = (lbCur + 1) + ' / ' + n;
-    if (n > 1) { var pre = new Image(); pre.src = GAL[(lbCur + 1) % n].full; }
-  }
-  function lbKey(e) {
-    if (e.key === 'Escape') { e.preventDefault(); lbClose(); }
-    else if (e.key === 'ArrowLeft') lbShow(lbCur - 1);
-    else if (e.key === 'ArrowRight') lbShow(lbCur + 1);
-    else if (e.key === 'Tab') {   // fokus ostaje u galeriji
-      var bs = [].slice.call(lb.querySelectorAll('button')).filter(function (b) { return b.offsetParent !== null; });
-      var i = bs.indexOf(d.activeElement);
-      e.preventDefault(); bs[(i + (e.shiftKey ? -1 : 1) + bs.length) % bs.length].focus();
-    }
-  }
-  function lbOpen(k) {
-    if (!GAL.length) return;
-    if (!lb) lbBuild();
-    lb.classList.toggle('is-one', GAL.length < 2);
-    lbBack = d.activeElement; lbShow(k || 0);
-    lbOverflow = d.documentElement.style.overflow; d.documentElement.style.overflow = 'hidden';
-    lb.classList.add('is-shown'); void lb.offsetWidth; lb.classList.add('is-open');
-    lb.querySelector('.jsd-lb-close').focus();
-    d.addEventListener('keydown', lbKey);
-    track('depo_galerija', {});
-  }
-  function lbClose() {
-    lb.classList.remove('is-open');
-    d.documentElement.style.overflow = lbOverflow;
-    d.removeEventListener('keydown', lbKey);
-    setTimeout(function () { if (!lb.classList.contains('is-open')) lb.classList.remove('is-shown'); }, 320);
-    if (lbBack && lbBack.focus) lbBack.focus();
-  }
 
   /* ---------- sadržaj iz WordPressa (REST API): stranica ski depoa ---------- */
   // EN stranice prvo pitaju /en/wp-json (qTranslate tada vraća engleski), pa obični put, pa ?rest_route= rezerva
@@ -787,22 +403,6 @@
     }
     return attempt(new Error('REST'));
   }
-  // ključ fotografije bez veličine (-1024x683, -scaled), da se ista fotografija ne ponovi
-  function key(u) { return String(u).replace(/^https?:\/\/[^\/]+/i, '').replace(/[?#].*$/, '').replace(/-\d+x\d+(?=\.[a-z0-9]+$)/i, '').replace(/-scaled(?=\.[a-z0-9]+$)/i, '').toLowerCase(); }
-  // <img> iz teksta stranice → { full, alt } (najveća do 2048 px iz srcset-a; i odložene slike: data-src, data-lazy-src)
-  function fromImg(im) {
-    var at = function (n) { return im.getAttribute(n) || ''; };
-    var src = at('data-src') || at('data-lazy-src') || at('src');
-    var set = at('data-srcset') || at('data-lazy-srcset') || at('srcset');
-    var wd = parseInt(at('width'), 10);
-    if (wd && wd < 200) return null;   // ikone, logotipi
-    var c = set.split(',').map(function (s) { var m = s.trim().match(/^(\S+)\s+(\d+)w$/); return m && { u: m[1], w: +m[2] }; })
-      .filter(Boolean).sort(function (a, b) { return a.w - b.w; });
-    var big = c.filter(function (x) { return x.w <= 2048; }).pop() || c[c.length - 1];
-    var full = big ? big.u : src;
-    if (!full || /^data:|\.svg(\?|$)/i.test(full)) return null;
-    return { full: abs(full), alt: clean(at('alt')) };
-  }
   var NUMW = { jedan: 1, jedna: 1, dva: 2, dvije: 2, tri: 3, 'četiri': 4, cetiri: 4, one: 1, two: 2, three: 3, four: 4 };
   function parse(pg) {
     var raw = pg.content && pg.content.rendered || '', html = pickLang(raw);
@@ -829,10 +429,6 @@
     // oprema depoa (ako stranica nabraja ventilaciju, sušenje, grijanje)
     var fv = /ventila/i.test(txt), fd = /sušen|susen|\bdry|drying/i.test(txt), fh = /grijan|grejan|heat/i.test(txt);
     if (fv || fd || fh) r.feat = { vent: fv, dry: fd, heat: fh };
-    var seen = {};
-    r.imgs = [].slice.call(b.querySelectorAll('img')).map(fromImg).filter(function (x) {
-      if (!x || seen[key(x.full)]) return false; seen[key(x.full)] = 1; return true;
-    });
     var link = pg.link || '';
     if (EN && link.indexOf(O + '/') === 0 && link.indexOf(O + '/en/') !== 0) link = O + '/en' + link.slice(O.length);
     r.link = link;
@@ -864,7 +460,6 @@
     if (r.feat) DATA.feat = r.feat;
     renderData();
     if (r.link) q('a[data-jsd="stranica"]').setAttribute('href', r.link);
-    if (!FIXED_GAL && r.imgs.length) GAL = BASE.concat(r.imgs);
     if (miss.length) why('stranica nema: ' + miss.join(', '));
     ld();
   }
@@ -873,6 +468,7 @@
     var el = q('.jsd-why') || q('.jsd-body').appendChild(d.createElement('small'));
     el.className = 'jsd-why'; el.textContent = T.why + ': ' + msg + ' (' + T.whyTail + ')';
   }
+
 
   /* ---------- schema.org za Google (usluga sa cijenom po danu) ---------- */
   function ld() {
@@ -894,28 +490,26 @@
     why(e && e.message || 'REST');
   });
 
-  /* ---------- pokretanje: raspored, 3D kad se sekcija približi, ulazak kad uđe u ekran, pauza van ekrana ---------- */
+  /* ---------- pokretanje: raspored; ulazak kad kadar uđe u ekran (vrata se zatvore) ---------- */
   fit();
   w.addEventListener('resize', refit);
-  if ('ResizeObserver' in w) { new ResizeObserver(refit).observe(d.body); new ResizeObserver(function () { if (api) api.resize(); }).observe(host); }
-  if ('IntersectionObserver' in w) {
-    var near = new IntersectionObserver(function (es) {
-      if (es.some(function (e) { return e.isIntersecting; })) { near.disconnect(); load3d(); }
-    }, { rootMargin: '1200px 0px 1200px 0px' });
-    near.observe(frame);
-    // van ekrana se ne crta (štedi bateriju)
-    new IntersectionObserver(function (es) {
-      if (!api) return;
-      if (es[0].isIntersecting) api.resume(); else api.pause();
-    }).observe(frame);
-    if (!reduced) {
-      root.classList.add('jsd-anim');
-      var io = new IntersectionObserver(function (es) {
-        if (es.some(function (e) { return e.isIntersecting; })) { root.classList.add('jsd-on'); io.disconnect(); entered = true; start(); }
-      }, { rootMargin: '0px 0px -12% 0px' });
-      io.observe(frame);
-    } else entered = true;
-  } else { entered = true; load3d(); }
+  if ('ResizeObserver' in w) new ResizeObserver(refit).observe(d.body);
+  if ('IntersectionObserver' in w && !reduced) {
+    var hinge = q('.jsd-hinge');
+    root.classList.add('jsd-anim'); hinge.classList.add('is-ajar');
+    var io = new IntersectionObserver(function (es) {
+      if (!es.some(function (e) { return e.isIntersecting; })) return;
+      io.disconnect();
+      root.classList.add('jsd-on');
+      // vrata se zatvore kad se pojave (tekst iznad je već na mjestu)
+      setTimeout(function () {
+        hinge.classList.add('is-closing'); hinge.classList.remove('is-ajar');
+        setTimeout(function () { hinge.classList.remove('is-closing'); }, 1200);
+      }, 650);
+    }, { rootMargin: '0px 0px -12% 0px' });
+    io.observe(frame);
+  }
+
   /* SEO-BRZINA:POCETAK */
   /* ---------- SEO i brzina (pravila početne, 14. 10.; pravi ga alati/seo-brzina.py) ---------- */
   (function () {
