@@ -138,7 +138,10 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
     const sel = await page.evaluate(() => document.querySelector('#jm-mapa .jm-card h3') && document.querySelector('#jm-mapa .jm-card h3').textContent);
     ok(/ 3$/.test(sel || ''), `${v.name}: klik na liniju staze 3 → "${sel}"`);
 
-    // cijeli ekran
+    // cijeli ekran (na telefonu su kontrole skrivene dok je kartica otvorena)
+    const ctlHidden = await page.evaluate(() => getComputedStyle(document.querySelector('#jm-mapa .jm-ctls')).pointerEvents === 'none');
+    ok(v.touch ? ctlHidden : !ctlHidden, `${v.name}: kontrole ${ctlHidden ? 'skrivene' : 'vidljive'} dok je kartica otvorena`);
+    await page.click('#jm-mapa .jm-x'); await sleep(300);
     await page.click('#jm-mapa [data-a="fs"]'); await sleep(500);
     await page.screenshot({ path: path.join(OUT, `${v.name}-7-cijeli-ekran.png`) });
     await page.keyboard.press('Escape'); await page.keyboard.press('Escape');
