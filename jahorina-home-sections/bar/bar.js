@@ -190,7 +190,7 @@
 
     /* tekst desno (cik-cak sa suvenirnicom iznad), poravnat sa desnom ivicom mreže 1240px */
     '#R .jb-body{position:relative;z-index:2;width:min(calc(var(--side) + 560px),52%);margin-left:auto;padding:clamp(56px,6vw,96px) var(--side) clamp(56px,6vw,96px) 0}',
-    '#R .jb-kicker{display:flex;align-items:center;gap:14px;font:600 11px/1 var(--fd);letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.78);margin-bottom:24px}',
+    '#R .jb-kicker{display:flex;align-items:center;gap:14px;font:600 15px/1.2 var(--fd);letter-spacing:.2px;color:rgba(255,255,255,.82);margin-bottom:22px}',   /* kao mali tekst hero-a (od 30. 10. bez velikih slova) */
     '#R .jb-kicker::before{content:"";width:34px;height:1.5px;flex-shrink:0;background:linear-gradient(90deg,var(--accent),#fff,var(--accent));box-shadow:0 0 10px rgba(0,185,242,.8)}',
     '#R h2{font-size:clamp(46px,5vw,78px);font-weight:800;line-height:.93;letter-spacing:-.025em}',
     '#R h2.jb-long{font-size:clamp(36px,3.8vw,58px)}',
@@ -206,7 +206,7 @@
     '#R .jb-facts b i{font:600 14px/1 var(--fd);font-style:normal;letter-spacing:0;color:var(--accent-2);padding-bottom:2px}',
     '#R .jb-facts .jb-f-txt b{gap:7px;font-size:16.5px;letter-spacing:.1px;padding-bottom:1px}',
     '#R .jb-facts .jb-f-txt b i{font:700 16px/1 var(--fd);padding-bottom:1px}',
-    '#R .jb-facts small{display:block;margin-top:9px;font:600 9.5px/1.25 var(--fd);letter-spacing:1.3px;text-transform:uppercase;color:var(--text-3);white-space:nowrap}',
+    '#R .jb-facts small{display:block;margin-top:8px;font:500 13px/1.25 var(--fb);letter-spacing:0;color:var(--text-3);white-space:nowrap}',
     /* dugmad kao u ratraku: bijelo glavno + stakleno sporedno, iste širine i visine */
     '#R .jb-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:34px;width:min(100%,500px)}',
     '#R .jb-btn{all:unset;position:relative!important;isolation:isolate;box-sizing:border-box!important;display:inline-flex!important;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px!important;border-radius:40px!important;cursor:pointer;',
@@ -230,9 +230,8 @@
     '#R .jb-more{position:relative!important}',
     '#R .jb-more::after{content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}',
     '#R .jb-more{display:inline-flex;align-items:center;gap:8px;margin-top:20px;font:500 13.5px/1.3 var(--fb);color:var(--text-3)!important;transition:color .2s}',
-    '#R .jb-more svg{width:14px;height:14px;transition:transform .25s ease}',
-    '#R .jb-more:hover{color:var(--accent)!important}',
-    '#R .jb-more:hover svg{transform:translateX(3px)}',
+    '#R .jb-more{text-decoration:underline;text-decoration-color:rgba(0,185,242,.4);text-underline-offset:4px}',
+    '#R .jb-more:hover,#R .jb-more:focus-visible{color:var(--accent)!important}',
     '#R .jb-why{display:block;margin-top:14px;font:500 11.5px/1.4 var(--fb);color:#FFB547}',
 
     /* MENI U KADRU: pravi meni (debljina strana, sjenka), blago okrenut prema tekstu. Dok sekcija ulazi u ekran, meni se
@@ -258,7 +257,7 @@
     '#R .jb-book:hover .jb-fb::after{background-position:0 0}',
     /* natpis ispod menija: "Meni · 12 strana" (dok se lista: "Meni · 03 / 12") + kako se koristi */
     '#R .jb-cap{position:absolute;left:-60px;right:-60px;top:calc(100% + 30px);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;pointer-events:none}',
-    '#R .jb-cap b{display:flex;align-items:center;gap:10px;font:600 10.5px/1 var(--fd);letter-spacing:2.6px;text-transform:uppercase;color:rgba(255,255,255,.72);text-shadow:0 1px 10px rgba(0,0,0,.7);white-space:nowrap;font-variant-numeric:tabular-nums;transition:color .25s}',
+    '#R .jb-cap b{display:flex;align-items:center;gap:10px;font:600 13.5px/1 var(--fd);letter-spacing:.2px;color:rgba(255,255,255,.78);text-shadow:0 1px 10px rgba(0,0,0,.7);white-space:nowrap;font-variant-numeric:tabular-nums;transition:color .25s}',
     '#R .jb-cap b svg{width:15px;height:15px;color:var(--accent)}',
     '#R .jb-cap small{font:500 12px/1.3 var(--fb);color:var(--text-3);text-shadow:0 1px 10px rgba(0,0,0,.7)}',
     '#R .jb-book:hover .jb-cap b{color:#fff}',
@@ -267,23 +266,23 @@
 
     /* ulazak (jednom): klase jb-anim/jb-on dodaje skripta samo kad postoji IntersectionObserver i nije uključeno smanjeno kretanje */
     '#R.jb-anim .jb-frame{opacity:0;transform:translateY(28px)}',
-    '#R.jb-anim.jb-on .jb-frame{opacity:1;transform:none;transition:opacity .8s ease,transform 1s cubic-bezier(.2,.7,.2,1)}',
+    '#R.jb-anim.jb-on .jb-frame{opacity:1;transform:none;transition:opacity .5s ease,transform .7s cubic-bezier(.2,.7,.2,1)}',
     '#R.jb-anim:not(.jb-on) .jb-bg.is-on{opacity:0;filter:saturate(.9) brightness(.3) contrast(1.08) blur(12px)}',
     '#R.jb-anim .jb-light{opacity:0}',
-    '#R.jb-anim.jb-on .jb-light{opacity:1;transition:opacity 1.8s ease .8s}',
+    '#R.jb-anim.jb-on .jb-light{opacity:1;transition:opacity 1.2s ease .4s}',
     '#R.jb-anim .jb-up{opacity:0;transform:translateY(20px)}',
-    '#R.jb-anim.jb-on .jb-up{opacity:1;transform:none;transition:opacity .7s ease var(--d,0s),transform .95s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
+    '#R.jb-anim.jb-on .jb-up{opacity:1;transform:none;transition:opacity .55s ease var(--d,0s),transform .75s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
     '#R.jb-anim .jb-kicker::before{transform:scaleX(0);transform-origin:left center}',
-    '#R.jb-anim.jb-on .jb-kicker::before{transform:none;transition:transform .6s cubic-bezier(.2,.7,.2,1) .5s}',
+    '#R.jb-anim.jb-on .jb-kicker::before{transform:none;transition:transform .5s cubic-bezier(.2,.7,.2,1) .2s}',
     /* meni se pojavi na stolu (podiže ga skrol), pa se korica jednom odškrine */
     '#R.jb-anim .jb-bk-in{opacity:0}',
-    '#R.jb-anim.jb-on .jb-bk-in{opacity:1;transition:opacity .9s ease .45s}',
+    '#R.jb-anim.jb-on .jb-bk-in{opacity:1;transition:opacity .7s ease .2s}',
     '#R.jb-anim .jb-cap{opacity:0}',
-    '#R.jb-anim.jb-on .jb-cap{opacity:1;transition:opacity .8s ease 1.3s}',
+    '#R.jb-anim.jb-on .jb-cap{opacity:1;transition:opacity .6s ease .7s}',
 
     /* manji laptop */
     '@media (max-width:1180px){#R .jb-body{width:min(calc(var(--side) + 500px),56%)}#R .jb-facts li{padding:2px 15px!important}#R .jb-facts b{font-size:23px;height:23px}',
-    '#R .jb-facts .jb-f-txt b{font-size:14.5px;gap:5px}#R .jb-facts .jb-f-txt b i{font-size:14px}#R .jb-facts small{letter-spacing:1px}#R .jb-acts{width:min(100%,470px)}#R .jb-btn{padding:0 14px!important}}',
+    '#R .jb-facts .jb-f-txt b{font-size:14.5px;gap:5px}#R .jb-facts .jb-f-txt b i{font-size:14px}#R .jb-facts small{font-size:12.5px}#R .jb-acts{width:min(100%,470px)}#R .jb-btn{padding:0 14px!important}}',
     /* tablet i telefon: fotografija gore (utapa se nadolje) sa menijem na njoj, tekst ispod */
     '@media (max-width:980px){',
     '#R .jb-frame{flex-direction:column;align-items:stretch;min-height:0}',
@@ -305,10 +304,10 @@
     '#R .jb-bk{transform:rotateY(8deg) rotateX(4deg) rotateZ(.5deg)}',
     '#R .jb-light{--lx:50%}',
     '#R .jb-cap{top:calc(100% + 14px)}',
-    '#R .jb-cap b{font-size:9.5px;letter-spacing:2.4px;gap:8px}',
+    '#R .jb-cap b{font-size:13px;letter-spacing:.1px;gap:8px}',
     '#R .jb-cap small,#R .jb-cap-n{display:none}',
     '#R .jb-body{padding:14px 22px 30px}',
-    '#R .jb-kicker{letter-spacing:2.6px;font-size:10px;gap:10px;margin-bottom:16px}',
+    '#R .jb-kicker{letter-spacing:.1px;font-size:13.5px;gap:10px;margin-bottom:16px}',
     '#R .jb-kicker::before{width:22px}',
     '#R h2{font-size:clamp(38px,11.6vw,54px)}',
     '#R h2.jb-long{font-size:clamp(30px,8.6vw,42px)}',
@@ -319,7 +318,7 @@
     '#R .jb-facts b{font-size:23px;height:23px}',
     '#R .jb-facts .jb-f-txt{grid-column:1 / -1;order:3;border-left:0;padding:14px 0 0!important;border-top:1px solid rgba(255,255,255,.12)}',
     '#R .jb-facts .jb-f-txt b{font-size:15px}',
-    '#R .jb-facts small{font-size:9px;letter-spacing:1px}',
+    '#R .jb-facts small{font-size:12px;white-space:normal}',
     '#R .jb-acts{grid-template-columns:1fr 1fr;gap:8px;margin-top:26px;width:100%}',
     '#R .jb-btn{height:44px;padding:0 12px!important;font-size:13px!important}',
     '#R .jb-l{display:none}',
@@ -338,7 +337,7 @@
     '#L .jb-r-bg{position:absolute;inset:-60px;background:#0A0F1A center/cover no-repeat;filter:blur(24px) saturate(.9) brightness(.52);transform:scale(1.04)}',
     '#L .jb-r-veil{position:absolute;inset:0;background:radial-gradient(70% 62% at 50% 46%,rgba(10,14,24,.15),rgba(4,7,14,.8)),linear-gradient(180deg,rgba(4,7,14,.55),transparent 16%,transparent 80%,rgba(4,7,14,.75))}',
     '#L .jb-r-top{position:absolute;left:0;right:0;top:0;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:clamp(12px,2vw,22px) clamp(14px,2.4vw,30px)}',
-    "#L .jb-r-title{display:flex;align-items:center;gap:12px;min-width:0;font:600 11px/1.2 'Archivo',system-ui,sans-serif;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.8)}",
+    "#L .jb-r-title{display:flex;align-items:center;gap:12px;min-width:0;font:600 14.5px/1.2 'Archivo',system-ui,sans-serif;letter-spacing:.2px;color:rgba(255,255,255,.86)}",
     '#L .jb-r-title::before{content:"";width:28px;height:1.5px;flex-shrink:0;background:linear-gradient(90deg,#00B9F2,#fff,#00B9F2);box-shadow:0 0 10px rgba(0,185,242,.8)}',
     '#L .jb-r-title em{font-style:normal;color:rgba(255,255,255,.5)}',
     '#L .jb-r-tools{display:flex;gap:10px;flex-shrink:0}',
@@ -381,7 +380,7 @@
     '#L .jb-r-zoom img{display:block;width:min(1240px,100%);height:auto;margin:0 auto 18px;border-radius:4px;box-shadow:0 30px 60px -30px rgba(0,0,0,.9);user-select:none}',
     '@media (max-width:760px){#L .jb-r-zoom{padding:72px 0 28px}#L .jb-r-zoom img{width:230%;max-width:none;margin:0 0 14px}}',
     '@media (max-width:980px){#L .jb-r-hint{display:none}}',
-    '@media (max-width:760px){#L .jb-r-title{letter-spacing:2.4px;font-size:10px;gap:9px}#L .jb-r-title::before{width:18px}#L .jb-r-title em{display:none}#L button{width:44px!important;height:44px!important}}',
+    '@media (max-width:760px){#L .jb-r-title{letter-spacing:.1px;font-size:13.5px;gap:9px}#L .jb-r-title::before{width:18px}#L .jb-r-title em{display:none}#L button{width:44px!important;height:44px!important}}',
     '@media (prefers-reduced-motion:reduce){#L,#L *{transition:none!important;animation:none!important}}',
 
     /* ---------- VIDEO PREKO CIJELOG EKRANA (YouTube se učitava tek na klik) ---------- */
@@ -423,7 +422,6 @@
     book: svg('<path d="M12 6.5 C10 5 7 4.6 3.5 5 V18.5 C7 18.1 10 18.5 12 20 C14 18.5 17 18.1 20.5 18.5 V5 C17 4.6 14 5 12 6.5 Z M12 6.5 V20" ' + S + '/>'),
     phone: svg('<path d="M6.6 3.8 L9.2 3.6 L10.6 7.6 L8.7 9 C9.6 11.2 11.6 13.4 14.1 14.6 L15.6 12.8 L19.6 14.2 L19.4 16.9 C19.3 18.4 18 19.6 16.4 19.4 C9.9 18.8 4.7 13.6 4.1 7.1 C3.9 5.5 5.1 4 6.6 3.8 Z" ' + S + '/>'),
     play: svg('<circle cx="12" cy="12" r="8.6" ' + S + '/><path d="M10.2 8.9 L15.2 12 L10.2 15.1 Z" ' + S + '/>'),
-    arrow: svg('<path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
     prev: svg('<path d="M19 12 H5 M11 6 L5 12 L11 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
     next: svg('<path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
     close: svg('<path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'),
@@ -488,8 +486,8 @@
       }
       lines = [rest.slice(0, k).join(' '), rest.slice(k).join(' ')];
     } else if (rest.length) lines = [rest.join(' ')];
-    return lines.map(function (l, i) { return '<span class="jb-up" style="--d:' + (.36 + i * .1).toFixed(2) + 's">' + esc(l) + '</span>'; }).join(' ') +
-      ' <span class="jb-o jb-up" style="--d:' + (.36 + lines.length * .1).toFixed(2) + 's">' + esc(o) + '</span>';
+    return lines.map(function (l, i) { return '<span class="jb-up" style="--d:' + (.12 + i * .07).toFixed(2) + 's">' + esc(l) + '</span>'; }).join(' ') +
+      ' <span class="jb-o jb-up" style="--d:' + (.12 + lines.length * .07).toFixed(2) + 's">' + esc(o) + '</span>';
   }
   // uvod: prva rečenica pasusa (i druga, ako je prva vrlo kratka); tačka u broju (1.879) ne prekida rečenicu
   function leadOf(p) {
@@ -522,15 +520,15 @@
         '<span class="jb-cap"><b>' + ICON.book + '<span><span class="jb-cap-t"></span><span class="jb-cap-n"></span></span></b><small><span class="jb-cm">' + esc(T.capM) + '</span><span class="jb-ct">' + esc(T.capT) + '</span></small></span>' +
       '</button>' +
       '<div class="jb-body">' +
-        '<div class="jb-kicker jb-up" style="--d:.26s">' + esc(T.kicker) + '</div>' +
+        '<div class="jb-kicker jb-up" style="--d:.05s">' + esc(T.kicker) + '</div>' +
         '<h2 id="jb-h">' + titleHTML(T.head) + '</h2>' +
-        '<p class="jb-lead jb-up" style="--d:.72s">' + esc(T.lead) + '</p>' +
-        '<ul class="jb-facts jb-up" style="--d:.82s">' + factsHTML(T.altV, T.evV) + '</ul>' +
-        '<div class="jb-acts jb-up" style="--d:.94s">' +
+        '<p class="jb-lead jb-up" style="--d:.34s">' + esc(T.lead) + '</p>' +
+        '<ul class="jb-facts jb-up" style="--d:.42s">' + factsHTML(T.altV, T.evV) + '</ul>' +
+        '<div class="jb-acts jb-up" style="--d:.5s">' +
           '<a class="jb-btn jb-btn--solid" href="tel:' + esc(TEL) + '" data-jb="rezervacija"></a>' +
           '<button type="button" class="jb-btn jb-btn--ghost" data-jb="video" aria-haspopup="dialog">' + ICON.play + lbl(esc(T.video), esc(T.videoS)) + '</button>' +
         '</div>' +
-        '<a class="jb-more jb-up" style="--d:1.02s" href="' + esc(PAGE) + '" data-jb="stranica">' + esc(T.more) + ICON.arrow + '</a>' +
+        '<a class="jb-more jb-up" style="--d:.58s" href="' + esc(PAGE) + '" data-jb="stranica">' + esc(T.more) + '</a>' +
       '</div>' +
     '</div></section>';
   function q(s) { return root.querySelector(s); }
