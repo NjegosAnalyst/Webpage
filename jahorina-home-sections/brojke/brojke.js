@@ -51,8 +51,8 @@
   var T = EN ? {
     aria: 'The mountain in numbers', h: ['An Olympic', 'mountain'],
     lead: 'Jahorina ski resort slopes are groomed to FIS standards, from the first morning run to night skiing under the floodlights.',
-    km: { u: 'km', l: 'of alpine ski slopes', s: 'Groomed to FIS standards' },
-    zicare: { u: '', l: 'lifts and ski tows', s: 'Vertical transport' },
+    km: { u: 'km', l: 'of alpine ski slopes', s: 'For every skiing level' },
+    zicare: { u: '', l: 'lifts and ski tows', s: 'Gondola, six-seat chairlifts and ski lifts' },
     nocne: { u: '', l: 'night skiing slopes', s: 'Homologated' },
     sankanje: { u: 'm', l: 'sledding track', s: 'For the whole family' },
     photo: 'Night skiing on Olympic Mountain Jahorina: a snowboarder on a floodlit slope between snow-covered spruces',
@@ -60,8 +60,8 @@
   } : {
     aria: 'Planina u brojkama', h: ['Olimpijska', 'planina'],
     lead: 'Staze ski centra Jahorina uređene su po FIS standardima, od prvog jutarnjeg spusta do noćnog skijanja pod reflektorima.',
-    km: { u: 'km', l: 'alpskih skijaških staza', s: 'Uređene po FIS standardima' },
-    zicare: { u: '', l: 'žičara i ski liftova', s: 'Vertikalni transport' },
+    km: { u: 'km', l: 'alpskih skijaških staza', s: 'Za sve nivoe skijanja' },
+    zicare: { u: '', l: 'žičara i ski liftova', s: 'Gondola, šestosjedi i ski liftovi' },
     nocne: { u: '', l: 'staza za noćno skijanje', s: 'Homologovane' },
     sankanje: { u: 'm', l: 'staza sankališta', s: 'Za cijelu porodicu' },
     photo: 'Noćno skijanje na Olimpijskoj planini Jahorina: snowboarder na osvijetljenoj stazi između snijegom okovanih jela',
@@ -135,7 +135,8 @@
     '#R .jpb-wire2{fill:none!important;stroke:rgba(0,0,0,.35);stroke-width:1}',
     '#R .jpb-nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(30px,4vw,48px) clamp(18px,2.4vw,40px)}',
     '#R .jpb-num{position:relative;display:flex!important;flex-direction:column;align-items:center;text-align:center}',
-    '#R .jpb-chair{position:relative;z-index:2;width:min(100%,300px);aspect-ratio:300/250;container-type:inline-size;transform-origin:50% 1.6%}',
+    '#R .jpb-chair{position:relative;z-index:2;width:min(100%,300px);aspect-ratio:300/250;container-type:inline-size;transform-origin:50% 1.6%;margin-bottom:calc(min(100%,300px) * -.13)}',   /* prazno ispod sjedala → natpis bliže brojci */
+    '#R .jpb-num .jpb-l,#R .jpb-num .jpb-s{position:relative;z-index:3;text-wrap:balance}',   /* uski stupci (telefon): redovi podjednake dužine */
     '#R .jpb-chair svg{position:absolute;inset:0;width:100%;height:100%}',
     '#R .jpb-cl{fill:none!important;stroke:rgba(255,255,255,.62);stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}',
     '#R .jpb-cl2{fill:none!important;stroke:rgba(255,255,255,.3);stroke-width:1;stroke-linecap:round;vector-effect:non-scaling-stroke}',
@@ -155,12 +156,12 @@
     '#R .jpb-d{position:relative;display:inline-block;height:1em;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent)}',
     '#R .jpb-reel{display:flex;flex-direction:column;transform:translateY(calc(var(--v) * -5%))}',
     '#R .jpb-reel i{display:block;height:1em;margin:0;padding:0;line-height:1;font-style:normal!important;text-align:center;color:inherit!important}',
-    '#R h3.jpb-l{display:block;margin:clamp(8px,1vw,14px) 0 0!important;padding:0!important;border:0;background:none!important;font:500 15.5px/1.35 var(--fb)!important;letter-spacing:0!important;text-transform:none!important;color:#fff!important;-webkit-text-fill-color:currentColor!important;text-shadow:none!important}',
+    '#R h3.jpb-l{display:block;margin:clamp(8px,1vw,14px) 0 0!important;padding:0!important;border:0;background:none!important;font:500 17px/1.35 var(--fb)!important;letter-spacing:0!important;text-transform:none!important;color:#fff!important;-webkit-text-fill-color:currentColor!important;text-shadow:none!important}',
     '#R .jpb-s{display:block;margin-top:4px;font:500 13px/1.35 var(--fb);letter-spacing:0;color:var(--text-3)}',   // ranije VELIKA slova 10 / 9 / 8.5 px
-    /* sjedišta se blago njišu kao na vjetru (samo dok je blok na ekranu); prelaz mišem ih zaljulja */
+    /* sjedišta se blago zanjišu kad blok dođe na ekran (2 zamaha, pa mir); prelaz mišem ih zaljulja */
     '#R .jpb-sw,#R .jpb-hit{position:absolute;inset:0;transform-origin:50% 1.6%}',
-    '#R.jpb-vis .jpb-num.is-on .jpb-sw,#R.jpb-vis:not(.jpb-anim) .jpb-sw{animation:jpbSway var(--sw,5.6s) ease-in-out var(--swd,0s) infinite}',
-    '@keyframes jpbSway{0%,100%{transform:rotate(-.6deg)}50%{transform:rotate(.6deg)}}',
+    '#R.jpb-vis .jpb-num.is-on .jpb-sw,#R.jpb-vis:not(.jpb-anim) .jpb-sw{animation:jpbSway var(--sw,5.6s) ease-in-out var(--swd,0s) 2}',
+    '@keyframes jpbSway{0%,100%{transform:none}25%{transform:rotate(-.6deg)}75%{transform:rotate(.6deg)}}',   /* počinje i završava mirno — bez skoka na kraju */
     '#R .jpb-num.is-hit .jpb-hit{animation:jpbHit 1.6s cubic-bezier(.3,.6,.3,1)}',
     '@keyframes jpbHit{0%{transform:none}18%{transform:rotate(3.4deg)}42%{transform:rotate(-2.2deg)}66%{transform:rotate(1deg)}84%{transform:rotate(-.35deg)}100%{transform:none}}',
     '#R .jpb-sr{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}',
@@ -194,7 +195,7 @@
     '#R.jpb-anim .jpb-num.is-on .jpb-l,#R.jpb-anim .jpb-num.is-on .jpb-s,#R.jpb-anim .jpb-num.is-on .jpb-v em{opacity:1;transform:none}',
 
     /* manji laptop */
-    '@media (max-width:1180px){#R h3.jpb-l{font-size:14.5px!important}}',
+    '@media (max-width:1180px){#R h3.jpb-l{font-size:16px!important}}',
     /* tablet: fotografija gore, naslov i brojke ispod (red od 4) */
     '@media (max-width:980px){',
     '#R .jpb-frame{--mh:min(60vw,500px);justify-content:flex-start;min-height:0}',
@@ -205,7 +206,7 @@
     '#R h2{font-size:clamp(42px,7.4vw,64px)}',
     '#R .jpb-lead{max-width:56ch}',
     '#R .jpb-stats{margin-top:clamp(36px,6vw,52px);padding:0 clamp(22px,6vw,56px) clamp(38px,6vw,56px)}',
-    '#R h3.jpb-l{font-size:14px!important}',
+    '#R h3.jpb-l{font-size:15.5px!important}',
     '#R .jpb-s{font-size:12.5px}}',
     /* telefon: dva reda po dva sjedišta, svaki red na svom užetu */
     '@media (max-width:760px){',
@@ -217,7 +218,7 @@
     '#R .jpb-stats{margin-top:34px;padding:0 16px 34px}',
     '#R .jpb-nums{grid-template-columns:1fr 1fr;gap:34px 14px}',
     '#R .jpb-num{--ride:-44px}',   /* kratko klizanje, da sjedište ne prelazi preko susjednog */
-    '#R h3.jpb-l{font-size:13.5px!important}',
+    '#R h3.jpb-l{font-size:15px!important}',
     /* brzina na telefonu (SEO pravila početne): bez backdrop-filter, filtera i miješanja boja */
     '#R .jpb-back{-webkit-backdrop-filter:none;backdrop-filter:none;background:linear-gradient(180deg,rgba(22,33,56,.94),rgba(10,17,32,.96))}',
     '#R .jpb-ph img,#R.jpb-anim .jpb-ph img,#R.jpb-anim.jpb-on .jpb-ph img{filter:none}',

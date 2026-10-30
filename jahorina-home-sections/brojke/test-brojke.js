@@ -158,7 +158,7 @@ const info = (p) => p.evaluate(() => {
         for (let k = 0; k <= 400; k++) { const pt = wr.getPointAtLength(L * k / 400), sx = m.a * pt.x + m.c * pt.y + m.e, sy = m.b * pt.x + m.d * pt.y + m.f; if (Math.abs(sx - x) < 3) best = Math.min(best, Math.abs(sy - y)); }
         return best; })); })),
     mix: r.querySelectorAll('.jpb-mix, .jpb-key').length, sub1: r.querySelector('.jpb-num .jpb-s').textContent,
-    sway: cs(q('.jpb-sw')).animationName, vis: r.classList.contains('jpb-vis'),
+    sway: cs(q('.jpb-sw')).animationName, swayN: cs(q('.jpb-sw')).animationIterationCount, vis: r.classList.contains('jpb-vis'),
     numFits: [...r.querySelectorAll('.jpb-back')].every((bk) => { const v = bk.querySelector('.jpb-v').getBoundingClientRect(), b = bk.getBoundingClientRect(); return v.width <= b.width - 8 && v.height <= b.height; }),
     numsTop: r.querySelector('.jpb-nums').getBoundingClientRect().top, leadB: q('.jpb-lead').getBoundingClientRect().bottom, imgOk: q('.jpb-ph img').naturalWidth > 0, alt: q('.jpb-ph img').alt,
   };
@@ -197,8 +197,8 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   check('uže prolazi kroz hvataljke sjedišta', i.gripGap < 4, i.gripGap);
   check('brojke stanu u naslone sjedišta', i.numFits, i.numFits);
   check('sjedišta ispod naslova', i.numsTop > i.leadB, [i.numsTop, i.leadB]);
-  check('bez trake staza po težini (korisnik); ispod km stoji FIS', i.mix === 0 && i.sub1 === 'Uređene po FIS standardima', [i.mix, i.sub1]);
-  check('sjedišta se njišu dok je blok na ekranu', i.sway === 'jpbSway' && i.vis, [i.sway, i.vis]);
+  check('bez trake staza po težini (korisnik); ispod km „Za sve nivoe skijanja“ (FIS je u uvodu)', i.mix === 0 && i.sub1 === 'Za sve nivoe skijanja', [i.mix, i.sub1]);
+  check('sjedišta se zanjišu kad je blok na ekranu (2 zamaha, pa mir)', i.sway === 'jpbSway' && i.swayN === '2' && i.vis, [i.sway, i.swayN, i.vis]);
   await r.p.mouse.move(5, 5);
   const ch = await r.p.locator('#jpb-brojke .jpb-num').nth(1).locator('.jpb-back').boundingBox();
   await r.p.mouse.move(ch.x + ch.width / 2, ch.y + ch.height / 2);
