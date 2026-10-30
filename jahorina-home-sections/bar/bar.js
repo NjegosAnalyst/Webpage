@@ -18,7 +18,8 @@
      · meni = slike u Medijima sa imenom meni-bar-01, meni-bar-02 … (redni broj = strana; za isti broj vrijedi
        najnovija). Kad se cijene promijene, u Medije se dodaju nove slike sa istim imenima.
      Dok WordPress ne odgovori (ili ako nema tih slika), stoje ugrađeni tekst (isti kao na stranici 8. 10. 2026)
-     i ugrađeni meni (12 strana iz slike/meni/ pored ovog fajla). Prijavljeni admin vidi tehnički razlog.
+     i ugrađeni meni (12 strana iz slike/meni/ pored ovog fajla). Prijavljeni admin vidi tehnički razlog
+     (meni koji nije u Medijima nije razlog — to je redovno stanje, od 30. 10. bez poruke).
 
    Ugradnja: Elementor HTML widget sa <div id="jb-bar"></div> + ovaj fajl sa jsDelivr-a.
    Podešavanja na <div id="jb-bar"> (sva su neobavezna):
@@ -1154,7 +1155,7 @@
         buildFrameBook();
         if (R && R.open) layout();
       }
-    } else if (mn) miss.push('meni u Medijima (meni-bar-01, -02 …)' + (mn.err ? ': ' + mn.err.message : ''));
+    } else if (mn && mn.err) miss.push('meni u Medijima: ' + mn.err.message);   // bez slika u Medijima ugrađeni meni je redovno stanje (korisnik 30. 10.: bez poruke)
     if (miss.length) why(miss.join('; '));
   }
   function why(msg) {
