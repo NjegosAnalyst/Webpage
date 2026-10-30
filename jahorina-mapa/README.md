@@ -6,7 +6,7 @@ filteri, noćni prikaz, SR/EN). Prefiks klasa `jm-`, mjesto ugradnje `<div id="j
 ## Fajlovi
 - `mapa.js` — cijela komponenta (ubacuje CSS i HTML, čita `podaci/mapa.json` i `slike/` pored sebe ili iz `data-base`).
 - `podaci/mapa.json` — vektorski podaci (25 staza, vezne staze, 14 žičara, usluge, granica, pješačke i osvijetljene staze).
-- `slike/mapa-{dan,noc}-{2000,3543}.webp` — naslikana podloga iz PSD-a (dan) i noćna obrada (bez sunca, tamno nebo, tihe zvijezde).
+- `slike/mapa-{dan,noc}-{2000,3543}.webp` — naslikana podloga iz PSD-a: dan = prigušena verzija (bez sunca, mirno svijetlo nebo, teren manje zasićen; `PODLOGA` u `napravi-podatke.py`, 'original' vraća izgled iz PSD-a), noć = noćna obrada (tamno nebo, tihe zvijezde).
 - `alati/ulaz.py` — ručni ulaz: kontrolne tačke staza, oznake, žičare iz legende PSD-a, usluge.
 - `alati/napravi-podatke.py` — PSD → slike + `mapa.json`.
 - `pregled/index.html` — pregled (artifact), `test-mapa.js` — Playwright test (računar + telefon).

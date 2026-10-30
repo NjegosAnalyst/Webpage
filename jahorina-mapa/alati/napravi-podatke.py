@@ -62,6 +62,18 @@ sky = np.asarray(Image.fromarray((plavo * 255).astype(np.uint8)).filter(ImageFil
 noc = nocna(bez_sunca) * (1 - sky) + nebo * sky
 noc = Image.fromarray((np.clip(noc, 0, 1) * 255).astype(np.uint8))
 
+# dnevna podloga: 'prigusena' (korisnik 30. 10.: bez sunca, mirno svijetlo nebo, teren manje zasićen i hladniji,
+# da se staze i žičare jasnije ističu) ili 'original' (kao u PSD-u)
+PODLOGA = 'prigusena'
+if PODLOGA == 'prigusena':
+    a_ = np.asarray(bez_sunca).astype(np.float32) / 255
+    lum = (a_ @ np.array([.299, .587, .114], np.float32))[..., None]
+    a_ = lum + (a_ - lum) * .72                                       # manje zasićeno
+    a_ = 1 - (1 - np.clip(a_ * np.array([.985, 1.0, 1.02], np.float32), 0, 1)) * .93   # hladnije, mekše sjene
+    t_ = np.clip(ys / .55, 0, 1) ** 1.2
+    nebo_d = np.array([150, 190, 214], np.float32) / 255 * (1 - t_) + np.array([228, 238, 244], np.float32) / 255 * t_
+    dan = Image.fromarray((np.clip(a_ * (1 - sky) + nebo_d * sky, 0, 1) * 255).astype(np.uint8))
+
 (ROOT / 'slike').mkdir(exist_ok=True)
 for ime, im in (('dan', dan), ('noc', noc)):
     for w in (3543, 2000):

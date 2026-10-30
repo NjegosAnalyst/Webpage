@@ -15,15 +15,16 @@
   var T = EN ? {
     kicker: 'Piste map', h1: 'Ski runs of', h2: 'Jahorina',
     lead: '25 runs, link runs and 14 lifts of the Jahorina ski resort on one map. Tap a run or a lift for details, switch on night view to see the floodlit runs.',
-    laka: 'Easy', srednja: 'Intermediate', teska: 'Difficult', zicare: 'Lifts', usluge: 'Services', noc: 'Night skiing',
+    laka: 'Blue', srednja: 'Red', teska: 'Black', zicare: 'Lifts', usluge: 'Services', noc: 'Night skiing',
     run: 'Run', lift: 'Lift', zoomIn: 'Zoom in', zoomOut: 'Zoom out', reset: 'Whole map', full: 'Full screen', fullOff: 'Close full screen',
     close: 'Close', hintWheel: 'Hold Ctrl and scroll to zoom', hintTouch: 'Swipe sideways to move · pinch to zoom',
     help: 'Drag to move · Ctrl + scroll to zoom · Click a run for details', helpTouch: 'Swipe sideways · pinch to zoom · full screen for more room',
-    lit: 'Floodlit for night skiing', fis: 'FIS homologated', upper: 'Upper part difficult, lower part intermediate',
+    lit: 'Floodlit for night skiing', fis: 'FIS homologated', upper: 'Upper part black, lower part red',
     gore: 'Lift to the top', dole: 'At the bottom', od: 'Branches off run', u: 'Joins run', fromTop: 'Runs from the top',
     ride: 'ride', listLifts: 'Lifts', listRuns: 'Runs', listSum: 'Lifts and runs list', nLifts: 'lifts', nRuns: 'runs', mapLabel: 'Interactive piste map of Jahorina. Use the lists below the map to pick a run or a lift.',
     tip: { gondola: 'Gondola', sestosjed: 'Six-seater chairlift', dvosjed: 'Double chairlift', tanjir: 'Platter lift', sidro: 'T-bar lift' },
-    lvl: { laka: 'Easy run', srednja: 'Intermediate run', teska: 'Difficult run' },
+    lvl: { laka: 'Blue run', srednja: 'Red run', teska: 'Black run' },
+    grp: { laka: 'Blue runs', srednja: 'Red runs', teska: 'Black runs' },
     poi: { skikasa: 'Ski pass sales', karte24: 'Ski pass sales 24/7', parking: 'Parking', restoran: 'Restaurant', bar: 'Olimp bar',
       hotel: 'Hotel', smjestaj: 'Resort accommodation', skola: 'Ski school booking', poligon: 'Ski practice area', snowboard: 'Snowboard park',
       sankaliste: 'Sledding area', gondola: 'Poljice gondola', rent: 'Ski rental', wc: 'Toilets', gss: 'Mountain rescue',
@@ -37,15 +38,16 @@
   } : {
     kicker: 'Ski mapa', h1: 'Mapa staza', h2: 'Jahorine',
     lead: '25 staza, vezne staze i 14 žičara ski centra Jahorina na jednoj mapi. Dodirni stazu ili žičaru za detalje, a noćni prikaz pokazuje osvijetljene staze.',
-    laka: 'Lake', srednja: 'Srednje', teska: 'Teške', zicare: 'Žičare', usluge: 'Usluge', noc: 'Noćno skijanje',
+    laka: 'Plave', srednja: 'Crvene', teska: 'Crne', zicare: 'Žičare', usluge: 'Usluge', noc: 'Noćno skijanje',
     run: 'Staza', lift: 'Žičara', zoomIn: 'Uvećaj', zoomOut: 'Umanji', reset: 'Cijela mapa', full: 'Cijeli ekran', fullOff: 'Zatvori cijeli ekran',
     close: 'Zatvori', hintWheel: 'Drži Ctrl i skroluj za zum', hintTouch: 'Prevuci lijevo-desno · dva prsta za zum',
     help: 'Prevuci za pomjeranje · Ctrl + točkić za zum · klik na stazu za detalje', helpTouch: 'Prevuci lijevo-desno · dva prsta za zum · cijeli ekran za više prostora',
-    lit: 'Osvijetljena za noćno skijanje', fis: 'FIS homologovana', upper: 'Gornji dio težak, donji srednje težak',
+    lit: 'Osvijetljena za noćno skijanje', fis: 'FIS homologovana', upper: 'Gornji dio crna, donji dio crvena staza',
     gore: 'Žičara do vrha', dole: 'Na dnu', od: 'Odvaja se od staze', u: 'Spaja se sa stazom', fromTop: 'Staze sa vrha',
     ride: 'vožnje', listLifts: 'Žičare', listRuns: 'Staze', listSum: 'Popis žičara i staza', nLifts: 'žičara', nRuns: 'staza', mapLabel: 'Interaktivna mapa staza Jahorine. Stazu ili žičaru možeš izabrati i iz popisa ispod mape.',
     tip: { gondola: 'Gondola', sestosjed: 'Šestosjed', dvosjed: 'Dvosjed', tanjir: 'Ski lift tanjir', sidro: 'Ski lift sidro' },
-    lvl: { laka: 'Laka staza', srednja: 'Srednje teška staza', teska: 'Teška staza' },
+    lvl: { laka: 'Plava staza', srednja: 'Crvena staza', teska: 'Crna staza' },
+    grp: { laka: 'Plave staze', srednja: 'Crvene staze', teska: 'Crne staze' },
     poi: { skikasa: 'Prodaja ski karata', karte24: 'Prodaja ski karata 0–24', parking: 'Parking', restoran: 'Restoran', bar: 'Olimp bar',
       hotel: 'Hotel', smjestaj: 'Smještaj ski centra', skola: 'Booking ski škole', poligon: 'Ski poligon', snowboard: 'Snowboard poligon',
       sankaliste: 'Sankalište', gondola: 'Gondola Poljice', rent: 'Ski renta', wc: 'Toalet', gss: 'Gorska služba spasavanja Jahorina',
@@ -57,7 +59,7 @@
     here: 'Ovdje', snow: 'Osnježavanje', fisOn: 'FIS',
     peak: 'Ogorjelica', and: ', ', km: 'm'
   };
-  var NAZ_TEZ = { laka: EN ? 'easy' : 'laka', srednja: EN ? 'intermediate' : 'srednja', teska: EN ? 'difficult' : 'teška' };
+  var NAZ_TEZ = { laka: EN ? 'blue' : 'plava', srednja: EN ? 'red' : 'crvena', teska: EN ? 'black' : 'crna' };
 
   /* ---------- fontovi (jednom za sve sekcije) ---------- */
   var hasFonts = [].some.call(document.querySelectorAll('link[rel=stylesheet]'), function (l) {
@@ -395,8 +397,15 @@
     var upgraded = big;
     function upgrade() {
       if (upgraded) return; upgraded = true;
-      var hi = new Image(); hi.onload = function () { imgD.src = hi.src; if (nightLoaded) imgN.src = BASE + 'slike/mapa-noc-3543.webp'; };
-      hi.src = BASE + 'slike/mapa-dan-3543.webp'; big = true;
+      // oštrija slika ulazi tek kad je dekodirana: novi <img> preko starog, pa se stari ukloni (bez tamnog bljeska)
+      function swap(old, url, cb) {
+        var n = old.cloneNode(false); n.src = url;
+        var done = function () { old.parentNode.insertBefore(n, old.nextSibling); old.parentNode.removeChild(old); cb(n); };
+        (n.decode ? n.decode() : new Promise(function (r) { n.onload = r; })).then(done, function () {});
+      }
+      swap(imgD, BASE + 'slike/mapa-dan-3543.webp', function (n) { imgD = n; });
+      if (nightLoaded) swap(imgN, BASE + 'slike/mapa-noc-3543.webp', function (n) { imgN = n; });
+      big = true;
     }
 
     /* --- SVG --- */
@@ -494,7 +503,7 @@
     }).join('');
     $('.jm-pop summary b').textContent = D.zicare.length + ' ' + T.nLifts + ' · ' + D.staze.length + ' ' + T.nRuns;
     $('.jm-runs').innerHTML = ['laka', 'srednja', 'teska'].map(function (k) {
-      return '<div class="jm-rg"><span>' + T.lvl[k] + '</span><div class="jm-rcs">' + runs.filter(function (r) { return r.tez === k; }).map(function (r) {
+      return '<div class="jm-rg"><span>' + T.grp[k] + '</span><div class="jm-rcs">' + runs.filter(function (r) { return r.tez === k; }).map(function (r) {
         return '<button type="button" class="jm-rc t-' + k + '" data-run="' + r.id + '" aria-label="' + esc(T.run + ' ' + r.id) + '">' + esc(r.id) + '</button>';
       }).join('') + '</div></div>';
     }).join('');
