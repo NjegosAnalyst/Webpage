@@ -10,6 +10,11 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - **Firewall hostinga (ModSecurity)** vraća "Forbidden" kad se u WPCode snima veći kod (HTML sa formom/SVG, veći JS). Zato se veći kod drži na GitHubu i učitava preko jsDelivr (vidi Header).
 - Iz cloud okruženja **`oc-jahorina.com` (bez www) je blokiran, ali `https://www.oc-jahorina.com` radi** (21. 10.: HTML stranica i REST API se mogu čitati). Izgled se i dalje testira na simulacijama (Playwright), a korisnik šalje screenshotove.
 
+## KNJIGA STANDARDA (od 2. 11. 2026) — važi prije TEMA.md
+- Korisnik dao „Brand identitet OC Jahorina.pdf“ (Desktop). Sažetak i razlike prema sajtu: **`KNJIGA-STANDARDA.md`**.
+- Ukratko: font **Inter**; ponoćna `#0B132B`, tamna `#1C2541`, čelična `#3A506B`, ledena `#5BC0DE` (akcenat, kao tekst samo na tamnom), krem `#F4D6B0`, **narandžasta `#D97706` = jedno primarno dugme po ekranu, taman tekst**; dugmad 48 px / radijus 12; kartice radijus 20; sadržaj 1200 px; prelazi 1280 / 768 / 390.
+- Sajt sada koristi Archivo + Barlow i cyan `#00B9F2` sa cyan dugmetom — usklađivanje čeka korisnikovu odluku (redoslijed: hero → header/footer → sekcije → galerije).
+
 ## Vizuelni stil (tema hero-a)
 - Noćna fotografija Jahorine, tamne neumorfne površine, jedan akcenat **#00B9F2** (cyan).
 - Fontovi: **Archivo** (naslovi), **Barlow** (tekst). Pozadina ~#0A1120 / #0c1424.
