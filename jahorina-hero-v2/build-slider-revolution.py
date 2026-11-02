@@ -47,7 +47,7 @@ SR_RESET = """
 .jh-hero svg [fill]:not([fill="none"]){fill:currentColor!important}
 .jh-hero svg[fill="none"],.jh-hero svg [fill="none"]{fill:none!important}
 .jh-hero .jh-btn--ghost,.jh-hero .jh-burger,.jh-hero .jh-nav__link{color:#fff}
-.jh-hero .jh-quick__item{color:#C4EEFF}.jh-hero .jh-quick__item--accent{color:#fff}   /* ikonice: ledeno-plave, Web shop bijela */
+.jh-hero .jh-quick__item{color:#CDE9F3}.jh-hero .jh-quick__item--accent{color:#0B132B}   /* ikonice: ledene; Kupi ski kartu: tamno na narandžastoj (knjiga standarda) */
 .jh-hero .jh-quick__item svg{display:block;width:22px;height:22px;flex-shrink:0}
 .jh-hero .jh-dot{display:block!important;visibility:visible!important}   /* tačka na "i" je prazan span — neke teme skrivaju prazne span-ove */
 .jh-hero .jh-title{line-height:.94!important}
@@ -68,7 +68,7 @@ SR_LAYOUT = """
 .jh-hero:not(.jh-go),.jh-hero:not(.jh-go) *{animation-play-state:paused!important}
 
 /* fokus tastature: tema često skida outline sa linkova — ovdje ga vraćamo */
-.jh-hero .jh-quick__item:focus-visible{outline:2px solid #6FDBFF!important;outline-offset:3px!important}
+.jh-hero .jh-quick__item:focus-visible{outline:2px solid #8FD3EA!important;outline-offset:3px!important}
 .jh-hero .jh-quick__item--accent:focus-visible{outline-color:#fff!important}
 
 /* ===== Opcija A: meni je iz teme; Web shop i Ski mapa su pločice u traci ===== */
@@ -99,7 +99,7 @@ css_out = ("/* =================================================================
            "   JAHORINA HERO — DIO 2: CSS  (Slider Revolution → ⚙ → CSS/jQuery → CUSTOM CSS)\n"
            "   ===================================================================== */\n"
            "/* fontovi: ISTI link kao sekcije početne (TEMA.md) i snippet „Jahorina brzi start“ — učita se jednom, ovdje je samo rezerva */\n"
-           "@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap');\n"
+           "@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');\n"
            + SR_RESET + css.strip() + "\n" + SR_LAYOUT)
 
 # telefon: "slika ispod headera" se namjesti odmah (čim postoje hero i naš header), a ne tek kad se slajd
@@ -197,5 +197,5 @@ for folder, prefix, h in (('slider-revolution', 'ZAMIJENI-URL-', html),
     (out / '2-css.css').write_text(with_urls(css_out, prefix))
     (out / '3-js.js').write_text(js_out)
     for f in ('1-html.html', '2-css.css', '3-js.js'):
-        assert 'assets/' not in (out / f).read_text(), f
+        assert not re.search(r"[('\"]assets/", (out / f).read_text()), f   # relativna putanja do assets/ (apsolutni URL-ovi sa jsDelivr-a su u redu)
 print('Gotovo: slider-revolution/, slider-revolution-spremno/ i slider-revolution-EN-spremno/')

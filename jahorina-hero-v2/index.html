@@ -6,8 +6,12 @@
 <title>Jahorina Hero</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+  /* Obris "Jahorine": Inter Bold iz STATIČNOG fonta (inter-ui 4.1, OFL), samo A–z i "ı" (9 KB, sa jsDelivr-a zaključano na commit; izvor: inter-obris.woff2 u folderu hero-a).
+     Google Inter je promjenljivi font sa preklopljenim konturama — kad se slovo samo ocrta (-webkit-text-stroke),
+     vide se unutrašnje linije (npr. crta kroz "e"). Statični font ih nema. */
+  @font-face{font-family:'Inter Obris';font-style:normal;font-weight:700;font-display:swap;src:url(https://cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@074cba23b338a83169cd45adadf894d075164e1c/jahorina-hero-v2/assets/inter-obris.woff2) format('woff2')}
   /* ============================================================
      Jahorina Hero v2 — samostalna verzija (bez DC/Tweaks omotača)
      Sve klase imaju prefiks "jh-" da se ne sudaraju sa WP temom.
@@ -16,8 +20,8 @@
   html,body{margin:0;padding:0}
 
   .jh-hero{
-    --jh-accent:#00B9F2;
-    --jh-bg:#0a1120;
+    --jh-accent:#5BC0DE;   /* ledena plava (knjiga standarda) */
+    --jh-bg:#0B132B;   /* ponoćna plava */
     /* tamni neumorphism — mekane dvostruke sjene (tamna dole-desno, svjetlija gore-lijevo) */
     --nm-surface:rgba(20,30,49,.82);
     --nm-surface-2:#172238;
@@ -29,8 +33,8 @@
     --nm-inset-sm:inset 2px 2px 5px rgba(0,0,0,.4),inset -2px -2px 5px rgba(78,104,150,.13);
     position:relative;width:100%;min-height:100vh;
     padding:clamp(14px,1.6vw,22px);
-    background:#0c1424;
-    font-family:'Barlow',sans-serif;
+    background:#0B132B;
+    font-family:'Inter',Arial,sans-serif;
   }
   .jh-hero,.jh-hero *,.jh-hero *::before,.jh-hero *::after{box-sizing:border-box}
 
@@ -41,7 +45,7 @@
   .jh-frame{
     position:relative;width:100%;
     height:calc(100vh - clamp(28px,3.2vw,44px));min-height:660px;
-    border-radius:26px;overflow:hidden;background:var(--jh-bg);
+    border-radius:20px;overflow:hidden;background:var(--jh-bg);
     box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22);
   }
 
@@ -98,10 +102,10 @@
   .jh-nav__link::after{
     content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;border-radius:2px;
     background:linear-gradient(90deg,transparent,var(--jh-accent),#fff,var(--jh-accent),transparent);
-    box-shadow:0 0 10px rgba(0,185,242,.8);
+    box-shadow:0 0 10px rgba(91,192,222,.8);
     transform:scaleX(0);transition:transform .35s cubic-bezier(.2,.7,.2,1);
   }
-  .jh-nav__link:hover,.jh-dropdown.is-open > .jh-nav__link{color:#fff;text-shadow:0 0 14px rgba(0,185,242,.55)}
+  .jh-nav__link:hover,.jh-dropdown.is-open > .jh-nav__link{color:#fff;text-shadow:0 0 14px rgba(91,192,222,.55)}
   .jh-nav__link:hover::after,.jh-dropdown.is-open > .jh-nav__link::after{transform:scaleX(1)}
   .jh-nav__chevron{transition:transform .2s}
 
@@ -126,7 +130,7 @@
   .jh-btn{
     position:relative;isolation:isolate;
     display:inline-flex;align-items:center;gap:9px;
-    font-family:'Barlow',sans-serif;font-size:15px;letter-spacing:.3px;
+    font-family:'Inter',Arial,sans-serif;font-size:15px;letter-spacing:.3px;
     text-decoration:none;border-radius:40px;white-space:nowrap;
   }
   .jh-btn--ghost{
@@ -162,7 +166,7 @@
   /* odsjaj koji jednom pređe preko dugmeta na hover */
   .jh-btn--solid::after{
     content:"";position:absolute;top:0;bottom:0;left:-60%;width:45%;pointer-events:none;
-    background:linear-gradient(100deg,transparent,rgba(0,185,242,.35),rgba(255,255,255,.9),rgba(0,185,242,.35),transparent);
+    background:linear-gradient(100deg,transparent,rgba(91,192,222,.35),rgba(255,255,255,.9),rgba(91,192,222,.35),transparent);
     transform:skewX(-20deg);
   }
   .jh-btn--solid:hover::after,.jh-btn--solid:focus-visible::after{animation:jhShine 1.6s ease-in-out}
@@ -170,22 +174,22 @@
   .jh-btn--solid span{display:inline-block;transition:transform .25s}
   .jh-btn--solid:hover span{animation:jhNudge 1.1s ease-in-out infinite}
   @keyframes jhNudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
-  .jh-btn--solid:hover{transform:translateY(-2px);box-shadow:inset -2px -2px 4px rgba(13,21,36,.1),inset 2px 2px 3px #fff,0 0 0 1px rgba(0,185,242,.5),0 0 26px rgba(0,185,242,.55)}
-  .jh-btn--ghost:hover{box-shadow:var(--nm-raised),0 0 22px rgba(0,185,242,.4)}
+  .jh-btn--solid:hover{transform:translateY(-2px);box-shadow:inset -2px -2px 4px rgba(13,21,36,.1),inset 2px 2px 3px #fff,0 0 0 1px rgba(91,192,222,.5),0 0 26px rgba(91,192,222,.55)}
+  .jh-btn--ghost:hover{box-shadow:var(--nm-raised),0 0 22px rgba(91,192,222,.4)}
   .jh-btn--solid:active{transform:none;box-shadow:inset 3px 3px 7px rgba(13,21,36,.25),inset -3px -3px 6px #fff}
   .jh-btn--solid span{font-size:16px}
 
   /* ---------- naslov ---------- */
   .jh-headline{position:absolute;left:clamp(24px,3vw,52px);top:clamp(150px,25%,240px);z-index:5}
   .jh-kicker{
-    font-family:'Archivo',sans-serif;font-size:15px;font-weight:600;letter-spacing:.2px;
-    color:rgba(255,255,255,.82);margin-bottom:20px;
+    font-family:'Inter',Arial,sans-serif;font-size:15px;font-weight:600;letter-spacing:.2px;
+    color:#F4D6B0;margin-bottom:20px;   /* krem (knjiga standarda) */
     display:flex;align-items:center;gap:14px;
     animation:jhHold .45s step-end both;
   }
   /* 2) cyan linija se "upali" slijeva nadesno, pa teče svjetlost kroz nju */
   .jh-kicker::before{
-    content:"";width:34px;height:1.5px;box-shadow:0 0 10px rgba(0,185,242,.8);flex-shrink:0;
+    content:"";width:34px;height:1.5px;box-shadow:0 0 10px rgba(91,192,222,.8);flex-shrink:0;
     background:linear-gradient(90deg,var(--jh-accent),#fff,var(--jh-accent));background-size:200% 100%;
     transform-origin:left center;
     animation:jhLineOn .55s cubic-bezier(.2,.7,.2,1) .4s both;
@@ -194,8 +198,8 @@
   /* SEO: kicker je H1 — poništi stilove teme (Betheme/SR) za h1, izgled ostaje isti kao ranije */
   h1.jh-kicker{
     margin:0 0 20px!important;padding:0!important;border:0!important;background:none!important;
-    font-family:'Archivo',sans-serif!important;font-size:15px!important;font-weight:600!important;
-    line-height:inherit!important;color:rgba(255,255,255,.82)!important;
+    font-family:'Inter',Arial,sans-serif!important;font-size:15px!important;font-weight:600!important;
+    line-height:inherit!important;color:#F4D6B0!important;
     text-transform:none!important;letter-spacing:.2px!important;text-shadow:none!important;text-align:left!important;
   }
   /* dok JS ne preuzme, elementi čekaju skriveni (bez JS-a se pojave sami) */
@@ -205,7 +209,7 @@
   @keyframes jhFlick{0%{opacity:0}40%{opacity:.9}60%{opacity:.3}100%{opacity:1}}
 
   .jh-title{
-    margin:0;font-family:'Archivo',sans-serif;font-weight:800;
+    margin:0;font-family:'Inter',Arial,sans-serif;font-weight:700;   /* knjiga standarda: naslovi Inter Bold */
     font-size:clamp(52px,8.4vw,132px);line-height:.94;letter-spacing:-1px;
     color:#fff;
   }
@@ -221,7 +225,7 @@
   /* pune riječi nakon ulaska: svjetlosni snop prelazi preko slova samo na hover */
   .jh-title.is-live > span:nth-child(-n+2){
     color:transparent;-webkit-background-clip:text;background-clip:text;
-    background-image:linear-gradient(105deg,#fff 0%,#fff 42%,#9BE6FF 48%,#fff 50%,#9BE6FF 52%,#fff 58%,#fff 100%);
+    background-image:linear-gradient(105deg,#fff 0%,#fff 42%,#A9DDEE 48%,#fff 50%,#A9DDEE 52%,#fff 58%,#fff 100%);
     background-size:300% 100%;background-position:100% 0;
   }
   .jh-title.is-live:hover > span:nth-child(-n+2){animation:jhSweep 1.8s cubic-bezier(.6,0,.2,1)}
@@ -229,10 +233,10 @@
 
   /* "Jahorine": obris; tokom ulaska ga crta SVG, zatim preuzima ovaj sloj */
   .jh-title > span.jh-ice{
-    position:relative;width:max-content;
+    position:relative;width:max-content;font-family:'Inter Obris','Inter',Arial,sans-serif;
     color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.92);
     -webkit-background-clip:text;background-clip:text;
-    background-image:linear-gradient(105deg,transparent 40%,rgba(0,185,242,.5) 50%,transparent 60%);
+    background-image:linear-gradient(105deg,transparent 40%,rgba(91,192,222,.5) 50%,transparent 60%);
     background-size:300% 100%;background-position:100% 0;
     transition:letter-spacing .45s cubic-bezier(.2,.7,.2,1),-webkit-text-stroke-color .3s;
     animation:jhHold 1.1s step-end both;
@@ -241,7 +245,7 @@
   /* 4) poslije ulaska: neonski puls + ledeni odsjaj nekoliko puta (~20 s), pa miruje — beskonačan filter troši bateriju */
   .jh-title > span.jh-ice.is-live{animation:jhSweep 9s cubic-bezier(.6,0,.2,1) 2s 2,jhNeon 4.5s ease-in-out 4}
   /* 5) na prelaz mišem: slova se razmaknu i zasvijetle */
-  .jh-title > span.jh-ice.is-live:hover{animation:none;letter-spacing:4px;-webkit-text-stroke-color:#BFF1FF;filter:drop-shadow(0 0 16px rgba(0,185,242,.85)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
+  .jh-title > span.jh-ice.is-live:hover{animation:none;letter-spacing:4px;-webkit-text-stroke-color:#C9EAF4;filter:drop-shadow(0 0 16px rgba(91,192,222,.85)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
 
   /* ===== Tačka na "i": zaseban element (pri ulasku jednom tiho padne na mjesto) ===== */
   .jh-i{position:relative}
@@ -253,7 +257,7 @@
   }
   .jh-dot.is-waiting{opacity:0}
   /* na prelaz mišem tačka blago poskoči */
-  .jh-title > span.jh-ice.is-live:hover .jh-dot{animation:jhHop .55s cubic-bezier(.3,.6,.2,1);border-color:#BFF1FF;box-shadow:0 0 14px rgba(0,185,242,.85)}
+  .jh-title > span.jh-ice.is-live:hover .jh-dot{animation:jhHop .55s cubic-bezier(.3,.6,.2,1);border-color:#C9EAF4;box-shadow:0 0 14px rgba(91,192,222,.85)}
   @keyframes jhHop{0%,100%{transform:none}35%{transform:translateY(-.14em) rotate(-12deg)}70%{transform:translateY(0) scale(1.15,.85)}}
 
   /* ===== "Ledeno iscrtavanje" — SVG sloj preko riječi "Jahorine" ===== */
@@ -261,15 +265,15 @@
   .jh-ice__svg text{-webkit-text-stroke:0;stroke-linejoin:round;stroke-linecap:round}
   /* trag olovke: cyan linija koja ostaje iza vrha */
   .jh-ice__svg .jh-trail{
-    fill:transparent;stroke:#6FDBFF;stroke-width:2;
-    filter:drop-shadow(0 0 5px rgba(0,185,242,.85));
+    fill:transparent;stroke:#8FD3EA;stroke-width:2;
+    filter:drop-shadow(0 0 5px rgba(91,192,222,.85));
     animation:jhTrail var(--dur) cubic-bezier(.55,.05,.25,1) var(--delay) both;
   }
   @keyframes jhTrail{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
   /* vrh olovke: kratka užarena bijela crtica koja putuje ispred traga */
   .jh-ice__svg .jh-pen{
     fill:transparent;stroke:#fff;stroke-width:3.2;
-    filter:drop-shadow(0 0 3px #fff) drop-shadow(0 0 10px rgba(0,185,242,1)) drop-shadow(0 0 22px rgba(0,185,242,.7));
+    filter:drop-shadow(0 0 3px #fff) drop-shadow(0 0 10px rgba(91,192,222,1)) drop-shadow(0 0 22px rgba(91,192,222,.7));
     animation:jhPen var(--dur) cubic-bezier(.55,.05,.25,1) var(--delay) both;
   }
   @keyframes jhPen{
@@ -284,9 +288,9 @@
     animation:jhFrost 1.5s cubic-bezier(.3,.6,.2,1) both;
   }
   @keyframes jhFrost{
-    0%{stroke:#6FDBFF;filter:drop-shadow(0 0 5px rgba(0,185,242,.85))}
-    35%{stroke:#E8FBFF;filter:drop-shadow(0 0 16px rgba(0,185,242,.95)) drop-shadow(0 0 2px #fff)}
-    100%{stroke:rgba(255,255,255,.92);filter:drop-shadow(0 0 0 rgba(0,185,242,0))}
+    0%{stroke:#8FD3EA;filter:drop-shadow(0 0 5px rgba(91,192,222,.85))}
+    35%{stroke:#EAF6FA;filter:drop-shadow(0 0 16px rgba(91,192,222,.95)) drop-shadow(0 0 2px #fff)}
+    100%{stroke:rgba(255,255,255,.92);filter:drop-shadow(0 0 0 rgba(91,192,222,0))}
   }
   /* cijela riječ lagano "udahne" u trenutku zamrzavanja */
   .jh-title > span.jh-ice.is-breath{animation:jhBreath 1.4s cubic-bezier(.3,.6,.2,1) both}
@@ -296,13 +300,13 @@
   .jh-flare{
     position:absolute;left:50%;height:2px;width:150%;pointer-events:none;border-radius:2px;
     transform:translate(-50%,-50%) scaleX(0);
-    background:linear-gradient(90deg,transparent 0%,rgba(0,185,242,.0) 8%,rgba(0,185,242,.55) 32%,#fff 50%,rgba(0,185,242,.55) 68%,rgba(0,185,242,0) 92%,transparent 100%);
-    box-shadow:0 0 12px 2px rgba(0,185,242,.55),0 0 40px 6px rgba(0,185,242,.25);
+    background:linear-gradient(90deg,transparent 0%,rgba(91,192,222,.0) 8%,rgba(91,192,222,.55) 32%,#fff 50%,rgba(91,192,222,.55) 68%,rgba(91,192,222,0) 92%,transparent 100%);
+    box-shadow:0 0 12px 2px rgba(91,192,222,.55),0 0 40px 6px rgba(91,192,222,.25);
     animation:jhFlare 1.3s cubic-bezier(.2,.7,.2,1) forwards;
   }
   .jh-flare::after{ /* jezgro odsjaja */
     content:"";position:absolute;left:50%;top:50%;width:18%;height:14px;transform:translate(-50%,-50%);
-    background:radial-gradient(ellipse,rgba(255,255,255,.9),rgba(0,185,242,.35) 45%,transparent 70%);
+    background:radial-gradient(ellipse,rgba(255,255,255,.9),rgba(91,192,222,.35) 45%,transparent 70%);
     filter:blur(2px);
   }
   @keyframes jhFlare{
@@ -315,7 +319,7 @@
   .jh-glint{
     position:absolute;width:var(--s);height:var(--s);margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);pointer-events:none;
     background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-10 -10 20 20'%3E%3Cpath d='M0-10C.6-2 2-.6 10 0 2 .6.6 2 0 10-.6 2-2 .6-10 0-2-.6-.6-2 0-10Z' fill='%23fff'/%3E%3C/svg%3E");
-    filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 10px rgba(0,185,242,.9));
+    filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 10px rgba(91,192,222,.9));
     animation:jhGlint .9s cubic-bezier(.3,.6,.2,1) var(--d) both;
   }
   @keyframes jhGlint{
@@ -327,7 +331,7 @@
   .jh-spark{
     position:absolute;width:var(--s);height:var(--s);pointer-events:none;
     background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg stroke='%23fff' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M0-10V10M-8.7-5 8.7 5M-8.7 5 8.7-5M0-6-2.5-8.5M0-6 2.5-8.5M0 6-2.5 8.5M0 6 2.5 8.5'/%3E%3C/g%3E%3C/svg%3E");
-    filter:drop-shadow(0 0 3px rgba(0,185,242,.9));
+    filter:drop-shadow(0 0 3px rgba(91,192,222,.9));
     animation:jhRise var(--t) cubic-bezier(.2,.6,.3,1) var(--d) both;
   }
   @keyframes jhRise{
@@ -338,8 +342,8 @@
 
   @keyframes jhSweep{0%{background-position:100% 0}45%,100%{background-position:0 0}}
   @keyframes jhNeon{
-    0%,100%{-webkit-text-stroke-color:rgba(255,255,255,.92);filter:drop-shadow(0 0 0 rgba(0,185,242,0)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
-    50%{-webkit-text-stroke-color:#D6F6FF;filter:drop-shadow(0 0 8px rgba(0,185,242,.5)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
+    0%,100%{-webkit-text-stroke-color:rgba(255,255,255,.92);filter:drop-shadow(0 0 0 rgba(91,192,222,0)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
+    50%{-webkit-text-stroke-color:#D6EEF6;filter:drop-shadow(0 0 8px rgba(91,192,222,.5)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}
   }
   /* rotirajući ugao za "svjetlosni prsten" oko dugmadi */
   @property --jh-a{syntax:'<angle>';inherits:false;initial-value:0deg}
@@ -360,7 +364,7 @@
     box-shadow:var(--nm-raised);
   }
   .jh-rating__star{color:#f5b638;font-size:20px;line-height:1}
-  .jh-rating__value{font-family:'Archivo',sans-serif;font-weight:700;font-size:22px;color:#fff;font-variant-numeric:tabular-nums}
+  .jh-rating__value{font-family:'Inter',Arial,sans-serif;font-weight:700;font-size:22px;color:#fff;font-variant-numeric:tabular-nums}
 
   /* ---------- dole desno: spojena traka brzih linkova ---------- */
   .jh-quick{
@@ -386,27 +390,29 @@
   }
   .jh-quick__item{
     position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-    width:clamp(64px,5.4vw,76px);height:clamp(68px,5.6vw,80px);border-radius:16px;
-    text-decoration:none;color:#C4EEFF;   /* ikonice: blijeda ledeno-plava */
+    width:clamp(64px,5.4vw,76px);height:clamp(68px,5.6vw,80px);border-radius:12px;
+    text-decoration:none;color:#CDE9F3;   /* ikonice: blijeda ledeno-plava */
     background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.02));
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.11);
     transition:box-shadow .25s,transform .2s,filter .2s;
   }
   .jh-quick__item svg [stroke]{stroke-width:1.6}
-  .jh-quick__item:hover{transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(111,219,255,.38),inset 0 1px 0 rgba(255,255,255,.14),0 0 18px -4px rgba(0,185,242,.45)}
-  .jh-quick__item:focus-visible{outline:2px solid #6FDBFF;outline-offset:3px;transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(111,219,255,.38),inset 0 1px 0 rgba(255,255,255,.14),0 0 18px -4px rgba(0,185,242,.45)}
-  .jh-quick__item--accent:focus-visible{outline-color:#fff;filter:brightness(1.07)}
+  .jh-quick__item--accent svg [stroke]{stroke:currentColor}.jh-quick__item--accent svg [fill]:not([fill="none"]){fill:currentColor}   /* korpa tamna kao tekst */
+  .jh-quick__item:hover{transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(143,211,234,.38),inset 0 1px 0 rgba(255,255,255,.14),0 0 18px -4px rgba(91,192,222,.45)}
+  .jh-quick__item:focus-visible{outline:2px solid #8FD3EA;outline-offset:3px;transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(143,211,234,.38),inset 0 1px 0 rgba(255,255,255,.14),0 0 18px -4px rgba(91,192,222,.45)}
+  .jh-quick__item--accent:focus-visible{outline-color:#fff;filter:brightness(1.06)}
   .jh-quick__item:active{transform:scale(.96)}
-  /* Web shop: glavno dugme (široko, cyan, "Kupi ski kartu") — računar: lijevo u traci; telefon: cijeli red iznad ostalih */
+  /* Web shop: glavno dugme "Kupi ski kartu" — narandžasto sa tamnim tekstom (knjiga standarda: jedno po ekranu;
+     bijeli tekst na narandžastoj nije dozvoljen); računar: lijevo u traci; telefon: cijeli red iznad ostalih */
   .jh-quick__item--accent{
-    flex-direction:row;width:auto;padding:0 22px 0 18px;gap:11px;color:#fff;
-    background:linear-gradient(160deg,#45D6FF 0%,#00AEE6 50%,#008BC7 100%);isolation:isolate;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.18),0 10px 24px -10px rgba(0,185,242,.95);
+    flex-direction:row;width:auto;padding:0 22px 0 18px;gap:11px;color:#0B132B;border-radius:12px;
+    background:linear-gradient(170deg,#E3861A 0%,#D97706 55%,#C96E05 100%);isolation:isolate;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.32),inset 0 0 0 1px rgba(255,255,255,.12),0 10px 24px -12px rgba(217,119,6,.9);
   }
-  .jh-quick__item--accent:hover{filter:brightness(1.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.3),0 12px 28px -8px rgba(0,185,242,1)}
-  .jh-quick__label{font-family:'Archivo',sans-serif;font-weight:600;font-size:11px;letter-spacing:.1px;color:rgba(255,255,255,.9)}
+  .jh-quick__item--accent:hover{filter:brightness(1.06);box-shadow:inset 0 1px 0 rgba(255,255,255,.36),inset 0 0 0 1px rgba(255,255,255,.2),0 12px 28px -10px rgba(217,119,6,1)}
+  .jh-quick__label{font-family:'Inter',Arial,sans-serif;font-weight:600;font-size:11px;letter-spacing:.1px;color:rgba(255,255,255,.9)}
   .jh-quick__label--word{font-size:11px}
-  .jh-quick__label--cta{font-weight:700;font-size:15px;letter-spacing:0;color:#fff;text-align:left!important;min-height:0!important;line-height:1.15}
+  .jh-quick__label--cta{font-weight:600;font-size:16px;letter-spacing:0;color:#0B132B;text-align:left!important;min-height:0!important;line-height:1.15}
   .jh-quick__label{white-space:nowrap;text-align:center}
   /* "Dnevno / Noćno skijanje" u dva reda; svi natpisi imaju visinu dva reda, pa su ikonice u istoj liniji */
   .jh-quick__l2{display:block}
@@ -426,7 +432,7 @@
     background:linear-gradient(180deg,rgba(18,27,45,.5),rgba(9,14,26,.62));
     -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.07);
-    color:#C4EEFF;font-family:'Archivo',sans-serif;line-height:1.1;white-space:nowrap;text-align:left;
+    color:#CDE9F3;font-family:'Inter',Arial,sans-serif;line-height:1.1;white-space:nowrap;text-align:left;
     opacity:0;visibility:hidden;
   }
   .jh-wx.is-on{opacity:1;visibility:visible;animation:jhCardIn .8s cubic-bezier(.2,.7,.2,1) var(--wx-d,0s) both}
@@ -436,17 +442,17 @@
   .jh-wx__t{font-size:24px;font-weight:600;color:rgba(255,255,255,.95);letter-spacing:-.5px;font-variant-numeric:tabular-nums}
   .jh-wx__meta{display:flex;flex-direction:column;gap:4px}
   .jh-wx__desc{font-size:12px;font-weight:600;letter-spacing:0;color:rgba(255,255,255,.88)}
-  .jh-wx__wind{font-size:10.5px;font-weight:600;letter-spacing:.3px;color:rgba(196,238,255,.72)}
+  .jh-wx__wind{font-size:10.5px;font-weight:600;letter-spacing:.3px;color:rgba(205,233,243,.72)}
   .jh-wx__days{display:flex;gap:2px;padding-left:12px;box-shadow:inset 1px 0 0 rgba(255,255,255,.1)}
   .jh-wx__day{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:46px}
   .jh-wx__dn{font-size:11px;font-weight:600;letter-spacing:0;color:rgba(255,255,255,.62)}
   .jh-wx__di svg{width:18px;height:18px}
   .jh-wx__mm{font-size:11px;font-weight:600;color:rgba(255,255,255,.92);font-variant-numeric:tabular-nums}
-  .jh-wx__mm i{font-style:normal;font-weight:600;color:rgba(196,238,255,.58);padding-left:4px}
+  .jh-wx__mm i{font-style:normal;font-weight:600;color:rgba(205,233,243,.58);padding-left:4px}
   /* izvor podataka (obavezno navesti — licenca CC BY 4.0): sitno ispod trake (telefon: na kraju trake) */
   .jh-wx__src{position:absolute;right:14px;top:100%;margin-top:5px;
     font-size:10px;font-weight:600;letter-spacing:0;color:rgba(255,255,255,.62);text-decoration:none}   /* kontrast ~7:1 */
-  .jh-wx__src:hover{color:#6FDBFF}
+  .jh-wx__src:hover{color:#8FD3EA}
   .jh-wx__src-s{display:none}
 
   /* ---------- mobilni meni (hamburger) ---------- */
@@ -511,7 +517,7 @@
   /* ===== Raspored D: veći naslov, spušten nisko lijevo; traka ostaje dole desno ===== */
   @media (min-width:761px){
     .jh-headline{top:auto;bottom:calc(clamp(26px,3.4vw,46px) + clamp(84px,7vw,104px) + clamp(18px,3vh,34px))}
-    .jh-title{font-size:clamp(64px,min(11vw,18.5vh),190px);letter-spacing:-.02em}
+    .jh-title{font-size:clamp(64px,min(11vw,18.5vh),190px);letter-spacing:-.03em}
   }
   @media (max-width:760px){
     .jh-title{font-size:clamp(48px,15vw,76px)}   /* ~20% veći nego ranije */
@@ -531,13 +537,13 @@
     .jh-ch{animation-name:jhCrystalM}
     @keyframes jhCrystalM{0%{opacity:0;transform:translateY(.35em) scale(.96)}100%{opacity:1;transform:none}}
     /* "Jahorine": neonski sjaj ostaje, ali miran (puls je tjerao telefon da crta u svakom kadru) */
-    .jh-title > span.jh-ice.is-live{animation:none;-webkit-text-stroke-color:#E4F8FF;filter:drop-shadow(0 0 7px rgba(0,185,242,.5)) drop-shadow(0 4px 18px rgba(0,0,0,.4))}
-    .jh-dot.is-set{animation:none;border-color:#E4F8FF;box-shadow:0 0 8px rgba(0,185,242,.45)}
+    .jh-title > span.jh-ice.is-live{animation:none;-webkit-text-stroke-color:#E4F3F8;filter:drop-shadow(0 0 7px rgba(91,192,222,.5)) drop-shadow(0 4px 18px rgba(0,0,0,.4))}
+    .jh-dot.is-set{animation:none;border-color:#E4F3F8;box-shadow:0 0 8px rgba(91,192,222,.45)}
     .jh-lights{mix-blend-mode:normal}   /* svjetla izgledaju isto, a telefon ne miješa cijeli ekran u svakom kadru */
     .jh-ice__svg .jh-trail{filter:none}
-    .jh-ice__svg .jh-pen{filter:drop-shadow(0 0 4px rgba(0,185,242,.95))}
+    .jh-ice__svg .jh-pen{filter:drop-shadow(0 0 4px rgba(91,192,222,.95))}
     .jh-ice__svg.is-frost .jh-trail{animation-name:jhFrostM}
-    @keyframes jhFrostM{0%{stroke:#6FDBFF}35%{stroke:#E8FBFF}100%{stroke:rgba(255,255,255,.92)}}
+    @keyframes jhFrostM{0%{stroke:#8FD3EA}35%{stroke:#EAF6FA}100%{stroke:rgba(255,255,255,.92)}}
     .jh-glint,.jh-spark{filter:none}
   }
   @media (max-width:360px){
@@ -559,7 +565,7 @@
   @media (max-width:760px){
     .jh-quick{flex-wrap:wrap;gap:5px;padding:6px}
     .jh-quick__item{height:58px}
-    .jh-quick__item--accent{flex:1 1 100%;height:46px;justify-content:center;gap:10px;padding:0 14px;border-radius:14px}
+    .jh-quick__item--accent{flex:1 1 100%;height:48px;justify-content:center;gap:10px;padding:0 14px;border-radius:12px}
     .jh-quick__label--cta{font-size:14px}
   }
   @media (max-width:360px){
@@ -1227,12 +1233,12 @@
       svg.setAttribute('width', W); svg.setAttribute('height', box.height);
       svg.innerHTML =
         '<defs><linearGradient id="jhFrostGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="' + W + '" y2="0">' +
-        '<stop offset="0" stop-color="#BFF1FF" stop-opacity="0"/>' +
-        '<stop offset=".42" stop-color="#BFF1FF" stop-opacity="0"/>' +
-        '<stop offset=".48" stop-color="#E8FBFF" stop-opacity=".95"/>' +
-        '<stop offset=".52" stop-color="#6FDBFF" stop-opacity=".55"/>' +
-        '<stop offset=".6" stop-color="#BFF1FF" stop-opacity="0"/>' +
-        '<stop offset="1" stop-color="#BFF1FF" stop-opacity="0"/>' +
+        '<stop offset="0" stop-color="#C9EAF4" stop-opacity="0"/>' +
+        '<stop offset=".42" stop-color="#C9EAF4" stop-opacity="0"/>' +
+        '<stop offset=".48" stop-color="#EAF6FA" stop-opacity=".95"/>' +
+        '<stop offset=".52" stop-color="#8FD3EA" stop-opacity=".55"/>' +
+        '<stop offset=".6" stop-color="#C9EAF4" stop-opacity="0"/>' +
+        '<stop offset="1" stop-color="#C9EAF4" stop-opacity="0"/>' +
         '<animateTransform attributeName="gradientTransform" type="translate" from="' + (-W) + ' 0" to="' + W + ' 0" dur="1.3s" begin="indefinite" fill="freeze" calcMode="spline" keySplines=".3 .6 .2 1" keyTimes="0;1"/>' +
         '</linearGradient></defs>';
 
