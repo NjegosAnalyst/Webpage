@@ -17,7 +17,7 @@
 .jh-hero svg [fill]:not([fill="none"]){fill:currentColor!important}
 .jh-hero svg[fill="none"],.jh-hero svg [fill="none"]{fill:none!important}
 .jh-hero .jh-btn--ghost,.jh-hero .jh-burger,.jh-hero .jh-nav__link{color:#fff}
-.jh-hero .jh-quick__item{color:#CDE9F3}.jh-hero .jh-quick__item--accent{color:#0B132B}   /* ikonice: ledene; Kupi ski kartu: tamno na narandžastoj (knjiga standarda) */
+.jh-hero .jh-quick__item{color:#CDE9F3}.jh-hero .jh-quick__item--accent{color:#0B132B}   /* ikonice: ledene; Kupi ski kartu: tamno na ledenoj (korisnik 2. 11.) */
 .jh-hero .jh-quick__item svg{display:block;width:22px;height:22px;flex-shrink:0}
 .jh-hero .jh-dot{display:block!important;visibility:visible!important}   /* tačka na "i" je prazan span — neke teme skrivaju prazne span-ove */
 .jh-hero .jh-title{line-height:.94!important}
@@ -424,14 +424,14 @@
   .jh-quick__item:focus-visible{outline:2px solid #8FD3EA;outline-offset:3px;transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(143,211,234,.38),inset 0 1px 0 rgba(255,255,255,.14),0 0 18px -4px rgba(91,192,222,.45)}
   .jh-quick__item--accent:focus-visible{outline-color:#fff;filter:brightness(1.06)}
   .jh-quick__item:active{transform:scale(.96)}
-  /* Web shop: glavno dugme "Kupi ski kartu" — narandžasto sa tamnim tekstom (knjiga standarda: jedno po ekranu;
-     bijeli tekst na narandžastoj nije dozvoljen); računar: lijevo u traci; telefon: cijeli red iznad ostalih */
+  /* Web shop: glavno dugme "Kupi ski kartu" — ledena plava sa tamnim tekstom (korisnik 2. 11.: umjesto narandžaste iz
+     knjige standarda; jedno po ekranu; bijeli tekst na ledenoj nije čitljiv, 2:1); računar: lijevo u traci; telefon: cijeli red */
   .jh-quick__item--accent{
     flex-direction:row;width:auto;padding:0 22px 0 18px;gap:11px;color:#0B132B;border-radius:12px;
-    background:linear-gradient(170deg,#E3861A 0%,#D97706 55%,#C96E05 100%);isolation:isolate;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.32),inset 0 0 0 1px rgba(255,255,255,.12),0 10px 24px -12px rgba(217,119,6,.9);
+    background:linear-gradient(170deg,#7CCDE6 0%,#5BC0DE 55%,#4BB2D2 100%);isolation:isolate;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 0 0 1px rgba(255,255,255,.14),0 10px 24px -12px rgba(91,192,222,.9);
   }
-  .jh-quick__item--accent:hover{filter:brightness(1.06);box-shadow:inset 0 1px 0 rgba(255,255,255,.36),inset 0 0 0 1px rgba(255,255,255,.2),0 12px 28px -10px rgba(217,119,6,1)}
+  .jh-quick__item--accent:hover{filter:brightness(1.06);box-shadow:inset 0 1px 0 rgba(255,255,255,.36),inset 0 0 0 1px rgba(255,255,255,.2),0 12px 28px -10px rgba(91,192,222,1)}
   .jh-quick__label{font-family:'Inter',Arial,sans-serif;font-weight:600;font-size:11px;letter-spacing:.1px;color:rgba(255,255,255,.9)}
   .jh-quick__label--word{font-size:11px}
   .jh-quick__label--cta{font-weight:600;font-size:16px;letter-spacing:0;color:#0B132B;text-align:left!important;min-height:0!important;line-height:1.15}

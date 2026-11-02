@@ -41,6 +41,11 @@ CSS varijable (WordPress: Customizer → Additional CSS):
 
 ## Dugmad
 
+> **Korisnikova izmjena (2. 11. 2026) — važi prije knjige:** glavna dugmad („Kupi ski kartu“, „Pročitaj više“, „Više o …“)
+> su **ledena plava `#5BC0DE` sa tamnim tekstom `#0B132B`** (kontrast 8,8:1), ne narandžasta. Bijeli tekst na ledenoj nije
+> dozvoljen (2,1:1). Narandžasta ostaje samo za promocije, ako zatreba.
+
+
 - Visina 48 px, radijus 12 px, Inter SemiBold 16 px.
 - **Primarno: narandžasto, jedno po ekranu**; tekst na narandžastoj je **uvijek taman** (bijeli nije dozvoljen).
 - Sekundarno: obrub (na svijetlom tamni, na tamnom ledeni), neaktivno sivo („Rasprodato“), tekstualni link podvučen („Saznaj više“).
