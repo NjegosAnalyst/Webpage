@@ -13,7 +13,8 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 ## KNJIGA STANDARDA (od 2. 11. 2026) — važi prije TEMA.md
 - Korisnik dao „Brand identitet OC Jahorina.pdf“ (Desktop). Sažetak i razlike prema sajtu: **`KNJIGA-STANDARDA.md`**.
 - Ukratko: font **Inter**; ponoćna `#0B132B`, tamna `#1C2541`, čelična `#3A506B`, ledena `#5BC0DE` (akcenat, kao tekst samo na tamnom), krem `#F4D6B0`, **narandžasta `#D97706` = jedno primarno dugme po ekranu, taman tekst**; dugmad 48 px / radijus 12; kartice radijus 20; sadržaj 1200 px; prelazi 1280 / 768 / 390.
-- Sajt sada koristi Archivo + Barlow i cyan `#00B9F2` sa cyan dugmetom — usklađivanje čeka korisnikovu odluku (redoslijed: hero → header/footer → sekcije → galerije).
+- Usklađivanje (korisnik 2. 11.: „Da, kreni od hero-a“), redoslijed: hero → header/footer → sekcije → galerije.
+  - **Hero (2. 11., nije još na sajtu):** Inter (naslov Bold 700, `letter-spacing -.03em`), akcenat ledena `#5BC0DE` (sve ledene nijanse izvedene), pozadina `#0B132B`, H1 (mali tekst) krem `#F4D6B0`, „Kupi ski kartu“ narandžasto `#D97706` sa tamnim tekstom `#0B132B` (5,6:1), radijus 12, telefon 48 px; pločice radijus 12, kadar 20. **Ocrtano „Jahorine“** koristi statični Inter Bold podskup (`assets/inter-obris.woff2`, 9 KB, sa jsDelivr-a @074cba2) — Google Inter je promjenljivi font i `-webkit-text-stroke` pokaže preklopljene konture (crta kroz „e“). Zajednički font link (snippet „Jahorina brzi start“ + SR CSS `@import`) = Archivo + Barlow + **Inter** u jednom zahtjevu, dok sekcije ne pređu na Inter. Korisnik treba da zamijeni `2-css.css` i `3-js.js` u oba modula + snippet.
 
 ## Vizuelni stil (tema hero-a)
 - Noćna fotografija Jahorine, tamne neumorfne površine, jedan akcenat **#00B9F2** (cyan).
