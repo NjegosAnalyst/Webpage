@@ -47,14 +47,14 @@ SR_RESET = """
 .jh-hero svg [fill]:not([fill="none"]){fill:currentColor!important}
 .jh-hero svg[fill="none"],.jh-hero svg [fill="none"]{fill:none!important}
 .jh-hero .jh-btn--ghost,.jh-hero .jh-burger,.jh-hero .jh-nav__link{color:#fff}
-.jh-hero .jh-quick__item{color:#CDE9F3}.jh-hero .jh-quick__item--accent{color:#0B132B}   /* ikonice: ledene; Kupi ski kartu: tamno na ledenoj (korisnik 2. 11.) */
+.jh-hero .jh-quick__item{color:#C4EEFF}.jh-hero .jh-quick__item--accent{color:#fff}   /* ikonice: ledeno-plave, Web shop bijela */
 .jh-hero .jh-quick__item svg{display:block;width:22px;height:22px;flex-shrink:0}
 .jh-hero .jh-dot{display:block!important;visibility:visible!important}   /* tačka na "i" je prazan span — neke teme skrivaju prazne span-ove */
 .jh-hero .jh-title{line-height:.94!important}
 .jh-hero .jh-title > span{display:block!important;line-height:.94!important}
 .jh-hero .jh-ch,.jh-hero .jh-type{line-height:inherit!important}
 .jh-hero .jh-nav__link,.jh-hero .jh-btn,.jh-hero .jh-kicker{line-height:1.2!important}
-.jh-hero .jh-dropdown__menu a{line-height:22px!important}
+.jh-hero .jh-dropdown__menu a{line-height:1.3!important}
 .jh-hero .jh-intro p{line-height:1.55!important}
 .jh-hero .jh-rating,.jh-hero .jh-rating *{line-height:1!important}
 .jh-hero .jh-quick__label{line-height:1.1!important}
@@ -68,7 +68,7 @@ SR_LAYOUT = """
 .jh-hero:not(.jh-go),.jh-hero:not(.jh-go) *{animation-play-state:paused!important}
 
 /* fokus tastature: tema često skida outline sa linkova — ovdje ga vraćamo */
-.jh-hero .jh-quick__item:focus-visible{outline:2px solid #8FD3EA!important;outline-offset:3px!important}
+.jh-hero .jh-quick__item:focus-visible{outline:2px solid #6FDBFF!important;outline-offset:3px!important}
 .jh-hero .jh-quick__item--accent:focus-visible{outline-color:#fff!important}
 
 /* ===== Opcija A: meni je iz teme; Web shop i Ski mapa su pločice u traci ===== */
@@ -76,7 +76,7 @@ SR_LAYOUT = """
 .jh-hero .jh-quick__l2{display:block!important;line-height:inherit!important;margin:0!important}   /* drugi red natpisa (skijanje) */
 @media (max-width:760px){
   .jh-hero .jh-kicker > span{line-height:inherit!important}   /* H1 u dva reda: isti razmak redova kao kicker */
-  .jh-hero .jh-quick__label--word{font-size:12px;letter-spacing:0}
+  .jh-hero .jh-quick__label--word{font-size:10.5px;letter-spacing:0}
 }
 /* telefon: centriranje zadato direktno svakom redu i "Jahorine", jače od stilova teme/SR (na sajtu se naslov nije centrirao) */
 @media (max-width:760px){
@@ -91,7 +91,7 @@ SR_LAYOUT = """
   .jh-hero .jh-quick__item svg{width:17px;height:17px}
 }
 @media (max-width:360px){
-  .jh-hero .jh-quick__label--word{font-size:11.5px;letter-spacing:0}
+  .jh-hero .jh-quick__label--word{font-size:10px;letter-spacing:0}
 }
 """
 
@@ -99,7 +99,7 @@ css_out = ("/* =================================================================
            "   JAHORINA HERO — DIO 2: CSS  (Slider Revolution → ⚙ → CSS/jQuery → CUSTOM CSS)\n"
            "   ===================================================================== */\n"
            "/* fontovi: ISTI link kao sekcije početne (TEMA.md) i snippet „Jahorina brzi start“ — učita se jednom, ovdje je samo rezerva */\n"
-           "@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');\n"
+           "@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap');\n"
            + SR_RESET + css.strip() + "\n" + SR_LAYOUT)
 
 # telefon: "slika ispod headera" se namjesti odmah (čim postoje hero i naš header), a ne tek kad se slajd
@@ -208,5 +208,5 @@ for folder, prefix, h in (('slider-revolution', 'ZAMIJENI-URL-', html),
     (out / '2-css.css').write_text(only_ascii(with_urls(css_out, prefix), css=True))
     (out / '3-js.js').write_text(only_ascii(js_out))
     for f in ('1-html.html', '2-css.css', '3-js.js'):
-        assert not re.search(r"[('\"]assets/", (out / f).read_text()), f   # relativna putanja do assets/ (apsolutni URL-ovi sa jsDelivr-a su u redu)
+        assert 'assets/' not in (out / f).read_text(), f
 print('Gotovo: slider-revolution/, slider-revolution-spremno/ i slider-revolution-EN-spremno/')

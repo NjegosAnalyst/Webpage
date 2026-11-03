@@ -605,12 +605,12 @@
       svg.setAttribute('width', W); svg.setAttribute('height', box.height);
       svg.innerHTML =
         '<defs><linearGradient id="jhFrostGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="' + W + '" y2="0">' +
-        '<stop offset="0" stop-color="#C9EAF4" stop-opacity="0"/>' +
-        '<stop offset=".42" stop-color="#C9EAF4" stop-opacity="0"/>' +
-        '<stop offset=".48" stop-color="#EAF6FA" stop-opacity=".95"/>' +
-        '<stop offset=".52" stop-color="#8FD3EA" stop-opacity=".55"/>' +
-        '<stop offset=".6" stop-color="#C9EAF4" stop-opacity="0"/>' +
-        '<stop offset="1" stop-color="#C9EAF4" stop-opacity="0"/>' +
+        '<stop offset="0" stop-color="#BFF1FF" stop-opacity="0"/>' +
+        '<stop offset=".42" stop-color="#BFF1FF" stop-opacity="0"/>' +
+        '<stop offset=".48" stop-color="#E8FBFF" stop-opacity=".95"/>' +
+        '<stop offset=".52" stop-color="#6FDBFF" stop-opacity=".55"/>' +
+        '<stop offset=".6" stop-color="#BFF1FF" stop-opacity="0"/>' +
+        '<stop offset="1" stop-color="#BFF1FF" stop-opacity="0"/>' +
         '<animateTransform attributeName="gradientTransform" type="translate" from="' + (-W) + ' 0" to="' + W + ' 0" dur="1.3s" begin="indefinite" fill="freeze" calcMode="spline" keySplines=".3 .6 .2 1" keyTimes="0;1"/>' +
         '</linearGradient></defs>';
 
