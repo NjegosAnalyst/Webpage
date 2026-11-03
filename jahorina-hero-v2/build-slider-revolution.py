@@ -54,7 +54,7 @@ SR_RESET = """
 .jh-hero .jh-title > span{display:block!important;line-height:.94!important}
 .jh-hero .jh-ch,.jh-hero .jh-type{line-height:inherit!important}
 .jh-hero .jh-nav__link,.jh-hero .jh-btn,.jh-hero .jh-kicker{line-height:1.2!important}
-.jh-hero .jh-dropdown__menu a{line-height:1.3!important}
+.jh-hero .jh-dropdown__menu a{line-height:22px!important}
 .jh-hero .jh-intro p{line-height:1.55!important}
 .jh-hero .jh-rating,.jh-hero .jh-rating *{line-height:1!important}
 .jh-hero .jh-quick__label{line-height:1.1!important}
@@ -76,7 +76,7 @@ SR_LAYOUT = """
 .jh-hero .jh-quick__l2{display:block!important;line-height:inherit!important;margin:0!important}   /* drugi red natpisa (skijanje) */
 @media (max-width:760px){
   .jh-hero .jh-kicker > span{line-height:inherit!important}   /* H1 u dva reda: isti razmak redova kao kicker */
-  .jh-hero .jh-quick__label--word{font-size:10.5px;letter-spacing:0}
+  .jh-hero .jh-quick__label--word{font-size:12px;letter-spacing:0}
 }
 /* telefon: centriranje zadato direktno svakom redu i "Jahorine", jače od stilova teme/SR (na sajtu se naslov nije centrirao) */
 @media (max-width:760px){
@@ -91,7 +91,7 @@ SR_LAYOUT = """
   .jh-hero .jh-quick__item svg{width:17px;height:17px}
 }
 @media (max-width:360px){
-  .jh-hero .jh-quick__label--word{font-size:10px;letter-spacing:0}
+  .jh-hero .jh-quick__label--word{font-size:11.5px;letter-spacing:0}
 }
 """
 
