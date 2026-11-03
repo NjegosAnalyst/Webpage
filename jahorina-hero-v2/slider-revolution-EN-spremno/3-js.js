@@ -1,16 +1,16 @@
 /* =====================================================================
-   JAHORINA HERO — DIO 3: JavaScript  (Slider Revolution → ⚙ → CSS/jQuery → CUSTOM JS SR6)
-   Ne treba ništa mijenjati.
+   JAHORINA HERO \u2014 DIO 3: JavaScript  (Slider Revolution \u2192 \u2699 \u2192 CSS/jQuery \u2192 CUSTOM JS SR6)
+   Ne treba ni\u0161ta mijenjati.
    ===================================================================== */
 (function underHeaderEarly() {
   var hero = document.querySelector('.jh-hero');
-  if (!hero || !document.querySelector('.jf-header')) {   // header stiže sa CDN-a — provjera u svakom kadru, prije crtanja (najduže 8 s)
+  if (!hero || !document.querySelector('.jf-header')) {   // header sti\u017Ee sa CDN-a \u2014 provjera u svakom kadru, prije crtanja (najdu\u017Ee 8 s)
     if (performance.now() < 8000) requestAnimationFrame(underHeaderEarly);
     return;
   }
   // >>> rano
   (function underHeader() {
-    if (hero.__jhFit) return hero.__jhFit();   // već namješteno ranije — samo provjeri
+    if (hero.__jhFit) return hero.__jhFit();   // ve\u0107 namje\u0161teno ranije \u2014 samo provjeri
     var hdr = document.querySelector('.jf-header');
     if (!hdr) return;
     function fit() {
@@ -30,15 +30,15 @@
     }
     hero.__jhFit = fit;
     fit(); window.addEventListener('load', fit);
-    // telefon javlja "resize" i kad se pri skrolovanju sakrije traka adrese — tada nema šta da se mijenja
+    // telefon javlja "resize" i kad se pri skrolovanju sakrije traka adrese \u2014 tada nema \u0161ta da se mijenja
     var t, lw = window.innerWidth;
     window.addEventListener('resize', function () { if (window.innerWidth === lw) return; lw = window.innerWidth; clearTimeout(t); t = setTimeout(fit, 200); });
   })();
 })();
 
 (function waitForHero(tries) {
-  // Slider Revolution ubaci sloj, ali ga prikaže tek kad učita slajd.
-  // Čekamo da hero bude STVARNO vidljiv, pa tek onda pokrećemo sve animacije (samo jednom).
+  // Slider Revolution ubaci sloj, ali ga prika\u017Ee tek kad u\u010Dita slajd.
+  // \u010Cekamo da hero bude STVARNO vidljiv, pa tek onda pokre\u0107emo sve animacije (samo jednom).
   tries = tries || 0;
   var el = document.querySelector('.jh-hero');
   function visible(node) {
@@ -57,8 +57,8 @@
   }
   if (!el || window.__jahorinaHeroStarted) return;
   window.__jahorinaHeroStarted = true;
-  // pušta CSS animacije koje su do sada bile pauzirane — tek kadar POSLIJE pripreme ispod,
-  // da teški posao (mjerenje slova, platno za svjetla) ne padne usred pokreta (to je bio trzaj na otvaranju)
+  // pu\u0161ta CSS animacije koje su do sada bile pauzirane \u2014 tek kadar POSLIJE pripreme ispod,
+  // da te\u0161ki posao (mjerenje slova, platno za svjetla) ne padne usred pokreta (to je bio trzaj na otvaranju)
   function go() { el.classList.add('jh-go'); }
   requestAnimationFrame(function () { requestAnimationFrame(go); });
   setTimeout(go, 150);   // rezerva (npr. stranica otvorena u pozadinskoj kartici)
@@ -67,7 +67,7 @@
   var hero = document.querySelector('.jh-hero');
   if (!hero) return;
 
-  // dijagnostika za podešavanje: dodaj ?jhdebug na adresu stranice → poslije 6 s prikaže mjere hero-a (posjetioci to ne vide)
+  // dijagnostika za pode\u0161avanje: dodaj ?jhdebug na adresu stranice \u2192 poslije 6 s prika\u017Ee mjere hero-a (posjetioci to ne vide)
   if (/[?&#]jhdebug/.test(location.href)) setTimeout(function () {
     function q(s) { return hero.querySelector(s); }
     function r(el) { if (!el) return '-'; var b = el.getBoundingClientRect(); return Math.round(b.left) + ',' + Math.round(b.top) + ' ' + Math.round(b.width) + 'x' + Math.round(b.height); }
@@ -89,7 +89,7 @@
     document.body.appendChild(d);
   }, 6000);
 
-  // "O nama" dropdown i hamburger — samo ako hero ima svoj meni
+  // "O nama" dropdown i hamburger \u2014 samo ako hero ima svoj meni
   // (u Slider Revolution verziji meni dolazi iz teme, pa ovog dijela nema)
   var dd = hero.querySelector('.jh-dropdown');
   var header = hero.querySelector('.jh-header');
@@ -104,7 +104,7 @@
       e.stopPropagation();
       setDropdown(!dd.classList.contains('is-open'));
     });
-    // Hamburger (samo na užim ekranima)
+    // Hamburger (samo na u\u017Eim ekranima)
     burger.addEventListener('click', function (e) {
       e.stopPropagation();
       var open = !header.classList.contains('is-menu-open');
@@ -127,12 +127,12 @@
     });
   }
 
-  // ===== Telefon: hero ide ispod providnog headera sve do vrha ekrana (bez šava ispod headera) =====
-  // Radi samo na sajtu (gdje postoji naš header .jf-header i Slider Revolution omotač) i samo ako je hero odmah ispod headera.
-  // U Slider Revolution verziji ovaj dio se pokrene odmah pri učitavanju, prije prikaza slajda (da slika ne "skoči" pred posjetiocem).
+  // ===== Telefon: hero ide ispod providnog headera sve do vrha ekrana (bez \u0161ava ispod headera) =====
+  // Radi samo na sajtu (gdje postoji na\u0161 header .jf-header i Slider Revolution omota\u010D) i samo ako je hero odmah ispod headera.
+  // U Slider Revolution verziji ovaj dio se pokrene odmah pri u\u010Ditavanju, prije prikaza slajda (da slika ne "sko\u010Di" pred posjetiocem).
   // >>> rano
   (function underHeader() {
-    if (hero.__jhFit) return hero.__jhFit();   // već namješteno ranije — samo provjeri
+    if (hero.__jhFit) return hero.__jhFit();   // ve\u0107 namje\u0161teno ranije \u2014 samo provjeri
     var hdr = document.querySelector('.jf-header');
     if (!hdr) return;
     function fit() {
@@ -152,17 +152,17 @@
     }
     hero.__jhFit = fit;
     fit(); window.addEventListener('load', fit);
-    // telefon javlja "resize" i kad se pri skrolovanju sakrije traka adrese — tada nema šta da se mijenja
+    // telefon javlja "resize" i kad se pri skrolovanju sakrije traka adrese \u2014 tada nema \u0161ta da se mijenja
     var t, lw = window.innerWidth;
     window.addEventListener('resize', function () { if (window.innerWidth === lw) return; lw = window.innerWidth; clearTimeout(t); t = setTimeout(fit, 200); });
   })();
   // <<< rano
 
   // ===== Vremenska prognoza: gore desno, odmah ispod menija (vodoravna traka u stilu dugmadi) =====
-  // Podaci: MET Norway (Locationforecast 2.0, besplatno i za komercijalne sajtove, uz navođenje izvora).
-  // Svaki posjetilac pita najviše jednom u 30 min (keš u pregledniku). Ako ne uspije — widget se ne prikazuje.
+  // Podaci: MET Norway (Locationforecast 2.0, besplatno i za komercijalne sajtove, uz navo\u0111enje izvora).
+  // Svaki posjetilac pita najvi\u0161e jednom u 30 min (ke\u0161 u pregledniku). Ako ne uspije \u2014 widget se ne prikazuje.
   (function weather() {
-    var LAT = 43.733, LON = 18.567, ALT = 1600;   // Jahorina; ALT = visina (m) za koju se računa temperatura
+    var LAT = 43.733, LON = 18.567, ALT = 1600;   // Jahorina; ALT = visina (m) za koju se ra\u010Duna temperatura
     var frame = hero.querySelector('.jh-frame');
     if (!frame || !window.fetch || hero.querySelector('.jh-wx')) return;
     var en = /^en/i.test(document.documentElement.lang || '') || /^\/en(\/|$)/.test(location.pathname) ||
@@ -174,15 +174,15 @@
         rshow: 'Showers', sleet: 'Sleet', lsnow: 'Light snow', snow: 'Snow', hsnow: 'Heavy snow', sshow: 'Snow showers', thunder: 'Thunder' }
     } : {
       label: 'Vremenska prognoza za Jahorinu', wind: 'Vjetar', src: 'MET Norway', srcS: 'met.no',
-      d: ['Ned', 'Pon', 'Uto', 'Sri', 'Čet', 'Pet', 'Sub'],
-      k: { clear: 'Vedro', fair: 'Pretežno vedro', partly: 'Djelimično oblačno', cloudy: 'Oblačno', fog: 'Magla', lrain: 'Slaba kiša', rain: 'Kiša', hrain: 'Jaka kiša',
-        rshow: 'Pljuskovi', sleet: 'Susnježica', lsnow: 'Slab snijeg', snow: 'Snijeg', hsnow: 'Jak snijeg', sshow: 'Snježni pljuskovi', thunder: 'Grmljavina' }
+      d: ['Ned', 'Pon', 'Uto', 'Sri', '\u010Cet', 'Pet', 'Sub'],
+      k: { clear: 'Vedro', fair: 'Prete\u017Eno vedro', partly: 'Djelimi\u010Dno obla\u010Dno', cloudy: 'Obla\u010Dno', fog: 'Magla', lrain: 'Slaba ki\u0161a', rain: 'Ki\u0161a', hrain: 'Jaka ki\u0161a',
+        rshow: 'Pljuskovi', sleet: 'Susnje\u017Eica', lsnow: 'Slab snijeg', snow: 'Snijeg', hsnow: 'Jak snijeg', sshow: 'Snje\u017Eni pljuskovi', thunder: 'Grmljavina' }
     };
     var t0 = performance.now(), box = document.createElement('div'), shown = false, tries = 0;
     box.className = 'jh-wx'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', L.label);
     frame.appendChild(box);
 
-    // MET simbol (npr. "lightsnowshowers_night") → vrsta vremena
+    // MET simbol (npr. "lightsnowshowers_night") \u2192 vrsta vremena
     function kind(code) {
       var c = String(code || '').replace(/_(day|night|polartwilight)$/, '');
       if (/thunder/.test(c)) return 'thunder';
@@ -197,7 +197,7 @@
       if (c === 'fair') return 'fair';
       return 'clear';
     }
-    // ikonice: tanke linije kao dugmad (svaki element ima stroke — tako ga štite i pravila za SR)
+    // ikonice: tanke linije kao dugmad (svaki element ima stroke \u2014 tako ga \u0161tite i pravila za SR)
     function P(d) { return '<path d="' + d + '" stroke="currentColor"/>'; }
     function D(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="1.1" fill="currentColor" stroke="none"/>'; }
     var CLOUD = P('M7.2 19h10.3a4 4 0 0 0 .5-8 6 6 0 0 0-11.5 1.6A3.2 3.2 0 0 0 7.2 19Z'),
@@ -219,21 +219,21 @@
       else g = CLOUD_HI + P('M8.5 18 7.5 20.6M12.5 18l-1 2.6M16.5 18l-1 2.6');
       return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' + g + '</svg>';
     }
-    function deg(t) { var r = Math.round(t); return (r < 0 ? '−' + (-r) : String(r)) + '°'; }
+    function deg(t) { var r = Math.round(t); return (r < 0 ? '\u2212' + (-r) : String(r)) + '\u00B0'; }
 
     // datum, sat i dan u sedmici po vremenu na Jahorini (CET/CEST po pravilu EU), i kad je posjetilac u drugoj zoni.
     // Bez Intl.DateTimeFormat: njegovo pokretanje sa vremenskom zonom je na telefonu sporo (~20 ms) i pada usred ulaska.
     function lastSun(y, m) { var e = new Date(Date.UTC(y, m + 1, 0)); return Date.UTC(y, m, e.getUTCDate() - e.getUTCDay(), 1); }
     function parts(d) {
       var ms = d.getTime(), y = d.getUTCFullYear(), dst = ms >= lastSun(y, 2) && ms < lastSun(y, 9);
-      var l = new Date(ms + (dst ? 2 : 1) * 3600000);   // lokalno vrijeme, čita se UTC poljima
+      var l = new Date(ms + (dst ? 2 : 1) * 3600000);   // lokalno vrijeme, \u010Dita se UTC poljima
       return { k: l.getUTCFullYear() + '-' + l.getUTCMonth() + '-' + l.getUTCDate(), h: l.getUTCHours(), wd: l.getUTCDay() };
     }
     function sym(x) {
       return (x.next_1_hours && x.next_1_hours.summary.symbol_code) || (x.next_6_hours && x.next_6_hours.summary.symbol_code) ||
         (x.next_12_hours && x.next_12_hours.summary.symbol_code) || '';
     }
-    // odgovor MET-a → sada + sljedeća 3 dana (najviša/najniža temperatura i vrijeme oko podneva)
+    // odgovor MET-a \u2192 sada + sljede\u0107a 3 dana (najvi\u0161a/najni\u017Ea temperatura i vrijeme oko podneva)
     function parse(j) {
       var ts = j && j.properties && j.properties.timeseries;
       if (!ts || !ts.length || !ts[0].data || !ts[0].data.instant) return null;
@@ -274,12 +274,12 @@
       shown = true; place(topPx);
     }
 
-    // tačno ispod menija: na telefonu je slika ispod providnog headera, pa widget mora ispod dugmadi headera.
-    // Položaj se mjeri unaprijed (dok sve miruje), da dolazak podataka usred animacije ne traži novo mjerenje.
+    // ta\u010Dno ispod menija: na telefonu je slika ispod providnog headera, pa widget mora ispod dugmadi headera.
+    // Polo\u017Eaj se mjeri unaprijed (dok sve miruje), da dolazak podataka usred animacije ne tra\u017Ei novo mjerenje.
     var topPx = measure();
     function measure() {
       var hdr = document.querySelector('.jf-header') || hero.querySelector('.jh-header');
-      if (!hdr && document.querySelector('script[src*="header-snippet"]') && performance.now() < 8000) return null;   // naš header još stiže sa CDN-a
+      if (!hdr && document.querySelector('script[src*="header-snippet"]') && performance.now() < 8000) return null;   // na\u0161 header jo\u0161 sti\u017Ee sa CDN-a
       var y = window.scrollY || 0, top = 0;
       if (hdr && hdr.offsetHeight) {
         var hcs = getComputedStyle(hdr), hb = hdr.getBoundingClientRect().bottom + (hcs.position === 'fixed' ? 0 : y);
@@ -317,14 +317,14 @@
       .catch(function () { box.remove(); });
   })();
 
-  // ===== Reflektori: pale se uz stazu, tiho dišu, povremeno bljesne filmski zrak =====
+  // ===== Reflektori: pale se uz stazu, tiho di\u0161u, povremeno bljesne filmski zrak =====
   (function floodlights() {
     var photo = hero.querySelector('.jh-photo'), cv = photo.querySelector('.jh-lights'), ctx = cv.getContext('2d');
-    // [x, y] u udjelu fotografije (2000×1334), veličina svjetla 0–1, 1 = toplo svjetlo — pronađeno analizom fotografije
+    // [x, y] u udjelu fotografije (2000\u00D71334), veli\u010Dina svjetla 0\u20131, 1 = toplo svjetlo \u2014 prona\u0111eno analizom fotografije
     var LIGHTS = [[0.9567,0.8873,0.55,1],[0.2898,0.6649,0.54,0],[0.0752,0.3858,0.22,0],[0.9388,0.8963,0.43,1],[0.8324,0.7261,1,0],[0.8899,0.9188,0.62,1],[0.2229,0.5661,0.12,0],[0.3608,0.8373,0.28,0],[0.8177,0.2039,0.38,1],[0.7823,0.3904,0.17,0],[0.8516,0.4789,0.38,0],[0.8834,0.8795,0.57,1],[0.6613,0.926,0.15,0],[0.3973,0.4085,0.41,0],[0.721,0.7011,0.17,1],[0.4063,0.7691,0.47,0],[0.3835,0.8242,0.2,0],[0.3997,0.8116,0.82,0],[0.3125,0.576,0.09,0],[0.7286,0.339,0.23,0],[0.1369,0.5104,0.11,1],[0.2109,0.7366,0.16,0],[0.4511,0.5993,0.42,0],[0.6991,0.6965,0.3,1],[0.7885,0.2044,0.12,0],[0.2196,0.795,0.95,0],[0.5336,0.5553,0.51,0],[0.9975,0.6177,0.4,0],[0.6798,0.9492,0.17,1],[0.4129,0.3991,0.19,0],[0.2077,0.9387,0.56,1],[0.6448,0.9046,0.15,1],[0.5782,0.5135,0.4,0],[0.4107,0.5122,0.84,0],[0.7485,0.3537,0.27,0],[0.372,0.8599,0.16,1],[0.6816,0.3728,0.33,0],[0.6608,0.8965,0.08,1],[0.5086,0.6036,0.47,0],[0.9314,0.4547,0.04,0],[0.4011,0.3848,0.15,0],[0.2002,0.797,0.71,1],[0.4337,0.4426,0.1,0],[0.4458,0.7357,0.29,0],[0.7998,0.2318,0.38,0],[0.6749,0.73,0.09,1],[0.6431,0.449,0.4,0],[0.4812,0.6772,0.55,0],[0.667,0.3907,0.19,0],[0.2411,0.6867,0.05,1],[0.7217,0.4975,0.41,0],[0.2301,0.7709,0.43,1],[0.6138,0.4791,0.46,0],[0.4167,0.5428,0.15,0],[0.6988,0.3607,0.23,0],[0.7185,0.744,0.05,1],[0.4283,0.5694,0.15,0],[0.5411,0.9323,0.43,0],[0.6559,0.5207,0.88,0],[0.9958,0.6533,0.05,0],[0.3136,0.851,0.06,1],[0.8185,0.721,0.11,0],[0.6637,0.4174,0.28,0],[0.0802,0.4375,0.03,1],[0.4879,0.8625,0.42,0],[0.2378,0.3828,0.03,1],[0.2692,0.6904,0.05,1],[0.4539,0.9119,1,0],[0.7523,0.731,0.05,0],[0.5855,0.8197,0.18,0]];
-    // zvijezde: samo na tamnom nebu iznad horizonta (pronađeno analizom fotografije) — [x, y, sjaj 0–1]
+    // zvijezde: samo na tamnom nebu iznad horizonta (prona\u0111eno analizom fotografije) \u2014 [x, y, sjaj 0\u20131]
     var STARS = [[0.4524,0.2056,0.13],[0.4466,0.0322,0.26],[0.1575,0.0016,0.01],[0.0832,0.0707,0.0],[0.0005,0.0546,0.94],[0.6749,0.1036,0.07],[0.4649,0.1703,0.13],[0.3838,0.1284,0.65],[0.2107,0.1281,0.0],[0.2132,0.0724,0.03],[0.1357,0.1245,0.01],[0.2495,0.0477,0.01],[0.2934,0.0429,0.01],[0.0692,0.1357,0.02],[0.5722,0.0291,0.94],[0.5984,0.0136,0.0],[0.0753,0.1988,0.4],[0.3416,0.0161,0.63],[0.625,0.1229,0.0],[0.1156,0.072,0.82],[0.581,0.1488,0.42],[0.7538,0.1059,0.01],[0.6659,0.0507,0.76],[0.1362,0.1748,0.36],[0.8219,0.0237,0.57],[0.0415,0.2827,0.5],[0.984,0.0244,0.26],[0.1993,0.1648,0.11],[0.0362,0.0606,0.85],[0.9062,0.0167,0.0],[0.0067,0.2008,0.55],[0.7177,0.0559,0.93],[0.5047,0.0053,0.02],[0.1644,0.1833,0.3],[0.9684,0.1882,0.15],[0.0049,0.1206,0.77],[0.5387,0.1367,0.02],[0.493,0.1048,0.78],[0.3221,0.1113,0.39],[0.8906,0.0494,0.0],[0.1325,0.017,0.83],[0.7899,0.0275,0.0],[0.5699,0.1123,0.35],[0.6857,0.0475,0.0],[0.4813,0.0477,0.0],[0.3268,0.161,0.22],[0.634,0.006,0.05],[0.4053,0.0496,0.0],[0.7226,0.0126,0.0],[0.5147,0.1754,0.06],[0.0228,0.2337,0.06],[0.0996,0.1505,0.3],[0.3986,0.0936,0.02],[0.0528,0.0947,0.38],[0.4295,0.1659,0.14],[0.7064,0.008,0.64],[0.4556,0.0738,0.47],[0.8466,0.0787,0.34],[0.8788,0.0057,0.08],[0.2792,0.1911,0.01],[0.3633,0.1287,0.18],[0.2815,0.0026,0.18],[0.0817,0.2981,0.25],[0.9156,0.0677,0.32],[0.0364,0.0225,0.01],[0.2466,0.1402,0.46],[0.5161,0.2448,0.15],[0.6671,0.0117,0.3],[0.376,0.1957,0.06],[0.6217,0.0291,0.01],[0.4068,0.0131,0.13],[0.2055,0.0341,0.78],[0.5483,0.1101,0.36],[0.9984,0.2817,0.0],[0.6971,0.1004,0.1],[0.2386,0.2104,0.77],[0.5479,0.0139,0.96],[0.7633,0.0374,0.15],[0.2391,0.0911,0.0],[0.9665,0.2598,0.52],[0.3062,0.1554,0.0],[0.9954,0.0519,0.68],[0.2739,0.1397,0.88],[0.3725,0.2579,0.01],[0.5849,0.0002,0.0],[0.18,0.0353,0.08],[0.4871,0.196,0.02],[0.1026,0.1178,0.61],[0.2981,0.2623,0.33],[0.0723,0.0049,0.03],[0.3844,0.1055,0.35],[0.2346,0.0,0.01],[0.3331,0.2723,0.07],[0.5137,0.0275,0.0],[0.8556,0.0415,0.66],[0.981,0.1259,0.51],[0.0071,0.311,0.04],[0.1758,0.0034,0.0],[0.5942,0.0748,0.0],[0.4307,0.0008,0.03],[0.3247,0.1944,0.24],[0.1518,0.1158,0.04],[0.2785,0.2274,0.0],[0.008,0.0122,0.66],[0.9497,0.0028,0.05],[0.6572,0.1392,0.98],[0.5981,0.1171,0.2],[0.3734,0.0174,0.06],[0.118,0.0966,0.0],[0.4724,0.0042,0.31],[0.3497,0.2214,0.19],[0.1993,0.1934,0.45],[0.1953,0.1165,0.86],[0.5267,0.1109,0.35],[0.1395,0.0488,0.83],[0.3162,0.041,0.76],[0.7702,0.0739,0.04],[1.0,0.1391,0.98],[0.0138,0.176,0.76],[0.0676,0.0379,0.03],[0.4538,0.1186,0.83],[0.2618,0.018,0.78],[0.1437,0.2154,0.2],[0.2287,0.2535,0.14],[0.5807,0.0897,0.0],[0.5551,0.247,0.02],[0.9532,0.0995,0.12],[0.2736,0.1126,0.05],[0.0576,0.2169,0.04],[0.8723,0.0606,0.37],[0.3623,0.0751,0.99],[0.0392,0.156,0.79],[0.3213,0.0728,0.26],[0.0067,0.2696,0.68],[0.5681,0.1803,0.0],[0.2897,0.083,0.51],[0.3418,0.0699,0.07],[0.4209,0.0957,0.41],[0.5454,0.0494,0.27],[0.6427,0.0697,0.51]];
-    // svjetla su meka, pa je dovoljna niža rezolucija platna: telefon 1×, računar do 1.5× (4× manje posla)
+    // svjetla su meka, pa je dovoljna ni\u017Ea rezolucija platna: telefon 1\u00D7, ra\u010Dunar do 1.5\u00D7 (4\u00D7 manje posla)
     var mobile = window.matchMedia('(max-width:760px)').matches;
     var IW = 2000, IH = 1334, dpr = mobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.5), W = 0, H = 0, pts = [], k = 1;
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -339,7 +339,7 @@
       x.fillStyle = gr; x.fillRect(0, 0, 128, 128); return c;
     }
     var COLD = sprite(185, 226, 255), WARM = sprite(255, 176, 88);
-    var STAR = (function () {   // sitna zvijezda: oštro bijelo jezgro i jedva vidljiv plavičast oreol
+    var STAR = (function () {   // sitna zvijezda: o\u0161tro bijelo jezgro i jedva vidljiv plavi\u010Dast oreol
       var c = document.createElement('canvas'), x = c.getContext('2d'); c.width = c.height = 32;
       var g = x.createRadialGradient(16, 16, 0, 16, 16, 16);
       g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.16, 'rgba(235,245,255,.9)');
@@ -347,7 +347,7 @@
       x.fillStyle = g; x.fillRect(0, 0, 32, 32); return c;
     })();
     var stars = [];
-    // oštar horizontalni zrak (anamorfni flare): svijetlo jezgro u sredini, vrhovi se gube
+    // o\u0161tar horizontalni zrak (anamorfni flare): svijetlo jezgro u sredini, vrhovi se gube
     var STREAK = (function () {
       var c = document.createElement('canvas'), x = c.getContext('2d'); c.width = 512; c.height = 32;
       var h = x.createLinearGradient(0, 0, 512, 0);
@@ -379,7 +379,7 @@
         return {
           x: ox + l[0] * IW * k, y: oy + l[1] * IH * k, s: l[2], warm: l[3],
           ph: o.ph || rnd(0, 6.28), f1: o.f1 || rnd(0.25, 0.6), f2: o.f2 || rnd(0.7, 1.4),
-          on: 0.5 + (1 - l[1]) * 1.9 + rnd(0, 0.15)          // pale se od podnožja ka vrhu staze
+          on: 0.5 + (1 - l[1]) * 1.9 + rnd(0, 0.15)          // pale se od podno\u017Eja ka vrhu staze
         };
       });
     }
@@ -422,11 +422,11 @@
         var u = (t - f.t) / f.d, e = Math.sin(Math.PI * u), R = (14 + f.p.s * 26) * sc;
         var len = R * (9 + 5 * e);
         ctx.globalAlpha = e * 0.35; ctx.drawImage(COLD, f.p.x - len * 0.55, f.p.y - R * 0.5, len * 1.1, R);          // meki sjaj oko zraka
-        ctx.globalAlpha = e * 0.95; ctx.drawImage(STREAK, f.p.x - len, f.p.y - R * 0.1, len * 2, R * 0.2);          // oštar horizontalni zrak
+        ctx.globalAlpha = e * 0.95; ctx.drawImage(STREAK, f.p.x - len, f.p.y - R * 0.1, len * 2, R * 0.2);          // o\u0161tar horizontalni zrak
         ctx.save(); ctx.translate(f.p.x, f.p.y); ctx.rotate(Math.PI / 2);
         ctx.globalAlpha = e * 0.45; ctx.drawImage(STREAK, -R * 2.6, -R * 0.07, R * 5.2, R * 0.14);                 // kratki vertikalni zrak
         ctx.restore();
-        ctx.globalAlpha = e * 0.7;  ctx.drawImage(COLD, f.p.x - R * 1.8, f.p.y - R * 1.8, R * 3.6, R * 3.6);          // jače jezgro
+        ctx.globalAlpha = e * 0.7;  ctx.drawImage(COLD, f.p.x - R * 1.8, f.p.y - R * 1.8, R * 3.6, R * 3.6);          // ja\u010De jezgro
       });
       ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
     }
@@ -450,7 +450,7 @@
     });
   })();
 
-  // ===== Ulazak teksta: kicker se "otkuca", naslov se kristališe, "Jahorine" se iscrta ledom =====
+  // ===== Ulazak teksta: kicker se "otkuca", naslov se kristali\u0161e, "Jahorine" se iscrta ledom =====
   (function intro() {
     var title = hero.querySelector('.jh-title');
     var ice = hero.querySelector('.jh-ice');
@@ -458,12 +458,12 @@
     var dotI = ice.querySelector('.jh-i'), dot = ice.querySelector('.jh-dot');
     var phone = window.matchMedia('(max-width:760px)').matches;
 
-    // Mjeri riječ: položaj svakog slova, osnovnu liniju, profil vrhova slova i tačan položaj tačke na "i"
+    // Mjeri rije\u010D: polo\u017Eaj svakog slova, osnovnu liniju, profil vrhova slova i ta\u010Dan polo\u017Eaj ta\u010Dke na "i"
     var mCache = null;
     function measureIce() {
       var cs = getComputedStyle(ice), box = ice.getBoundingClientRect(), fs = parseFloat(cs.fontSize);
       var font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
-      // isto slovo, ista veličina → mjerenje se ne ponavlja (skupo je, a pada baš usred animacije ulaska)
+      // isto slovo, ista veli\u010Dina \u2192 mjerenje se ne ponavlja (skupo je, a pada ba\u0161 usred animacije ulaska)
       var key = box.width + '|' + font + '|' + cs.letterSpacing + '|' + (document.fonts ? document.fonts.status : '');
       if (mCache && mCache.key === key) { mCache.box = box; return mCache; }
       var probe = document.createElement('i');
@@ -484,7 +484,7 @@
       }
 
       var cv = document.createElement('canvas'), g = cv.getContext('2d', { willReadFrequently: true });
-      // tačka na "i": razlika između "i" i "ı" nacrtanih na istom mjestu
+      // ta\u010Dka na "i": razlika izme\u0111u "i" i "\u0131" nacrtanih na istom mjestu
       var S = Math.ceil(fs * 1.6), ox = Math.ceil(fs * 0.3), oy = Math.ceil(fs * 1.25);
       cv.width = S; cv.height = S; g.font = font; g.textBaseline = 'alphabetic';
       g.fillText('i', ox, oy); var A = g.getImageData(0, 0, S, S).data;
@@ -501,7 +501,7 @@
       var dot = { x: iC.x + dx - 1, y: baseY + dy - 1, w: dw + 2, h: dh + 2 };
       dot.cx = dot.x + dot.w / 2; dot.cy = dot.y + dot.h / 2;
 
-      // profil vrhova slova (za klizanje tačke)
+      // profil vrhova slova (za klizanje ta\u010Dke)
       var PW = Math.ceil(box.width), PH = Math.ceil(box.height);
       cv.width = PW; cv.height = PH; g.font = font; g.textBaseline = 'alphabetic';
       chars.forEach(function (c) { g.fillText(c.c, c.x, baseY); });
@@ -514,7 +514,7 @@
       var asc = g.measureText('h').actualBoundingBoxAscent || fs * 0.72;
       return (mCache = { key: key, box: box, fs: fs, font: font, baseY: baseY, chars: chars, dot: dot, profile: profile, asc: asc });
     }
-    // postavi tačku tačno na mjesto (u koordinatama slova "ı", pa prati i razmak slova na hover)
+    // postavi ta\u010Dku ta\u010Dno na mjesto (u koordinatama slova "\u0131", pa prati i razmak slova na hover)
     function placeDot() {
       var m = measureIce(), ib = dotI.getBoundingClientRect(), ibx = ib.left - m.box.left, iby = ib.top - m.box.top;
       dot.style.left = (m.dot.x - ibx) + 'px'; dot.style.top = (m.dot.y - iby) + 'px';
@@ -527,7 +527,7 @@
       setTimeout(res, 2500);
     });
     fontsReady.then(placeDot);
-    // rezerva: ako tema/dodatak sakrije tačku (npr. pravilo span:empty{display:none}), prikaži obično "i"
+    // rezerva: ako tema/dodatak sakrije ta\u010Dku (npr. pravilo span:empty{display:none}), prika\u017Ei obi\u010Dno "i"
     function fixDot() {
       var cs = getComputedStyle(dot), b = dot.getBoundingClientRect();
       if (b.width > 1 && cs.display !== 'none' && cs.visibility !== 'hidden') return;
@@ -537,7 +537,7 @@
     setTimeout(fixDot, 9000);
     var rz, lw = window.innerWidth;
     window.addEventListener('resize', function () {
-      if (window.innerWidth === lw) return;   // veličina slova zavisi samo od širine ekrana
+      if (window.innerWidth === lw) return;   // veli\u010Dina slova zavisi samo od \u0161irine ekrana
       lw = window.innerWidth;
       clearTimeout(rz); rz = setTimeout(placeDot, 150);
     });
@@ -563,7 +563,7 @@
     function after(sec, fn) { setTimeout(fn, Math.max(0, sec * 1000 - (performance.now() - t0))); }
 
 
-    // "Otkrij čaroliju": svako slovo se kristališe iz zamućenja
+    // "Otkrij \u010Daroliju": svako slovo se kristali\u0161e iz zamu\u0107enja
     var lines = [].slice.call(title.children).filter(function (el) { return el !== ice; });
     var n = 0, last = 0;
     lines.forEach(function (line) {
@@ -594,7 +594,7 @@
     });
     }
 
-    // "Jahorine": svjetlosna olovka iscrta obris, tačka na "i" skače kao skijaš, slova se zalede
+    // "Jahorine": svjetlosna olovka iscrta obris, ta\u010Dka na "i" ska\u010De kao skija\u0161, slova se zalede
     ice.classList.add('is-drawing');
     dot.classList.add('is-waiting');
 
@@ -637,7 +637,7 @@
         setTimeout(el.remove.bind(el), life);
       }
 
-      // tačka padne na "ı" tačno kad počinje zamrzavanje (isti trenutak kao ranije: 2,26 s od početka crtanja)
+      // ta\u010Dka padne na "\u0131" ta\u010Dno kad po\u010Dinje zamrzavanje (isti trenutak kao ranije: 2,26 s od po\u010Detka crtanja)
       dropDot(m, 2260, freeze);
 
       function freeze() {
@@ -667,7 +667,7 @@
       }
     }
 
-    // ---- tačka: jednom tiho padne odozgo na "ı" i legne (bez traga i odskoka) ----
+    // ---- ta\u010Dka: jednom tiho padne odozgo na "\u0131" i legne (bez traga i odskoka) ----
     function dropDot(m, landAt, onLand) {
       var T = 560;
       setTimeout(function () {
@@ -683,13 +683,13 @@
       }, Math.max(0, landAt - T));
     }
 
-    // crta tek kad se font učita (da obris tačno legne na slova), najranije u 1.1 s
+    // crta tek kad se font u\u010Dita (da obris ta\u010Dno legne na slova), najranije u 1.1 s
     fontsReady.then(function () { after(1.1, drawIce); });
   })();
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  // Parallax — fotografija se blago pomjera za mišem
+  // Parallax \u2014 fotografija se blago pomjera za mi\u0161em
   var tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
   function tick() {
     cx += (tx - cx) * 0.07; cy += (ty - cy) * 0.07;

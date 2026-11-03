@@ -188,14 +188,25 @@ for a, b_ in EN:
     assert a in html_en, 'EN: nije pronađeno ' + a
     html_en = html_en.replace(a, b_)
 
+def only_ascii(text, css=False):
+    """Samo ASCII znakovi: č, ž, ° … kao \\uXXXX (JS) ili \\XXXX (CSS). Kod se lijepi ručno, a kopiranje u pogrešnom
+    kodiranju (3. 11.: „0¬∞“, „ƒået“ u prognozi na sajtu) tada ne može pokvariti slova."""
+    def esc(ch):
+        if css:
+            return '\\%X ' % ord(ch)
+        b = ch.encode('utf-16-be')
+        return ''.join('\\u%02X%02X' % (b[i], b[i + 1]) for i in range(0, len(b), 2))
+    return ''.join(c if ord(c) < 128 else esc(c) for c in text)
+
+
 for folder, prefix, h in (('slider-revolution', 'ZAMIJENI-URL-', html),
                           ('slider-revolution-spremno', MEDIA, html),
                           ('slider-revolution-EN-spremno', MEDIA, html_en)):
     out = HERE / folder
     out.mkdir(exist_ok=True)
     (out / '1-html.html').write_text(with_urls(h, prefix) + '\n')
-    (out / '2-css.css').write_text(with_urls(css_out, prefix))
-    (out / '3-js.js').write_text(js_out)
+    (out / '2-css.css').write_text(only_ascii(with_urls(css_out, prefix), css=True))
+    (out / '3-js.js').write_text(only_ascii(js_out))
     for f in ('1-html.html', '2-css.css', '3-js.js'):
         assert not re.search(r"[('\"]assets/", (out / f).read_text()), f   # relativna putanja do assets/ (apsolutni URL-ovi sa jsDelivr-a su u redu)
 print('Gotovo: slider-revolution/, slider-revolution-spremno/ i slider-revolution-EN-spremno/')
