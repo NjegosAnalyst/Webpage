@@ -14,7 +14,7 @@
   /* ---------- tekstovi ---------- */
   var T = EN ? {
     kicker: 'Piste map', h1: 'Ski runs of', h2: 'Jahorina',
-    lead: '25 runs, link runs and 14 lifts of the Jahorina ski resort on one map. Tap a run or a lift for details, switch on night view to see the floodlit runs.',
+    lead: '{s}, link runs and {z} of the Jahorina ski resort on one map. Tap a run or a lift for details, switch on night view to see the floodlit runs.',
     laka: 'Blue', srednja: 'Red', teska: 'Black', zicare: 'Lifts', usluge: 'Services', noc: 'Night skiing',
     run: 'Run', lift: 'Lift', zoomIn: 'Zoom in', zoomOut: 'Zoom out', reset: 'Whole map', full: 'Full screen', fullOff: 'Close full screen',
     close: 'Close', hintWheel: 'Hold Ctrl and scroll to zoom', hintTouch: 'Swipe sideways to move · pinch to zoom',
@@ -37,7 +37,7 @@
     peak: 'Ogorjelica', and: ', ', km: 'm'
   } : {
     kicker: 'Ski mapa', h1: 'Mapa staza', h2: 'Jahorine',
-    lead: '25 staza, vezne staze i 14 žičara ski centra Jahorina na jednoj mapi. Dodirni stazu ili žičaru za detalje, a noćni prikaz pokazuje osvijetljene staze.',
+    lead: '{s}, vezne staze i {z} ski centra Jahorina na jednoj mapi. Dodirni stazu ili žičaru za detalje, a noćni prikaz pokazuje osvijetljene staze.',
     laka: 'Plave', srednja: 'Crvene', teska: 'Crne', zicare: 'Žičare', usluge: 'Usluge', noc: 'Noćno skijanje',
     run: 'Staza', lift: 'Žičara', zoomIn: 'Uvećaj', zoomOut: 'Umanji', reset: 'Cijela mapa', full: 'Cijeli ekran', fullOff: 'Zatvori cijeli ekran',
     close: 'Zatvori', hintWheel: 'Drži Ctrl i skroluj za zum', hintTouch: 'Prevuci lijevo-desno · dva prsta za zum',
@@ -59,6 +59,12 @@
     here: 'Ovdje', snow: 'Osnježavanje', fisOn: 'FIS',
     peak: 'Ogorjelica', and: ', ', km: 'm'
   };
+  // množina: SR 1 staza, 2–4 staze, 5+ staza (11–14 staza); EN run/runs
+  function br(n, sr1, sr2, sr5, en1, enN) {
+    if (EN) return n + ' ' + (n === 1 ? en1 : enN);
+    var d = n % 10, s = n % 100;
+    return n + ' ' + (d === 1 && s !== 11 ? sr1 : d >= 2 && d <= 4 && (s < 12 || s > 14) ? sr2 : sr5);
+  }
   var NAZ_TEZ = { laka: EN ? 'blue' : 'plava', srednja: EN ? 'red' : 'crvena', teska: EN ? 'black' : 'crna' };
 
   /* ---------- fontovi (jednom za sve sekcije) ---------- */
@@ -501,7 +507,9 @@
         '<span class="jm-li-n"><strong>' + esc(z.ime) + '</strong><span>' + (z.tip ? T.tip[z.tip] : T.lift) + '</span></span>' +
         '<span class="jm-li-m">' + z.m + ' m<small>' + fmt(z.min) + ' min</small></span></button></li>';
     }).join('');
-    $('.jm-pop summary b').textContent = D.zicare.length + ' ' + T.nLifts + ' · ' + D.staze.length + ' ' + T.nRuns;
+    var nS = br(D.staze.length, 'staza', 'staze', 'staza', 'run', 'runs'), nZ = br(D.zicare.length, 'žičara', 'žičare', 'žičara', 'lift', 'lifts');
+    $('.jm-pop summary b').textContent = nZ + ' · ' + nS;
+    $('.jm-lead').textContent = T.lead.replace('{s}', nS.charAt(0).toUpperCase() + nS.slice(1)).replace('{z}', nZ);
     $('.jm-runs').innerHTML = ['laka', 'srednja', 'teska'].map(function (k) {
       return '<div class="jm-rg"><span>' + T.grp[k] + '</span><div class="jm-rcs">' + runs.filter(function (r) { return r.tez === k; }).map(function (r) {
         return '<button type="button" class="jm-rc t-' + k + '" data-run="' + r.id + '" aria-label="' + esc(T.run + ' ' + r.id) + '">' + esc(r.id) + '</button>';
@@ -517,7 +525,7 @@
       vw = view.clientWidth || 1; vh = view.clientHeight || 1;
       // najmanji zum: računar = cijela širina bez praznih traka; telefon = visina skijališta (bez sitne cijele mape)
       kMin = narrowView() ? Math.max(vw / W, vh / 1650) : Math.max(vw / W, vh / (H - BY0));
-      kMax = big ? 1.6 : 1.15; if (vw < 700) kMax = 1.3;
+      kMax = 1.1; if (vw < 700) kMax = 1.25;   // podloga je u izvoru 1593 px: dalje od ovoga samo mutnija slika
     }
     function clamp() {
       k = Math.max(kMin, Math.min(kMax, k));

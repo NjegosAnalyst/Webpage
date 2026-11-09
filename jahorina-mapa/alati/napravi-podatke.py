@@ -1,87 +1,121 @@
 #!/usr/bin/env python3
-"""PSD mape skijališta → slike (dan/noć) + vektorski podaci za interaktivnu mapu.
+"""Illustrator mapa skijališta (AI, PDF-kompatibilna) → slike (dan/noć) + vektorski podaci za interaktivnu mapu.
 
-    python3 napravi-podatke.py <mapa.psd>
+    python3 napravi-podatke.py <mapa.ai>
 
-PSD je na GitHub Release-u `mapa-psd` (prevelik za repo):
-https://github.com/NjegosAnalyst/Webpage/releases/download/mapa-psd/mapa.Jahorina.pejzaz.psd
-Potrebno: pip install psd-tools scikit-image scipy pillow
+AI je na GitHub Release-u `mapa-ai` (prevelik za repo):
+https://github.com/NjegosAnalyst/Webpage/releases/download/mapa-ai/Mapa.ZIMA.2026.NOVO.v2.ai
+(starija PSD verzija: Release `mapa-psd`; skripta za nju je u istoriji repoa, commit prije 9. 11. 2026)
+Potrebno: pip install pymupdf scikit-image scipy pillow
 
 Izlaz: ../slike/mapa-{dan,noc}-{3543,2000}.webp, ../podaci/mapa.json
-Slojevi PSD-a: vidljivi slojevi = naslikana podloga; „Layer 30“ = staze, žičare, ikonice (raster);
-„osvetljena staza“ (skriven) = osvijetljene staze za noćno skijanje.
+AI fajl: najveća slika na stranici = naslikana podloga (povezana slika, u fajlu 1593 × 987 px, žute osvijetljene staze
+su urezane u nju); sve ostalo (staze, žičare, ikonice, legenda) je vektor. Svijet mape = područje podloge
+(PDF tačke 0..3805.92 × 134..2494) u 3543 × 2198 px.
 """
-import sys, json, pathlib, numpy as np
+import sys, io, json, pathlib, numpy as np
+import pymupdf
 from PIL import Image, ImageDraw, ImageFilter
-from psd_tools import PSDImage
 from scipy import ndimage as ndi
 from scipy.spatial import cKDTree
 from skimage.graph import route_through_array
-from skimage.morphology import dilation, opening, disk, skeletonize
+from skimage.morphology import dilation, opening, disk, skeletonize, remove_small_objects
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from ulaz import STAZE, OZNAKE, NEIMENOVANE, VEZE_RUCNO, ROMBOIDI, ZICARE, USLUGE, USLUGE_INFO, FIS, VRHOVI, SANKE, NATPISI
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-W, H = 3543, 1996
-psd = PSDImage.open(sys.argv[1])
-assert (psd.width, psd.height) == (W, H), 'očekivana veličina PSD-a 3543 x 1996'
-sloj = {l.name: l for l in psd}
+BB = pymupdf.Rect(0, 134, 3805.92, 2494)          # područje podloge u PDF tačkama
+W = 3543; S = W / BB.width                         # H (2198) daje iscrtani sloj oznaka
 
-def puni(l):
-    c = Image.new('RGBA', (W, H), (0, 0, 0, 0)); c.alpha_composite(l.topil().convert('RGBA'), (l.bbox[0], l.bbox[1])); return c
+doc = pymupdf.open(sys.argv[1]); pg = doc[0]
+slike = sorted(pg.get_image_info(xrefs=True), key=lambda i: -(i['bbox'][2] - i['bbox'][0]) * (i['bbox'][3] - i['bbox'][1]))
+POD = slike[0]                                      # naslikana podloga
+pix = pymupdf.Pixmap(doc, POD['xref'])
+if pix.n - pix.alpha != 3: pix = pymupdf.Pixmap(pymupdf.csRGB, pix)
+src = Image.frombytes('RGB' if not pix.alpha else 'RGBA', (pix.width, pix.height), pix.samples).convert('RGB')
+bx0, by0, bx1, by1 = POD['bbox']                    # dio slike koji pada u BB
+kx = (BB.x0 - bx0) / (bx1 - bx0) * src.width; kx1 = (BB.x1 - bx0) / (bx1 - bx0) * src.width
+ky = (BB.y0 - by0) / (by1 - by0) * src.height; ky1 = (BB.y1 - by0) / (by1 - by0) * src.height
+SW, SH = src.size
+kx, ky, kx1, ky1 = max(0, kx), max(0, ky), min(SW, kx1), min(SH, ky1)   # podloga pokriva BB (zaokruživanje ivica)
 
-# ---------- slike ----------
-SUNCE = {'Layer 13', 'Layer 14'}
-dan = psd.composite().convert('RGB')
-bez_sunca = psd.composite(layer_filter=lambda l: l.is_visible() and l.name not in SUNCE).convert('RGB')
+# sloj oznaka: stranica bez podloge, providna pozadina
+pg.delete_image(POD['xref'])
+op_pix = pg.get_pixmap(matrix=pymupdf.Matrix(S, S), clip=BB, alpha=True)
+oznake = Image.open(io.BytesIO(op_pix.tobytes('png'))).convert('RGBA')   # preko PNG-a: boje bez premultiplikovane providnosti
+assert oznake.width == W, oznake.size
+H = oznake.height
 
-def nocna(im):
-    a = np.asarray(im.convert('RGB')).astype(np.float32) / 255
-    lum = a @ np.array([.299, .587, .114], np.float32)
-    g = lum[..., None]
-    a = a * .45 + g * .55                                   # manje zasićeno
-    a = np.clip(a, 0, 1) ** 1.35 * .62                       # tamnije, kontrast u svijetlim (snijeg)
-    tint = np.array([.20, .38, .72], np.float32)             # plavi mjesečev ton
-    a = a * (.62 + .38 * tint * 1.6)
-    return a
+# ---------- podloga: osvijetljene staze (žuto), nebo, prigušena dnevna i noćna verzija ----------
+a0 = np.asarray(src).astype(np.float32) / 255
+mx, mn = a0.max(2), a0.min(2)
+sat = (mx - mn) / np.maximum(mx, 1e-3)
+hue_y = (a0[..., 0] > .62) & (a0[..., 1] > .55) & (a0[..., 2] < a0[..., 1] - .12) & (a0[..., 0] - a0[..., 2] > .18)
+zuto = hue_y & (sat > .22)
+zuto = remove_small_objects(zuto, 25)
+# za uklanjanje boje šire nego za linije: i svjetlije žute ivice traka
+zuto_siri = ndi.binary_dilation(zuto | (hue_y & (sat > .1) & ndi.binary_dilation(zuto, iterations=3)), iterations=1)
+zuto_meko = np.asarray(Image.fromarray((zuto_siri * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1.6))).astype(np.float32)[..., None] / 255
+lum0 = (a0 @ np.array([.299, .587, .114], np.float32))[..., None]
+# žute trake → snijeg (staze ispod su bijele): bez boje, malo svjetlije
+a1 = a0 * (1 - zuto_meko) + np.clip(lum0 * 1.04 + .03, 0, 1) * zuto_meko
 
-ys = np.linspace(0, 1, H, dtype=np.float32)[:, None, None]
-nebo = (np.array([5, 10, 24], np.float32) * (1 - ys) + np.array([22, 38, 72], np.float32) * ys) / 255  # tamnoplavi prelaz
-nebo = np.broadcast_to(nebo, (H, W, 3)).copy()
-rng = np.random.default_rng(7)                               # rijetke, tihe zvijezde (kao u hero-u)
-for _ in range(260):
-    x, y = rng.integers(0, W), rng.integers(0, 760); b = rng.uniform(.35, .9) * (1 - y / 900)
-    nebo[y, x] = np.maximum(nebo[y, x], b)
-    if b > .7 and 0 < x < W - 1: nebo[y, x - 1] = nebo[y, x + 1] = np.maximum(nebo[y, x + 1], b * .45)
-# nebo = plavo-cyan pikseli (u PSD-u i izmaglica iznad planina); meka maska
-bs = np.asarray(bez_sunca).astype(np.int32)
-plavo = (bs[..., 2] > 170) & (bs[..., 2] - bs[..., 0] > 60) & (bs[..., 1] > 120)
-plavo[min(H, 1150):] = False
-sky = np.asarray(Image.fromarray((plavo * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(3))).astype(np.float32)[..., None] / 255
-noc = nocna(bez_sunca) * (1 - sky) + nebo * sky
-noc = Image.fromarray((np.clip(noc, 0, 1) * 255).astype(np.uint8))
+# nebo: povezano sa gornjom ivicom, plavo ili (iznad 165. reda, van opservatorije) sve
+ys0 = np.arange(SH)[:, None]; xs0 = np.arange(SW)[None, :]
+plav = (a0[..., 2] > .72) & (a0[..., 2] - a0[..., 0] > .17)
+gore = (ys0 < 165 * SH / 987) & ~((xs0 > 775 * SW / 1593) & (xs0 < 865 * SW / 1593))
+nebo_k = (plav | gore) & (ys0 < 420 * SH / 987)
+lab_, _ = ndi.label(nebo_k)
+vrh = set(np.unique(lab_[0])) - {0}
+nebo_m = np.isin(lab_, list(vrh))
+nebo_m = ndi.binary_closing(nebo_m, iterations=2)
+sky0 = np.asarray(Image.fromarray((nebo_m * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1.4))).astype(np.float32)[..., None] / 255
 
-# dnevna podloga: 'prigusena' (korisnik 30. 10.: bez sunca, mirno svijetlo nebo, teren manje zasićen i hladniji,
-# da se staze i žičare jasnije ističu) ili 'original' (kao u PSD-u)
-PODLOGA = 'prigusena'
-if PODLOGA == 'prigusena':
-    a_ = np.asarray(bez_sunca).astype(np.float32) / 255
-    lum = (a_ @ np.array([.299, .587, .114], np.float32))[..., None]
-    a_ = lum + (a_ - lum) * .72                                       # manje zasićeno
-    a_ = 1 - (1 - np.clip(a_ * np.array([.985, 1.0, 1.02], np.float32), 0, 1)) * .93   # hladnije, mekše sjene
-    t_ = np.clip(ys / .55, 0, 1) ** 1.2
-    nebo_d = np.array([150, 190, 214], np.float32) / 255 * (1 - t_) + np.array([228, 238, 244], np.float32) / 255 * t_
-    dan = Image.fromarray((np.clip(a_ * (1 - sky) + nebo_d * sky, 0, 1) * 255).astype(np.uint8))
+def u_svijet(arr):        # niz (SH, SW, 3|1) → slika svijeta W × H
+    im = Image.fromarray((np.clip(arr, 0, 1) * 255).astype(np.uint8).squeeze())
+    return im.resize((W, H), Image.LANCZOS, box=(kx, ky, kx1, ky1))
+
+yy = np.linspace(0, 1, SH, dtype=np.float32)[:, None, None]
+# dnevna (prigušena): bez sunca, mirno svijetlo nebo, teren manje zasićen i hladniji
+lum1 = (a1 @ np.array([.299, .587, .114], np.float32))[..., None]
+d_ = lum1 + (a1 - lum1) * .72
+d_ = 1 - (1 - np.clip(d_ * np.array([.985, 1.0, 1.02], np.float32), 0, 1)) * .93
+t_ = np.clip(yy / .38, 0, 1) ** 1.2
+nebo_d = np.array([150, 190, 214], np.float32) / 255 * (1 - t_) + np.array([228, 238, 244], np.float32) / 255 * t_
+dan = u_svijet(d_ * (1 - sky0) + nebo_d * sky0).filter(ImageFilter.UnsharpMask(radius=2, percent=60, threshold=2))
+
+def nocna(a):
+    lum = (a @ np.array([.299, .587, .114], np.float32))[..., None]
+    a = a * .45 + lum * .55
+    a = np.clip(a, 0, 1) ** 1.35 * .62
+    return a * (.62 + .38 * np.array([.20, .38, .72], np.float32) * 1.6)
+nebo_n = (np.array([5, 10, 24], np.float32) * (1 - yy) + np.array([22, 38, 72], np.float32) * yy) / 255
+nebo_n = np.broadcast_to(nebo_n, (SH, SW, 3)).copy()
+noc = u_svijet(nocna(a1) * (1 - sky0) + nebo_n * sky0)
+# zvijezde u punoj rezoluciji (oštre), samo na nebu
+nm = np.asarray(Image.fromarray((nebo_m * 255).astype(np.uint8)).resize((W, H), Image.BILINEAR, box=(kx, ky, kx1, ky1))) > 200
+na = np.asarray(noc).astype(np.float32) / 255
+rng = np.random.default_rng(7)
+for _ in range(320):
+    x, y = int(rng.integers(1, W - 1)), int(rng.integers(0, int(H * .3)))
+    if not nm[y, x]: continue
+    b_ = rng.uniform(.35, .9) * (1 - y / (H * .34))
+    na[y, x] = np.maximum(na[y, x], b_)
+    if b_ > .65: na[y, x - 1] = na[y, x + 1] = np.maximum(na[y, x + 1], b_ * .45)
+noc = Image.fromarray((np.clip(na, 0, 1) * 255).astype(np.uint8))
 
 (ROOT / 'slike').mkdir(exist_ok=True)
 for ime, im in (('dan', dan), ('noc', noc)):
     for w in (3543, 2000):
         out = im if w == W else im.resize((w, round(H * w / W)), Image.LANCZOS)
-        out.save(ROOT / 'slike' / f'mapa-{ime}-{w}.webp', quality=82 if w == W else 80, method=6)
+        out.save(ROOT / 'slike' / f'mapa-{ime}-{w}.webp', quality=80, method=6)
 
-# ---------- maske boja iz „Layer 30“ ----------
-A = np.asarray(puni(sloj['Layer 30'])).astype(int); r, g, b, a = A[..., 0], A[..., 1], A[..., 2], A[..., 3]
+# osvijetljene staze (žute trake podloge) u koordinatama svijeta
+la = np.asarray(Image.fromarray((zuto * 255).astype(np.uint8)).resize((W, H), Image.BILINEAR, box=(kx, ky, kx1, ky1))) > 110
+
+# ---------- maske boja sa sloja oznaka ----------
+A = np.asarray(oznake).astype(int); r, g, b, a = A[..., 0], A[..., 1], A[..., 2], A[..., 3]
 op = a > 140
 M = {
  'red':   op & (r > 170) & (g < 90) & (b < 90),
@@ -91,6 +125,7 @@ M = {
  'yellow':op & (r > 200) & (g > 160) & (b < 100),
  'green': op & (g > r + 30) & (g > b + 10) & (r < 170),
  'white': op & (r > 235) & (g > 235) & (b > 235),
+ 'zlato': op & (r > 170) & (g > 105) & (g < 175) & (b < 75),
 }
 CL = {'red': M['red'], 'blue': M['blue'] | M['teal'], 'black': M['black'], 'white': M['white']}
 cijena = {}
@@ -146,9 +181,7 @@ def ruta(boja, tacke):
 TEZ = {'blue': 'laka', 'red': 'srednja', 'black': 'teska'}
 RANG = {'laka': 0, 'srednja': 1, 'teska': 2}
 
-# osvijetljene staze (skriven sloj)
-la = np.asarray(puni(sloj['osvetljena staza']))[..., 3] > 60
-la_d = dilation(la, disk(6))
+la_d = dilation(la, disk(8))
 
 staze = []; sve_rute = {}
 for sid, segs in STAZE.items():
@@ -281,12 +314,12 @@ nocne = [put(rdp(izgladi(izgladi(p, 15), 15), 1.2)) for p in trag(la, 40)]
 def projekcija(a, b, o):
     a, b, o = map(np.array, (a, b, o)); t = np.clip(np.dot(o - a, b - a) / np.dot(b - a, b - a), .08, .92); return np.round(a + t * (b - a), 1).tolist()
 # topovi za osnježavanje: žute ikonice (glava i tijelo topa se spoje), bez ikonica koje su takođe žute (24h, policija, poligon, snow factory)
-lab, n = ndi.label(ndi.binary_closing(M['yellow'], iterations=2), np.ones((3, 3)))
-ar = ndi.sum(M['yellow'], lab, range(1, n + 1)); sl = ndi.find_objects(lab); topovi = []
+lab, n = ndi.label(ndi.binary_closing(M['zlato'], iterations=2), np.ones((3, 3)))
+ar = ndi.sum(M['zlato'], lab, range(1, n + 1)); sl = ndi.find_objects(lab); topovi = []
 zute = [p for k in ('karte24', 'policija', 'poligon', 'snowfactory', 'skibike') for p in USLUGE.get(k, [])]
 for a_, s_ in zip(ar, sl):
     h_, w_ = s_[0].stop - s_[0].start, s_[1].stop - s_[1].start
-    if 70 <= a_ <= 700 and 8 <= w_ <= 40 and 8 <= h_ <= 40:
+    if 45 <= a_ <= 700 and 6 <= w_ <= 45 and 6 <= h_ <= 45:
         c = ((s_[1].start + s_[1].stop) / 2, (s_[0].start + s_[0].stop) / 2)
         if min((np.hypot(c[0] - x, c[1] - y) for x, y in zute), default=99) < 28: continue
         if any(np.hypot(c[0] - x, c[1] - y) < 22 for x, y in topovi): continue

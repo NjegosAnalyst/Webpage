@@ -65,8 +65,8 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
       };
     });
     ok(info.runs >= 25, `${v.name}: oznake staza ${info.runs}`);
-    ok(info.lifts === 14, `${v.name}: žičare ${info.lifts}`);
-    ok(info.paths === 25, `${v.name}: staze u SVG-u ${info.paths}`);
+    ok(info.lifts === 13, `${v.name}: žičare ${info.lifts}`);
+    ok(info.paths === 24, `${v.name}: staze u SVG-u ${info.paths}`);
     ok(info.overflow <= 0, `${v.name}: bez vodoravnog skrola (${info.overflow})`);
     ok(info.h1 === 0, `${v.name}: bez H1`);
     ok(/Mapa staza\s+Jahorine/.test(info.h2), `${v.name}: H2 "${info.h2}"`);
@@ -127,9 +127,14 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
       // tačka na liniji staze 3 koja je unutar okvira (dalje od ivica i kontrola)
       const p = document.querySelector('#jm-mapa .jm-hits [data-run="3"]'), fr = document.querySelector('#jm-mapa .jm-frame').getBoundingClientRect();
       const L = p.getTotalLength(), m = p.getScreenCTM();
-      for (let f = 0.5; f < 0.95; f += 0.03) {
+      for (let f = 0.3; f < 0.97; f += 0.02) {
         const pt = p.getPointAtLength(L * f), x = pt.x * m.a + m.e, y = pt.y * m.d + m.f;
-        if (x > fr.left + 30 && x < fr.right - 70 && y > fr.top + 30 && y < fr.bottom - 30) return { x, y };
+        const el = document.elementFromPoint(x, y);
+        // dalje od dugmadi (oznake žičara/usluga): telefon „prilijepi“ dodir za najbliže dugme
+        const nearBtn = [...document.querySelectorAll('#jm-mapa .jm-world button')].some((btn) => {
+          const r = btn.getBoundingClientRect(); return r.width && x > r.left - 28 && x < r.right + 28 && y > r.top - 28 && y < r.bottom + 28;
+        });
+        if (x > fr.left + 30 && x < fr.right - 70 && y > fr.top + 30 && y < fr.bottom - 30 && el && el.getAttribute('data-run') === '3' && !nearBtn) return { x, y };
       }
       return null;
     });
