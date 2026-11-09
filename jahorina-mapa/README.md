@@ -45,6 +45,11 @@ Tačke iz PSD verzije su prenesene afinom transformacijom (pomak ≈ 7, 6 px) i 
 - Usluge: nema ikonica hotela ni snowboard parka; pomjereni parking, sankalište, ski renta i uprava; tri pasarele.
 - Staza za ski sanke ide i grebenom od Ogorjelice do Olimp bara. Nova podloga ima opservatoriju na Ogorjelici.
 
+## Prikaz (9. 11. 2026, korisnik)
+Bez usluga, bez topova za osnježavanje i bez popisa žičara i staza ispod mape. Podaci ostaju u `mapa.json`; atributi
+`data-usluge="1"`, `data-topovi="1"`, `data-popis="1"` na `#jm-mapa` ih vraćaju (sa filterima). Ostaju: staze, vezne staze,
+žičare, FIS oznake, granica, pješačke staze, noćni prikaz.
+
 ## Otvoreno
 - Dužine i nazivi staza nisu na mapi (samo brojevi i težina) — mogu se dodati u `ulaz.py` kad stignu.
 - Podloga u većoj rezoluciji (od dizajnerke), ako postoji.

@@ -10,6 +10,10 @@
   root.setAttribute('data-jm', '1');
   var BASE = root.getAttribute('data-base') || SRC.replace(/[^\/]*(\?.*)?$/, '');
   var EN = (root.getAttribute('data-lang') || (/^\/en(\/|$)/.test(location.pathname) ? 'en' : 'sr')) === 'en';
+  // šta se prikazuje (korisnik 9. 11.: bez usluga, osnježavanja i popisa ispod mape); data-usluge="1",
+  // data-topovi="1", data-popis="1" na #jm-mapa ih vraća
+  var IMA = function (n) { return root.getAttribute('data-' + n) === '1'; };
+  var USL = IMA('usluge'), TOP = IMA('topovi'), POP = IMA('popis');
 
   /* ---------- tekstovi ---------- */
   var T = EN ? {
@@ -21,7 +25,7 @@
     help: 'Drag to move · Ctrl + scroll to zoom · Click a run for details', helpTouch: 'Swipe sideways · pinch to zoom · full screen for more room',
     lit: 'Floodlit for night skiing', fis: 'FIS homologated', upper: 'Upper part black, lower part red',
     gore: 'Lift to the top', dole: 'At the bottom', od: 'Branches off run', u: 'Joins run', fromTop: 'Runs from the top',
-    ride: 'ride', listLifts: 'Lifts', listRuns: 'Runs', listSum: 'Lifts and runs list', nLifts: 'lifts', nRuns: 'runs', mapLabel: 'Interactive piste map of Jahorina. Use the lists below the map to pick a run or a lift.',
+    ride: 'ride', listLifts: 'Lifts', listRuns: 'Runs', listSum: 'Lifts and runs list', nLifts: 'lifts', nRuns: 'runs', mapLabel: 'Interactive piste map of Jahorina. Runs and lifts on the map are buttons.',
     tip: { gondola: 'Gondola', sestosjed: 'Six-seater chairlift', dvosjed: 'Double chairlift', tanjir: 'Platter lift', sidro: 'T-bar lift' },
     lvl: { laka: 'Blue run', srednja: 'Red run', teska: 'Black run' },
     grp: { laka: 'Blue runs', srednja: 'Red runs', teska: 'Black runs' },
@@ -44,7 +48,7 @@
     help: 'Prevuci za pomjeranje · Ctrl + točkić za zum · klik na stazu za detalje', helpTouch: 'Prevuci lijevo-desno · dva prsta za zum · cijeli ekran za više prostora',
     lit: 'Osvijetljena za noćno skijanje', fis: 'FIS homologovana', upper: 'Gornji dio crna, donji dio crvena staza',
     gore: 'Žičara do vrha', dole: 'Na dnu', od: 'Odvaja se od staze', u: 'Spaja se sa stazom', fromTop: 'Staze sa vrha',
-    ride: 'vožnje', listLifts: 'Žičare', listRuns: 'Staze', listSum: 'Popis žičara i staza', nLifts: 'žičara', nRuns: 'staza', mapLabel: 'Interaktivna mapa staza Jahorine. Stazu ili žičaru možeš izabrati i iz popisa ispod mape.',
+    ride: 'vožnje', listLifts: 'Žičare', listRuns: 'Staze', listSum: 'Popis žičara i staza', nLifts: 'žičara', nRuns: 'staza', mapLabel: 'Interaktivna mapa staza Jahorine. Staze i žičare na mapi su dugmad.',
     tip: { gondola: 'Gondola', sestosjed: 'Šestosjed', dvosjed: 'Dvosjed', tanjir: 'Ski lift tanjir', sidro: 'Ski lift sidro' },
     lvl: { laka: 'Plava staza', srednja: 'Crvena staza', teska: 'Crna staza' },
     grp: { laka: 'Plave staze', srednja: 'Crvene staze', teska: 'Crne staze' },
@@ -367,8 +371,8 @@
         '<div class="jm-card" role="dialog" aria-live="polite"><button class="jm-x" type="button" aria-label="' + T.close + '">' + I.x + '</button><div class="jm-cb"></div></div>' +
       '</div>' +
       '<p class="jm-help">' + (isTouch ? T.helpTouch : T.help) + '</p>' +
-      '<details class="jm-pop"><summary>' + T.listSum + '<b></b><i aria-hidden="true"></i></summary>' +
-      '<div class="jm-lists"><div><h3>' + T.listLifts + '</h3><ul class="jm-lifts"></ul></div><div><h3>' + T.listRuns + '</h3><div class="jm-runs"></div></div></div></details>' +
+      (POP ? '<details class="jm-pop"><summary>' + T.listSum + '<b></b><i aria-hidden="true"></i></summary>' +
+      '<div class="jm-lists"><div><h3>' + T.listLifts + '</h3><ul class="jm-lifts"></ul></div><div><h3>' + T.listRuns + '</h3><div class="jm-runs"></div></div></div></details>' : '') +
     '</div>';
 
   var $ = function (s) { return root.querySelector(s); };
@@ -419,7 +423,7 @@
     s.push('<svg class="jm-svg" viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true">');
     s.push('<g>' + D.granica.map(function (d) { return '<path class="jm-gr" d="' + d + '"/>'; }).join('') + '</g>');
     s.push('<g class="jm-lod2">' + D.pjesacke.map(function (d) { return '<path class="jm-pj" d="' + d + '"/>'; }).join('') + '</g>');
-    s.push('<g class="jm-sks jm-lod2">' + (D.sanke || []).map(function (d) { return '<path class="jm-skc" d="' + d + '"/>'; }).join('') +
+    if (USL) s.push('<g class="jm-sks jm-lod2">' + (D.sanke || []).map(function (d) { return '<path class="jm-skc" d="' + d + '"/>'; }).join('') +
       (D.sanke || []).map(function (d) { return '<path class="jm-sk" d="' + d + '"/>'; }).join('') + '</g>');
     s.push('<g class="jm-nls">' + D.nocne.map(function (d) { return '<path class="jm-nl jm-nl-a" d="' + d + '"/><path class="jm-nl jm-nl-b" d="' + d + '"/>'; }).join('') + '</g>');
     s.push('<g class="jm-lod2"><g class="jm-ves">' + D.veze.map(function (v) { return '<path class="jm-ve-k t-' + v.t + '" d="' + v.d + '"/>'; }).join('') +
@@ -448,10 +452,10 @@
     /* --- HTML oznake --- */
     var m = [];
     var pos = function (x, y) { return 'style="left:' + x + 'px;top:' + y + 'px"'; };
-    (D.topovi || []).forEach(function (t) { m.push('<span class="jm-mk jm-top" ' + pos(t[0], t[1]) + ' aria-hidden="true">' + P.top + '</span>'); });
+    if (TOP) (D.topovi || []).forEach(function (t) { m.push('<span class="jm-mk jm-top" ' + pos(t[0], t[1]) + ' aria-hidden="true">' + P.top + '</span>'); });
     (D.fis || []).forEach(function (f) { m.push('<span class="jm-mk jm-fis" ' + pos(f[0], f[1]) + ' aria-hidden="true">F<i>I</i>S</span>'); });
-    (D.natpisi || []).forEach(function (n) { m.push('<span class="jm-mk jm-nat" ' + pos(n.x, n.y) + '>' + esc(n.t) + '</span>'); });
-    D.usluge.forEach(function (u) {
+    if (USL) (D.natpisi || []).forEach(function (n) { m.push('<span class="jm-mk jm-nat" ' + pos(n.x, n.y) + '>' + esc(n.t) + '</span>'); });
+    if (USL) D.usluge.forEach(function (u) {
       var g = P[u.k] || '•', name = T.poi[u.k] || u.k;
       var inner = g.charAt(0) === '<' ? g : esc(g);
       if (u.k === 'bar') inner = g + '<span>' + esc(name) + '</span>';
@@ -479,8 +483,8 @@
         return '<button type="button" class="jm-chip" data-f="' + k + '" aria-pressed="true"><span class="jm-sw" style="--sw:var(--c-' + k + ')' + (k === 'teska' ? ';box-shadow:0 0 0 1.5px rgba(255,255,255,.85)' : '') + '"></span>' + T[k] + '<b>' + cnt[k] + '</b></button>';
       }).join('') +
       '<button type="button" class="jm-chip" data-f="zicare" aria-pressed="true"><span class="jm-sw" style="--sw:#0B1222;height:2px;box-shadow:0 0 0 1.5px rgba(255,255,255,.85)"></span>' + T.zicare + '<b>' + D.zicare.length + '</b></button>' +
-      '<button type="button" class="jm-chip" data-f="usluge" aria-pressed="true"><span class="jm-sw" style="--sw:rgba(10,17,32,.9);width:13px;height:13px;border-radius:4px;box-shadow:inset 0 0 0 1px rgba(196,238,255,.6)"></span>' + T.usluge + '</button>' +
-      ((D.topovi || []).length ? '<button type="button" class="jm-chip" data-f="topovi" aria-pressed="true"><span class="jm-sw" style="--sw:#F2C14E;width:8px;height:12px;border-radius:2px 2px 4px 4px"></span>' + T.snow + '<b>' + D.topovi.length + '</b></button>' : '') +
+      (USL ? '<button type="button" class="jm-chip" data-f="usluge" aria-pressed="true"><span class="jm-sw" style="--sw:rgba(10,17,32,.9);width:13px;height:13px;border-radius:4px;box-shadow:inset 0 0 0 1px rgba(196,238,255,.6)"></span>' + T.usluge + '</button>' : '') +
+      (TOP && (D.topovi || []).length ? '<button type="button" class="jm-chip" data-f="topovi" aria-pressed="true"><span class="jm-sw" style="--sw:#F2C14E;width:8px;height:12px;border-radius:2px 2px 4px 4px"></span>' + T.snow + '<b>' + D.topovi.length + '</b></button>' : '') +
       '<button type="button" class="jm-nt" role="switch" aria-checked="false">' + T.noc + '<i></i></button>';
     }
     $('.jm-chips').innerHTML = chipsHTML();
@@ -501,16 +505,16 @@
       var n = e.target.closest('.jm-nt'); if (n && root.contains(n)) { setNight(!night); }
     });
 
-    /* --- popis --- */
-    $('.jm-lifts').innerHTML = D.zicare.slice().sort(order).map(function (z) {
+    /* --- popis (samo uz data-popis="1") --- */
+    if (POP) $('.jm-lifts').innerHTML = D.zicare.slice().sort(order).map(function (z) {
       return '<li><button type="button" class="jm-li" data-lift="' + z.id + '"><span class="jm-lb">' + liftIcon(z.tip) + '<b>' + z.id + '</b></span>' +
         '<span class="jm-li-n"><strong>' + esc(z.ime) + '</strong><span>' + (z.tip ? T.tip[z.tip] : T.lift) + '</span></span>' +
         '<span class="jm-li-m">' + z.m + ' m<small>' + fmt(z.min) + ' min</small></span></button></li>';
     }).join('');
     var nS = br(D.staze.length, 'staza', 'staze', 'staza', 'run', 'runs'), nZ = br(D.zicare.length, 'žičara', 'žičare', 'žičara', 'lift', 'lifts');
-    $('.jm-pop summary b').textContent = nZ + ' · ' + nS;
+    if (POP) $('.jm-pop summary b').textContent = nZ + ' · ' + nS;
     $('.jm-lead').textContent = T.lead.replace('{s}', nS.charAt(0).toUpperCase() + nS.slice(1)).replace('{z}', nZ);
-    $('.jm-runs').innerHTML = ['laka', 'srednja', 'teska'].map(function (k) {
+    if (POP) $('.jm-runs').innerHTML = ['laka', 'srednja', 'teska'].map(function (k) {
       return '<div class="jm-rg"><span>' + T.grp[k] + '</span><div class="jm-rcs">' + runs.filter(function (r) { return r.tez === k; }).map(function (r) {
         return '<button type="button" class="jm-rc t-' + k + '" data-run="' + r.id + '" aria-label="' + esc(T.run + ' ' + r.id) + '">' + esc(r.id) + '</button>';
       }).join('') + '</div></div>';

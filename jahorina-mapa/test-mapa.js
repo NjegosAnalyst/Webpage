@@ -75,16 +75,18 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
     const frame = await page.$('#jm-mapa .jm-frame');
     await frame.screenshot({ path: path.join(OUT, `${v.name}-2-mapa.png`) });
 
-    // zbijen prikaz: filteri niski, popis zatvoren dok se ne klikne
-    const kompakt = await page.evaluate(() => ({
+    // bez usluga, osnježavanja i popisa ispod mape (korisnik 9. 11.); filteri niski
+    const bez = await page.evaluate(() => ({
       chip: document.querySelector('#jm-mapa .jm-bar .jm-chip').getBoundingClientRect().height,
-      open: document.querySelector('#jm-mapa .jm-pop').open,
+      poi: document.querySelectorAll('#jm-mapa .jm-poi, #jm-mapa .jm-top, #jm-mapa .jm-sks, #jm-mapa .jm-nat').length,
+      chips: [...document.querySelectorAll('#jm-mapa .jm-bar .jm-chip')].map((c) => c.dataset.f).join(','),
+      pop: document.querySelectorAll('#jm-mapa .jm-pop, #jm-mapa .jm-lists').length,
     }));
-    ok(kompakt.chip <= 34 && !kompakt.open, `${v.name}: filteri ${kompakt.chip}px, popis zatvoren`);
-    await page.click('#jm-mapa .jm-pop summary'); await sleep(200);
+    ok(bez.chip <= 34, `${v.name}: filteri ${bez.chip}px`);
+    ok(bez.poi === 0 && bez.pop === 0 && bez.chips === 'laka,srednja,teska,zicare', `${v.name}: bez usluga/topova/popisa (oznaka ${bez.poi}, popis ${bez.pop}, filteri ${bez.chips})`);
 
-    // izbor staze iz popisa
-    await page.click('#jm-mapa .jm-runs .jm-rc[data-run="4a"]');
+    // izbor staze (oznaka na mapi)
+    await page.evaluate(() => document.querySelector('#jm-mapa .jm-pm[data-run="4a"]').click());
     await sleep(800);
     const card = await page.evaluate(() => { const c = document.querySelector('#jm-mapa .jm-card'); return c.classList.contains('on') && c.textContent; });
     ok(card && /4a/.test(card), `${v.name}: kartica staze 4a (${(card || '').slice(0, 80)})`);
@@ -93,18 +95,14 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
     await frame.screenshot({ path: path.join(OUT, `${v.name}-3-staza-4a.png`) });
 
     // izbor žičare
-    await page.click('#jm-mapa .jm-lifts .jm-li[data-lift="2"]');
+    await page.evaluate(() => document.querySelector('#jm-mapa .jm-world .jm-lb[data-lift="2"]').click());
     await sleep(800);
     await frame.screenshot({ path: path.join(OUT, `${v.name}-4-zicara-2.png`) });
 
-    // žičara sidro i usluga sa popisom (usklađeno sa zvaničnom slikom mape)
-    await page.click('#jm-mapa .jm-lifts .jm-li[data-lift="11"]'); await sleep(600);
+    // žičara sidro (iz legende)
+    await page.evaluate(() => document.querySelector('#jm-mapa .jm-world .jm-lb[data-lift="11"]').click()); await sleep(600);
     const sidro = await page.evaluate(() => document.querySelector('#jm-mapa .jm-card').textContent);
     ok(/sidro/.test(sidro), `${v.name}: žičara 11 je ski lift sidro`);
-    await page.evaluate(() => document.querySelector('#jm-mapa .jm-poi[data-info="gondola"]').click()); await sleep(400);
-    const gond = await page.evaluate(() => document.querySelector('#jm-mapa .jm-card').textContent);
-    ok(/Ski depo/.test(gond) && /Mjenjačnica/.test(gond), `${v.name}: kartica Gondola Poljice sa uslugama`);
-    await frame.screenshot({ path: path.join(OUT, `${v.name}-4b-gondola.png`) });
 
     // noćni prikaz
     await page.click('#jm-mapa .jm-x');
@@ -113,12 +111,12 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
     await frame.screenshot({ path: path.join(OUT, `${v.name}-5-noc.png`) });
     await page.click('#jm-mapa .jm-bar .jm-nt');
 
-    // zum dugmetom (prikaz usluga)
+    // zum dugmetom (vezne staze se pojave)
     await page.click('#jm-mapa [data-a="fit"]'); await sleep(500);
     await page.click('#jm-mapa [data-a="in"]'); await sleep(400);
     await page.click('#jm-mapa [data-a="in"]'); await sleep(600);
-    const pois = await page.evaluate(() => [...document.querySelectorAll('#jm-mapa .jm-poi')].filter((e) => getComputedStyle(e).visibility === 'visible').length);
-    ok(pois > 0, `${v.name}: usluge vidljive poslije zuma (${pois})`);
+    const veze = await page.evaluate(() => getComputedStyle(document.querySelector('#jm-mapa .jm-lod2')).opacity);
+    ok(veze === '1', `${v.name}: vezne staze vidljive poslije zuma`);
     await frame.screenshot({ path: path.join(OUT, `${v.name}-6-zum.png`) });
 
     // klik na stazu na mapi (putanja)
