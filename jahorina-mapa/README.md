@@ -99,6 +99,8 @@ Drugi broj: `data-gss="+387 …"` na `#jm-mapa`.
 - **Kartica staze:** „Žičara do starta“ za staze koje ne kreću od žičare (npr. 3b: žičara 2 preko staze 2); naziv i
   dužina se prikazuju čim se upišu u `STAZE_INFO` (`ulaz.py`). Status otvoreno/zatvoreno čeka izvor podataka.
 
+- Kontrole na mapi: samo + i − (korisnik 10. 11.: bez „cijela mapa“ i „cijeli ekran“).
+
 ## Otvoreno
 - Dužine i nazivi staza nisu na mapi (samo brojevi i težina) — mogu se dodati u `ulaz.py` kad stignu.
 - Podloga u većoj rezoluciji (od dizajnerke), ako postoji.
