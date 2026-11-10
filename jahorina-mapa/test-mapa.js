@@ -188,9 +188,9 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
     const ctlHidden = await page.evaluate(() => getComputedStyle(document.querySelector('#jm-mapa .jm-ctls')).pointerEvents === 'none');
     ok(v.touch ? ctlHidden : !ctlHidden, `${v.name}: kontrole ${ctlHidden ? 'skrivene' : 'vidljive'} dok je kartica otvorena`);
     await page.click('#jm-mapa .jm-x'); await sleep(300);
-    await page.click('#jm-mapa [data-a="fs"]'); await sleep(500);
-    await page.screenshot({ path: path.join(OUT, `${v.name}-7-cijeli-ekran.png`) });
-    await page.keyboard.press('Escape'); await page.keyboard.press('Escape');
+    // samo + i − (bez „cijela mapa“ i „cijeli ekran“, korisnik 10. 11.)
+    const ctl = await page.evaluate(() => [...document.querySelectorAll('#jm-mapa .jm-ctl')].map((b) => b.dataset.a).join(','));
+    ok(ctl === 'in,out', `${v.name}: dugmad na mapi ${ctl}`);
 
     // engleski
     await page.click('#pv-en'); await page.waitForSelector('#jm-mapa .jm-pm'); await sleep(600);

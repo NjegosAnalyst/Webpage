@@ -22,11 +22,11 @@
     laka: 'Blue', srednja: 'Red', teska: 'Black', zicare: 'Lifts', usluge: 'Services', noc: 'Night skiing',
     run: 'Run', lift: 'Lift', zoomIn: 'Zoom in', zoomOut: 'Zoom out', reset: 'Whole map', full: 'Full screen', fullOff: 'Close full screen',
     close: 'Close', hintWheel: 'Hold Ctrl and scroll to zoom', hintTouch: 'Swipe sideways to move · pinch to zoom',
-    help: 'Drag to move · Ctrl + scroll to zoom · Click a run for details', helpTouch: 'Swipe sideways · pinch to zoom · full screen for more room',
+    help: 'Drag to move · Ctrl + scroll to zoom · Click a run for details', helpTouch: 'Swipe sideways · pinch or + to zoom',
     lit: 'Floodlit for night skiing', fis: 'FIS homologated', upper: 'Upper part black, lower part red',
     gore: 'Lift to the top', dole: 'At the bottom', od: 'Branches off run', u: 'Joins run', fromTop: 'Runs from the top',
     doStarta: 'Lift to the start', preko: 'via run', duz: 'length', dl: 'Download the ski map',
-    uputa: 'Tap a run number or a lift for details. Pinch or + to zoom, full screen for more room.',
+    uputa: 'Tap a run number or a lift for details. Pinch or + to zoom.',
     ride: 'ride', listLifts: 'Lifts', listRuns: 'Runs', listSum: 'Lifts and runs list', nLifts: 'lifts', nRuns: 'runs', mapLabel: 'Interactive piste map of Jahorina. Runs and lifts on the map are buttons.',
     tip: { gondola: 'Gondola', sestosjed: 'Six-seater chairlift', dvosjed: 'Double chairlift', tanjir: 'Platter lift', sidro: 'T-bar lift' },
     lvl: { laka: 'Blue run', srednja: 'Red run', teska: 'Black run' },
@@ -48,11 +48,11 @@
     laka: 'Plave', srednja: 'Crvene', teska: 'Crne', zicare: 'Žičare', usluge: 'Usluge', noc: 'Noćno skijanje',
     run: 'Staza', lift: 'Žičara', zoomIn: 'Uvećaj', zoomOut: 'Umanji', reset: 'Cijela mapa', full: 'Cijeli ekran', fullOff: 'Zatvori cijeli ekran',
     close: 'Zatvori', hintWheel: 'Drži Ctrl i skroluj za zum', hintTouch: 'Prevuci lijevo-desno · dva prsta za zum',
-    help: 'Prevuci za pomjeranje · Ctrl + točkić za zum · klik na stazu za detalje', helpTouch: 'Prevuci lijevo-desno · dva prsta za zum · cijeli ekran za više prostora',
+    help: 'Prevuci za pomjeranje · Ctrl + točkić za zum · klik na stazu za detalje', helpTouch: 'Prevuci lijevo-desno · dva prsta ili + za zum',
     lit: 'Osvijetljena za noćno skijanje', fis: 'FIS homologovana', upper: 'Gornji dio crna, donji dio crvena staza',
     gore: 'Žičara do vrha', dole: 'Na dnu', od: 'Odvaja se od staze', u: 'Spaja se sa stazom', fromTop: 'Staze sa vrha',
     doStarta: 'Žičara do starta', preko: 'preko staze', duz: 'dužina', dl: 'Preuzmi mapu staza',
-    uputa: 'Dodirni broj staze ili žičaru za detalje. Dva prsta ili + za zum, cijeli ekran za više prostora.',
+    uputa: 'Dodirni broj staze ili žičaru za detalje. Dva prsta ili + za zum.',
     ride: 'vožnje', listLifts: 'Žičare', listRuns: 'Staze', listSum: 'Popis žičara i staza', nLifts: 'žičara', nRuns: 'staza', mapLabel: 'Interaktivna mapa staza Jahorine. Staze i žičare na mapi su dugmad.',
     tip: { gondola: 'Gondola', sestosjed: 'Šestosjed', dvosjed: 'Dvosjed', tanjir: 'Ski lift tanjir', sidro: 'Ski lift sidro' },
     lvl: { laka: 'Plava staza', srednja: 'Crvena staza', teska: 'Crna staza' },
@@ -399,9 +399,6 @@
         '<div class="jm-ctls">' +
           '<button class="jm-ctl" type="button" data-a="in" aria-label="' + T.zoomIn + '" title="' + T.zoomIn + '">' + I.plus + '</button>' +
           '<button class="jm-ctl" type="button" data-a="out" aria-label="' + T.zoomOut + '" title="' + T.zoomOut + '">' + I.minus + '</button>' +
-          '<button class="jm-ctl" type="button" data-a="fit" aria-label="' + T.reset + '" title="' + T.reset + '">' + I.fit + '</button>' +
-          '<span class="jm-ctl-gap"></span>' +
-          '<button class="jm-ctl" type="button" data-a="fs" aria-label="' + T.full + '" title="' + T.full + '">' + I.full + '</button>' +
         '</div>' +
         '<div class="jm-tip" aria-hidden="true">' + T.uputa + '</div><div class="jm-hint" aria-hidden="true"></div><div class="jm-tt" aria-hidden="true"></div>' +
         '<div class="jm-card" role="dialog" aria-live="polite"><button class="jm-x" type="button" aria-label="' + T.close + '">' + I.x + '</button><div class="jm-cb"></div></div>' +
@@ -1006,7 +1003,7 @@
       var c = { x: (vw / 2 - tx) / k, y: (vh / 2 - ty) / k }, rel_ = k / kMin;
       root.classList.toggle('jm-fs', v);
       document.documentElement.style.overflow = v ? 'hidden' : '';
-      var b = root.querySelector('[data-a="fs"]'); b.innerHTML = v ? I.unfull : I.full; b.setAttribute('aria-label', v ? T.fullOff : T.full); b.title = v ? T.fullOff : T.full;
+      var b = root.querySelector('[data-a="fs"]'); if (b) { b.innerHTML = v ? I.unfull : I.full; b.setAttribute('aria-label', v ? T.fullOff : T.full); b.title = v ? T.fullOff : T.full; }
       bounds(); k = Math.max(kMin, kMin * rel_); tx = vw / 2 - c.x * k; ty = vh / 2 - c.y * k; apply();
       if (v) view.focus({ preventScroll: true });
     }
