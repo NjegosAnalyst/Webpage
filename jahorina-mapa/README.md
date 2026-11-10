@@ -5,7 +5,7 @@ filteri, noćni prikaz, SR/EN). Prefiks klasa `jm-`, mjesto ugradnje `<div id="j
 
 ## Fajlovi
 - `mapa.js` — cijela komponenta (ubacuje CSS i HTML, čita `podaci/mapa.json` i `slike/` pored sebe ili iz `data-base`).
-- `podaci/mapa.json` — vektorski podaci (24 staze, vezne staze, 13 žičara, usluge, topovi, granica, pješačke staze,
+- `podaci/mapa.json` — vektorski podaci (25 staza, vezne staze, 14 žičara, usluge, topovi, granica, pješačke staze,
   staza za ski sanke, osvijetljene staze).
 - `slike/mapa-{dan,noc}-{2000,3543}.webp` — naslikana podloga: dan = prigušena (bez sunca, mirno nebo, žute trake
   osvijetljenih staza neutralisane u snijeg), noć = noćna obrada (tamno nebo, tihe zvijezde).
@@ -81,6 +81,23 @@ Drugi broj: `data-gss="+387 …"` na `#jm-mapa`.
 - Preostalo: rezerva za sam `mapa.js` sa githack-a je bez SRI (isti loader kao ostale sekcije; githack nije bilo moguće
   provjeriti iz ovog okruženja — ako šalje CORS, SRI se može dodati i rezervi u svim redovima).
 - Commit mora ostati na GitHubu: grana se ne smije brisati prije spajanja u `main`.
+
+## Ispravke posle provjere na sajtu (10. 11. 2026)
+- **25 staza / 14 žičara kao ski info:** vraćene staza 9a (putanja iz PSD-a, `'rucno'` u `ulaz.py`, jer je nema na sloju
+  oznaka AI mape) i žičara 12 Oštra glava (tanjir, 115 m); Prača 13, Trnovo I 14, AI-jeva 9a je opet 9b.
+  Napomena: Bojanin AI od 5. 11. ih nema — provjeriti sa njom/službom koja verzija važi.
+- **Tekst za pretraživače i AI:** red za Elementor nosi statični tekst (H2, uvod sa brojkama, 14 žičara sa dužinom i
+  vožnjom, staze po boji, osvijetljene i FIS staze, link za preuzimanje, Gorska služba) na srpskom i engleskom
+  (CSS bira po `<html lang>`). Loader ga sakrije dok se mapa učita; ako mapa ne krene za 8 s ili podaci ne stignu, tekst
+  ostaje. ~4,6 KB.
+- **Preuzimanje:** dugme „Preuzmi mapu staza“ ispod uvoda; podrazumijevano `preuzimanje/mapa-staza-jahorina.jpg`
+  (zvanična slika 2000 × 1200, 25/14, sa jsDelivr-a); `PREUZMI` u `napravi-widget.py` = adresa iz WordPress Medija.
+- **Bijele trake:** `paint()` oboji omotače u kojima je samo mapa (Elementor kontejner/kolona, `#Content` teme) bojom
+  sekcije, pa padding ispod naslova stranice i iznad footera postane tamni dio sekcije. Test provjerava piksele.
+- **Telefon:** filteri u dva reda (bez povlačenja), okvir `clamp(230px, 64vw, 340px)` sa cijelim skijalištem pri
+  otvaranju, oznake žičara tek na zumu, kontrole vodoravno (+, −, cijeli ekran; „cijela mapa“ u cijelom ekranu).
+- **Kartica staze:** „Žičara do starta“ za staze koje ne kreću od žičare (npr. 3b: žičara 2 preko staze 2); naziv i
+  dužina se prikazuju čim se upišu u `STAZE_INFO` (`ulaz.py`). Status otvoreno/zatvoreno čeka izvor podataka.
 
 ## Otvoreno
 - Dužine i nazivi staza nisu na mapi (samo brojevi i težina) — mogu se dodati u `ulaz.py` kad stignu.
