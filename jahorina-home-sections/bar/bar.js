@@ -22,7 +22,7 @@
      data-stranica="olimpijski-bar"   (slug WordPress stranice)
      data-telefon="+387…"              (broj za rezervacije; podrazumijevano kontakt OC Jahorina +387 57 270 003)
      data-video="https://youtu.be/…"   (zamjena za video sa stranice)
-     data-radno="Svaki dan 9–17h"      (radno vrijeme u tihom redu; EN: data-radno-en="Daily 9 am – 5 pm")
+     data-radno="Otvoreno 9–21h"       (zamjena za radno vrijeme u tihom redu; EN: data-radno-en="Open 9 am – 9 pm")
      data-uvod="…" / data-uvod-en="…"  (zamjena za uvod)
    GA: Rezervacije → bar_rezervacija (nacin: telefon), video → bar_video,
        "Više o baru" → bar_klik (cilj: stranica).
@@ -49,20 +49,20 @@
   var T = EN ? {
     kicker: 'Restaurant', head: 'Olympic Bar', altV: '1,879',
     lead: 'Home-style cooking and fine drinks at the top of Jahorina, with views of the lake and the surrounding peaks.',
-    place: 'Terrace with a view',
+    hours: 'Open 9 am – 9 pm', place: 'Terrace with a view',
     rez: 'Book a table', rezAria: 'Book a table by phone', rezLine: 'Reservations', video: 'Watch the atmosphere', more: 'More about the Olympic Bar',
     close: 'Close', vid: 'Video: Olympic Bar', why: 'WordPress', whyTail: 'showing built-in content',
     photo: 'Mushroom risotto and a glass of white wine on a set table at the Olympic Bar'
   } : {
     kicker: 'Restoran', head: 'Olimpijski bar', altV: '1.879',
     lead: 'Domaća kuhinja i vrhunska pića na vrhu Jahorine, uz pogled na akumulaciono jezero i okolne vrhove.',
-    place: 'Terasa sa pogledom',
+    hours: 'Otvoreno 9–21h', place: 'Terasa sa pogledom',
     rez: 'Rezerviši sto', rezAria: 'Rezerviši sto telefonom', rezLine: 'Rezervacije', video: 'Pogledaj atmosferu', more: 'Više o Olimpijskom baru',
     close: 'Zatvori', vid: 'Video: Olimpijski bar', why: 'WordPress', whyTail: 'prikazan je ugrađeni sadržaj',
     photo: 'Rižoto sa pečurkama i čaša bijelog vina na postavljenom stolu Olimpijskog bara'
   };
   var LEAD = opt(EN ? 'uvod-en' : 'uvod', T.lead);
-  var RADNO = opt(EN ? 'radno-en' : 'radno', '');
+  var RADNO = opt(EN ? 'radno-en' : 'radno', T.hours);   // radno vrijeme (korisnik 10. 11.: od 9 do 21h)
 
   // jedna mirna fotografija (premium: bez smjene); pozicija na računaru / telefonu i jačina
   var PHOTO = { full: HERE + 'slike/bar-glavna.webp', md: HERE + 'slike/bar-glavna-1000.webp', w: 2000, pos: '60% 56%', mpos: '40% 64%', lum: .88, alt: T.photo };
