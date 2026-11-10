@@ -26,7 +26,7 @@
   var IMG = root.getAttribute('data-slika') || HERE + 'slike/ratrak-glavna.webp';
   var IMG_SM = root.getAttribute('data-slika') ? IMG : HERE + 'slike/ratrak-glavna-960.webp';
   var SRCSET = root.getAttribute('data-slika') ? '' : IMG_SM + ' 960w, ' + IMG + ' 1600w';
-  var MAIL = 'skipass@oc-jahorina.com', PHONE = '00387 57 270 003', TEL = '+38757270003';
+  var MAIL = 'skipass@oc-jahorina.com', PHONE = '+387 57 270 003', TEL = '+38757270003';
   function opt(k, def) { var v = root.getAttribute('data-' + k); return v == null || !v.trim() ? def : v.trim(); }
   var CFG = {
     trajanje: opt('trajanje', '20 min'),
@@ -59,10 +59,6 @@
   /* ---------- izgled (sve je pod #jr-ratrak; tokeni i obrasci iz hero-a i vijesti) ---------- */
   var CSS = [
     '#R{--bg:#0A1120;--line:rgba(255,255,255,.1);--text:#fff;--text-2:rgba(255,255,255,.8);--text-3:rgba(255,255,255,.56);--accent:#00B9F2;',
-    '--nm-surface:rgba(20,30,49,.72);--nm-surface-2:#172238;--nm-dark:rgba(0,0,0,.42);--nm-light:rgba(78,104,150,.16);',
-    '--nm-raised:4px 4px 10px var(--nm-dark),-3px -3px 9px var(--nm-light),inset 1px 1px 0 rgba(255,255,255,.05);',
-    '--nm-raised-sm:3px 3px 7px var(--nm-dark),-2px -2px 6px var(--nm-light),inset 1px 1px 0 rgba(255,255,255,.05);',
-    '--nm-inset:inset 3px 3px 8px rgba(0,0,0,.42),inset -3px -3px 7px rgba(78,104,150,.14);',
     "--fd:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;--fb:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;",
     'display:block;background:var(--bg);color:var(--text);font:400 16px/1.55 var(--fb);text-align:left;color-scheme:dark}',
     '#R.jr--boxed{border-radius:28px;overflow:hidden}',
@@ -91,12 +87,15 @@
     '#R .jr-bloom{display:none}',
     '#R.jr--sun .jr-bloom{--ext:0px;display:block;position:absolute;pointer-events:none;left:calc(var(--sx) - 32%);width:64%;top:calc(var(--ext) * -1);height:calc(var(--ext) + var(--pt) + 90px);',
     'background:radial-gradient(50% 100% at 50% 100%,rgba(255,184,110,.62),rgba(255,152,82,.36) 30%,rgba(255,128,64,.15) 56%,rgba(255,110,60,.05) 78%,transparent);transition:opacity .8s ease}',
-    '#R.jr--sun.jr--join .jr-bloom{--ext:calc(var(--gap) / 2)}',
+    '#R.jr--sun.jr--join .jr-bloom{--ext:calc(var(--gap) * .75)}',
+    /* vijesti iznad već daju cijeli razmak sekcije (padding dole, clamp(56px,7vw,100px)), pa ratrak iznad kadra ne dodaje ništa
+       (ranije pola razmaka + rub → ~170 px na računaru; sada 100 px, telefon 56 px) */
+    '#R.jr--join .jr-wrap{--pt:0px}',
     '#R.jr--sun .jr-frame::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;z-index:6;pointer-events:none;background:linear-gradient(90deg,transparent calc(var(--sx) - 24%),rgba(255,214,170,.5) var(--sx),transparent calc(var(--sx) + 24%))}',
     /* okvir kao u hero-u */
     '#R .jr-frame{position:relative;transform-origin:50% 0;display:grid;grid-template-columns:minmax(0,46fr) minmax(0,54fr);min-height:clamp(600px,46vw,880px);border-radius:26px;overflow:hidden;isolation:isolate;background:#0B1324;',
-    'box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22)}',
-    '#R .jr-frame::after{content:"";position:absolute;inset:0;z-index:6;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.08)}',
+    'box-shadow:0 50px 90px -50px rgba(0,0,0,.95),6px 6px 16px rgba(0,0,0,.55),-5px -5px 14px rgba(60,84,128,.14)}',
+    '#R .jr-frame::after{content:"";position:absolute;inset:0;z-index:6;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.09)}',
     /* ista fotografija, jako zamućena i zatamnjena, preko cijelog kadra (topli odsjaj zalaska ide iza teksta) */
     '#R .jr-amb{position:absolute;inset:-12%;width:124%;height:124%;object-fit:cover;object-position:60% 80%;z-index:-3;filter:blur(46px) saturate(.6) brightness(.5)}',
     '#R .jr-shade{position:absolute;inset:0;z-index:-2;pointer-events:none;',
@@ -111,15 +110,17 @@
     'linear-gradient(0deg,rgba(6,11,22,.55) 0%,rgba(6,11,22,0) 32%),linear-gradient(180deg,rgba(6,18,42,.16) 0%,rgba(6,18,42,0) 12%),',
     'radial-gradient(120% 90% at 50% 50%,transparent 58%,rgba(4,8,18,.42) 100%)}',
 
-    /* galerija: staklena pilula na fotografiji (kao dugmad u hero-u) */
+    /* galerija: staklena pločica na fotografiji (stil B, kao traka u hero-u i vijestima) */
     '#R .jr-shot img{cursor:zoom-in}',
     '#R .jr-gal::after{content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}',
     '#R a[data-jr="mail"]:not(.jr-btn),#R a[data-jr="telefon"]:not(.jr-btn){padding:13px 0!important}',
-    '#R .jr-gal{all:unset;position:absolute!important;left:20px;top:20px;z-index:3;box-sizing:border-box!important;display:inline-flex!important;align-items:center;gap:9px;padding:10px 15px 10px 12px!important;margin:0!important;border:0!important;border-radius:40px!important;cursor:pointer;',
-    'font:600 13px/1 var(--fd)!important;letter-spacing:.3px!important;text-transform:none!important;color:#fff!important;background:var(--nm-surface)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--nm-raised)!important;transition:color .2s,box-shadow .25s}',
-    '#R .jr-gal svg{width:17px;height:17px}',
+    '#R .jr-gal{all:unset;position:absolute!important;left:20px;top:20px;z-index:3;box-sizing:border-box!important;display:inline-flex!important;align-items:center;gap:9px;padding:10px 15px 10px 12px!important;margin:0!important;border:0!important;border-radius:14px!important;cursor:pointer;',
+    'font:600 13px/1 var(--fd)!important;letter-spacing:.3px!important;text-transform:none!important;color:#fff!important;background:linear-gradient(180deg,rgba(18,27,45,.78),rgba(9,14,26,.88))!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);'
+    + 'box-shadow:inset 0 0 0 1px rgba(255,255,255,.09),inset 0 1px 0 rgba(255,255,255,.1),0 12px 28px -14px rgba(0,0,0,.9)!important;transition:color .2s,box-shadow .25s,transform .2s}',
+    '#R .jr-gal svg{width:17px;height:17px;color:#C4EEFF}',
     '#R .jr-gal i{font-style:normal;color:var(--text-3);font-variant-numeric:tabular-nums}',
-    '#R .jr-gal:hover{color:var(--accent)!important;box-shadow:var(--nm-raised),0 0 22px rgba(0,185,242,.4)!important}',
+    '#R .jr-gal:hover{transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(111,219,255,.38),inset 0 1px 0 rgba(255,255,255,.14),0 0 18px -4px rgba(0,185,242,.45)!important}',
+    '#R .jr-gal:active{transform:scale(.96)}',
     '#R .jr-gal:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
 
     /* tekst preko kadra */
@@ -131,41 +132,38 @@
     'filter:drop-shadow(0 0 8px rgba(0,185,242,.35)) drop-shadow(0 6px 30px rgba(0,0,0,.4))}}',
     '#R .jr-lead{margin-top:26px;font-size:clamp(15.5px,1.15vw,17px);line-height:1.62;color:var(--text-2)!important;max-width:46ch;text-wrap:pretty}',
 
-    /* stakleni panel sa pločicama (isti kao brzi linkovi u hero-u) */
+    /* staklena traka sa pločicama (stil B: ista kao brzi linkovi u hero-u i traka u vijestima, bez starih neumorfnih sjena) */
     '#R .jr-dock{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:30px!important;padding:7px!important;border-radius:22px;width:min(100%,440px);',
-    'background:var(--nm-surface);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--nm-inset)}',
+    'background:linear-gradient(180deg,rgba(18,27,45,.78),rgba(9,14,26,.88));-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.09),0 22px 44px -20px rgba(0,0,0,.95)}',
     /* sve tri pločice iste (cijena samo cyan brojem i tankim cyan rubom); ikona, vrijednost i natpis uvijek na istim linijama
        (natpis ima mjesto za dva reda, pa „Polaz gondole Poljice“ ne podiže svoju vrijednost) */
-    '#R .jr-tile{display:grid;grid-template-rows:18px auto 2.5em;justify-items:center;align-content:start;row-gap:9px;padding:15px 8px 9px!important;border-radius:15px;text-align:center;',
-    'background:var(--nm-surface-2);box-shadow:var(--nm-raised-sm)}',
-    '#R .jr-tile svg{width:18px;height:18px;color:rgba(255,255,255,.72)}',
+    '#R .jr-tile{display:grid;grid-template-rows:18px auto 2.5em;justify-items:center;align-content:start;row-gap:9px;padding:15px 8px 9px!important;border-radius:14px;text-align:center;',
+    'background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.02));box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.11)}',
+    '#R .jr-tile svg{width:18px;height:18px;color:#C4EEFF}',
     '#R .jr-tile b{font:700 17px/1 var(--fd);letter-spacing:-.005em;color:#fff;white-space:nowrap;font-variant-numeric:tabular-nums}',
     '#R .jr-tile small{font:500 12.5px/1.25 var(--fb);letter-spacing:0;color:rgba(255,255,255,.62)}',
-    '#R .jr-tile--accent{box-shadow:var(--nm-raised-sm),inset 0 0 0 1px rgba(0,185,242,.3)}',
-    '#R .jr-tile--accent svg,#R .jr-tile--accent b{color:#2CCBF8}',
+    '#R .jr-tile--accent{box-shadow:inset 0 0 0 1px rgba(111,219,255,.42),inset 0 1px 0 rgba(255,255,255,.14),0 0 16px -6px rgba(0,185,242,.5)}',
+    '#R .jr-tile--accent svg,#R .jr-tile--accent b{color:#9BE6FF}',
     '#R .jr-notes{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:16px!important}',
     '#R .jr-notes li{display:flex;align-items:center;gap:9px;font-size:14px;line-height:1.4;color:var(--text-2)}',
     '#R .jr-notes li::before{content:""!important;width:5px;height:5px;border-radius:50%;flex:none;background:var(--accent);box-shadow:0 0 8px rgba(0,185,242,.8)}',
 
-    /* rezervacija: dva dugmeta iste visine i fonta, ikona uvijek ispred teksta; bijelo glavno + stakleno sporedno (kao u hero-u) */
-    /* dva dugmeta iste širine, red tačno širok kao panel sa pločicama iznad (ivice poravnate); tri (web shop) se prelamaju */
-    '#R .jr-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:28px;width:min(100%,440px)}',
-    '#R .jr-acts--3{display:flex;flex-wrap:wrap}',
-    '#R .jr-btn{position:relative;isolation:isolate;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px!important;border-radius:40px;white-space:nowrap;font:600 13.5px/1 var(--fb);letter-spacing:.2px;font-variant-numeric:tabular-nums}',
-    '#R .jr-btn svg{width:15px;height:15px}',
+    /* rezervacija: glavno dugme = cyan pločica kao „Kupi ski kartu“ u hero-u i „Pročitaj više“ u vijestima (10. 11.; ranije bijelo),
+       sporedno = staklena pločica kao „Sve vijesti“; ikona uvijek ispred teksta. Red je tačno širok kao traka sa pločicama iznad
+       (ivice poravnate): dugmad dobiju širinu po tekstu i dijele ostatak, a kad ne stanu u red, svako ide u svoj red */
+    '#R .jr-acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px;width:min(100%,440px)}',
+    '#R .jr-btn{position:relative;flex:1 1 auto;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:9px;height:48px;padding:0 20px!important;border-radius:16px;white-space:nowrap;font:700 15px/1 var(--fd);letter-spacing:0;font-variant-numeric:tabular-nums;transition:transform .2s ease,box-shadow .25s ease,filter .2s,color .2s}',
+    '#R .jr-btn svg{width:16px;height:16px}',
+    '#R .jr-btn:active{transform:scale(.96)}',
     '#R .jr-s{display:none}',
-    '#R .jr-btn--solid{overflow:hidden;color:#0d1524!important;background:linear-gradient(145deg,#fff,#E6EEF6);transition:transform .2s,box-shadow .2s;',
-    'box-shadow:inset -2px -2px 4px rgba(13,21,36,.1),inset 2px 2px 3px #fff,4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16)}',
-    '#R .jr-btn--solid::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:45%;pointer-events:none;transform:skewX(-20deg);',
-    'background:linear-gradient(100deg,transparent,rgba(0,185,242,.35),rgba(255,255,255,.9),rgba(0,185,242,.35),transparent)}',
-    '#R .jr-btn--solid:hover{transform:translateY(-2px);box-shadow:inset -2px -2px 4px rgba(13,21,36,.1),inset 2px 2px 3px #fff,0 0 0 1px rgba(0,185,242,.5),0 0 26px rgba(0,185,242,.55)}',
-    '#R .jr-btn--solid:hover::after{animation:jrShine 1.6s ease-in-out}',
-    '@keyframes jrShine{0%{left:-60%}35%,100%{left:130%}}',
-    '#R .jr-btn--solid:active{transform:none;box-shadow:inset 3px 3px 7px rgba(13,21,36,.25),inset -3px -3px 6px #fff}',
-    '#R .jr-btn--ghost{color:#fff!important;background:var(--nm-surface);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(255,255,255,.08);transition:color .2s,box-shadow .25s}',
-    '#R .jr-btn--ghost svg{color:var(--accent)}',
-    '#R .jr-btn--ghost:hover{color:var(--accent)!important;box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(0,185,242,.4),0 0 22px rgba(0,185,242,.35)}',
-    '#R .jr-btn--ghost:active{box-shadow:inset 2px 2px 5px rgba(0,0,0,.4),inset -2px -2px 5px rgba(78,104,150,.13)}',
+    '#R .jr-btn--solid{color:#fff!important;background:linear-gradient(160deg,#45D6FF 0%,#00AEE6 50%,#008BC7 100%);',
+    'box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.18),0 10px 24px -10px rgba(0,185,242,.95)}',
+    '#R .jr-btn--solid:hover,#R .jr-btn--solid:focus-visible{filter:brightness(1.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.3),0 12px 28px -8px rgba(0,185,242,1)}',
+    '#R a.jr-btn--solid:focus-visible{outline-color:#fff!important}',
+    '#R .jr-btn--ghost{font-weight:600;color:rgba(255,255,255,.92)!important;background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.02));box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.11)}',
+    '#R .jr-btn--ghost svg{color:#C4EEFF}',
+    '#R .jr-btn--ghost:hover{color:#fff!important;transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(111,219,255,.38),inset 0 1px 0 rgba(255,255,255,.14),0 0 18px -4px rgba(0,185,242,.45)}',
+    '#R .jr-btn--ghost:active{transform:scale(.96)}',
     '#R .jr-book{margin-top:16px;font-size:13.5px;line-height:1.55;color:var(--text-3)!important;max-width:62ch}',
     '#R .jr-book a{color:var(--text-2)!important;border:0!important;padding:0!important;white-space:nowrap;text-decoration:underline!important;text-decoration-color:rgba(0,185,242,.5)!important;text-decoration-thickness:1px!important;text-underline-offset:3px}',   /* ranije border-bottom — tema ga je pomjerala ispod reda */
     '#R .jr-book a:hover{color:var(--accent)!important}',
@@ -212,9 +210,8 @@
     '#R .jr-tile{padding:14px 4px 8px!important}',
     '#R .jr-tile small{font-size:12px}',
     '#R .jr-notes{flex-direction:column;gap:6px}',
-    '#R .jr-acts{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:24px;width:100%}',
-    '#R .jr-acts--3{display:flex;flex-wrap:wrap}',
-    '#R .jr-btn{flex:1 1 auto;height:44px;padding:0 12px!important;font-size:13px}',
+    '#R .jr-acts{gap:8px;margin-top:24px;width:100%}',
+    '#R .jr-btn{height:46px;padding:0 16px!important;font-size:14px}',
     '#R .jr-acts:not(.jr-acts--3) .jr-l{display:none}',
     '#R .jr-acts:not(.jr-acts--3) .jr-s{display:inline}}',
     '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}',
