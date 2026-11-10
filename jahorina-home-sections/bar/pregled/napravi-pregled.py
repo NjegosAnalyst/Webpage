@@ -2,10 +2,10 @@
 """Pregled sekcije Olimpijski bar za korisnika (artifact "Jahorina Olimpijski bar").
 
 Suvenirnica je iznad, kao na početnoj, da se vidi prelaz i da su u istoj temi. Pravi pregled/index.html + pregled/slike/
-(iste putanje kao pored bar.js i suvenirnica.js na jsDelivr-u, pa oba bloka koriste svoje podrazumijevane fotografije,
-a meni svoje ugrađene strane iz slike/meni/). WordPress se iz pregleda ne može pitati, pa pregled pokazuje ugrađeni tekst
-(isti kao na stranici Olimpijski bar) i ugrađeni meni.
-Pokretanje: python3 napravi-pregled.py → objavi pregled/index.html kao artifact, sa fajlovima slike/*.webp i slike/meni/*.webp.
+(iste putanje kao pored bar.js i suvenirnica.js na jsDelivr-u, pa oba bloka koriste svoje podrazumijevane fotografije).
+WordPress se iz pregleda ne može pitati, pa pregled pokazuje ugrađeni tekst (isti kao na stranici Olimpijski bar).
+Od 10. 11. bar je bez menija.
+Pokretanje: python3 napravi-pregled.py → objavi pregled/index.html kao artifact, sa fajlovima slike/*.webp.
 Izlaz (index.html, slike/) se ne čuva u gitu — uvijek se pravi iz bar.js i suvenirnica.js.
 """
 import pathlib, shutil
@@ -14,11 +14,9 @@ SEC = HERE.parent.parent
 OUT = HERE / 'slike'
 if OUT.exists():
     shutil.rmtree(OUT)
-(OUT / 'meni').mkdir(parents=True)
+OUT.mkdir(parents=True)
 for f in sorted((SEC / 'bar' / 'slike').glob('*.webp')):
     shutil.copy(f, OUT / f.name)
-for f in sorted((SEC / 'bar' / 'slike' / 'meni').glob('*.webp')):
-    shutil.copy(f, OUT / 'meni' / f.name)
 for f in sorted((SEC / 'suvenirnica' / 'slike').glob('*.webp')):
     shutil.copy(f, OUT / f.name)
 

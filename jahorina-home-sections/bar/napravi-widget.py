@@ -3,8 +3,8 @@
 
 Redoslijed: izmijeni bar.js → commit + push → python3 napravi-widget.py → commit + push
 → korisniku daj novi sadržaj elementor-html-widget.html.
-Fotografije i ugrađeni meni se učitavaju iz istog commita (slike/ pored bar.js). Tekst, brojevi i video se čitaju sa
-WordPress stranice (data-stranica = slug), a meni iz Medija (slike meni-bar-01, meni-bar-02 …) kad postoje.
+Fotografije se učitavaju iz istog commita (slike/ pored bar.js). Tekst, brojevi i video se čitaju sa
+WordPress stranice (data-stranica = slug). Od 10. 11. bez menija (cjenovnika).
 """
 import base64, hashlib, pathlib, subprocess
 
