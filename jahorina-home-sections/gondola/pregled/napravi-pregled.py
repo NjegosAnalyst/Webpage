@@ -4,7 +4,7 @@
 Olimpijski bar je iznad, kao na početnoj, da se vide prelaz i cik-cak. Pravi pregled/index.html + pregled/slike/
 (iste putanje kao pored gondola.js i bar.js na jsDelivr-u, pa oba bloka koriste svoje podrazumijevane fotografije).
 WordPress se iz pregleda ne može pitati, pa pregled pokazuje ugrađeni tekst i pakete (isti kao na stranici VIP gondole).
-Pokretanje: python3 napravi-pregled.py → objavi pregled/index.html kao artifact, sa fajlovima slike/*.webp i slike/meni/*.webp.
+Pokretanje: python3 napravi-pregled.py → objavi pregled/index.html kao artifact, sa fajlovima slike/*.webp.
 Izlaz (index.html, slike/) se ne čuva u gitu — uvijek se pravi iz gondola.js i bar.js.
 """
 import pathlib, shutil
@@ -13,13 +13,11 @@ SEC = HERE.parent.parent
 OUT = HERE / 'slike'
 if OUT.exists():
     shutil.rmtree(OUT)
-(OUT / 'meni').mkdir(parents=True)
+OUT.mkdir(parents=True)
 for f in sorted((SEC / 'gondola' / 'slike').glob('*.webp')):
     shutil.copy(f, OUT / f.name)
 for f in sorted((SEC / 'bar' / 'slike').glob('*.webp')):
     shutil.copy(f, OUT / f.name)
-for f in sorted((SEC / 'bar' / 'slike' / 'meni').glob('*.webp')):
-    shutil.copy(f, OUT / 'meni' / f.name)
 
 GON = (SEC / 'gondola' / 'gondola.js').read_text(encoding='utf-8')
 BAR = (SEC / 'bar' / 'bar.js').read_text(encoding='utf-8')

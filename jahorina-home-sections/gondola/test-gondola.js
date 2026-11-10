@@ -186,7 +186,8 @@ async function lb(p) {
   check('Rezerviši VIP 1 → mail sa stranice, naslov i tekst sa paketom', /^mailto:vip@oc-jahorina\.com\?subject=Rezervacija: VIP gondola 1&body=Poštovani,\n\nželim da rezervišem paket VIP gondola 1 \(150 KM\)\./.test(S.rez[0]) && S.rez[1] === 'Rezerviši VIP 1', S.rez);
   check('napomena: najmanje dan ranije + link stranice', S.note === 'Rezervacija e-poštom, najmanje dan ranije Više o VIP gondoli' && S.page === SITE + '/vip-gondola/', [S.note, S.page]);
   check('ulaznica i dugmad iste širine, poravnati', S.passW === S.actsW && S.passL === S.actsL, [S.passW, S.actsW, S.passL, S.actsL]);
-  check('dugmad: isti red, ista širina i visina (44px), natpisi staju', S.acts[0][0] === S.acts[1][0] && S.acts[0][1] === S.acts[1][1] && S.acts[0][2] === 44 && S.actsFit, S.acts);
+  // od 10. 11. (kao ratrak i bar): cyan glavno + staklena pločica, širina po tekstu, 48 px (telefon 46)
+  check('dugmad: isti red, ista visina (48px), natpisi staju', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 48 && S.acts[1][2] === 48 && S.actsFit, S.acts);
   check('tekst lijevo ne prekriva bliske kabine (desno)', S.cabFree && S.cabIn && S.bodyIn, [S.cabFree, S.cabIn, S.bodyIn]);
   check('LED upaljen poslije ulaska (sloj otkriven do kraja)', S.led === '' && /135%\)?\s*\)?$|#000 100%|rgb\(0, 0, 0\) 100%/.test(S.litMask), [S.led, S.litMask]);
   check('sve vidljivo poslije ulaska', S.hidden === 0, S.hidden);
@@ -199,9 +200,10 @@ async function lb(p) {
     const r = document.getElementById('jg-gondola'), a = document.querySelector('#jb-bar .jb-frame').getBoundingClientRect(), b = r.querySelector('.jg-frame').getBoundingClientRect();
     const tmp = document.createElement('div'); tmp.style.cssText = 'position:absolute;width:var(--gap);height:var(--g)'; r.querySelector('.jg-wrap').appendChild(tmp);
     const gap = tmp.getBoundingClientRect().width, gg = tmp.getBoundingClientRect().height; tmp.remove();
-    return { join: r.classList.contains('jg--join'), space: Math.round(b.top - a.bottom), want: Math.round(gap + gg) };
+    return { join: r.classList.contains('jg--join'), space: Math.round(b.top - a.bottom), want: Math.round(gap) };
   });
-  check('bar iznad: jg--join, razmak kadar → kadar = --gap + --g', j.join && Math.abs(j.space - j.want) <= 2, j);
+  // od 10. 11.: između dvije naše sekcije jedan razmak (--gap)
+  check('bar iznad: jg--join, razmak kadar → kadar = --gap', j.join && Math.abs(j.space - j.want) <= 2, j);
   await p.screenshot({ path: path.join(OUT, 'bar-gondola.png'), fullPage: true });
   await p.locator('#jg-gondola .jg-frame').screenshot({ path: path.join(OUT, 'sr-racunar-kadar.png') });
   // izbor VIP 2: cijena se prebroji do 250, meze uključeno, mail za VIP 2
@@ -328,7 +330,7 @@ async function lb(p) {
     check('tekst ne prekriva kabine, sve u kadru', S.cabFree && S.bodyIn, [S.cabFree, S.bodyIn]);
     check('natpisi dugmadi i izbora staju; stavke u ulaznici', S.actsFit && S.incFit, [S.actsFit, S.incFit]);
     check('ulaznica i dugmad iste širine', S.passW === S.actsW && S.passL === S.actsL, [S.passW, S.actsW]);
-    if (vw <= 760 && vw > 360) check('telefon: oba dugmeta u jednom redu, 44px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 44, S.acts);
+    if (vw <= 760 && vw > 360) check('telefon: oba dugmeta u jednom redu, 46px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 46 && S.acts[1][2] === 46, S.acts);
     await p.locator('#jg-gondola .jg-frame').screenshot({ path: path.join(OUT, name + '.png') });
     if (touch) {
       await p.tap('#jg-gondola .jg-tb[data-k="1"]'); await p.waitForTimeout(600);
