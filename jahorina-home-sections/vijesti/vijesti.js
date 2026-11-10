@@ -73,7 +73,7 @@
     '#V .jv-more--foot{display:none}',
 
     /* scena slajdera */
-    '#V .jv-stage{position:relative;height:clamp(500px,46vw,620px);border-radius:30px;overflow:hidden;background:var(--surface);isolation:isolate;touch-action:pan-y;',
+    '#V .jv-stage{position:relative;height:clamp(470px,42vw,570px);border-radius:30px;overflow:hidden;background:var(--surface);isolation:isolate;touch-action:pan-y;',
     'box-shadow:0 50px 90px -50px rgba(0,0,0,.95),var(--raised)}',
     '#V .jv-stage::after{content:"";position:absolute;inset:0;z-index:5;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.09)}',
     '#V .jv-slide{position:absolute;inset:0;display:flex;align-items:center;opacity:0;visibility:hidden;z-index:1;transition:opacity .9s ease,visibility 0s linear .9s}',
@@ -82,8 +82,8 @@
     '#V .jv-slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-3;filter:saturate(.7) brightness(.84) contrast(1.06)}',
     '#V .jv-tint{position:absolute;inset:0;z-index:-2;pointer-events:none;background:linear-gradient(160deg,#1E4F96 0%,#0E2A55 100%);mix-blend-mode:soft-light;opacity:.7}',
     '#V .jv-slide::before{content:"";position:absolute;inset:0;z-index:-1;',
-    'background:linear-gradient(90deg,rgba(10,17,32,.97) 0%,rgba(10,17,32,.86) 30%,rgba(10,17,32,.4) 60%,rgba(10,17,32,.08) 100%),linear-gradient(0deg,rgba(10,17,32,.92) 0%,rgba(10,17,32,.4) 20%,rgba(10,17,32,0) 40%)}',
-    '#V .jv-body{display:flex;flex-direction:column;align-items:flex-start;width:min(660px,64%);padding:56px 56px 112px}',
+    'background:linear-gradient(90deg,rgba(16,27,51,.97) 0%,rgba(16,27,51,.86) 30%,rgba(16,27,51,.4) 60%,rgba(16,27,51,.08) 100%),linear-gradient(0deg,rgba(16,27,51,.92) 0%,rgba(16,27,51,.4) 20%,rgba(16,27,51,0) 40%)}',
+    '#V .jv-body{display:flex;flex-direction:column;align-items:flex-start;width:min(660px,64%);padding:48px 56px 64px}',
     '#V .jv-body > *{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .8s cubic-bezier(.2,.7,.2,1)}',
     '#V .is-on .jv-body > *{opacity:1;transform:none}',
     '#V .is-on .jv-body > :nth-child(1){transition-delay:.22s}',
@@ -146,7 +146,7 @@
     '#V.jv-anim.jv-on .jv-car{opacity:1;transform:none;transition:opacity .8s ease,transform .9s cubic-bezier(.2,.7,.2,1)}',
 
     /* tablet / telefon */
-    '@media (max-width:1060px){#V .jv-body{width:min(640px,78%)}}',
+    '@media (max-width:1060px){#V .jv-stage{height:clamp(500px,52vw,560px)}#V .jv-body{width:min(640px,78%);padding-bottom:112px}}',
     '@media (max-width:760px){',
     '#V .jv-head{margin-bottom:24px}',
     '#V .jv-head .jv-more{display:none}',
@@ -327,7 +327,16 @@
       '<button type="button" class="jv-btn jv-next" aria-label="' + esc(T.next) + '">' + ICON.next + '</button></div></div>' +
       '</div></div><a class="jv-more jv-more--foot" href="' + esc(ALL) + '" aria-label="' + esc(T.allLabel) + '">' + esc(T.all) + '</a>');
     reveal();
+    structured(items);
     if (n > 1) slider(n);
+  }
+  // SEO: JSON-LD ItemList (stranica-sažetak: svaka stavka samo pozicija + adresa vijesti, kako Google traži)
+  function structured(items) {
+    var el = d.getElementById('jv-ld') || (d.head || d.documentElement).appendChild(Object.assign(d.createElement('script'), { id: 'jv-ld', type: 'application/ld+json' }));
+    el.textContent = JSON.stringify({
+      '@context': 'https://schema.org', '@type': 'ItemList', name: T.t1 + ' ' + T.t2,
+      itemListElement: items.map(function (it, k) { return { '@type': 'ListItem', position: k + 1, url: it.link }; })
+    });
   }
 
   /* ---------- slajder ---------- */

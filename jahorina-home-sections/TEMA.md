@@ -40,6 +40,7 @@ da sve sekcije izgledaju kao jedna cjelina.
 - Slike: `alt` iz Medija, a ako ga nema, kratak opis onoga što je na slici (bez dodatka „— Olimpijska planina Jahorina“, od 15. 10.); `loading="lazy"`; `width`/`height`.
 - Naslovi iz više `<span>`-ova: između span-ova razmak, da Google ne pročita slijepljene riječi. Fontovi se učitavaju jednom (provjera prije dodavanja `<link>`).
 - Linkovi: pravi `<a href>`; link stavke ima `aria-label="Pročitaj više: <naslov>"`; „Sve vijesti“ ima `aria-label` sa ključnim riječima; EN vodi na `/en/`.
+- Strukturirani podaci: lista stavki sekcije kao JSON-LD `ItemList` (samo `position` + `url` svake stavke), ubačen iz JS-a (obrazac `structured()` u `vijesti.js`).
 - Naziv: „Olimpijska planina Jahorina“, ne „Olimpijski centar“ (osim pravnog naziva firme).
 
 ## Kako se sekcija gradi i ugrađuje

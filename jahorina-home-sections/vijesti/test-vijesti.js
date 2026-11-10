@@ -69,7 +69,8 @@ function page(boxed) {
 
 async function run(name, { url, viewport, boxed = false, rest = 'ok', fullPage = false, order = 'normal', clip = false }) {
   CLIP = clip;
-  sorted = order === 'notice' ? noticeFirst : [posts[2], posts[3], posts[0], posts[1]];
+  const longFirst = [Object.assign({}, posts[2], { title: { rendered: 'Najduži mogući naslov vijesti: počinje prodaja sezonskih ski karata za sezonu 2026/27 po povoljnijim cijenama do kraja novembra' }, excerpt: { rendered: '<p>' + 'Pretprodaja sezonskih ski karata počinje na blagajnama i u web shopu, a povoljnije cijene važe do kraja mjeseca za sve kategorije, porodične pakete i djecu. '.repeat(2) + '</p>' } }), posts[3], posts[0], posts[1]];
+  sorted = order === 'notice' ? noticeFirst : order === 'long' ? longFirst : [posts[2], posts[3], posts[0], posts[1]];
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: 2 });
   const p = await ctx.newPage();
@@ -136,6 +137,8 @@ async function run(name, { url, viewport, boxed = false, rest = 'ok', fullPage =
           blur: bar ? getComputedStyle(bar).backdropFilter : null, imgFilter: imgs[0] ? getComputedStyle(imgs[0]).filter : null,
         };
       })(),
+      fits: [...r.querySelectorAll('.jv-slide')].every((sl) => { const b = sl.querySelector('.jv-body'); return b.scrollHeight <= sl.clientHeight + 1; }),
+      ld: (() => { const e = document.getElementById('jv-ld'); if (!e) return null; const j = JSON.parse(e.textContent); return j['@type'] + ' ' + j.itemListElement.length + ' · ' + (j.itemListElement[0] || {}).url; })(),
       gaps: (() => {
         const b = r.getBoundingClientRect(), w = document.querySelector('.srwrap'), h = document.querySelector('.hero').getBoundingClientRect(), a = document.querySelector('.after').getBoundingClientRect();
         const hb = getComputedStyle(w).overflow === 'hidden' ? Math.min(h.bottom, w.getBoundingClientRect().bottom) : h.bottom;
@@ -159,5 +162,7 @@ async function run(name, { url, viewport, boxed = false, rest = 'ok', fullPage =
   await run('4-boxed-bez-embed', { url: SITE + '/pocetna-zima/', viewport: { width: 1366, height: 860 }, boxed: true, rest: 'noembed', fullPage: true });
   await run('5-greska', { url: SITE + '/pocetna-zima/', viewport: { width: 1280, height: 800 }, rest: 'fail' });
   await run('7-obavjestenje-prvo', { url: SITE + '/pocetna-zima/', viewport: { width: 1440, height: 900 }, order: 'notice' });
+  await run('8-dug-naslov-1100', { url: SITE + '/pocetna-zima/', viewport: { width: 1100, height: 800 }, order: 'long' });
+  await run('8b-dug-naslov-1440', { url: SITE + '/pocetna-zima/', viewport: { width: 1440, height: 900 }, order: 'long' });
   await run('6-tablet-sr', { url: SITE + '/pocetna-zima/', viewport: { width: 820, height: 1180 } });
 })().catch((e) => { console.error(e); process.exit(1); });
