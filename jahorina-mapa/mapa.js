@@ -246,6 +246,7 @@
   '#jm-mapa .jm-ct h3{font:800 16px/1.15 var(--fd)!important;color:#fff!important;margin:0!important;padding:0!important;letter-spacing:-.2px!important;text-transform:none!important}' +
   '#jm-mapa .jm-ct p{margin:3px 0 0;font:500 13px/1.3 var(--fb);color:var(--text-2)}' +
   '#jm-mapa .jm-cl{list-style:none;margin:10px 0 0;padding:10px 0 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:7px}' +
+  '#jm-mapa ul,#jm-mapa li{list-style:none!important;background:none!important}#jm-mapa li::before,#jm-mapa li::marker{content:none!important}' +
   '#jm-mapa .jm-cl li{display:flex;gap:8px;align-items:baseline;font:400 13px/1.35 var(--fb);color:var(--text-2)}' +
   '#jm-mapa .jm-cl li span{flex:none;min-width:92px;font:600 9.5px/1.9 var(--fd);letter-spacing:1px;text-transform:uppercase;color:var(--text-3)}' +
   '#jm-mapa .jm-cl li strong{color:#fff;font-weight:600}' +
@@ -397,13 +398,81 @@
   var frame = $('.jm-frame'), view = $('.jm-view'), world = $('.jm-world'), card = $('.jm-card'), cardBody = $('.jm-cb');
   var hint = $('.jm-hint'), tt = $('.jm-tt');
 
-  fetch(BASE + 'podaci/mapa.json').then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+  /* ---------- na sajtu: rezerva sa GitHuba, puna širina, šavovi ---------- */
+  // ako jsDelivr ne isporuči podatke ili sliku: isti fajl iz istog punog commita sa raw.githubusercontent.com
+  var CDN = /^https:\/\/cdn\.jsdelivr\.net\/gh\/([^\/]+)\/([^@\/]+)@([0-9a-f]{40})\//i;
+  function alt(u) { return CDN.test(u) ? u.replace(CDN, 'https://raw.githubusercontent.com/$1/$2/$3/') : null; }
+  function guard(im) { im.addEventListener('error', function () { var a = alt(im.src); if (a && !im.__jfb) { im.__jfb = 1; im.src = a; } }); return im; }
+  function getJSON(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }); }
+  // puna širina: kontejner teme/Elementora je uži od ekrana → blok se raširi (kao ostale sekcije, fit() iz vijesti.js)
+  function fit() {
+    var st = root.style;
+    st.removeProperty('width'); st.removeProperty('max-width'); st.removeProperty('margin-left');
+    var cw = document.documentElement.clientWidth, r = root.getBoundingClientRect();
+    if (r.width < cw - 1) {
+      st.setProperty('width', cw + 'px', 'important'); st.setProperty('max-width', 'none', 'important');
+      st.setProperty('margin-left', -r.left + 'px', 'important');
+    }
+  }
+  fit();
+  window.addEventListener('resize', fit);
+  // šav: bijela traka između ovog bloka i tamnog bloka iznad/footera ispod (isti postupak kao alati/seo-brzina.py)
+  var DARK = '#jv-vijesti,#jr-ratrak,#jsu-suvenirnica,#jb-bar,#jg-gondola,#jsd-depo,#jsb-park,#jsk-sankaliste,#jpb-brojke,.jh-hero,rs-module-wrap,rs-fullwidth-wrap';
+  var FOOT = '.jf-wp, .jf-footer, #Footer, footer, .mfn-footer-tmpl, .elementor-location-footer';
+  function empty(x) {
+    return !x.offsetHeight || /^(SCRIPT|STYLE|LINK|NOSCRIPT|TEMPLATE)$/.test(x.tagName) ||
+      (x.offsetHeight <= 200 && !x.matches(DARK + ',' + FOOT) && !x.querySelector(DARK + ',' + FOOT + ',img,svg,video,iframe,canvas,input,button') && !(x.textContent || '').trim());
+  }
+  function seam() {
+    for (var el = root.parentElement; el && el.parentElement && el !== document.body && el !== document.documentElement; el = el.parentElement) {
+      var prev = el.previousElementSibling;
+      while (prev && empty(prev) && !prev.matches(FOOT)) prev = prev.previousElementSibling;
+      if (!prev) continue;
+      var dk = prev.matches(DARK) ? [prev] : [].slice.call(prev.querySelectorAll(DARK));
+      if (!dk.length) return;
+      dk = dk[dk.length - 1];
+      var pe = root.parentElement;
+      el.style.removeProperty('margin-top'); if (pe !== el) pe.style.removeProperty('margin-top');
+      var gap = el.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;
+      if (gap > .5 && gap <= 160) el.style.setProperty('margin-top', (parseFloat(getComputedStyle(el).marginTop) || 0) - gap + 'px', 'important');
+      var rest = root.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;
+      if (rest > .5 && rest <= 160) pe.style.setProperty('margin-top', (parseFloat(getComputedStyle(pe).marginTop) || 0) - rest + 'px', 'important');
+      root.style.boxShadow = '0 -2px 0 0 #0A1120';
+      return;
+    }
+  }
+  function seamDown() {
+    for (var el = root.parentElement; el && el !== document.body && el !== document.documentElement; el = el.parentElement) {
+      var nx = el.nextElementSibling;
+      while (nx && empty(nx)) nx = nx.nextElementSibling;
+      if (!nx) continue;
+      if (!(nx.matches(FOOT) || nx.querySelector('.jf-wp, .jf-footer'))) return;
+      el.style.removeProperty('margin-bottom');
+      var gap = nx.getBoundingClientRect().top - root.getBoundingClientRect().bottom;
+      if (gap > .5 && gap <= 240) el.style.setProperty('margin-bottom', (parseFloat(getComputedStyle(el).marginBottom) || 0) - gap + 'px', 'important');
+      return;
+    }
+  }
+  function reseam() { clearTimeout(reseam.t); reseam.t = setTimeout(function () { fit(); seam(); seamDown(); }, 160); }
+  seam(); seamDown();
+  window.addEventListener('load', reseam);
+  if ('ResizeObserver' in window) new ResizeObserver(reseam).observe(document.body);
+
+  // podaci i slike tek kad je mapa ~2 ekrana daleko (na početnoj ne usporava prvi prikaz)
+  function load() {
+    var u = BASE + 'podaci/mapa.json';
+    getJSON(u).catch(function (e) { var a = alt(u); if (!a) throw e; return getJSON(a); })
     .then(start).catch(function (e) {
       world.innerHTML = '';
       view.insertAdjacentHTML('beforeend', '<p style="position:absolute;inset:auto 0 45%;text-align:center;color:rgba(255,255,255,.7);font:500 15px var(--fb)">' +
         (EN ? 'The map could not be loaded.' : 'Mapa se trenutno ne može učitati.') + '</p>');
       if (window.console) console.warn('jm-mapa', e);
     });
+  }
+  if ('IntersectionObserver' in window) {
+    var lio = new IntersectionObserver(function (es) { if (es.some(function (e) { return e.isIntersecting; })) { lio.disconnect(); load(); } }, { rootMargin: '1600px 0px 1600px 0px' });
+    lio.observe(root);
+  } else load();
 
   function start(D) {
     var W = D.w, H = D.h;
@@ -416,8 +485,8 @@
 
     /* --- slike --- */
     var big = (window.innerWidth || 1200) * (window.devicePixelRatio || 1) > 1500;
-    var imgD = new Image(), imgN = new Image();
-    var imgL = new Image(); imgL.className = 'jm-img'; imgL.alt = ''; imgL.setAttribute('aria-hidden', 'true'); imgL.width = W; imgL.height = H;
+    var imgD = guard(new Image()), imgN = guard(new Image());
+    var imgL = guard(new Image()); imgL.className = 'jm-img'; imgL.alt = ''; imgL.setAttribute('aria-hidden', 'true'); imgL.width = W; imgL.height = H;
     imgL.src = BASE + 'slike/mapa-dan-96.webp';   // ~2 KB, uvećana izgleda kao meko zamućena slika (bez CSS filtera)
     imgD.className = 'jm-img jm-img-d'; imgD.alt = EN ? 'Painted panorama of the Jahorina ski resort with the Ogorjelica peak' : 'Naslikana panorama ski centra Jahorina sa vrhom Ogorjelica';
     imgD.width = W; imgD.height = H; imgD.decoding = 'async';
@@ -434,7 +503,8 @@
       function swap(old, url, cb) {
         var n = old.cloneNode(false); n.src = url;
         var done = function () { old.parentNode.insertBefore(n, old.nextSibling); old.parentNode.removeChild(old); cb(n); };
-        (n.decode ? n.decode() : new Promise(function (r) { n.onload = r; })).then(done, function () {});
+        var dec = function () { return n.decode ? n.decode() : new Promise(function (r, x) { n.onload = r; n.onerror = x; }); };
+        dec().then(done, function () { var a = alt(url); if (a) { n.src = a; dec().then(done, function () {}); } });
       }
       swap(imgD, BASE + 'slike/mapa-dan-3543.webp', function (n) { imgD = n; });
       if (nightLoaded) swap(imgN, BASE + 'slike/mapa-noc-3543.webp', function (n) { imgN = n; });
@@ -618,7 +688,9 @@
     bounds(); home(0);
     // stalni prikaz poslije promjene veličine
     var rT;
-    window.addEventListener('resize', function () { clearTimeout(rT); rT = setTimeout(function () { var cx = (vw / 2 - tx) / k, cy = (vh / 2 - ty) / k, rel = k / kMin; bounds(); k = kMin * rel; tx = vw / 2 - cx * k; ty = vh / 2 - cy * k; apply(); }, 120); });
+    function rebound() { clearTimeout(rT); rT = setTimeout(function () { var cx = (vw / 2 - tx) / k, cy = (vh / 2 - ty) / k, rel = k / kMin; bounds(); k = kMin * rel; tx = vw / 2 - cx * k; ty = vh / 2 - cy * k; apply(); }, 120); }
+    window.addEventListener('resize', rebound);
+    if ('ResizeObserver' in window) new ResizeObserver(rebound).observe(view);
 
     /* --- živi detalji: svjetlosna linija niz izabranu stazu, kabina po izabranoj žičari (kratko, 2 prolaza) --- */
     var fx = { raf: 0, tm: 0, els: [] };
