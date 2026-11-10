@@ -1,7 +1,8 @@
 // Simulacija sajta za sekciju Olimpijski bar (sajt se iz cloud okruženja ne može otvoriti).
 // Playwright presreće oc-jahorina.com i jsDelivr: stranica, WordPress REST odgovor (stranica Olimpijski bar),
 // bar.js, suvenirnica.js, fotografije i fontovi se služe lokalno. YouTube se ne učitava.
-// Od 10. 11. bar je bez menija (korisnik: „bez cjenovnika“) — test provjerava i da ga nema.
+// Od 10. 11. bar je bez menija (korisnik: „bez cjenovnika“) i u stilu premium restorana: jedna fotografija, „Restoran · 1.879 m“,
+// pun naslov, kratak uvod, tihi red (radno vrijeme · terasa), „Rezerviši sto“ + „Pogledaj atmosferu“.
 // Pokretanje: node test-bar.js [folder-za-screenshotove] [folder-sa-fontovima]
 const { chromium } = require('playwright');
 const fs = require('fs');
@@ -118,29 +119,27 @@ async function state(p) {
     const h2 = r.querySelector('h2 span');
     const hit = (a, c) => a.left < c.right && c.left < a.right && a.top < c.bottom && c.top < a.bottom;
     const f = r.querySelector('.jb-frame').getBoundingClientRect();
-    const txt = [...r.querySelectorAll('.jb-kicker, h2 span, .jb-lead, .jb-facts li, .jb-btn, .jb-more')].map((e) => e.getBoundingClientRect());
+    const txt = [...r.querySelectorAll('.jb-kicker, h2 span, .jb-lead, .jb-place, .jb-btn, .jb-play, .jb-meta')].map((e) => e.getBoundingClientRect());
     return {
       scroll: document.documentElement.scrollWidth - document.documentElement.clientWidth,
       left: Math.round(b.left), width: Math.round(b.width), cw: document.documentElement.clientWidth,
       h2color: getComputedStyle(h2).color, h2font: getComputedStyle(h2).fontFamily.split(',')[0],
       lines: [...r.querySelectorAll('h2 span')].map((s) => s.textContent),
-      outline: [...r.querySelectorAll('h2 span.jb-o')].map((s) => s.textContent).join(''),
+      outline: [...r.querySelectorAll('h2 span')].filter((s) => getComputedStyle(s).webkitTextStrokeWidth !== '0px' || /jb-o/.test(s.className)).length,
       kicker: r.querySelector('.jb-kicker').textContent, lead: r.querySelector('.jb-lead').textContent,
-      facts: [...r.querySelectorAll('.jb-facts li')].map((e) => e.querySelector('b').textContent + ' ' + e.querySelector('small').textContent).join('|'),
-      factsShown: getComputedStyle(r.querySelector('.jb-facts')).display !== 'none',
-      // vrijednosti na istoj liniji (na telefonu brojevi gore, "Bar · restoran · terasa" ispod)
-      factsRow: new Set([...r.querySelectorAll(innerWidth > 760 ? '.jb-facts b' : '.jb-f-alt b, .jb-f-ev b')].map((e) => Math.round(e.getBoundingClientRect().top))).size === 1,
+      place: r.querySelector('.jb-place').textContent, facts: r.querySelectorAll('.jb-facts').length,
       noMenu: !document.querySelector('#jb-bar .jb-book, #jb-bar .jb-fb, #jb-meni') && !/\b(meni|menu|cjenovnik)\b/i.test(r.querySelector('.jb-frame').textContent),
-      bg: +r.querySelector('.jb-bg.is-on').getAttribute('data-k'), bgs: r.querySelectorAll('.jb-bg').length,
-      rez: [r.querySelector('a[data-jb="rezervacija"]').getAttribute('href'), r.querySelector('a[data-jb="rezervacija"]').innerText.trim()],
+      bgs: r.querySelectorAll('.jb-bg').length, tint: r.querySelectorAll('.jb-tint').length,
+      photoW: Math.round(r.querySelector('.jb-bg').getBoundingClientRect().width / f.width * 100),
+      rez: [r.querySelector('.jb-btn').getAttribute('href'), r.querySelector('.jb-btn').innerText.trim(), r.querySelector('.jb-tel').getAttribute('href'), r.querySelector('.jb-tel').textContent],
       txtIn: txt.every((a) => a.left >= f.left - 1 && a.right <= f.right + 1 && a.top >= f.top - 1 && a.bottom <= f.bottom + 1),
       bodyIn: (() => { const q = r.querySelector('.jb-body').getBoundingClientRect(); return q.left >= f.left - 1 && q.right <= f.right + 1 && q.bottom <= f.bottom + 1; })(),
       page: r.querySelector('a[data-jb="stranica"]').getAttribute('href'),
       why: (r.querySelector('.jb-why') || {}).textContent || '',
       hidden: [...r.querySelectorAll('.jb-up,.jb-bg.is-on')].filter((e) => getComputedStyle(e).opacity !== '1').length,
       imgOk: [...r.querySelectorAll('img')].every((i) => i.complete && i.naturalWidth > 0),
-      acts: [...r.querySelectorAll('.jb-btn')].map((a) => { const q = a.getBoundingClientRect(); return [Math.round(q.top), Math.round(q.width), Math.round(q.height)]; }),
-      actsFit: [...r.querySelectorAll('.jb-btn')].every((a) => a.scrollWidth <= a.clientWidth + 1),
+      acts: [...r.querySelectorAll('.jb-btn, .jb-play')].map((a) => { const q = a.getBoundingClientRect(); return [Math.round(q.top), Math.round(q.width), Math.round(q.height)]; }),
+      actsFit: [...r.querySelectorAll('.jb-btn, .jb-play, .jb-meta a')].every((a) => a.scrollWidth <= a.clientWidth + 1),
     };
   });
 }
@@ -152,18 +151,18 @@ async function state(p) {
   let S = await state(p);
   check('bez vodoravnog skrola, preko cijele širine', S.scroll === 0 && S.left === 0 && S.width === S.cw, S);
   check('naslov bijeli i Archivo uprkos temi', S.h2color === 'rgb(255, 255, 255)' && /Archivo/.test(S.h2font), [S.h2color, S.h2font]);
-  check('naslov iz WP-a: "Olimpijski / bar", bar obris', S.lines.join('|') === 'Olimpijski|bar' && S.outline === 'bar', S.lines);
-  check('uvod = prva rečenica sa stranice (1.879 ne prekida rečenicu)', S.lead === P1.split('zabave.')[0] + 'zabave.', S.lead);
-  check('podaci: 1.879 m (iz teksta), Bar · restoran · terasa / après-ski i koncerti, 40+ (iz teksta), na istoj liniji', S.facts === '1.879m nadmorske visine|Bar·restoran·terasa après-ski i koncerti|40+ događaja godišnje' && S.factsRow, S.facts);
+  check('naslov iz WP-a: "Olimpijski / bar", pun (bez obrisa)', S.lines.join('|') === 'Olimpijski|bar' && S.outline === 0, [S.lines, S.outline]);
+  check('mali tekst: Restoran · 1.879 m (visina iz teksta stranice)', S.kicker === 'Restoran · 1.879 m', S.kicker);
+  check('uvod: kratak sažetak (domaća kuhinja, pića, pogled)', /^Domaća kuhinja i vrhunska pića na vrhu Jahorine/.test(S.lead), S.lead);
+  check('tihi red: Terasa sa pogledom (bez tri podatka i 40+ događaja)', S.place === 'Terasa sa pogledom' && S.facts === 0, [S.place, S.facts]);
   check('bez menija (cjenovnika) u kadru i preko ekrana', S.noMenu, S.noMenu);
-  check('tri fotografije u pozadini, prva upaljena', S.bgs === 3 && S.bg === 0, [S.bgs, S.bg]);
-  check('Rezervacije → kontakt telefon (057 270 003)', S.rez[0] === 'tel:+38757270003' && /Rezervacije · 057 270 003/.test(S.rez[1]), S.rez);
+  check('jedna fotografija, bez plave noćne obrade, lijevih 60% kadra', S.bgs === 1 && S.tint === 0 && S.photoW === 60, [S.bgs, S.tint, S.photoW]);
+  check('Rezerviši sto → kontakt telefon; ispod: Rezervacije 057 270 003', S.rez.join('|') === 'tel:+38757270003|Rezerviši sto|tel:+38757270003|057 270 003', S.rez);
   check('tekst u kadru', S.txtIn && S.bodyIn, [S.txtIn, S.bodyIn]);
   check('link = stranica iz WP-a', S.page === SITE + '/olimpijski-bar/', S.page);
   rest = rest.filter((x) => !/suvenirnica/.test(x));
   check('jedan poziv WP-u: samo stranica (Mediji se više ne pitaju za meni)', rest.length === 1 && /pages\?slug=olimpijski-bar/.test(rest[0]), rest);
-  // od 10. 11. (kao ratrak): cyan glavno + staklena pločica, širina po tekstu, 48 px (telefon 46)
-  check('dugmad: isti red, ista visina (48px)', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 48 && S.acts[1][2] === 48 && S.actsFit, S.acts);
+  check('Rezerviši sto (50 px) i Pogledaj atmosferu u istom redu', Math.abs(S.acts[0][0] - S.acts[1][0]) <= 2 && S.acts[0][2] === 50 && S.actsFit, S.acts);
   check('sve vidljivo poslije ulaska', S.hidden === 0, S.hidden);
   check('fotografija učitana', S.imgOk);
   check('admin poruka se ne vidi', S.why === '', S.why);
@@ -177,14 +176,14 @@ async function state(p) {
   check('suvenirnica iznad: jb--join, razmak kadar → kadar = --gap', j.join && Math.abs(j.space - j.want) <= 2, j);
   await p.screenshot({ path: path.join(OUT, 'suvenirnica-bar.png'), fullPage: true });
   await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, 'sr-racunar-kadar.png') });
-  await p.click('#jb-bar .jb-btn--solid');
+  await p.click('#jb-bar .jb-btn');
   // video
-  await p.click('#jb-bar .jb-btn--ghost'); await p.waitForTimeout(500);
+  await p.click('#jb-bar .jb-play'); await p.waitForTimeout(500);
   let V = await p.evaluate(() => { const v = document.getElementById('jb-vid'); return { shown: getComputedStyle(v).display, src: (v.querySelector('iframe') || {}).src || '', focus: document.activeElement.tagName }; });
   check('video: YouTube (nocookie) sa ID-jem iz WP stranice, tek na klik', V.shown === 'grid' && /youtube-nocookie\.com\/embed\/AbCdEfGhIj0\?autoplay=1/.test(V.src), V);
   await p.keyboard.press('Escape'); await p.waitForTimeout(450);
   V = await p.evaluate(() => { const v = document.getElementById('jb-vid'); return { shown: getComputedStyle(v).display, iframes: v.querySelectorAll('iframe').length, focus: document.activeElement.className }; });
-  check('Esc zatvara video (iframe uklonjen, fokus na dugme)', V.shown === 'none' && V.iframes === 0 && /jb-btn--ghost/.test(V.focus), V);
+  check('Esc zatvara video (iframe uklonjen, fokus na link)', V.shown === 'none' && V.iframes === 0 && /jb-play/.test(V.focus), V);
   await p.click('#jb-bar .jb-more');
   let ev = await p.evaluate(() => window.__ev.map((e) => e[1] + ':' + JSON.stringify(e[2])));
   check('GA4: bar_rezervacija, bar_video, bar_klik', JSON.stringify(ev) === JSON.stringify(['bar_rezervacija:{"nacin":"telefon","jezik":"sr"}', 'bar_video:{"jezik":"sr"}', 'bar_klik:{"cilj":"stranica","jezik":"sr"}']), ev);
@@ -195,7 +194,7 @@ async function state(p) {
   ({ p, ctx, errors } = await open(browser, { wp: 'iframe', admin: true }));
   S = await state(p);
   check('admin bez poruke', S.why === '', S.why);
-  await p.click('#jb-bar .jb-btn--ghost'); await p.waitForTimeout(300);
+  await p.click('#jb-bar .jb-play'); await p.waitForTimeout(300);
   check('video ID iz iframe-a', /embed\/ZyXwVuTsRq1/.test(await p.evaluate(() => document.querySelector('#jb-vid iframe').src)));
   check('bez grešaka u konzoli', errors.length === 0, errors);
   await ctx.close();
@@ -203,27 +202,27 @@ async function state(p) {
   console.log('WordPress ispiše PHP upozorenje prije JSON-a (Safari: "The string did not match the expected pattern")');
   ({ p, ctx, errors } = await open(browser, { wp: 'upozorenje', ga: 'none', admin: true }));
   S = await state(p);
-  check('podaci se ipak pročitaju (uvod, brojevi, link), admin bez poruke o stranici', S.lead === P1.split('zabave.')[0] + 'zabave.' && S.facts.split('|').length === 3 && !/stranica/.test(S.why), [S.lead, S.why]);
+  check('podaci se ipak pročitaju (visina, link), admin bez poruke o stranici', S.kicker === 'Restoran · 1.879 m' && S.page === SITE + '/olimpijski-bar/' && !/stranica/.test(S.why), [S.kicker, S.why]);
   await ctx.close();
   ({ p, ctx, errors } = await open(browser, { wp: 'html', ga: 'none', admin: true }));
   S = await state(p);
-  check('HTML umjesto JSON-a: ugrađeni tekst, admin vidi početak odgovora', /^Na vrhu Jahorine/.test(S.lead) && /odgovor nije JSON · pages: „[^“]*Stranica u održavanju“/.test(S.why), S.why);
+  check('HTML umjesto JSON-a: ugrađeni tekst, admin vidi početak odgovora', /^Domaća kuhinja/.test(S.lead) && /odgovor nije JSON · pages: „[^“]*Stranica u održavanju“/.test(S.why), S.why);
   await ctx.close();
 
-  console.log('Tekst stranice bez brojeva → red sa brojevima se sakrije; video ostaje podrazumijevani');
-  ({ p, ctx, errors } = await open(browser, { wp: 'bezbrojeva', ga: 'none' }));
+  console.log('Tekst stranice bez visine → mali tekst samo „Restoran“; video ostaje podrazumijevani; radno vrijeme iz reda za widget');
+  ({ p, ctx, errors } = await open(browser, { wp: 'bezbrojeva', ga: 'none', attrs: 'data-radno="Svaki dan 9–17h"' }));
   S = await state(p);
-  check('brojevi sakriveni (ostaje Bar · restoran · terasa), uvod novi', S.facts === 'Bar·restoran·terasa après-ski i koncerti' && /novo mjesto/.test(S.lead), [S.facts, S.lead]);
-  await p.click('#jb-bar .jb-btn--ghost'); await p.waitForTimeout(300);
+  check('bez visine: „Restoran“; red: Svaki dan 9–17h · Terasa sa pogledom', S.kicker === 'Restoran' && S.place === 'Svaki dan 9–17h·Terasa sa pogledom', [S.kicker, S.place]);
+  await p.click('#jb-bar .jb-play'); await p.waitForTimeout(300);
   check('video: podrazumijevani ID (7qo0-fAx5CI)', /embed\/7qo0-fAx5CI/.test(await p.evaluate(() => document.querySelector('#jb-vid iframe').src)));
   await ctx.close();
 
   console.log('EN, računar, Google Tag Manager, qTranslate oznake (/en/wp-json ne radi → /wp-json)');
   ({ p, ctx, errors, rest } = await open(browser, { path: '/en/pocetna-zima/', ga: 'gtm', wp: 'qtranslate' }));
   S = await state(p);
-  check('engleski naslov iz WP-a: Olympic / Bar', S.lines.join('|') === 'Olympic|Bar' && S.kicker === 'Food & après-ski', [S.lines, S.kicker]);
-  check('engleski uvod i podaci (1,879 m, Bar · restaurant · terrace, 40+)', /^At the top of Jahorina/.test(S.lead) && S.facts === '1,879m above sea level|Bar·restaurant·terrace après-ski & concerts|40+ events a year', [S.lead, S.facts]);
-  check('link vodi na /en/; Book: +387 57 270 003; bez menija', S.noMenu && S.page === SITE + '/en/olimpijski-bar/' && /Book: \+387 57 270 003/.test(S.rez[1]), [S.cap, S.page, S.rez]);
+  check('engleski naslov iz WP-a: Olympic / Bar; Restaurant · 1,879 m', S.lines.join('|') === 'Olympic|Bar' && S.kicker === 'Restaurant · 1,879 m', [S.lines, S.kicker]);
+  check('engleski uvod i red', /^Home-style cooking and fine drinks/.test(S.lead) && S.place === 'Terrace with a view', [S.lead, S.place]);
+  check('link vodi na /en/; Book a table: +387 57 270 003; bez menija', S.noMenu && S.page === SITE + '/en/olimpijski-bar/' && S.rez[1] === 'Book a table' && S.rez[3] === '+387 57 270 003', [S.page, S.rez]);
   check('prvo /en/wp-json, pa /wp-json', /^\/en\/wp-json/.test(rest[0]) && rest.some((x) => /^\/wp-json\/wp\/v2\/pages/.test(x)), rest);
   await p.click('#jb-bar .jb-more');
   ev = await p.evaluate(() => window.__ev);
@@ -235,7 +234,7 @@ async function state(p) {
   console.log('WordPress ne odgovara (403): posjetilac vidi ugrađeni tekst, admin i razlog');
   ({ p, ctx, errors } = await open(browser, { wp: 'greska', ga: 'none' }));
   S = await state(p);
-  check('ugrađeni tekst i podaci', S.lines.join('|') === 'Olimpijski|bar' && /^Na vrhu Jahorine/.test(S.lead) && S.facts.split('|').length === 3 && S.why === '', S);
+  check('ugrađeni tekst', S.lines.join('|') === 'Olimpijski|bar' && /^Domaća kuhinja/.test(S.lead) && S.kicker === 'Restoran · 1.879 m' && S.why === '', S);
   await ctx.close();
   ({ p, ctx, errors } = await open(browser, { wp: 'greska', ga: 'none', admin: true }));
   S = await state(p);
@@ -247,24 +246,11 @@ async function state(p) {
   check('pogrešan slug: admin vidi da stranica nije pronađena', /nije pronađena/.test(S.why), S.why);
   await ctx.close();
 
-  console.log('Smjena fotografija u pozadini: sama, redom');
+  console.log('Jedna mirna fotografija: bez smjene');
   ({ p, ctx, errors } = await open(browser, { ga: 'none' }));
-  await p.mouse.move(5, 5);
-  await p.waitForTimeout(7000 + 2600);
-  S = await state(p);
-  check('poslije ~7 s u pozadini je enterijer (druga fotografija)', S.bg === 1, S.bg);
-  await p.waitForTimeout(2200);
-  await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, 'sr-racunar-enterijer.png') });
-  await p.waitForTimeout(7000 - 2200 + 600);
-  S = await state(p);
-  check('pa losos (treća)', S.bg === 2, S.bg);
-  await p.waitForTimeout(2200);
-  await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, 'sr-racunar-losos.png') });
-  check('bez grešaka u konzoli', errors.length === 0, errors);
-  await ctx.close();
-  ({ p, ctx, errors } = await open(browser, { ga: 'none', reduced: true }));
   await p.waitForTimeout(8000);
-  check('smanjeno kretanje: bez smjene', (await state(p)).bg === 0);
+  check('poslije 8 s i dalje ista (jedina) fotografija', await p.evaluate(() => document.querySelectorAll('#jb-bar .jb-bg').length === 1 && /bar-glavna/.test(document.querySelector('#jb-bar .jb-bg').currentSrc)));
+  check('bez grešaka u konzoli', errors.length === 0, errors);
   await ctx.close();
 
   for (const [name, vw, vh, touch] of [['laptop', 1280, 800], ['laptop-nizak', 1366, 680], ['siroki', 1920, 1080], ['tablet', 900, 1100, true], ['telefon', 390, 844, true], ['uski-telefon', 340, 740, true]]) {
@@ -274,8 +260,9 @@ async function state(p) {
     check('bez vodoravnog skrola, preko cijele širine', S.scroll === 0 && S.left === 0 && S.width === S.cw, S);
     check('sve vidljivo poslije ulaska', S.hidden === 0, S.hidden);
     check('bez menija, tekst u kadru', S.noMenu && S.txtIn && S.bodyIn, [S.noMenu, S.txtIn, S.bodyIn]);
-    check('brojevi u jednom redu; natpisi dugmadi staju', S.factsRow && S.actsFit, [S.factsRow, S.actsFit]);
-    if (vw <= 760) check('telefon: oba dugmeta u jednom redu, 46px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 46 && S.acts[1][2] === 46, S.acts);
+    check('natpisi dugmeta i linkova staju', S.actsFit, S.actsFit);
+    if (vw > 980) check('računar: fotografija u lijevih 60% kadra', S.photoW === 60, S.photoW);
+    if (vw <= 760) check('telefon: Rezerviši sto preko cijele širine (48 px), Pogledaj atmosferu ispod', S.acts[0][2] === 48 && S.acts[1][0] > S.acts[0][0] + 40, S.acts);
     await p.locator('#jb-bar .jb-frame').screenshot({ path: path.join(OUT, name + '.png') });
     if (vw <= 760) {   // telefon: fotografija gore niža (bez menija), tekst odmah ispod
       const ph = await p.evaluate(() => Math.round(document.querySelector('#jb-bar .jb-bgs').getBoundingClientRect().height));

@@ -1,24 +1,29 @@
 /* =====================================================================
-   JAHORINA — OLIMPIJSKI BAR (početna, ispod suvenirnice) · v3 bez menija (10. 11., korisnik: „bez cjenovnika, to ukloni“)
+   JAHORINA — OLIMPIJSKI BAR (početna, ispod suvenirnice) · v4 „premium restoran“ (10. 11.)
+   Korisnik 10. 11.: bez cjenovnika; „da izgleda kao premium restoran svjetskog nivoa, minimalistički“ → jedna mirna
+   fotografija u toplim tonovima (bez smjene i bez plave noćne obrade), mali tekst „Restoran · 1.879 m“, pun naslov
+   (bez obrisa), kratak uvod, jedan tihi red (radno vrijeme · terasa), jedno glavno dugme „Rezerviši sto“ i tihi link
+   „Pogledaj atmosferu“ (video); broj telefona i link stranice sitno ispod.
    Tema hero-a, vijesti, ratraka i suvenirnice (noćni ton, jedan cyan akcenat, Archivo/Barlow, kadar preko cijele
    širine, fotografija u pozadini kadra, naslov sa iscrtanim krajem, staklene pločice), sa svojim detaljima:
-     · u pozadini kadra se SMJENJUJU fotografije bara (rižoto → enterijer → losos): nova se upali iz mraka, kao svjetlo;
      · cik-cak sa suvenirnicom iznad (tamo fotografija desno): ovdje je fotografija lijevo, tekst desno;
-     · desno naslov, uvod, tri podatka (nadmorska visina · Bar · restoran · terasa / après-ski i koncerti · 40+ događaja),
-       dugmad "Rezervacije" (telefon) i "Pogledaj video" (YouTube preko ekrana tek na klik).
-     (Do 10. 11. lijevo je stajao meni-knjiga sa listanjem preko ekrana — uklonjen sa slikama strana; vidi git istoriju.)
+     · video (YouTube) se otvara preko ekrana tek na klik.
+     (Do 10. 11. lijevo je stajao meni-knjiga, a u pozadini su se smjenjivale 3 fotografije — vidi git istoriju.)
 
    SADRŽAJ JE IZ WORDPRESSA:
-     · stranica "Olimpijski bar" (slug olimpijski-bar): naslov = naslov stranice, uvod = prva rečenica prvog pasusa,
-       nadmorska visina i broj događaja se čitaju iz teksta, video = prvi YouTube link/ugradnja na stranici,
+     · stranica "Olimpijski bar" (slug olimpijski-bar): naslov = naslov stranice, nadmorska visina (u malom tekstu)
+       se čita iz teksta, video = prvi YouTube link/ugradnja na stranici,
        telefon = prvi tel: link na stranici (ako postoji), "Više o baru" = link stranice;
-     Dok WordPress ne odgovori, stoji ugrađeni tekst (isti kao na stranici 8. 10. 2026). Prijavljeni admin vidi tehnički razlog.
+     Uvod je kratak sažetak teksta stranice (u kodu; zamjena: data-uvod). Dok WordPress ne odgovori, stoji ugrađeni tekst.
+     Prijavljeni admin vidi tehnički razlog.
 
    Ugradnja: Elementor HTML widget sa <div id="jb-bar"></div> + ovaj fajl sa jsDelivr-a.
    Podešavanja na <div id="jb-bar"> (sva su neobavezna):
      data-stranica="olimpijski-bar"   (slug WordPress stranice)
      data-telefon="+387…"              (broj za rezervacije; podrazumijevano kontakt OC Jahorina +387 57 270 003)
      data-video="https://youtu.be/…"   (zamjena za video sa stranice)
+     data-radno="Svaki dan 9–17h"      (radno vrijeme u tihom redu; EN: data-radno-en="Daily 9 am – 5 pm")
+     data-uvod="…" / data-uvod-en="…"  (zamjena za uvod)
    GA: Rezervacije → bar_rezervacija (nacin: telefon), video → bar_video,
        "Više o baru" → bar_klik (cilj: stranica).
    ===================================================================== */
@@ -39,37 +44,28 @@
   var TEL_FIXED = !!opt('telefon', '');
   var TEL = opt('telefon', '+38757270003');   // kontakt telefon OC Jahorina (marketing i prodaja, kao rezervacije ratraka)
   var reduced = w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var DUR = 7000;   // smjena fotografija (ms)
 
-  // ugrađeni tekst = tekst sa stranice Olimpijski bar (8. 10. 2026); srednji podatak je korisnikov; EN je prevod
+  // tekstovi (10. 11., premium restoran): uvod je sažetak teksta stranice (domaća kuhinja, vrhunska pića, pogled na jezero i vrhove)
   var T = EN ? {
-    kicker: 'Food & après-ski', head: 'Olympic Bar',
-    lead: 'At the top of Jahorina, 1,879 metres above sea level, the Olympic Bar is a favourite of skiers and lovers of good food and fun.',
-    alt: ['m', 'above sea level'], mid: ['Bar · restaurant · terrace', 'après-ski & concerts'], ev: ['+', 'events a year'],
-    altV: '1,879', evV: '40',
-    rez: 'Book', rezS: 'Reservations', rezAria: 'Reservations by phone', video: 'Watch the video', videoS: 'Video', more: 'More about the Olympic Bar',
+    kicker: 'Restaurant', head: 'Olympic Bar', altV: '1,879',
+    lead: 'Home-style cooking and fine drinks at the top of Jahorina, with views of the lake and the surrounding peaks.',
+    place: 'Terrace with a view',
+    rez: 'Book a table', rezAria: 'Book a table by phone', rezLine: 'Reservations', video: 'Watch the atmosphere', more: 'More about the Olympic Bar',
     close: 'Close', vid: 'Video: Olympic Bar', why: 'WordPress', whyTail: 'showing built-in content',
-    photos: ['Mushroom risotto and a glass of white wine on the Olympic Bar placemat "Hospitality is part of skiing"',
-      'Olympic Bar interior: velvet chairs, wooden tables and warm lights by the large windows',
-      'Salmon fillet with grilled vegetables and Dalmatian stew']
+    photo: 'Mushroom risotto and a glass of white wine on a set table at the Olympic Bar'
   } : {
-    kicker: 'Hrana i après-ski', head: 'Olimpijski bar',
-    lead: 'Na vrhu Jahorine, na 1.879 metara nadmorske visine, nalazi se Olimpijski bar, omiljeno mjesto skijaša i ljubitelja dobre hrane i zabave.',
-    alt: ['m', 'nadmorske visine'], mid: ['Bar · restoran · terasa', 'après-ski i koncerti'], ev: ['+', 'događaja godišnje'],
-    altV: '1.879', evV: '40',
-    rez: 'Rezervacije', rezS: 'Rezervacije', rezAria: 'Rezervacije telefonom', video: 'Pogledaj video', videoS: 'Video', more: 'Više o Olimpijskom baru',
+    kicker: 'Restoran', head: 'Olimpijski bar', altV: '1.879',
+    lead: 'Domaća kuhinja i vrhunska pića na vrhu Jahorine, uz pogled na akumulaciono jezero i okolne vrhove.',
+    place: 'Terasa sa pogledom',
+    rez: 'Rezerviši sto', rezAria: 'Rezerviši sto telefonom', rezLine: 'Rezervacije', video: 'Pogledaj atmosferu', more: 'Više o Olimpijskom baru',
     close: 'Zatvori', vid: 'Video: Olimpijski bar', why: 'WordPress', whyTail: 'prikazan je ugrađeni sadržaj',
-    photos: ['Rižoto sa pečurkama i čaša bijelog vina na podmetaču Olimpijskog bara „Hospitality is part of skiing“',
-      'Enterijer Olimpijskog bara: plišane stolice, drveni stolovi i topla svjetla uz velike prozore',
-      'Losos sa grilovanim povrćem i dalmatinskim varivom']
+    photo: 'Rižoto sa pečurkama i čaša bijelog vina na postavljenom stolu Olimpijskog bara'
   };
+  var LEAD = opt(EN ? 'uvod-en' : 'uvod', T.lead);
+  var RADNO = opt(EN ? 'radno-en' : 'radno', '');
 
-  // fotografije kadra (smjenjuju se): pozicija na računaru / telefonu i jačina (svaka fotografija ima svoju svjetlinu)
-  var PHOTOS = [
-    { f: 'bar-glavna', w: 2000, pos: '40% 62%', mpos: '40% 64%', lum: .74 },
-    { f: 'bar-enterijer', w: 1336, pos: '50% 50%', mpos: '50% 50%', lum: .8 },
-    { f: 'bar-losos', w: 1300, pos: '50% 50%', mpos: '50% 50%', lum: .64 }
-  ].map(function (p, k) { p.full = HERE + 'slike/' + p.f + '.webp'; p.md = HERE + 'slike/' + p.f + '-1000.webp'; p.alt = T.photos[k]; return p; });
+  // jedna mirna fotografija (premium: bez smjene); pozicija na računaru / telefonu i jačina
+  var PHOTO = { full: HERE + 'slike/bar-glavna.webp', md: HERE + 'slike/bar-glavna-1000.webp', w: 2000, pos: '60% 56%', mpos: '40% 64%', lum: .88, alt: T.photo };
 
   /* ---------- izgled ---------- */
   var CSS = [
@@ -104,19 +100,18 @@
     /* tanak topli odsjaj na gornjoj ivici, iznad toplog svjetla bara (lijevo) */
     '#R .jb-frame::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;z-index:6;pointer-events:none;background:linear-gradient(90deg,transparent 2%,rgba(255,214,170,.42) 22%,transparent 48%)}',
     '#R .jb-bgs{position:absolute;inset:0;z-index:-1;overflow:hidden}',
-    /* fotografije: blaža noćna obrada nego u vijestima, da topla svjetlost bara ostane. Smjena: nova se upali iz mraka
-       (kao svjetlo), stara se ugasi; bez zumiranja i pomjeranja. Desna ivica se utapa u tamu ispod teksta */
-    '#R .jb-bg{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0;',
-    'filter:saturate(.9) brightness(.22) contrast(1.08);transition:opacity 1.6s ease,filter 2.2s cubic-bezier(.3,.6,.2,1);',
-    '-webkit-mask-image:linear-gradient(270deg,transparent 0,#000 24%);mask-image:linear-gradient(270deg,transparent 0,#000 24%)}',
-    '#R .jb-bg.is-on{opacity:1;filter:saturate(.9) brightness(var(--lum,.74)) contrast(1.08)}',
-    '#R .jb-tint{position:absolute;inset:0;pointer-events:none;background:linear-gradient(160deg,#1E4F96 0%,#0E2A55 100%);mix-blend-mode:soft-light;opacity:.34}',
+    /* fotografija: prirodni topli tonovi (hrana ne smije biti plava — bez noćne obrade iz teme), samo blago prigušena;
+       pri ulasku se upali iz mraka. Desna ivica se utapa u tamu ispod teksta */
+    '#R .jb-bg{position:absolute;top:0;left:0;width:60%;height:100%;object-fit:cover;opacity:0;',
+    'filter:brightness(.3) contrast(1.04);transition:opacity 1.6s ease,filter 2.2s cubic-bezier(.3,.6,.2,1);',
+    '-webkit-mask-image:linear-gradient(270deg,transparent 0,#000 34%);mask-image:linear-gradient(270deg,transparent 0,#000 34%)}',   /* računar: fotografija u lijevih 60% (cijeli tanjir i čaša), tekst na mirnoj tami desno */
+    '#R .jb-bg.is-on{opacity:1;filter:brightness(var(--lum,.88)) contrast(1.04)}',
     '#R .jb-scrim{position:absolute;inset:0;pointer-events:none;',
     'background:linear-gradient(270deg,rgba(6,11,22,.93) 0,rgba(6,11,22,.84) calc(var(--side) + 380px),rgba(6,11,22,.55) calc(var(--side) + 590px),rgba(6,11,22,.14) calc(var(--side) + 790px),rgba(6,11,22,0) calc(var(--side) + 930px)),',
     'linear-gradient(90deg,rgba(6,11,22,.42) 0,rgba(6,11,22,0) calc(var(--side) + 180px)),',
-    'linear-gradient(0deg,rgba(6,11,22,.55) 0%,rgba(6,11,22,0) 30%),linear-gradient(180deg,rgba(6,18,42,.32) 0%,rgba(6,18,42,0) 22%),',
+    'linear-gradient(0deg,rgba(6,11,22,.5) 0%,rgba(6,11,22,0) 30%),linear-gradient(180deg,rgba(8,10,16,.28) 0%,rgba(8,10,16,0) 22%),',
     'radial-gradient(130% 100% at 38% 50%,transparent 56%,rgba(4,8,18,.55) 100%)}',
-    /* toplo svjetlo bara gore lijevo (jedini topli izvor; ostalo je noćna obrada) */
+    /* toplo svjetlo bara gore lijevo */
     '#R .jb-light{position:absolute;inset:0;pointer-events:none;background:radial-gradient(30% 54% at var(--lx,22%) 0%,rgba(255,214,170,.17),rgba(255,190,140,.05) 55%,transparent 80%)}',
 
     /* tekst desno (cik-cak sa suvenirnicom iznad), poravnat sa desnom ivicom mreže 1240px */
@@ -126,41 +121,29 @@
     '#R h2{font-size:clamp(46px,5vw,78px);font-weight:800;line-height:.93;letter-spacing:-.025em}',
     '#R h2.jb-long{font-size:clamp(36px,3.8vw,58px)}',
     '#R h2 > span{display:block;filter:drop-shadow(0 6px 30px rgba(0,0,0,.45))}',
-    '@supports (-webkit-text-stroke:1px #fff){#R h2 > span.jb-o{color:transparent!important;-webkit-text-fill-color:transparent!important;-webkit-text-stroke:1.6px rgba(255,255,255,.94)!important;',
-    'filter:drop-shadow(0 0 8px rgba(0,185,242,.35)) drop-shadow(0 6px 30px rgba(0,0,0,.45))}}',
-    '#R .jb-lead{margin-top:26px;font-size:clamp(15.5px,1.2vw,17.5px);line-height:1.62;color:var(--text-2)!important;max-width:42ch;text-wrap:pretty}',
-    /* tri podatka: tipografski red bez pločica, jedinica i tačkice cyan, tanke uspravne crte između; vrijednosti stoje na istoj liniji */
-    '#R .jb-facts{display:flex;align-items:flex-start;margin-top:30px!important}',
-    '#R .jb-facts li{padding:2px 22px!important;border-left:1px solid rgba(255,255,255,.14);min-width:0}',
-    '#R .jb-facts li:first-child{padding-left:0!important;border-left:0}',
-    '#R .jb-facts b{display:flex;align-items:flex-end;gap:3px;height:27px;font:700 27px/1 var(--fd);letter-spacing:-.015em;color:#fff;white-space:nowrap;font-variant-numeric:tabular-nums}',
-    '#R .jb-facts b i{font:600 14px/1 var(--fd);font-style:normal;letter-spacing:0;color:var(--accent-2);padding-bottom:2px}',
-    '#R .jb-facts .jb-f-txt b{gap:7px;font-size:16.5px;letter-spacing:.1px;padding-bottom:1px}',
-    '#R .jb-facts .jb-f-txt b i{font:700 16px/1 var(--fd);padding-bottom:1px}',
-    '#R .jb-facts small{display:block;margin-top:8px;font:500 13px/1.25 var(--fb);letter-spacing:0;color:var(--text-3);white-space:nowrap}',
-    /* dugmad kao u ratraku (10. 11.): glavno = cyan pločica kao „Kupi ski kartu“ u hero-u i „Pročitaj više“ u vijestima (ranije bijelo),
-       sporedno = staklena pločica kao „Sve vijesti“; dugmad dobiju širinu po tekstu i dijele ostatak reda, a kad ne stanu, svako ide u svoj red */
-    '#R .jb-acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:34px;width:min(100%,500px)}',
-    '#R .jb-btn{all:unset;position:relative!important;flex:1 1 auto;box-sizing:border-box!important;display:inline-flex!important;align-items:center;justify-content:center;gap:9px;height:48px;padding:0 20px!important;border-radius:16px!important;cursor:pointer;',
-    'white-space:nowrap;font:700 15px/1 var(--fd)!important;letter-spacing:0!important;font-variant-numeric:tabular-nums;transition:transform .2s ease,box-shadow .25s ease,filter .2s,color .2s}',
-    '#R .jb-btn svg{width:16px;height:16px}',
+    '#R .jb-lead{margin-top:26px;font-size:clamp(16px,1.25vw,18px);line-height:1.62;color:var(--text-2)!important;max-width:38ch;text-wrap:pretty}',
+    /* jedan tihi red (radno vrijeme · terasa) umjesto tri podatka */
+    '#R .jb-place{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-top:22px!important;font:500 14px/1.4 var(--fb);letter-spacing:.2px;color:var(--text-3)!important}',
+    '#R .jb-place i{font-style:normal;color:var(--accent)}',
+    /* jedno glavno dugme (cyan kao „Kupi ski kartu“) + tihi link videa; bez sporednog dugmeta */
+    '#R .jb-acts{display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px;margin-top:34px}',
+    '#R .jb-btn{all:unset;position:relative!important;box-sizing:border-box!important;display:inline-flex!important;align-items:center;justify-content:center;height:50px;padding:0 28px!important;border-radius:16px!important;cursor:pointer;',
+    'white-space:nowrap;font:700 15px/1 var(--fd)!important;letter-spacing:0!important;color:#fff!important;background:linear-gradient(160deg,#45D6FF 0%,#00AEE6 50%,#008BC7 100%)!important;',
+    'box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.18),0 10px 24px -10px rgba(0,185,242,.95)!important;transition:transform .2s ease,box-shadow .25s ease,filter .2s}',
+    '#R .jb-btn:hover,#R .jb-btn:focus-visible{filter:brightness(1.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.3),0 12px 28px -8px rgba(0,185,242,1)!important}',
+    '#R a.jb-btn:focus-visible{outline-color:#fff!important}',
     '#R .jb-btn:active{transform:scale(.96)}',
-    '#R .jb-s{display:none}',
-    '#R .jb-btn--solid{color:#fff!important;background:linear-gradient(160deg,#45D6FF 0%,#00AEE6 50%,#008BC7 100%)!important;',
-    'box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.18),0 10px 24px -10px rgba(0,185,242,.95)!important}',
-    '#R .jb-btn--solid:hover,#R .jb-btn--solid:focus-visible{filter:brightness(1.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.3),0 12px 28px -8px rgba(0,185,242,1)!important}',
-    '#R a.jb-btn--solid:focus-visible{outline-color:#fff!important}',
-    '#R .jb-btn--solid em{font-style:normal;font-weight:500;color:rgba(255,255,255,.86)}',
-    '#R .jb-btn--ghost{font-weight:600!important;color:rgba(255,255,255,.92)!important;background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.02))!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.11)!important}',
-    '#R .jb-btn--ghost svg{color:#C4EEFF}',
-    '#R .jb-btn--ghost:hover{color:#fff!important;transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(111,219,255,.38),inset 0 1px 0 rgba(255,255,255,.14),0 0 18px -4px rgba(0,185,242,.45)!important}',
-    '#R .jb-btn--ghost:active{transform:scale(.96)}',
-    /* tihi link stranice ispod dugmadi */
-    '#R .jb-more{position:relative!important}',
-    '#R .jb-more::after{content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}',
-    '#R .jb-more{display:inline-flex;align-items:center;gap:8px;margin-top:20px;font:500 13.5px/1.3 var(--fb);color:var(--text-3)!important;transition:color .2s}',
-    '#R .jb-more{text-decoration:underline;text-decoration-color:rgba(0,185,242,.4);text-underline-offset:4px}',
-    '#R .jb-more:hover,#R .jb-more:focus-visible{color:var(--accent)!important}',
+    '#R .jb-play{all:unset;position:relative!important;box-sizing:border-box!important;display:inline-flex!important;align-items:center;gap:10px;height:48px;cursor:pointer;white-space:nowrap;',
+    'font:600 15px/1 var(--fd)!important;letter-spacing:0!important;color:rgba(255,255,255,.88)!important;transition:color .2s}',
+    '#R .jb-play svg{width:22px;height:22px;color:#C4EEFF;transition:transform .25s ease}',
+    '#R .jb-play:hover{color:#fff!important}',
+    '#R .jb-play:hover svg{transform:scale(1.08)}',
+    '#R .jb-play:active{transform:scale(.96)}',
+    /* sitno ispod: broj za rezervacije i link stranice */
+    '#R .jb-meta{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:18px!important;font:500 13.5px/1.4 var(--fb);color:var(--text-3)!important}',
+    '#R .jb-meta a{position:relative;color:var(--text-2)!important;white-space:nowrap;text-decoration:underline;text-decoration-color:rgba(0,185,242,.4);text-underline-offset:4px;transition:color .2s}',
+    '#R .jb-meta a::after{content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}',
+    '#R .jb-meta a:hover,#R .jb-meta a:focus-visible{color:var(--accent)!important}',
     '#R .jb-why{display:block;margin-top:14px;font:500 11.5px/1.4 var(--fb);color:#FFB547}',
 
     /* ulazak (jednom): klase jb-anim/jb-on dodaje skripta samo kad postoji IntersectionObserver i nije uključeno smanjeno kretanje */
@@ -174,13 +157,12 @@
     '#R.jb-anim .jb-kicker::before{transform:scaleX(0);transform-origin:left center}',
     '#R.jb-anim.jb-on .jb-kicker::before{transform:none;transition:transform .5s cubic-bezier(.2,.7,.2,1) .2s}',
     /* manji laptop */
-    '@media (max-width:1180px){#R .jb-body{width:min(calc(var(--side) + 500px),56%)}#R .jb-facts li{padding:2px 15px!important}#R .jb-facts b{font-size:23px;height:23px}',
-    '#R .jb-facts .jb-f-txt b{font-size:14.5px;gap:5px}#R .jb-facts .jb-f-txt b i{font-size:14px}#R .jb-facts small{font-size:12.5px}#R .jb-acts{width:min(100%,470px)}#R .jb-btn{padding:0 16px!important}}',
+    '@media (max-width:1180px){#R .jb-body{width:min(calc(var(--side) + 500px),56%)}}',
     /* tablet i telefon: fotografija gore (utapa se nadolje), tekst ispod */
     '@media (max-width:980px){',
     '#R .jb-frame{flex-direction:column;align-items:stretch;min-height:0}',
     '#R .jb-bgs{position:relative;inset:auto;height:min(58vw,500px);-webkit-mask-image:linear-gradient(180deg,#000 64%,transparent 100%);mask-image:linear-gradient(180deg,#000 64%,transparent 100%)}',
-    '#R .jb-bg{-webkit-mask-image:none;mask-image:none}',
+    '#R .jb-bg{width:100%;-webkit-mask-image:none;mask-image:none}',
     '#R .jb-scrim{background:linear-gradient(0deg,rgba(6,11,22,.5) 0%,rgba(6,11,22,0) 40%),linear-gradient(180deg,rgba(6,18,42,.36) 0%,rgba(6,18,42,0) 26%),linear-gradient(90deg,rgba(6,11,22,.45) 0%,rgba(6,11,22,0) 45%)}',
     '#R .jb-light{--lx:24%}',
     '#R .jb-body{width:auto;margin-left:0;padding:clamp(28px,4vw,40px) clamp(22px,6vw,56px) clamp(32px,5vw,52px)}',
@@ -198,18 +180,12 @@
     '#R h2{font-size:clamp(38px,11.6vw,54px)}',
     '#R h2.jb-long{font-size:clamp(30px,8.6vw,42px)}',
     '#R .jb-lead{margin-top:18px}',
-    /* telefon: brojevi gore u dva stupca, "Bar · restoran · terasa" ispod preko cijele širine */
-    '#R .jb-facts{display:grid;grid-template-columns:1fr 1fr;row-gap:16px;margin-top:24px!important}',
-    '#R .jb-facts li{padding:2px 0 2px 16px!important}',
-    '#R .jb-facts b{font-size:23px;height:23px}',
-    '#R .jb-facts .jb-f-txt{grid-column:1 / -1;order:3;border-left:0;padding:14px 0 0!important;border-top:1px solid rgba(255,255,255,.12)}',
-    '#R .jb-facts .jb-f-txt b{font-size:15px}',
-    '#R .jb-facts small{font-size:12px;white-space:normal}',
-    '#R .jb-acts{gap:8px;margin-top:26px;width:100%}',
-    '#R .jb-btn{height:46px;padding:0 16px!important;font-size:14px!important}',
-    '#R .jb-l{display:none}',
-    '#R .jb-s{display:inline}',
-    '#R .jb-more{margin-top:18px;font-size:13px}}',
+    '#R .jb-place{margin-top:18px!important;font-size:13.5px}',
+    /* telefon: dugme preko cijele širine, link videa ispod u sredini */
+    '#R .jb-acts{gap:4px;margin-top:26px}',
+    '#R .jb-btn{flex:1 1 100%;height:48px;font-size:14.5px!important}',
+    '#R .jb-play{margin:0 auto;font-size:14.5px!important}',
+    '#R .jb-meta{justify-content:center;margin-top:10px!important;font-size:13px}}',
     '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}',
 
     /* ---------- VIDEO PREKO CIJELOG EKRANA (YouTube se učitava tek na klik) ---------- */
@@ -247,14 +223,7 @@
     close: svg('<path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'),
   };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-  // dugi natpis (računar) i kratki (telefon); oba su već HTML
-  function lbl(l, s) { return l === s ? l : '<span class="jb-l">' + l + '</span><span class="jb-s">' + s + '</span>'; }
   function clean(s) { return String(s || '').replace(/\s+/g, ' ').trim(); }
-  function clip(s, n) {
-    if (s.length <= n) return s;
-    s = s.slice(0, n); var i = s.lastIndexOf(' ');
-    return (i > n * .6 ? s.slice(0, i) : s).replace(/[\s,;:.–—-]+$/, '') + '…';
-  }
   // YouTube ID iz linka ili ugradnje (watch?v=, youtu.be/, embed/, shorts/, nocookie) ili samo ID
   function ytId(s) {
     s = String(s || '').replace(/\\\//g, '/');
@@ -288,7 +257,7 @@
     if (!want || langs.indexOf(want) < 0) want = langs[0];
     return segs.filter(function (g) { return !g[0] || g[0] === want; }).map(function (g) { return g[1]; }).join('');
   }
-  // naslov u redove: zadnja riječ je obris ("Olimpijski / bar"), ostatak u jedan ili dva ujednačena reda
+  // naslov u redove ("Olimpijski / bar"); od 10. 11. pun, bez obrisa (obris je sportski detalj, ovo je restoran)
   function titleHTML(s) {
     var wd = clean(s).replace(/[\s!.:,;]+$/, '').split(' ');
     var n = wd.length > 2 && wd[wd.length - 2].length <= 4 ? 2 : 1;
@@ -302,54 +271,40 @@
       lines = [rest.slice(0, k).join(' '), rest.slice(k).join(' ')];
     } else if (rest.length) lines = [rest.join(' ')];
     return lines.map(function (l, i) { return '<span class="jb-up" style="--d:' + (.12 + i * .07).toFixed(2) + 's">' + esc(l) + '</span>'; }).join(' ') +
-      ' <span class="jb-o jb-up" style="--d:' + (.12 + lines.length * .07).toFixed(2) + 's">' + esc(o) + '</span>';
+      ' <span class="jb-up" style="--d:' + (.12 + lines.length * .07).toFixed(2) + 's">' + esc(o) + '</span>';
   }
-  // uvod: prva rečenica pasusa (i druga, ako je prva vrlo kratka); tačka u broju (1.879) ne prekida rečenicu
-  function leadOf(p) {
-    var ss = clean(p).match(/(?:[^.!?]|\.(?=\d))+(?:[.!?]+|$)/g) || [p], out = clean(ss[0]);
-    if (out.length < 70 && ss[1]) out += ' ' + clean(ss[1]);
-    return clip(out, 260);
-  }
-  // tri podatka: nadmorska visina i događaji (iz teksta stranice, ako postoje) + "Bar · restoran · terasa"
-  function factsHTML(alt, ev) {
-    var out = '';
-    if (alt) out += '<li class="jb-f-alt"><b>' + esc(alt) + '<i>' + esc(T.alt[0]) + '</i></b><small>' + esc(T.alt[1]) + '</small></li>';
-    out += '<li class="jb-f-txt"><b>' + T.mid[0].split(' · ').map(esc).join('<i>·</i>') + '</b><small>' + esc(T.mid[1]) + '</small></li>';
-    if (ev) out += '<li class="jb-f-ev"><b>' + esc(ev) + '<i>' + esc(T.ev[0]) + '</i></b><small>' + esc(T.ev[1]) + '</small></li>';
-    return out;
-  }
-  function rezHTML() {
-    return ICON.phone + lbl(esc(T.rez) + (EN ? ': ' : ' · ') + '<em>' + esc(telShow(TEL)) + '</em>', esc(T.rezS));
-  }
+  function kickerText(alt) { return T.kicker + (alt ? ' · ' + alt + ' m' : ''); }
+  function placeHTML() { return (RADNO ? [RADNO, T.place] : [T.place]).map(esc).join('<i aria-hidden="true">·</i>'); }
 
   /* ---------- crtanje ---------- */
-  function bgImg(p, k) {
-    return '<img class="jb-bg' + (k ? '' : ' is-on') + '" data-k="' + k + '" src="' + esc(p.full) + '" srcset="' + esc(p.md) + ' 1000w, ' + esc(p.full) + ' ' + p.w + 'w" sizes="100vw"' +
-      ' alt="' + esc(p.alt) + '"' + (k ? ' aria-hidden="true"' : '') + ' style="object-position:' + p.pos + ';--mpos:' + p.mpos + ';--lum:' + p.lum + '" decoding="async" loading="lazy">';
+  function bgImg(p) {
+    return '<img class="jb-bg is-on" src="' + esc(p.full) + '" srcset="' + esc(p.md) + ' 1000w, ' + esc(p.full) + ' ' + p.w + 'w" sizes="100vw"' +
+      ' alt="' + esc(p.alt) + '" style="object-position:' + p.pos + ';--mpos:' + p.mpos + ';--lum:' + p.lum + '" decoding="async" loading="lazy">';
   }
   root.innerHTML =
     '<section class="jb-wrap" aria-labelledby="jb-h"><div class="jb-frame">' +
-      '<div class="jb-bgs">' + PHOTOS.map(bgImg).join('') + '<span class="jb-tint"></span><span class="jb-scrim"></span><span class="jb-light"></span></div>' +
+      '<div class="jb-bgs">' + bgImg(PHOTO) + '<span class="jb-scrim"></span><span class="jb-light"></span></div>' +
       '<div class="jb-body">' +
-        '<div class="jb-kicker jb-up" style="--d:.05s">' + esc(T.kicker) + '</div>' +
+        '<div class="jb-kicker jb-up" style="--d:.05s">' + esc(kickerText(T.altV)) + '</div>' +
         '<h2 id="jb-h">' + titleHTML(T.head) + '</h2>' +
-        '<p class="jb-lead jb-up" style="--d:.34s">' + esc(T.lead) + '</p>' +
-        '<ul class="jb-facts jb-up" style="--d:.42s">' + factsHTML(T.altV, T.evV) + '</ul>' +
-        '<div class="jb-acts jb-up" style="--d:.5s">' +
-          '<a class="jb-btn jb-btn--solid" href="tel:' + esc(TEL) + '" data-jb="rezervacija"></a>' +
-          '<button type="button" class="jb-btn jb-btn--ghost" data-jb="video" aria-haspopup="dialog">' + ICON.play + lbl(esc(T.video), esc(T.videoS)) + '</button>' +
+        '<p class="jb-lead jb-up" style="--d:.3s">' + esc(LEAD) + '</p>' +
+        '<p class="jb-place jb-up" style="--d:.38s">' + placeHTML() + '</p>' +
+        '<div class="jb-acts jb-up" style="--d:.46s">' +
+          '<a class="jb-btn" href="tel:' + esc(TEL) + '" data-jb="rezervacija">' + esc(T.rez) + '</a>' +
+          '<button type="button" class="jb-play" data-jb="video" aria-haspopup="dialog">' + ICON.play + esc(T.video) + '</button>' +
         '</div>' +
-        '<a class="jb-more jb-up" style="--d:.58s" href="' + esc(PAGE) + '" data-jb="stranica">' + esc(T.more) + '</a>' +
+        '<p class="jb-meta jb-up" style="--d:.54s"><span>' + esc(T.rezLine) + ': <a class="jb-tel" href="tel:' + esc(TEL) + '" data-jb="rezervacija"></a></span>' +
+          '<a class="jb-more" href="' + esc(PAGE) + '" data-jb="stranica">' + esc(T.more) + '</a></p>' +
       '</div>' +
     '</div></section>';
   function q(s) { return root.querySelector(s); }
   function qa(s) { return [].slice.call(root.querySelectorAll(s)); }
   function setTel(t) {
     TEL = t;
-    var a = q('a[data-jb="rezervacija"]');
-    a.setAttribute('href', 'tel:' + TEL.replace(/[^\d+]/g, ''));
-    a.setAttribute('aria-label', T.rezAria + ' ' + telShow(TEL));
-    a.innerHTML = rezHTML();
+    var href = 'tel:' + TEL.replace(/[^\d+]/g, '');
+    qa('a[data-jb="rezervacija"]').forEach(function (a) { a.setAttribute('href', href); });
+    q('.jb-btn').setAttribute('aria-label', T.rezAria + ' ' + telShow(TEL));
+    q('.jb-tel').textContent = telShow(TEL);
   }
   setTel(TEL);
 
@@ -449,30 +404,6 @@
     else if (k === 'stranica') track('bar_klik', { cilj: 'stranica' });
   });
 
-  /* ---------- smjena fotografija u pozadini (nova se upali iz mraka; bez zumiranja) ---------- */
-  var BG = { cur: 0, timer: 0, vis: false, on: false };
-  var AUTO = PHOTOS.length > 1 && !reduced && 'IntersectionObserver' in w;
-  function bgHold() { return !BG.vis || !BG.on || d.hidden || !!modal; }
-  function bgGo() {
-    clearTimeout(BG.timer); BG.timer = 0;
-    if (!AUTO || bgHold()) return;
-    BG.timer = setTimeout(function () { bgShow(BG.cur + 1); }, DUR);
-  }
-  function bgShow(k) {
-    var n = PHOTOS.length; k = (k % n + n) % n; BG.cur = k;
-    qa('.jb-bg').forEach(function (im) {
-      var a = +im.getAttribute('data-k') === k;
-      if (a) { im.loading = 'eager'; im.removeAttribute('aria-hidden'); } else im.setAttribute('aria-hidden', 'true');
-      im.classList.toggle('is-on', a);
-    });
-    var nx = q('.jb-bg[data-k="' + ((k + 1) % n) + '"]'); if (nx) nx.loading = 'eager';   // sljedeća se učita na vrijeme
-    bgGo();
-  }
-  d.addEventListener('visibilitychange', function () { bgGo(); });
-  if ('IntersectionObserver' in w) new IntersectionObserver(function (es) {
-    BG.vis = es[es.length - 1].isIntersecting; bgGo();
-  }, { threshold: .25 }).observe(q('.jb-frame'));
-
   /* ---------- VIDEO preko cijelog ekrana (youtube-nocookie, učitava se tek sad) ---------- */
   var V = null, vBack = null;
   function vKey(e) {
@@ -488,7 +419,7 @@
       V.querySelector('button').addEventListener('click', vClose);
       V.addEventListener('click', function (e) { if (e.target === V) vClose(); });
     }
-    vBack = d.activeElement; modal = 'video'; bgGo();
+    vBack = d.activeElement; modal = 'video';
     V.querySelector('.jb-v-box').innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + encodeURIComponent(YT) +
       '?autoplay=1&rel=0&playsinline=1&modestbranding=1" title="' + esc(T.vid) + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
     lockScroll(true);
@@ -503,7 +434,6 @@
     lockScroll(false);
     setTimeout(function () { if (!V.classList.contains('is-open')) { V.classList.remove('is-shown'); V.querySelector('.jb-v-box').innerHTML = ''; } }, 320);
     if (vBack && vBack.focus) vBack.focus({ preventScroll: true });
-    bgGo();
   }
 
   /* ---------- sadržaj iz WordPressa (REST API): stranica Olimpijski bar ---------- */
@@ -538,15 +468,13 @@
   function parse(pg) {
     var raw = pg.content && pg.content.rendered || '', html = pickLang(raw);
     var b = new DOMParser().parseFromString('<!doctype html><body>' + html, 'text/html').body;   // ne izvršava skripte, ne učitava slike
-    var ps = [].slice.call(b.querySelectorAll('p')).map(function (p) { return clean(p.textContent); }).filter(function (t) { return t.length > 30; });
-    var txt = clean(b.textContent), m, alt = '', ev = '';
+    var txt = clean(b.textContent), m, alt = '';
     if ((m = txt.match(/(\d{1,2}[.,]?\d{3})\s*(?:metara|metres|meters|m)\b/i))) alt = m[1];
-    if ((m = txt.match(/(?:više\s+od|preko|over|more\s+than)\s+(\d+)\s+(?:događaj\w*|manifestacij\w*|events?)/i))) ev = m[1];
     var tl = b.querySelector('a[href^="tel:"]');
     var link = pg.link || '';
     if (EN && link.indexOf(O + '/') === 0 && link.indexOf(O + '/en/') !== 0) link = O + '/en' + link.slice(O.length);
     return {
-      id: pg.id, link: link, ps: ps, alt: alt, ev: ev, yt: ytId(raw), tel: tl ? tl.getAttribute('href').slice(4).trim() : '',
+      id: pg.id, link: link, alt: alt, yt: ytId(raw), tel: tl ? tl.getAttribute('href').slice(4).trim() : '',
       title: clean(new DOMParser().parseFromString('<body>' + pickLang(pg.title && pg.title.rendered || ''), 'text/html').body.textContent)
     };
   }
@@ -565,11 +493,9 @@
         if (h2.textContent.replace(/\s+/g, '') !== r.title.replace(/\s+/g, '')) h2.innerHTML = titleHTML(r.title);
         h2.classList.toggle('jb-long', r.title.length > 26);
       }
-      if (r.ps.length) { var ld = leadOf(r.ps[0]); if (ld !== q('.jb-lead').textContent) q('.jb-lead').textContent = ld; }
-      else miss.push('tekst');
-      // nadmorska visina i broj događaja samo ako ih tekst stranice ima (kad se tekst promijeni, mijenjaju se i ovdje)
-      var fl = q('.jb-facts'), fh = factsHTML(r.alt, r.ev);
-      if (fl.innerHTML !== fh) fl.innerHTML = fh;
+      // nadmorska visina iz teksta stranice (kad se tekst promijeni, mijenja se i ovdje); bez nje samo „Restoran“
+      var kt = kickerText(r.alt);
+      if (q('.jb-kicker').textContent !== kt) q('.jb-kicker').textContent = kt;
       if (r.link) q('a[data-jb="stranica"]').setAttribute('href', r.link);
       if (!YT_FIXED) { if (r.yt) YT = r.yt; else miss.push('video'); }
       if (!TEL_FIXED && r.tel && r.tel.replace(/[^\d]/g, '').length >= 8) setTel(r.tel);
@@ -586,21 +512,18 @@
     why(e && e.message || 'REST');
   });
 
-  // ulazak jednom, kad kadar dođe u vidno polje; poslije toga kreće smjena fotografija
+  // ulazak jednom, kad kadar dođe u vidno polje
   if ('IntersectionObserver' in w && !reduced) {
     root.classList.add('jb-anim');
     var io = new IntersectionObserver(function (es) {
-      if (es.some(function (e) { return e.isIntersecting; })) {
-        root.classList.add('jb-on'); io.disconnect();
-        setTimeout(function () { BG.on = true; bgGo(); }, 1800);
-      }
+      if (es.some(function (e) { return e.isIntersecting; })) { root.classList.add('jb-on'); io.disconnect(); }
     }, { rootMargin: '0px 0px -10% 0px' });
     io.observe(q('.jb-frame'));
-  } else { BG.on = true; bgGo(); }
+  }
   /* SEO-BRZINA:POCETAK */
   /* ---------- SEO i brzina (pravila početne, 14. 10.; pravi ga alati/seo-brzina.py) ---------- */
   (function () {
-    var SRC = (d.currentScript && d.currentScript.src) || '', DIMS = {"bar-enterijer-1000.webp":[1000,674],"bar-enterijer.webp":[1336,900],"bar-glavna-1000.webp":[1000,668],"bar-glavna.webp":[2000,1336],"bar-losos-1000.webp":[1000,667],"bar-losos.webp":[1300,867]};
+    var SRC = (d.currentScript && d.currentScript.src) || '', DIMS = {"bar-glavna-1000.webp":[1000,668],"bar-glavna.webp":[2000,1336]};
     var CDN = /^https:\/\/cdn\.jsdelivr\.net\/gh\/([^\/]+)\/([^@\/]+)@([0-9a-f]{40})\//i, ok = CDN.test(SRC);
     function fix(im) {
       if (im.__jseo) return;
