@@ -25,6 +25,9 @@ if not git('branch', '-r', '--contains', commit).strip():
     raise SystemExit(f'commit {commit[:7]} nije na GitHubu — prvo git push, pa ponovo.')
 body = git('show', f'{commit}:{REL}')
 sri = 'sha384-' + base64.b64encode(hashlib.sha384(body).digest()).decode()
+# heš podataka: mapa.js ih učita sa fetch(…, {integrity}) — izmijenjen mapa.json na CDN-u se odbije (kao skripta sa SRI)
+podaci = git('show', f'{commit}:jahorina-mapa/podaci/mapa.json')
+podaci_sri = 'sha384-' + base64.b64encode(hashlib.sha384(podaci).digest()).decode()
 url = f'https://cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@{commit}/{REL}'
 
 # Mali ugrađeni loader (radi i na stranici i u Elementor editoru, gdje se HTML ubacuje preko jQuery-ja):
@@ -35,6 +38,6 @@ def loader(url, sri):
             "'cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@','rawcdn.githack.com/NjegosAnalyst/Webpage/'))}}"
             "(d.head||d.documentElement).appendChild(s)}g(u,i)})(document,'" + url + "','" + sri + "')</script>")
 
-line = f'<div id="jm-mapa"{ATRIBUTI}></div>{loader(url, sri)}\n'
+line = f'<div id="jm-mapa" data-podaci="{podaci_sri}"{ATRIBUTI}></div>{loader(url, sri)}\n'
 (HERE / 'elementor-html-widget.html').write_text(line, encoding='utf-8')
 print(line)

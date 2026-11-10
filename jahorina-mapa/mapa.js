@@ -403,7 +403,35 @@
   var CDN = /^https:\/\/cdn\.jsdelivr\.net\/gh\/([^\/]+)\/([^@\/]+)@([0-9a-f]{40})\//i;
   function alt(u) { return CDN.test(u) ? u.replace(CDN, 'https://raw.githubusercontent.com/$1/$2/$3/') : null; }
   function guard(im) { im.addEventListener('error', function () { var a = alt(im.src); if (a && !im.__jfb) { im.__jfb = 1; im.src = a; } }); return im; }
-  function getJSON(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }); }
+  // podaci se provjeravaju kao i skripta: heš iz reda za Elementor (data-podaci="sha384-…"); izmijenjen fajl se odbije
+  var PODACI_SRI = root.getAttribute('data-podaci');
+  function getJSON(u) { return fetch(u, PODACI_SRI ? { integrity: PODACI_SRI } : undefined).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }); }
+  // i bez heša (pregled): u HTML idu samo provjerene vrijednosti (putanje, oznake, brojevi, poznate vrste)
+  function clean(D) {
+    var P = /^[MCLZ0-9 ,.\-]*$/, ID = /^\d{1,2}[a-z]?$/, TEZ = { laka: 1, srednja: 1, teska: 1 };
+    var n = function (v) { v = +v; if (!isFinite(v)) throw new Error('broj'); return v; };
+    var d = function (v) { if (typeof v !== 'string' || !P.test(v)) throw new Error('putanja'); return v; };
+    var id = function (v) { v = String(v); if (!ID.test(v)) throw new Error('oznaka'); return v; };
+    var t = function (v) { if (!TEZ[v]) throw new Error('težina'); return v; };
+    var xy = function (a) { return [n(a[0]), n(a[1])]; };
+    var ids = function (a) { return (a || []).map(id); };
+    var txt = function (v) { return String(v == null ? '' : v); };   // tekst ide kroz esc() ili textContent
+    return {
+      w: n(D.w), h: n(D.h),
+      staze: D.staze.map(function (r) { return { id: id(r.id), tez: t(r.tez), seg: r.seg.map(function (g) { return { t: t(g.t), d: d(g.d) }; }), o: r.o.map(xy),
+        noc: !!r.noc, fis: !!r.fis, bb: r.bb.map(n), gore: ids(r.gore), dole: ids(r.dole), od: ids(r.od), u: ids(r.u) }; }),
+      neimenovane: (D.neimenovane || []).map(function (v) { return { t: t(v.t), d: d(v.d) }; }),
+      veze: (D.veze || []).map(function (v) { return { t: t(v.t), d: d(v.d) }; }),
+      romboidi: (D.romboidi || []).map(function (r) { return { x: n(r.x), y: n(r.y), l: id(r.l), t: t(r.t) }; }),
+      zicare: D.zicare.map(function (z) { return { id: id(z.id), ime: txt(z.ime), tip: /^(gondola|sestosjed|dvosjed|tanjir|sidro)$/.test(z.tip) ? z.tip : null,
+        m: n(z.m), min: n(z.min), a: xy(z.a), b: xy(z.b), o: xy(z.o) }; }),
+      usluge: (D.usluge || []).filter(function (u) { return /^[a-z0-9]+$/.test(u.k); }).map(function (u) { return { k: u.k, x: n(u.x), y: n(u.y), i: /^[a-z0-9]+$/.test(u.i || '') ? u.i : undefined }; }),
+      topovi: (D.topovi || []).map(xy), fis: (D.fis || []).map(xy),
+      natpisi: (D.natpisi || []).map(function (v) { return { t: txt(v.t), x: n(v.x), y: n(v.y) }; }),
+      vrhovi: (D.vrhovi || []).map(function (v) { return { ime: txt(v.ime), v: n(v.v), x: n(v.x), y: n(v.y) }; }),
+      granica: (D.granica || []).map(d), pjesacke: (D.pjesacke || []).map(d), nocne: (D.nocne || []).map(d), sanke: (D.sanke || []).map(d)
+    };
+  }
   // puna širina: kontejner teme/Elementora je uži od ekrana → blok se raširi (kao ostale sekcije, fit() iz vijesti.js)
   function fit() {
     var st = root.style;
@@ -462,7 +490,7 @@
   function load() {
     var u = BASE + 'podaci/mapa.json';
     getJSON(u).catch(function (e) { var a = alt(u); if (!a) throw e; return getJSON(a); })
-    .then(start).catch(function (e) {
+    .then(function (D) { start(clean(D)); }).catch(function (e) {
       world.innerHTML = '';
       view.insertAdjacentHTML('beforeend', '<p style="position:absolute;inset:auto 0 45%;text-align:center;color:rgba(255,255,255,.7);font:500 15px var(--fb)">' +
         (EN ? 'The map could not be loaded.' : 'Mapa se trenutno ne može učitati.') + '</p>');
