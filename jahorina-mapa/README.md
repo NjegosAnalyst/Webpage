@@ -62,6 +62,16 @@ Bez usluga, bez topova za osnježavanje i bez popisa žičara i staza ispod mape
 Ispod mape: „Hitno na stazi? Gorska služba spasavanja Jahorina“ + dugme `tel:+38766636636` (broj sa zvanične mape).
 Drugi broj: `data-gss="+387 …"` na `#jm-mapa`.
 
+## Na sajtu (Elementor HTML widget, 10. 11. 2026)
+- Red: `elementor-html-widget.html` (pravi ga `napravi-widget.py`: jsDelivr zaključan na puni commit + SRI, rezerva githack;
+  podaci/slike iz istog commita, rezerva raw.githubusercontent.com).
+- **Svaka izmjena:** izmijeni → `node test-mapa.js` → commit + push → `python3 napravi-widget.py` → `node test-widget.js`
+  → commit + push → korisniku novi red.
+- `mapa.js` na sajtu: raširi se preko cijele širine (kao `fit()` u vijestima), zatvara šav sa tamnim blokom iznad i do
+  footera ispod (isti postupak kao `alati/seo-brzina.py`), podatke i slike učita tek ~2 ekrana prije nego što dođe na ekran.
+- `test-widget.js`: simulacija Betheme + Elementor (uži kontejner, stilovi teme, footer), SR, EN (`/en/`), telefon,
+  Elementor editor (jQuery ubacivanje), jsDelivr pao (githack), podaci/slike sa GitHuba.
+
 ## Otvoreno
 - Dužine i nazivi staza nisu na mapi (samo brojevi i težina) — mogu se dodati u `ulaz.py` kad stignu.
 - Podloga u većoj rezoluciji (od dizajnerke), ako postoji.
