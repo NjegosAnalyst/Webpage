@@ -3,7 +3,7 @@
    Tema hero-a, vijesti i ratraka (noćni ton, jedan cyan akcenat, Archivo/Barlow, kadar preko cijele širine,
    naslov sa iscrtanim krajem, staklo i blagi neumorfizam), sa svojim detaljima (korisnik: "tema da, detalji
    različiti"; v2 bez fotografije u pozadini: "prejednostavno, nije premium, fotografiju koristi i u pozadini"):
-     · fotografija proizvoda je pozadina cijelog kadra, a proizvodi se SMJENJUJU (marama → magneti → vitrina):
+     · fotografija proizvoda je pozadina cijelog kadra, a proizvodi se SMJENJUJU (od 10. 11.: suveniri → odjeća → domaći proizvodi):
        meki prelaz iz zamućenog u oštro, bez zumiranja;
      · dolje desno TIHI IZBOR PROIZVODA direktno na fotografiji (bez ploče): tri tanke linije sa brojem i nazivom,
        aktivna se puni cyan bojom; klik bira proizvod, "Sve fotografije" otvara galeriju preko cijelog ekrana;
@@ -45,18 +45,19 @@
   var T = EN ? {
     kicker: 'Souvenir shop', head: 'Take a piece of Jahorina with you!',
     lead: 'Visit our souvenir shops at the lower and upper stations of the Poljice gondola and find gifts that warm the heart.',
-    tags: ['Local artisans', 'Natural cosmetics', 'Warm textiles', 'For pets'],
-    caps: ['Neck gaiters', 'Magnets', 'Accessories'], capsS: ['Textiles', 'Magnets', 'Accessories'],
-    alts: ['Neck gaiter with the Olympic Centre Jahorina logo on a shop shelf', 'Jahorina magnets: ski boots, trees, gondola cabins, snowboards', 'Display case with Jahorina neck gaiters, gloves, goggles and ski socks'],
+    tags: ['Souvenirs and magnets', 'Clothing and hats', 'Handmade', 'Local products'],
+    caps: ['Souvenirs', 'Clothing', 'Local products'], capsS: ['Souvenirs', 'Clothing', 'Local products'],
+    alts: ['Plush mascot, red Ja.horina tote bag, mug, gloves and magnets', 'Knitted wool hat with a pom-pom and a traditional pattern', 'Jahorina fruit brandy in small bottles next to a plush mascot'],
     pick: 'From the shop', show: 'Show', page: 'More about the shop', pageS: 'Learn more', map: 'How to find us', mapS: 'Directions',
     gal: 'All photos', galLabel: 'Souvenir shop gallery', galOpen: 'Open gallery', photo: 'Photo', close: 'Close', prev: 'Previous photo', next: 'Next photo',
     why: 'WordPress', whyTail: 'showing built-in text'
   } : {
     kicker: 'Suvenirnica', head: 'Ponesite dio Jahorine sa sobom!',
     lead: 'Svratite u naše suvenirnice na polaznoj i izlaznoj stanici gondole Poljice i pronađite poklone koji griju srce.',
-    tags: ['Lokalni majstori', 'Prirodna kozmetika', 'Topli tekstil', 'Za ljubimce'],
-    caps: ['Marame i tekstil', 'Magneti', 'Zimski dodaci'], capsS: ['Tekstil', 'Magneti', 'Zimski dodaci'],
-    alts: ['Marama za vrat sa logom Olimpijskog centra Jahorina na polici suvenirnice', 'Magneti Jahorina: ski cipele, jelke, kabine gondole, daske', 'Vitrina sa maramama Jahorina, rukavicama, naočarama i ski čarapama'],
+    // vrste poklona i tabovi: uobičajeni nazivi kategorija suvenirnice (korisnik 10. 11.)
+    tags: ['Suveniri i magneti', 'Odjeća i kape', 'Ručni rad', 'Domaći proizvodi'],
+    caps: ['Suveniri', 'Odjeća', 'Domaći proizvodi'], capsS: ['Suveniri', 'Odjeća', 'Domaći proizvodi'],
+    alts: ['Plišana maskota, crvena torba Ja.horina, šolja, rukavice i magneti', 'Pletena vunena kapa sa pomponom i tradicionalnim šarama', 'Jahorinska rakija u malim bočicama pored plišane maskote'],
     pick: 'Iz ponude', show: 'Prikaži', page: 'Više o suvenirnici', pageS: 'Saznaj više', map: 'Kako do nas', mapS: 'Kako do nas',
     gal: 'Sve fotografije', galLabel: 'Galerija: suvenirnica', galOpen: 'Otvori galeriju', photo: 'Fotografija', close: 'Zatvori', prev: 'Prethodna fotografija', next: 'Sljedeća fotografija',
     why: 'WordPress', whyTail: 'prikazan je ugrađeni tekst'
@@ -66,10 +67,11 @@
   var FIXED = !!root.getAttribute('data-galerija');
   var BASE = FIXED
     ? opt('galerija', '').split(',').map(function (x) { x = x.trim(); return x && { full: x }; }).filter(Boolean)
-    : ['suvenirnica-glavna', 'suvenirnica-1', 'suvenirnica-2'].map(function (f, k) {
+    // kvadratni izrezi iz originala sa stranice Suvenirnica (JD_05204, JD_05163, JD_05167), 1600 px; sve tri stoje desno od teksta (jsu-bg--r)
+    : ['suvenirnica-suveniri', 'suvenirnica-odjeca', 'suvenirnica-domace'].map(function (f, k) {
         var u = HERE + 'slike/' + f;
-        return { full: u + '.webp', md: u + '-1000.webp', cap: T.caps[k], capS: T.capsS[k], alt: T.alts[k],
-          w: k === 1 ? 1334 : 2000, pos: ['60% 50%', '50% 32%', '50% 56%'][k], r: !k, mpos: ['56% 50%', '50% 30%', '50% 50%'][k], lum: [.78, .8, .62][k] };
+        return { full: u + '.webp', md: u + '-1000.webp', cap: T.caps[k], capS: T.capsS[k], alt: T.alts[k], stem: ['jd_05204', 'jd_05163', 'jd_05167'][k],
+          w: 1600, pos: ['50% 62%', '50% 50%', '50% 50%'][k], r: true, mpos: ['45% 50%', '55% 50%', '50% 50%'][k], lum: [.74, .82, .7][k] };
       });
   var SHOW = BASE.slice(0, 3), N = SHOW.length;
   var GAL = BASE.slice();
@@ -111,8 +113,9 @@
     /* fotografije izloga: aktivna je oštra, ostale čekaju zamućene i tamne (prelaz bez zumiranja) */
     '#R .jsu-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;filter:saturate(.86) brightness(.5) contrast(1.1) blur(14px);',
     'transition:opacity 1.2s ease,filter 1.5s cubic-bezier(.2,.7,.2,1)}',
-    /* proizvod (marama) stoji desno od teksta: fotografija počinje od 16% i lijevom ivicom se utapa u tamu */
-    '#R .jsu-bg--r{left:16%;width:84%;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 24%);mask-image:linear-gradient(90deg,transparent 0,#000 24%)}',
+    /* izlog (od 10. 11.): fotografija proizvoda zauzima desnih 60% kadra i lijevom ivicom se meko utapa u tamu ispod teksta;
+       kvadratni izrez, pa se proizvod vidi cijeli (u punoj širini kadra portretne fotografije su bile preblizu) */
+    '#R .jsu-bg--r{left:40%;width:60%;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%);mask-image:linear-gradient(90deg,transparent 0,#000 30%)}',
     '#R .jsu-bg.is-on{opacity:1;filter:saturate(.88) brightness(var(--lum,.78)) contrast(1.1) blur(0px)}',
     /* noćna obrada: plavi sloj, tamni prelaz slijeva (ispod teksta) i odozdo (ispod izbora), vinjeta, toplo svjetlo izloga gore desno */
     '#R .jsu-tint{position:absolute;inset:0;pointer-events:none;background:linear-gradient(160deg,#1E4F96 0%,#0E2A55 100%);mix-blend-mode:soft-light;opacity:.5}',
@@ -235,6 +238,8 @@
     '#R .jsu-l{display:none}',
     '#R .jsu-s{display:inline}}',
     '@media (max-width:380px){#R .jsu-segs{gap:9px}#R .jsu-seg .jsu-n{font-size:12px}}',
+    /* najuži telefoni (≤360 px): „Domaći proizvodi“ staje u svoju trećinu */
+    '@media (max-width:360px){#R .jsu-segs{gap:8px}#R .jsu-seg .jsu-n{font-size:11px}}',
     '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}',
 
     /* galerija preko cijelog ekrana (ista kao u ratraku) */
@@ -669,7 +674,13 @@
     if (r.ps.length) { var ld = leadOf(r.ps[0]); if (ld !== q('.jsu-lead').textContent) q('.jsu-lead').textContent = ld; }
     else miss.push('tekst');
     if (r.link) q('a[data-jsu="stranica"]').setAttribute('href', r.link);
-    if (!FIXED && r.imgs.length) { GAL = BASE.concat(r.imgs); galCount(); }
+    // fotografije izloga su izrezi fotografija sa stranice (JD_05204 …, i ponovo otpremljene, npr. JD_05174-1) → ne ponavljaju se u galeriji
+    if (!FIXED && r.imgs.length) {
+      var stems = {}; BASE.forEach(function (g) { if (g.stem) stems[g.stem] = 1; });
+      GAL = BASE.concat(r.imgs.filter(function (x) {
+        return !stems[key(x.full).split('/').pop().replace(/\.[a-z0-9]+$/, '').replace(/-\d$/, '')];
+      })); galCount();
+    }
     else if (!r.imgs.length) miss.push('fotografije');
     if (miss.length) why('stranica "' + SLUG + '" nema: ' + miss.join(', '));
   }
@@ -699,7 +710,7 @@
   /* SEO-BRZINA:POCETAK */
   /* ---------- SEO i brzina (pravila početne, 14. 10.; pravi ga alati/seo-brzina.py) ---------- */
   (function () {
-    var SRC = (d.currentScript && d.currentScript.src) || '', DIMS = {"suvenirnica-1-1000.webp":[1000,1499],"suvenirnica-1.webp":[1334,2000],"suvenirnica-2-1000.webp":[1000,667],"suvenirnica-2.webp":[2000,1334],"suvenirnica-glavna-1000.webp":[1000,667],"suvenirnica-glavna.webp":[2000,1334]};
+    var SRC = (d.currentScript && d.currentScript.src) || '', DIMS = {"suvenirnica-domace-1000.webp":[1000,1000],"suvenirnica-domace.webp":[1600,1600],"suvenirnica-odjeca-1000.webp":[1000,1000],"suvenirnica-odjeca.webp":[1600,1600],"suvenirnica-suveniri-1000.webp":[1000,1000],"suvenirnica-suveniri.webp":[1600,1600]};
     var CDN = /^https:\/\/cdn\.jsdelivr\.net\/gh\/([^\/]+)\/([^@\/]+)@([0-9a-f]{40})\//i, ok = CDN.test(SRC);
     function fix(im) {
       if (im.__jseo) return;

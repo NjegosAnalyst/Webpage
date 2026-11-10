@@ -77,7 +77,7 @@ async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900
       return route.fulfill({ contentType: ct, body: fs.readFileSync(f) });
     }
     if (u.origin === SITE && u.pathname.startsWith('/wp-content/uploads/')) {   // fotografije sa WordPress stranice
-      const n = /suv-b/.test(u.pathname) ? 'suvenirnica-1' : /suv-c/.test(u.pathname) ? 'suvenirnica-2' : 'suvenirnica-glavna';
+      const n = /suv-b/.test(u.pathname) ? 'suvenirnica-odjeca' : /suv-c/.test(u.pathname) ? 'suvenirnica-domace' : 'suvenirnica-suveniri';
       return route.fulfill({ contentType: 'image/webp', body: fs.readFileSync(path.join(__dirname, 'slike', n + '.webp')) });
     }
     if (u.origin === SITE && (/\/wp-json\//.test(u.pathname) || u.searchParams.get('rest_route'))) {
@@ -133,6 +133,7 @@ async function state(p) {
       kicker: r.querySelector('.jsu-kicker').textContent, lead: r.querySelector('.jsu-lead').textContent,
       tags: [...r.querySelectorAll('.jsu-tags li')].map((e) => e.textContent).join('|'),
       where: r.querySelectorAll('.jsu-where').length,
+      segW: [...r.querySelectorAll('.jsu-seg .jsu-n')].map((e) => e.textContent + ' ' + e.scrollWidth + '/' + e.clientWidth).join(' | '),
       whereFits: [...r.querySelectorAll('.jsu-seg .jsu-n')].every((e) => e.getClientRects().length === 1 && e.scrollWidth <= e.clientWidth + 1),
       // tekst (naslov, uvod, vrste, dugmad) se ne preklapa sa izborom proizvoda
       overlap: (() => {
@@ -169,8 +170,8 @@ async function state(p) {
   check('naslov iz WP-a u tri reda, "sa sobom" obris', S.lines.join('|') === 'Ponesite dio|Jahorine|sa sobom' && S.outline === 'sa sobom', S.lines);
   check('nadnaslov = naslov stranice', S.kicker === 'Suvenirnica', S.kicker);
   check('uvod = prva rečenica sa stranice', S.lead === P1.split('. ')[0] + '.', S.lead);
-  check('vrste poklona; bez oznake lokacije gore desno', S.tags === 'Lokalni majstori|Prirodna kozmetika|Topli tekstil|Za ljubimce' && S.where === 0 && S.whereFits, [S.tags, S.where, S.whereFits]);
-  check('izlog: 3 linije izbora, prva u pozadini, 01, natpis', S.thumbs === 3 && S.active === 0 && S.count === '01' && S.cap === 'Marame i tekstil' && S.pressed === 'true,false,false', [S.thumbs, S.active, S.count, S.cap, S.pressed]);
+  check('vrste poklona; bez oznake lokacije gore desno', S.tags === 'Suveniri i magneti|Odjeća i kape|Ručni rad|Domaći proizvodi' && S.where === 0 && S.whereFits, [S.tags, S.where, S.whereFits]);
+  check('izlog: 3 linije izbora, prva u pozadini, 01, natpis', S.thumbs === 3 && S.active === 0 && S.count === '01' && S.cap === 'Suveniri' && S.pressed === 'true,false,false', [S.thumbs, S.active, S.count, S.cap, S.pressed]);
   check('tekst se ne preklapa sa izborom, izbor na svom mjestu, sve u kadru', !S.overlap && S.inFrame && S.pickPos, [S.overlap, S.inFrame, S.pickPos]);
   check('bez tačkica liste iz teme', S.bullets === 'none', S.bullets);
   check('link = stranica iz WP-a', S.page === SITE + '/suvenirnica/', S.page);
@@ -208,7 +209,7 @@ async function state(p) {
   await p.click('#jsu-suvenirnica .jsu-seg[data-k="2"]');
   await p.waitForTimeout(1600);
   S = await state(p);
-  check('klik na treću liniju: vitrina u pozadini, 03, natpis', S.active === 2 && S.count === '03' && S.cap === 'Zimski dodaci' && S.pressed === 'false,false,true' && S.hidden === 0, [S.active, S.count, S.cap, S.pressed]);
+  check('klik na treću liniju: domaći proizvodi u pozadini, 03, natpis', S.active === 2 && S.count === '03' && S.cap === 'Domaći proizvodi' && S.pressed === 'false,false,true' && S.hidden === 0, [S.active, S.count, S.cap, S.pressed]);
   await p.locator('#jsu-suvenirnica .jsu-frame').screenshot({ path: path.join(OUT, 'sr-racunar-vitrina.png') });
   await p.click('#jsu-suvenirnica .jsu-gal');
   await p.waitForTimeout(700);
@@ -225,7 +226,7 @@ async function state(p) {
   await p.mouse.move(5, 5);
   await p.waitForTimeout(7200);
   S = await state(p);
-  check('poslije ~6,5 s u izlogu je drugi proizvod (Magneti, 02)', S.active === 1 && S.cap === 'Magneti' && S.count === '02', [S.active, S.cap, S.count]);
+  check('poslije ~6,5 s u izlogu je drugi proizvod (Odjeća, 02)', S.active === 1 && S.cap === 'Odjeća' && S.count === '02', [S.active, S.cap, S.count]);
   const prog = await p.evaluate(() => getComputedStyle(document.querySelector('#jsu-suvenirnica .jsu-seg.is-on i s')).animationName);
   check('linija napretka se puni na aktivnoj liniji', prog === 'jsuProg', prog);
   await p.hover('#jsu-suvenirnica .jsu-lead');
@@ -260,7 +261,7 @@ async function state(p) {
   ({ p, ctx, errors, rest } = await open(browser, { path: '/en/pocetna-zima/', ga: 'gtm', wp: 'qtranslate' }));
   S = await state(p);
   check('engleski naslov iz WP-a', S.lines.join('|') === 'Take a piece|of Jahorina|with you' && S.kicker === 'Souvenir shop', [S.lines, S.kicker]);
-  check('engleski uvod, vrste poklona i nazivi', /^Visit our souvenir shops/.test(S.lead) && S.tags === 'Local artisans|Natural cosmetics|Warm textiles|For pets' && S.whereFits && S.cap === 'Neck gaiters', [S.lead, S.tags, S.cap]);
+  check('engleski uvod, vrste poklona i nazivi', /^Visit our souvenir shops/.test(S.lead) && S.tags === 'Souvenirs and magnets|Clothing and hats|Handmade|Local products' && S.whereFits && S.cap === 'Souvenirs', [S.lead, S.tags, S.cap]);
   check('link vodi na /en/', S.page === SITE + '/en/suvenirnica/', S.page);
   check('prvo /en/wp-json, pa /wp-json', /^\/en\/wp-json/.test(rest[0]) && /^\/wp-json/.test(rest[1]), rest);
   await p.click('#jsu-suvenirnica .jsu-cta');
@@ -315,7 +316,7 @@ async function state(p) {
     S = await state(p);
     check('bez vodoravnog skrola, preko cijele širine', S.scroll === 0 && S.left === 0 && S.width === S.cw, S);
     check('sve vidljivo poslije ulaska', S.hidden === 0, S.hidden);
-    check('nazivi proizvoda cijeli, u jednom redu', S.whereFits);
+    check('nazivi proizvoda cijeli, u jednom redu', S.whereFits, S.segW);
     check('vrste poklona u dvije kolone', S.tagCols === 2, S.tagCols);
     check('tekst se ne preklapa sa izborom, izbor na svom mjestu, sve u kadru', !S.overlap && S.inFrame && S.pickPos, [S.overlap, S.inFrame, S.pickPos]);
     if (name === 'telefon') check('telefon: oba dugmeta u jednom redu, 46px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 46 && S.acts[1][2] === 46, S.acts);
