@@ -45,17 +45,17 @@
   var TEL = opt('telefon', '+38757270003');   // kontakt telefon OC Jahorina (marketing i prodaja, kao rezervacije ratraka)
   var reduced = w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // tekstovi (10. 11., premium restoran): uvod je sažetak teksta stranice (domaća kuhinja, vrhunska pića, pogled na jezero i vrhove)
+  // tekstovi (10. 11., premium restoran): uvod je sažetak teksta stranice (domaća kuhinja, vrhunska pića) + pogled sa vrha kao metafora
   var T = EN ? {
     kicker: 'Après-ski & restaurant', head: 'Olympic Bar', altV: '1,879',
-    lead: 'Home-style cooking and fine drinks at the top of Jahorina, with views of the lake and the surrounding peaks.',
+    lead: 'Home-style cooking and fine drinks at the top of Jahorina, with the whole mountain at your feet.',
     hours: 'Open 9 am – 9 pm', place: 'Terrace with a view',
     rez: 'Book a table', rezAria: 'Book a table by phone', rezLine: 'Reservations', video: 'Watch the atmosphere', more: 'More about the Olympic Bar',
     close: 'Close', vid: 'Video: Olympic Bar', why: 'WordPress', whyTail: 'showing built-in content',
     photo: 'Mushroom risotto and a glass of white wine on a set table at the Olympic Bar'
   } : {
     kicker: 'Après-ski i restoran', head: 'Olimpijski bar', altV: '1.879',   // korisnik 10. 11. (ranije „Restoran“)
-    lead: 'Domaća kuhinja i vrhunska pića na vrhu Jahorine, uz pogled na akumulaciono jezero i okolne vrhove.',
+    lead: 'Domaća kuhinja i vrhunska pića na vrhu Jahorine, gdje vam je cijela planina na dlanu.',   // korisnik 10. 11.: bez jezera, metafora pogleda sa vrha
     hours: 'Otvoreno 9–21h', place: 'Terasa sa pogledom',
     rez: 'Rezerviši sto', rezAria: 'Rezerviši sto telefonom', rezLine: 'Rezervacije', video: 'Pogledaj atmosferu', more: 'Više o Olimpijskom baru',
     close: 'Zatvori', vid: 'Video: Olimpijski bar', why: 'WordPress', whyTail: 'prikazan je ugrađeni sadržaj',
