@@ -93,10 +93,29 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
     const cw = await page.evaluate(() => { const c = document.querySelector('#jm-mapa .jm-card').getBoundingClientRect(), f = document.querySelector('#jm-mapa .jm-frame').getBoundingClientRect(); return { w: Math.round(c.width), h: Math.round(c.height), fh: Math.round(f.height) }; });
     ok(v.touch ? cw.h <= cw.fh * 0.47 : cw.w <= 290, `${v.name}: kartica ${cw.w}×${cw.h}px (okvir ${cw.fh}px)`);
     await frame.screenshot({ path: path.join(OUT, `${v.name}-3-staza-4a.png`) });
+    // poravnanje: SVG linije, slike i HTML oznake u istim koordinatama (svijet = veličina podataka)
+    const por = await page.evaluate(() => {
+      const w = document.querySelector('#jm-mapa .jm-world'), m = w.querySelector('.jm-pm[data-run="4a"]'), r = m.getBoundingClientRect();
+      const path = w.querySelector('.jm-p[data-run="4a"] .jm-ln'), L = path.getTotalLength(), M = path.getScreenCTM();
+      let best = 1e9; const cx = r.x + r.width / 2, cy = r.y + r.height / 2;
+      for (let i = 0; i <= 400; i++) { const q = path.getPointAtLength(L * i / 400); best = Math.min(best, Math.hypot(q.x * M.a + M.e - cx, q.y * M.d + M.f - cy)); }
+      const img = w.querySelector('.jm-img-d');
+      return { d: best, wh: w.offsetHeight, ih: img.offsetHeight };
+    });
+    ok(por.d < 2 && por.wh === por.ih, `${v.name}: oznaka na liniji (${por.d.toFixed(1)} px), svijet ${por.wh} = slika ${por.ih}`);
+    // svjetlosna linija niz stazu: postoji i pomjera se
+    const fl1 = await page.evaluate(() => { const p = document.querySelector('#jm-mapa .jm-flw'); return p ? parseFloat(p.style.strokeDashoffset) : null; });
+    await sleep(500);
+    const fl2 = await page.evaluate(() => { const p = document.querySelector('#jm-mapa .jm-flw'); return p ? parseFloat(p.style.strokeDashoffset) : null; });
+    ok(fl1 !== null && fl2 !== null && fl1 !== fl2, `${v.name}: svjetlosna linija niz stazu (${fl1} → ${fl2})`);
+    const slika = await page.evaluate(() => ({ lq: !!document.querySelector('#jm-mapa img[src$="mapa-dan-96.webp"]'), op: getComputedStyle(document.querySelector('#jm-mapa .jm-img-d')).opacity }));
+    ok(slika.lq && slika.op === '1', `${v.name}: mutna slika ispod, oštra vidljiva (${slika.op})`);
 
     // izbor žičare
     await page.evaluate(() => document.querySelector('#jm-mapa .jm-world .jm-lb[data-lift="2"]').click());
     await sleep(800);
+    const cab = await page.evaluate(() => { const c = document.querySelector('#jm-mapa .jm-cab'); return c ? c.style.transform : null; });
+    ok(cab && /translate3d/.test(cab), `${v.name}: kabina po žičari 2 (${cab})`);
     await frame.screenshot({ path: path.join(OUT, `${v.name}-4-zicara-2.png`) });
 
     // žičara sidro (iz legende)

@@ -110,6 +110,7 @@ for ime, im in (('dan', dan), ('noc', noc)):
     for w in (3543, 2000):
         out = im if w == W else im.resize((w, round(H * w / W)), Image.LANCZOS)
         out.save(ROOT / 'slike' / f'mapa-{ime}-{w}.webp', quality=80, method=6)
+dan.resize((96, round(H * 96 / W)), Image.LANCZOS).save(ROOT / 'slike' / 'mapa-dan-96.webp', quality=60)   # mutna slika dok se učitava oštra
 
 # osvijetljene staze (žute trake podloge) u koordinatama svijeta
 la = np.asarray(Image.fromarray((zuto * 255).astype(np.uint8)).resize((W, H), Image.BILINEAR, box=(kx, ky, kx1, ky1))) > 110

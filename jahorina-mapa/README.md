@@ -50,6 +50,14 @@ Bez usluga, bez topova za osnježavanje i bez popisa žičara i staza ispod mape
 `data-usluge="1"`, `data-topovi="1"`, `data-popis="1"` na `#jm-mapa` ih vraćaju (sa filterima). Ostaju: staze, vezne staze,
 žičare, FIS oznake, granica, pješačke staze, noćni prikaz.
 
+## Živi detalji (10. 11. 2026)
+- Izabrana staza: svjetlosna linija dvaput tiho pređe stazu od vrha do dna (`flowRun`, ~1,4–2,6 s po prolazu).
+- Izabrana žičara: kabina dvaput pređe od donje do gornje stanice pa nestane (`rideLift`).
+- Učitavanje: odmah mutna mala slika (`slike/mapa-dan-96.webp`, 1,5 KB, uvećana bez CSS filtera), oštra se mekano pojavi.
+- Sve to staje uz `prefers-reduced-motion`; animacije rade samo nekoliko sekundi poslije izbora (requestAnimationFrame).
+- Ispravljeno: svijet mape je bio visine 1996 px (PSD), a AI mapa ima 2198 → linije, oznake i slika su bile malo
+  razmaknute. Sada se veličina svijeta postavlja iz `mapa.json` (`w`, `h`); test provjerava da je oznaka staze na liniji.
+
 ## Otvoreno
 - Dužine i nazivi staza nisu na mapi (samo brojevi i težina) — mogu se dodati u `ulaz.py` kad stignu.
 - Podloga u većoj rezoluciji (od dizajnerke), ako postoji.

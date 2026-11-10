@@ -121,10 +121,15 @@
   '#jm-mapa .jm-view{position:absolute;inset:0;overflow:hidden;cursor:grab;touch-action:pan-y;outline:none;user-select:none;-webkit-user-select:none}' +
   '#jm-mapa .jm-view.jm-drag{cursor:grabbing}' +
   '#jm-mapa .jm-view:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}' +
-  '#jm-mapa .jm-world{position:absolute;left:0;top:0;width:3543px;height:1996px;transform-origin:0 0;--inv:1;--lw:1;--ms:1}' +
+  '#jm-mapa .jm-world{position:absolute;left:0;top:0;width:3543px;height:2198px;transform-origin:0 0;--inv:1;--lw:1;--ms:1}' +
   '#jm-mapa .jm-world.jm-moving{will-change:transform}' +
   '#jm-mapa .jm-img{position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none!important;display:block;pointer-events:none}' +
   '#jm-mapa .jm-img-n{opacity:0;transition:opacity .6s ease}' +
+  '#jm-mapa .jm-img-d{opacity:0;transition:opacity .7s ease}#jm-mapa .jm-img-d.jm-in{opacity:1}' +
+  '#jm-mapa .jm-flw{stroke:#fff;stroke-width:calc(var(--lw)*3px);fill:none;stroke-linecap:round;pointer-events:none}' +
+  '#jm-mapa .jm-flw-g{stroke:#fff;stroke-width:calc(var(--lw)*10px);opacity:.3;fill:none;stroke-linecap:round;pointer-events:none}' +
+  '#jm-mapa .jm-cab{position:absolute;left:0;top:0;pointer-events:none;opacity:0;transition:opacity .3s;will-change:transform}#jm-mapa .jm-cab.on{opacity:1}' +
+  '#jm-mapa .jm-cab i{display:block;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2.5px #fff,0 0 12px rgba(0,185,242,.75);transform:scale(calc(var(--inv)*var(--ms)))}' +
   '#jm-mapa.jm-night .jm-img-n{opacity:1}' +
   '#jm-mapa svg.jm-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}' +
   '#jm-mapa .jm-svg path,#jm-mapa .jm-svg line{fill:none;stroke-linecap:round;stroke-linejoin:round}' +
@@ -389,6 +394,7 @@
 
   function start(D) {
     var W = D.w, H = D.h;
+    world.style.width = W + 'px'; world.style.height = H + 'px';   // svijet = veličina podataka (SVG, slike i oznake u istim koordinatama)
     var byRun = {}, byLift = {};
     D.staze.forEach(function (s) { byRun[s.id] = s; });
     D.zicare.forEach(function (z) { byLift[z.id] = z; });
@@ -398,9 +404,13 @@
     /* --- slike --- */
     var big = (window.innerWidth || 1200) * (window.devicePixelRatio || 1) > 1500;
     var imgD = new Image(), imgN = new Image();
-    imgD.className = 'jm-img'; imgD.alt = EN ? 'Painted panorama of the Jahorina ski resort with the Ogorjelica peak' : 'Naslikana panorama ski centra Jahorina sa vrhom Ogorjelica';
+    var imgL = new Image(); imgL.className = 'jm-img'; imgL.alt = ''; imgL.setAttribute('aria-hidden', 'true'); imgL.width = W; imgL.height = H;
+    imgL.src = BASE + 'slike/mapa-dan-96.webp';   // ~2 KB, uvećana izgleda kao meko zamućena slika (bez CSS filtera)
+    imgD.className = 'jm-img jm-img-d'; imgD.alt = EN ? 'Painted panorama of the Jahorina ski resort with the Ogorjelica peak' : 'Naslikana panorama ski centra Jahorina sa vrhom Ogorjelica';
     imgD.width = W; imgD.height = H; imgD.decoding = 'async';
+    imgD.onload = function () { requestAnimationFrame(function () { imgD.classList.add('jm-in'); }); };
     imgD.src = BASE + 'slike/mapa-dan-' + (big ? 3543 : 2000) + '.webp';
+    if (imgD.complete && imgD.naturalWidth) imgD.classList.add('jm-in');
     imgN.className = 'jm-img jm-img-n'; imgN.alt = ''; imgN.setAttribute('aria-hidden', 'true'); imgN.width = W; imgN.height = H; imgN.decoding = 'async';
     var nightLoaded = false;
     function loadNight() { if (!nightLoaded) { nightLoaded = true; imgN.src = BASE + 'slike/mapa-noc-' + (big ? 3543 : 2000) + '.webp'; } }
@@ -474,6 +484,7 @@
     world.innerHTML = s.join('') + m.join('');
     world.insertBefore(imgN, world.firstChild);
     world.insertBefore(imgD, world.firstChild);
+    world.insertBefore(imgL, world.firstChild);
 
     /* --- filteri --- */
     var cnt = { laka: 0, srednja: 0, teska: 0 };
@@ -596,10 +607,52 @@
     var rT;
     window.addEventListener('resize', function () { clearTimeout(rT); rT = setTimeout(function () { var cx = (vw / 2 - tx) / k, cy = (vh / 2 - ty) / k, rel = k / kMin; bounds(); k = kMin * rel; tx = vw / 2 - cx * k; ty = vh / 2 - cy * k; apply(); }, 120); });
 
+    /* --- živi detalji: svjetlosna linija niz izabranu stazu, kabina po izabranoj žičari (kratko, 2 prolaza) --- */
+    var fx = { raf: 0, tm: 0, els: [] };
+    function stopFx() {
+      if (fx.raf) cancelAnimationFrame(fx.raf); clearTimeout(fx.tm); fx.raf = 0;
+      fx.els.forEach(function (e) { if (e.parentNode) e.parentNode.removeChild(e); }); fx.els = [];
+    }
+    var ease = function (p) { return -(Math.cos(Math.PI * p) - 1) / 2; };
+    function play(per, gap, passes, frame, end) {     // per ms po prolazu; kreće kad se kamera smiri (~450 ms)
+      var t0 = performance.now() + 450;
+      (function step(now) {
+        var t = now - t0, i = Math.floor(t / (per + gap));
+        if (t >= 0 && i >= passes) { fx.raf = 0; end(); return; }
+        frame(t < 0 ? 0 : ease(Math.min(1, (t - i * (per + gap)) / per)), t >= 0);
+        fx.raf = requestAnimationFrame(step);
+      })(performance.now());
+    }
+    function flowRun(r) {
+      if (reduce) return;
+      var svg = world.querySelector('svg.jm-svg'), NS = 'http://www.w3.org/2000/svg', g = document.createElementNS(NS, 'g'), segs = [], tot = 0;
+      svg.appendChild(g); fx.els.push(g);
+      r.seg.forEach(function (sg) {
+        var q = { p: [] };
+        ['jm-flw-g', 'jm-flw'].forEach(function (c) { var p = document.createElementNS(NS, 'path'); p.setAttribute('d', sg.d); p.setAttribute('class', c); g.appendChild(p); q.p.push(p); });
+        q.L = q.p[1].getTotalLength(); q.s = tot; tot += q.L; segs.push(q);
+      });
+      var Dl = Math.max(40, tot * .16);
+      segs.forEach(function (q) { q.p.forEach(function (p) { p.style.strokeDasharray = Dl + ' ' + (q.L + Dl); p.style.strokeDashoffset = Dl; }); });
+      play(Math.min(2600, Math.max(1400, 900 + tot * .9)), 350, 2, function (e) {
+        var d = e * (tot + Dl);
+        segs.forEach(function (q) { var o = Dl - Math.max(0, Math.min(q.L + Dl, d - q.s)); q.p[0].style.strokeDashoffset = q.p[1].style.strokeDashoffset = o; });
+      }, function () { stopFx(); });
+    }
+    function rideLift(z) {
+      if (reduce) return;
+      var c = document.createElement('span'); c.className = 'jm-cab'; c.innerHTML = '<i></i>'; world.appendChild(c); fx.els.push(c);
+      play(Math.min(3400, 1600 + z.m * 1.1), 300, 2, function (e, go) {
+        c.style.transform = 'translate3d(' + (z.a[0] + (z.b[0] - z.a[0]) * e).toFixed(1) + 'px,' + (z.a[1] + (z.b[1] - z.a[1]) * e).toFixed(1) + 'px,0)';
+        if (go) c.classList.add('on');
+      }, function () { c.classList.remove('on'); fx.tm = setTimeout(stopFx, 350); });
+    }
+
     /* --- izbor --- */
     var sel = null;
     function clearSel() {
       var wasOpen = card.classList.contains('on');
+      stopFx();
       sel = null; root.classList.remove('jm-sel');
       [].forEach.call(root.querySelectorAll('.on'), function (e) { if (!e.classList.contains('jm-card')) e.classList.remove('on'); });
       card.classList.remove('on'); root.classList.remove('jm-cardon');
@@ -622,6 +675,7 @@
         row(T.u, r.u.map(runChip).join('')) + row(T.dole, r.dole.map(liftChip).join('')) + '</ul>';
       card.classList.add('on'); root.classList.add('jm-cardon');
       if (focus !== false) fitBox(r.bb[0], r.bb[1], r.bb[2], r.bb[3], 520);
+      flowRun(r);
     }
     function selectLift(id, focus) {
       var z = byLift[id]; if (!z) return;
@@ -636,6 +690,7 @@
         (fromTop.length ? '<ul class="jm-cl">' + row(T.fromTop, fromTop.map(function (r) { return runChip(r.id); }).join('')) + '</ul>' : '');
       card.classList.add('on'); root.classList.add('jm-cardon');
       if (focus !== false) fitBox(Math.min(z.a[0], z.b[0]), Math.min(z.a[1], z.b[1]), Math.max(z.a[0], z.b[0]), Math.max(z.a[1], z.b[1]), 520, .9);
+      rideLift(z);
     }
     function selectPoi(btn, focus) {
       clearSel();

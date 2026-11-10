@@ -114,6 +114,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - **30. 10.:** nazivi težine kao na mapi: plave / crvene / crne staze (EN blue / red / black); dnevna podloga prigušena (bez sunca, svijetlo plavo-sivo nebo, teren 72 % zasićenosti, hladniji ton) — `PODLOGA = 'original'` vraća PSD izgled.
 - **9. 11.: nova mapa iz Illustratora** („Mapa ZIMA 2026 NOVO v2“, Release `mapa-ai`): nova naslikana podloga (zimska šuma, opservatorija), 13 žičara (bez Oštre glave; Prača 12, Trnovo I 13), 24 staze (stara 9a uklonjena, 9b → 9a), nove vezne 1c/1a, bez hotela i snowboard parka. Podloga u fajlu je samo 1593 × 987 px (povezana slika) → zum ograničen na 1,1. Detalji u `jahorina-mapa/README.md`.
 - **9. 11. (korisnik):** bez usluga, bez osnježavanja i bez popisa žičara ispod mape (vraćaju se sa `data-usluge/topovi/popis="1"`); filteri: plave, crvene, crne, žičare, noćno skijanje.
+- **10. 11.:** živi detalji (svjetlosna linija niz izabranu stazu, kabina po izabranoj žičari, mekano učitavanje slike); ispravljena visina svijeta (1996 → iz podataka, 2198) — linije i oznake su bile pomjerene u odnosu na sliku. Slika mape koju je korisnik poslao 10. 11. je starija verzija (14 žičara); važi AI od 5. 11. Nazivi i dužine staza i dalje nisu ni na jednoj mapi.
 - Pregled (artifact): https://claude.ai/artifact/X8xC3r94DjZxFT5KZGsX99
 - Otvoreno: dužine/nazivi staza, gdje ide na sajtu (posebna stranica ili početna), pa red za Elementor.
 
