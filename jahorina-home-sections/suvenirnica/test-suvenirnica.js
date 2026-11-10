@@ -301,9 +301,10 @@ async function state(p) {
     const cs = getComputedStyle(r.querySelector('.jsu-wrap')), px = (v) => parseFloat(v);
     const tmp = document.createElement('div'); tmp.style.cssText = 'position:absolute;width:var(--gap);height:var(--g)'; r.querySelector('.jsu-wrap').appendChild(tmp);
     const gap = tmp.getBoundingClientRect().width, gg = tmp.getBoundingClientRect().height; tmp.remove();
-    return { join: r.classList.contains('jsu--join'), space: Math.round(b.top - a.bottom), want: Math.round(gap + gg), pt: cs.paddingTop };
+    return { join: r.classList.contains('jsu--join'), space: Math.round(b.top - a.bottom), want: Math.round(gap), pt: cs.paddingTop };
   });
-  check('jsu--join, razmak = --gap + --g', j.join && Math.abs(j.space - j.want) <= 2, j);
+  // od 10. 11.: između dvije naše sekcije jedan razmak (--gap), suvenirnica iznad kadra ne dodaje rub
+  check('jsu--join, razmak = --gap', j.join && Math.abs(j.space - j.want) <= 2, j);
   await p.screenshot({ path: path.join(OUT, 'ratrak-suvenirnica.png'), fullPage: true });
   check('bez grešaka u konzoli', errors.length === 0, errors);
   await ctx.close();
