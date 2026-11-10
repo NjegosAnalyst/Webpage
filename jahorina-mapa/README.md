@@ -58,6 +58,10 @@ Bez usluga, bez topova za osnježavanje i bez popisa žičara i staza ispod mape
 - Ispravljeno: svijet mape je bio visine 1996 px (PSD), a AI mapa ima 2198 → linije, oznake i slika su bile malo
   razmaknute. Sada se veličina svijeta postavlja iz `mapa.json` (`w`, `h`); test provjerava da je oznaka staze na liniji.
 
+## Gorska služba spasavanja (10. 11. 2026)
+Ispod mape: „Hitno na stazi? Gorska služba spasavanja Jahorina“ + dugme `tel:+38766636636` (broj sa zvanične mape).
+Drugi broj: `data-gss="+387 …"` na `#jm-mapa`.
+
 ## Otvoreno
 - Dužine i nazivi staza nisu na mapi (samo brojevi i težina) — mogu se dodati u `ulaz.py` kad stignu.
 - Podloga u većoj rezoluciji (od dizajnerke), ako postoji.

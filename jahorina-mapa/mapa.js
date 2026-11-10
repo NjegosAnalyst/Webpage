@@ -38,7 +38,8 @@
       bar: ['Restaurant', 'Outdoor bar', 'Souvenir shop', 'Reservoir lake'],
       poligon: ['Practice slope', 'Magic carpet', 'Tubing', 'Kids playground', 'Ski school booking', 'Practice area ticket office'] },
     here: 'On site', snow: 'Snowmaking', fisOn: 'FIS',
-    peak: 'Ogorjelica', and: ', ', km: 'm'
+    peak: 'Ogorjelica', and: ', ', km: 'm',
+    sosQ: 'Emergency on the slopes?', sos: '<span class="jm-sos-x">Jahorina </span>Mountain Rescue', sosCall: 'Call Mountain Rescue'
   } : {
     kicker: 'Ski mapa', h1: 'Mapa staza', h2: 'Jahorine',
     lead: '{s}, vezne staze i {z} ski centra Jahorina na jednoj mapi. Dodirni stazu ili žičaru za detalje, a noćni prikaz pokazuje osvijetljene staze.',
@@ -61,8 +62,11 @@
       bar: ['Restoran', 'Vanjski šank', 'Suvenirnica', 'Akumulaciono jezero'],
       poligon: ['Ski staza', 'Pokretna traka', 'Tjubing', 'Dječije igralište', 'Booking ski škole', 'Ski kasa za poligon'] },
     here: 'Ovdje', snow: 'Osnježavanje', fisOn: 'FIS',
-    peak: 'Ogorjelica', and: ', ', km: 'm'
+    peak: 'Ogorjelica', and: ', ', km: 'm',
+    sosQ: 'Hitno na stazi?', sos: 'Gorska služba spasavanja<span class="jm-sos-x"> Jahorina</span>', sosCall: 'Pozovi Gorsku službu spasavanja'
   };
+  // broj Gorske službe spasavanja (sa zvanične mape); data-gss na #jm-mapa ga mijenja
+  var GSS = root.getAttribute('data-gss') || '+387 66 636 636';
   // množina: SR 1 staza, 2–4 staze, 5+ staza (11–14 staza); EN run/runs
   function br(n, sr1, sr2, sr5, en1, enN) {
     if (EN) return n + ' ' + (n === 1 ? en1 : enN);
@@ -262,6 +266,12 @@
   '#jm-mapa .jm-rc.t-laka{background:var(--c-laka)}#jm-mapa .jm-rc.t-srednja{background:var(--c-srednja)}#jm-mapa .jm-rc.t-teska{background:var(--c-teska);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}' +
   '#jm-mapa .jm-rc.z{background:rgba(196,238,255,.1);color:var(--ice)!important;box-shadow:inset 0 0 0 1px rgba(196,238,255,.2)}' +
   '#jm-mapa .jm-help{font:500 13px/1.4 var(--fb);color:var(--text-3);margin:0}' +
+  '#jm-mapa .jm-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px}' +
+  '#jm-mapa .jm-sos{display:flex;align-items:center;gap:12px;padding:6px 6px 6px 8px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));box-shadow:inset 0 0 0 1px var(--line)}' +
+  '#jm-mapa .jm-sos-i{flex:none;width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:rgba(227,52,60,.16);color:#FF6B72}#jm-mapa .jm-sos-i svg{width:18px;height:18px}' +
+  '#jm-mapa .jm-sos-t{display:flex;flex-direction:column;gap:3px;min-width:0;font:600 13px/1.2 var(--fd);color:#fff}#jm-mapa .jm-sos-t small{font:500 12px/1.2 var(--fb);color:var(--text-3)}' +
+  '#jm-mapa .jm-sos a{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:12px;white-space:nowrap;font:700 15px/1 var(--fd)!important;letter-spacing:.3px;font-variant-numeric:tabular-nums;color:#fff!important;background:rgba(227,52,60,.9);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);transition:filter .2s,transform .12s}' +
+  '#jm-mapa .jm-sos a svg{width:16px;height:16px}#jm-mapa .jm-sos a:hover{filter:brightness(1.08)}#jm-mapa .jm-sos a:active{transform:scale(.96)}#jm-mapa .jm-sos a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}' +
   /* popis ispod mape */
   '#jm-mapa .jm-pop{border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));box-shadow:inset 0 0 0 1px var(--line)}' +
   '#jm-mapa .jm-pop>summary{list-style:none;display:flex;align-items:center;gap:12px;min-height:44px;padding:0 16px;cursor:pointer;font:600 11px/1 var(--fd);letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.8);border-radius:16px}' +
@@ -295,7 +305,7 @@
   '#jm-mapa .jm-fsbar .jm-chip,#jm-mapa .jm-fsbar .jm-nt{background:linear-gradient(180deg,rgba(18,27,45,.88),rgba(9,14,26,.92))}' +
   '@media (max-width:900px){#jm-mapa .jm-head{grid-template-columns:1fr}#jm-mapa .jm-lists{grid-template-columns:1fr}}' +
   '@media (max-width:760px){' +
-  '#jm-mapa{padding-left:0;padding-right:0}#jm-mapa .jm-head,#jm-mapa .jm-bar,#jm-mapa .jm-help{padding-left:16px;padding-right:16px}#jm-mapa .jm-pop{margin:0 16px}' +
+  '#jm-mapa{padding-left:0;padding-right:0}#jm-mapa .jm-head,#jm-mapa .jm-bar,#jm-mapa .jm-foot{padding-left:16px;padding-right:16px}#jm-mapa .jm-sos{flex:1 1 100%}#jm-mapa .jm-sos-t{font-size:12.5px}#jm-mapa .jm-sos-t .jm-sos-x{display:none}#jm-mapa .jm-sos a{margin-left:auto;padding:0 13px;font-size:14px!important}#jm-mapa .jm-pop{margin:0 16px}' +
   '#jm-mapa .jm-frame{border-radius:0;height:min(72vh,520px);box-shadow:inset 0 1px 0 var(--line),inset 0 -1px 0 var(--line)}' +
   '#jm-mapa .jm-bar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;justify-content:flex-start}#jm-mapa .jm-bar::-webkit-scrollbar{display:none}' +
   '#jm-mapa .jm-chips{flex-wrap:nowrap}#jm-mapa .jm-chip,#jm-mapa .jm-nt{flex:none}' +
@@ -375,7 +385,10 @@
         '<div class="jm-hint" aria-hidden="true"></div><div class="jm-tt" aria-hidden="true"></div>' +
         '<div class="jm-card" role="dialog" aria-live="polite"><button class="jm-x" type="button" aria-label="' + T.close + '">' + I.x + '</button><div class="jm-cb"></div></div>' +
       '</div>' +
-      '<p class="jm-help">' + (isTouch ? T.helpTouch : T.help) + '</p>' +
+      '<div class="jm-foot"><p class="jm-help">' + (isTouch ? T.helpTouch : T.help) + '</p>' +
+        '<div class="jm-sos"><span class="jm-sos-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 4h4v6h6v4h-6v6h-4v-6H4v-4h6z"/></svg></span>' +
+        '<span class="jm-sos-t"><small>' + T.sosQ + '</small>' + T.sos + '</span>' +
+        '<a href="tel:' + GSS.replace(/[^+\d]/g, '') + '" aria-label="' + esc(T.sosCall + ' ' + GSS) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>' + esc(GSS) + '</a></div></div>' +
       (POP ? '<details class="jm-pop"><summary>' + T.listSum + '<b></b><i aria-hidden="true"></i></summary>' +
       '<div class="jm-lists"><div><h3>' + T.listLifts + '</h3><ul class="jm-lifts"></ul></div><div><h3>' + T.listRuns + '</h3><div class="jm-runs"></div></div></div></details>' : '') +
     '</div>';

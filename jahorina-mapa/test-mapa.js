@@ -93,6 +93,9 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
     const cw = await page.evaluate(() => { const c = document.querySelector('#jm-mapa .jm-card').getBoundingClientRect(), f = document.querySelector('#jm-mapa .jm-frame').getBoundingClientRect(); return { w: Math.round(c.width), h: Math.round(c.height), fh: Math.round(f.height) }; });
     ok(v.touch ? cw.h <= cw.fh * 0.47 : cw.w <= 290, `${v.name}: kartica ${cw.w}×${cw.h}px (okvir ${cw.fh}px)`);
     await frame.screenshot({ path: path.join(OUT, `${v.name}-3-staza-4a.png`) });
+    // broj Gorske službe spasavanja ispod mape
+    const sos = await page.evaluate(() => { const a = document.querySelector('#jm-mapa .jm-sos a'); if (!a) return null; const r = a.getBoundingClientRect(); return { href: a.getAttribute('href'), t: a.textContent, h: Math.round(r.height), right: Math.round(r.right), vw: innerWidth }; });
+    ok(sos && sos.href === 'tel:+38766636636' && /636 636/.test(sos.t) && sos.h >= 44 && sos.right <= sos.vw, `${v.name}: Gorska služba ${sos && sos.t} (${sos && sos.h}px)`);
     // poravnanje: SVG linije, slike i HTML oznake u istim koordinatama (svijet = veličina podataka)
     const por = await page.evaluate(() => {
       const w = document.querySelector('#jm-mapa .jm-world'), m = w.querySelector('.jm-pm[data-run="4a"]'), r = m.getBoundingClientRect();
