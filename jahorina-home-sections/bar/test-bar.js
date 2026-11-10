@@ -1,7 +1,7 @@
 // Simulacija sajta za sekciju Olimpijski bar (sajt se iz cloud okruženja ne može otvoriti).
 // Playwright presreće oc-jahorina.com i jsDelivr: stranica, WordPress REST odgovor (stranica Olimpijski bar),
 // bar.js, suvenirnica.js, fotografije i fontovi se služe lokalno. YouTube se ne učitava.
-// Od 10. 11. bar je bez menija (korisnik: „bez cjenovnika“) i u stilu premium restorana: jedna fotografija, „Restoran · 1.879 m“,
+// Od 10. 11. bar je bez menija (korisnik: „bez cjenovnika“) i u stilu premium restorana: jedna fotografija, „Après-ski i restoran · 1.879 m“,
 // pun naslov, kratak uvod, tihi red (radno vrijeme · terasa), „Rezerviši sto“ + „Pogledaj atmosferu“.
 // Pokretanje: node test-bar.js [folder-za-screenshotove] [folder-sa-fontovima]
 const { chromium } = require('playwright');
@@ -152,7 +152,7 @@ async function state(p) {
   check('bez vodoravnog skrola, preko cijele širine', S.scroll === 0 && S.left === 0 && S.width === S.cw, S);
   check('naslov bijeli i Archivo uprkos temi', S.h2color === 'rgb(255, 255, 255)' && /Archivo/.test(S.h2font), [S.h2color, S.h2font]);
   check('naslov iz WP-a: "Olimpijski / bar", pun (bez obrisa)', S.lines.join('|') === 'Olimpijski|bar' && S.outline === 0, [S.lines, S.outline]);
-  check('mali tekst: Restoran · 1.879 m (visina iz teksta stranice)', S.kicker === 'Restoran · 1.879 m', S.kicker);
+  check('mali tekst: Après-ski i restoran · 1.879 m (visina iz teksta stranice)', S.kicker === 'Après-ski i restoran · 1.879 m', S.kicker);
   check('uvod: kratak sažetak (domaća kuhinja, pića, pogled)', /^Domaća kuhinja i vrhunska pića na vrhu Jahorine/.test(S.lead), S.lead);
   check('tihi red: Otvoreno 9–21h · Terasa sa pogledom (bez tri podatka i 40+ događaja)', S.place === 'Otvoreno 9–21h·Terasa sa pogledom' && S.facts === 0, [S.place, S.facts]);
   check('bez menija (cjenovnika) u kadru i preko ekrana', S.noMenu, S.noMenu);
@@ -202,17 +202,17 @@ async function state(p) {
   console.log('WordPress ispiše PHP upozorenje prije JSON-a (Safari: "The string did not match the expected pattern")');
   ({ p, ctx, errors } = await open(browser, { wp: 'upozorenje', ga: 'none', admin: true }));
   S = await state(p);
-  check('podaci se ipak pročitaju (visina, link), admin bez poruke o stranici', S.kicker === 'Restoran · 1.879 m' && S.page === SITE + '/olimpijski-bar/' && !/stranica/.test(S.why), [S.kicker, S.why]);
+  check('podaci se ipak pročitaju (visina, link), admin bez poruke o stranici', S.kicker === 'Après-ski i restoran · 1.879 m' && S.page === SITE + '/olimpijski-bar/' && !/stranica/.test(S.why), [S.kicker, S.why]);
   await ctx.close();
   ({ p, ctx, errors } = await open(browser, { wp: 'html', ga: 'none', admin: true }));
   S = await state(p);
   check('HTML umjesto JSON-a: ugrađeni tekst, admin vidi početak odgovora', /^Domaća kuhinja/.test(S.lead) && /odgovor nije JSON · pages: „[^“]*Stranica u održavanju“/.test(S.why), S.why);
   await ctx.close();
 
-  console.log('Tekst stranice bez visine → mali tekst samo „Restoran“; video ostaje podrazumijevani; radno vrijeme iz reda za widget (zamjena)');
+  console.log('Tekst stranice bez visine → mali tekst bez visine; video ostaje podrazumijevani; radno vrijeme iz reda za widget (zamjena)');
   ({ p, ctx, errors } = await open(browser, { wp: 'bezbrojeva', ga: 'none', attrs: 'data-radno="Svaki dan 9–17h"' }));
   S = await state(p);
-  check('bez visine: „Restoran“; red: Svaki dan 9–17h · Terasa sa pogledom', S.kicker === 'Restoran' && S.place === 'Svaki dan 9–17h·Terasa sa pogledom', [S.kicker, S.place]);
+  check('bez visine: „Après-ski i restoran“; red: Svaki dan 9–17h · Terasa sa pogledom', S.kicker === 'Après-ski i restoran' && S.place === 'Svaki dan 9–17h·Terasa sa pogledom', [S.kicker, S.place]);
   await p.click('#jb-bar .jb-play'); await p.waitForTimeout(300);
   check('video: podrazumijevani ID (7qo0-fAx5CI)', /embed\/7qo0-fAx5CI/.test(await p.evaluate(() => document.querySelector('#jb-vid iframe').src)));
   await ctx.close();
@@ -220,7 +220,7 @@ async function state(p) {
   console.log('EN, računar, Google Tag Manager, qTranslate oznake (/en/wp-json ne radi → /wp-json)');
   ({ p, ctx, errors, rest } = await open(browser, { path: '/en/pocetna-zima/', ga: 'gtm', wp: 'qtranslate' }));
   S = await state(p);
-  check('engleski naslov iz WP-a: Olympic / Bar; Restaurant · 1,879 m', S.lines.join('|') === 'Olympic|Bar' && S.kicker === 'Restaurant · 1,879 m', [S.lines, S.kicker]);
+  check('engleski naslov iz WP-a: Olympic / Bar; Après-ski & restaurant · 1,879 m', S.lines.join('|') === 'Olympic|Bar' && S.kicker === 'Après-ski & restaurant · 1,879 m', [S.lines, S.kicker]);
   check('engleski uvod i red', /^Home-style cooking and fine drinks/.test(S.lead) && S.place === 'Open 9 am – 9 pm·Terrace with a view', [S.lead, S.place]);
   check('link vodi na /en/; Book a table: +387 57 270 003; bez menija', S.noMenu && S.page === SITE + '/en/olimpijski-bar/' && S.rez[1] === 'Book a table' && S.rez[3] === '+387 57 270 003', [S.page, S.rez]);
   check('prvo /en/wp-json, pa /wp-json', /^\/en\/wp-json/.test(rest[0]) && rest.some((x) => /^\/wp-json\/wp\/v2\/pages/.test(x)), rest);
@@ -234,7 +234,7 @@ async function state(p) {
   console.log('WordPress ne odgovara (403): posjetilac vidi ugrađeni tekst, admin i razlog');
   ({ p, ctx, errors } = await open(browser, { wp: 'greska', ga: 'none' }));
   S = await state(p);
-  check('ugrađeni tekst', S.lines.join('|') === 'Olimpijski|bar' && /^Domaća kuhinja/.test(S.lead) && S.kicker === 'Restoran · 1.879 m' && S.why === '', S);
+  check('ugrađeni tekst', S.lines.join('|') === 'Olimpijski|bar' && /^Domaća kuhinja/.test(S.lead) && S.kicker === 'Après-ski i restoran · 1.879 m' && S.why === '', S);
   await ctx.close();
   ({ p, ctx, errors } = await open(browser, { wp: 'greska', ga: 'none', admin: true }));
   S = await state(p);

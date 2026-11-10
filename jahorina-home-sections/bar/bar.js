@@ -1,7 +1,7 @@
 /* =====================================================================
    JAHORINA — OLIMPIJSKI BAR (početna, ispod suvenirnice) · v4 „premium restoran“ (10. 11.)
    Korisnik 10. 11.: bez cjenovnika; „da izgleda kao premium restoran svjetskog nivoa, minimalistički“ → jedna mirna
-   fotografija u toplim tonovima (bez smjene i bez plave noćne obrade), mali tekst „Restoran · 1.879 m“, pun naslov
+   fotografija u toplim tonovima (bez smjene i bez plave noćne obrade), mali tekst „Après-ski i restoran · 1.879 m“, pun naslov
    (bez obrisa), kratak uvod, jedan tihi red (radno vrijeme · terasa), jedno glavno dugme „Rezerviši sto“ i tihi link
    „Pogledaj atmosferu“ (video); broj telefona i link stranice sitno ispod.
    Tema hero-a, vijesti, ratraka i suvenirnice (noćni ton, jedan cyan akcenat, Archivo/Barlow, kadar preko cijele
@@ -47,14 +47,14 @@
 
   // tekstovi (10. 11., premium restoran): uvod je sažetak teksta stranice (domaća kuhinja, vrhunska pića, pogled na jezero i vrhove)
   var T = EN ? {
-    kicker: 'Restaurant', head: 'Olympic Bar', altV: '1,879',
+    kicker: 'Après-ski & restaurant', head: 'Olympic Bar', altV: '1,879',
     lead: 'Home-style cooking and fine drinks at the top of Jahorina, with views of the lake and the surrounding peaks.',
     hours: 'Open 9 am – 9 pm', place: 'Terrace with a view',
     rez: 'Book a table', rezAria: 'Book a table by phone', rezLine: 'Reservations', video: 'Watch the atmosphere', more: 'More about the Olympic Bar',
     close: 'Close', vid: 'Video: Olympic Bar', why: 'WordPress', whyTail: 'showing built-in content',
     photo: 'Mushroom risotto and a glass of white wine on a set table at the Olympic Bar'
   } : {
-    kicker: 'Restoran', head: 'Olimpijski bar', altV: '1.879',
+    kicker: 'Après-ski i restoran', head: 'Olimpijski bar', altV: '1.879',   // korisnik 10. 11. (ranije „Restoran“)
     lead: 'Domaća kuhinja i vrhunska pića na vrhu Jahorine, uz pogled na akumulaciono jezero i okolne vrhove.',
     hours: 'Otvoreno 9–21h', place: 'Terasa sa pogledom',
     rez: 'Rezerviši sto', rezAria: 'Rezerviši sto telefonom', rezLine: 'Rezervacije', video: 'Pogledaj atmosferu', more: 'Više o Olimpijskom baru',
@@ -493,7 +493,7 @@
         if (h2.textContent.replace(/\s+/g, '') !== r.title.replace(/\s+/g, '')) h2.innerHTML = titleHTML(r.title);
         h2.classList.toggle('jb-long', r.title.length > 26);
       }
-      // nadmorska visina iz teksta stranice (kad se tekst promijeni, mijenja se i ovdje); bez nje samo „Restoran“
+      // nadmorska visina iz teksta stranice (kad se tekst promijeni, mijenja se i ovdje); bez nje samo „Après-ski i restoran“
       var kt = kickerText(r.alt);
       if (q('.jb-kicker').textContent !== kt) q('.jb-kicker').textContent = kt;
       if (r.link) q('a[data-jb="stranica"]').setAttribute('href', r.link);
