@@ -68,4 +68,6 @@ Skillovi pomažu, ali **ova tema ima prednost**: kad skill predloži nešto drug
 | Ne koristimo za sajt | `ui-styling` | Tailwind/shadcn ne ide u WordPress sekcije (sve je čist CSS pod id-em sekcije). Samo za zasebne alate/aplikacije. |
 | Novi skill | `find-skills` | Pronalazi dodatne skillove; nove dodati u ovu tabelu. |
 
+**Svjesni izuzeci od teme (odobrio korisnik 10. 11.):** Olimpijski bar je predstavljen kao premium restoran — fotografija hrane u **toplim prirodnim tonovima** (bez plave noćne obrade; hrana ne smije biti plava), naslov **pun bez obrisa**, bez brojki; cyan ostaje samo na dugmetu i sitnim akcentima.
+
 **Svjesni izuzeci od skillova (odobrio korisnik):** blagi cyan sjaj na akcentima (ne neon), ručno crtane SVG ilustracije (šestosjed u „Planina u brojkama“), staklene pločice kao u hero-u, ručno upisane brojke u redu widgeta.
