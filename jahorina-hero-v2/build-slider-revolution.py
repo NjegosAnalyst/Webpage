@@ -14,7 +14,7 @@ import re
 from pathlib import Path
 
 HERE = Path(__file__).parent
-MEDIA = '/wp-content/uploads/2026/09/'   # bez domena: ista veza kao stranica (www ili ne), nema dodatnog povezivanja
+MEDIA = '/wp-content/uploads/2026/10/'   # bez domena: ista veza kao stranica (www ili ne), nema dodatnog povezivanja
 
 src = (HERE / 'index.html').read_text()
 css = src[src.index('<style>') + 7:src.index('</style>')].replace('  html,body{margin:0;padding:0}\n', '')
@@ -58,6 +58,8 @@ SR_RESET = """
 .jh-hero .jh-intro p{line-height:1.55!important}
 .jh-hero .jh-rating,.jh-hero .jh-rating *{line-height:1!important}
 .jh-hero .jh-quick__label{line-height:1.1!important}
+.jh-hero .jh-wx,.jh-hero .jh-wx *{line-height:1.1!important;white-space:nowrap!important}   /* prognoza: SR daje line-height 25px */
+.jh-hero .jh-wx a{text-decoration:none!important}
 .jh-hero .jh-nav__link,.jh-hero .jh-btn{align-items:center!important}
 """
 
@@ -65,12 +67,16 @@ SR_LAYOUT = """
 /* animacije čekaju dok Slider Revolution ne prikaže slajd (JS tada doda .jh-go) */
 .jh-hero:not(.jh-go),.jh-hero:not(.jh-go) *{animation-play-state:paused!important}
 
+/* fokus tastature: tema često skida outline sa linkova — ovdje ga vraćamo */
+.jh-hero .jh-quick__item:focus-visible{outline:2px solid #6FDBFF!important;outline-offset:3px!important}
+.jh-hero .jh-quick__item--accent:focus-visible{outline-color:#fff!important}
+
 /* ===== Opcija A: meni je iz teme; Web shop i Ski mapa su pločice u traci ===== */
 .jh-hero .jh-quick__label{white-space:nowrap!important;text-align:center}
-.jh-hero .jh-quick__l2{display:block!important;line-height:inherit!important;margin:0!important}   /* drugi red natpisa (SKIJANJE) */
+.jh-hero .jh-quick__l2{display:block!important;line-height:inherit!important;margin:0!important}   /* drugi red natpisa (skijanje) */
 @media (max-width:760px){
   .jh-hero .jh-kicker > span{line-height:inherit!important}   /* H1 u dva reda: isti razmak redova kao kicker */
-  .jh-hero .jh-quick__label--word{font-size:7.9px;letter-spacing:.2px}
+  .jh-hero .jh-quick__label--word{font-size:10.5px;letter-spacing:0}
 }
 /* telefon: centriranje zadato direktno svakom redu i "Jahorine", jače od stilova teme/SR (na sajtu se naslov nije centrirao) */
 @media (max-width:760px){
@@ -78,21 +84,22 @@ SR_LAYOUT = """
   .jh-hero .jh-kicker,.jh-hero .jh-kicker > span,.jh-hero .jh-title,.jh-hero .jh-title > span{text-align:center!important}
   .jh-hero .jh-title > span.jh-ice{display:table!important;width:auto!important;margin-left:auto!important;margin-right:auto!important;left:auto!important;right:auto!important;float:none!important}
   .jh-hero .jh-quick{left:max(14px,calc(50% - 220px))!important;right:max(14px,calc(50% - 220px))!important;width:auto!important;max-width:none!important;margin:0!important}
+  .jh-hero .jh-wx{left:max(14px,calc(50% - 220px))!important;right:max(14px,calc(50% - 220px))!important;width:auto!important;margin:0!important}   /* prognoza: ista širina kao traka dugmadi */
   .jh-hero .jh-quick__item svg{width:19px;height:19px}
-  .jh-hero .jh-quick__item--accent .jh-quick__l2{display:inline!important}   /* telefon: "WEB SHOP · SKI KARTE" u jednom redu */
 }
 @media (max-width:760px) and (max-height:680px){
   .jh-hero .jh-quick__item svg{width:17px;height:17px}
 }
 @media (max-width:360px){
-  .jh-hero .jh-quick__label--word{font-size:7.1px;letter-spacing:0}
+  .jh-hero .jh-quick__label--word{font-size:10px;letter-spacing:0}
 }
 """
 
 css_out = ("/* =====================================================================\n"
            "   JAHORINA HERO — DIO 2: CSS  (Slider Revolution → ⚙ → CSS/jQuery → CUSTOM CSS)\n"
            "   ===================================================================== */\n"
-           "@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&display=swap');\n"
+           "/* fontovi: ISTI link kao sekcije početne (TEMA.md) i snippet „Jahorina brzi start“ — učita se jednom, ovdje je samo rezerva */\n"
+           "@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Barlow:wght@300;400;500;600;700&display=swap');\n"
            + SR_RESET + css.strip() + "\n" + SR_LAYOUT)
 
 # telefon: "slika ispod headera" se namjesti odmah (čim postoje hero i naš header), a ne tek kad se slajd
@@ -140,13 +147,10 @@ js_out = ("/* ==================================================================
           + js + "\n})();\n")
 
 
-# Slike koje su već u WordPress Mediji (provjereno na sajtu): /2026/09/jahorina-noc.webp.
-# Lakše verzije (jahorina-hero-desktop/mobil.webp) nisu otpremljene — kad se otpreme,
-# ovdje vrati njihova imena i MEDIA na mjesec otpremanja.
-SITE_FILES = {
-    'jahorina-hero-desktop.webp': 'jahorina-noc.webp',
-    'jahorina-hero-mobil.webp': 'jahorina-noc.webp',
-}
+# Lakše verzije su otpremljene 30. 10. 2026 (provjereno na sajtu, iste veličine kao u assets/):
+# /2026/10/jahorina-hero-desktop.webp (150 KB) i /2026/10/jahorina-hero-mobil.webp (98 KB).
+# Stara /2026/09/jahorina-noc.webp (204 KB) se više ne koristi.
+SITE_FILES = {}
 
 
 def with_urls(text, prefix):
@@ -160,29 +164,40 @@ def with_urls(text, prefix):
 EN = [
     ('aria-label="Olimpijska planina Jahorina"', 'aria-label="Olympic Mountain Jahorina"'),
     ('aria-label="Noćno skijanje na Jahorini"', 'aria-label="Night skiing on Jahorina"'),
-    ('>Ski centar Jahorina · Olimpijska planina<', '>Jahorina Ski Resort · Olympic Mountain<'),   # H1 (SEO)
+    ('>Ski centar Jahorina, Olimpijska planina<', '>Jahorina Ski Resort, Olympic Mountain<'),   # H1 (SEO)
     ('aria-label="Otkrij čaroliju Jahorine"', 'aria-label="Discover the magic of Jahorina"'),
     ('<span>Otkrij</span>', '<span>Discover</span>'),
     ('<span>čaroliju</span>', '<span>the magic of</span>'),
     ('<span class="jh-dot"></span></span>ne</span>', '<span class="jh-dot"></span></span>na</span>'),
     ('https://www.oc-jahorina.com/ski-mapa/', 'https://www.oc-jahorina.com/en/ski-mapa/'),
     ('aria-label="Ski mapa" title="Ski mapa"', 'aria-label="Ski map" title="Ski map"'),
-    ('>SKI MAPA<', '>SKI MAP<'),
+    ('>Ski mapa<', '>Ski map<'),
     ('https://www.oc-jahorina.com/ski-info/', 'https://www.oc-jahorina.com/en/ski-info/'),
     ('aria-label="Dnevno skijanje" title="Dnevno skijanje"', 'aria-label="Day skiing" title="Day skiing"'),
-    ('>DNEVNO<span class="jh-quick__l2">SKIJANJE<', '>DAY<span class="jh-quick__l2">SKIING<'),
+    ('>Dnevno<span class="jh-quick__l2">skijanje<', '>Day<span class="jh-quick__l2">skiing<'),
     ('https://www.oc-jahorina.com/nocno-skijanje-info/', 'https://www.oc-jahorina.com/en/nocno-skijanje-info/'),
     ('aria-label="Noćno skijanje" title="Noćno skijanje"', 'aria-label="Night skiing" title="Night skiing"'),
-    ('>NOĆNO<span class="jh-quick__l2">SKIJANJE<', '>NIGHT<span class="jh-quick__l2">SKIING<'),
+    ('>Noćno<span class="jh-quick__l2">skijanje<', '>Night<span class="jh-quick__l2">skiing<'),
     ('aria-label="Virtuelna tura 360°" title="Virtuelna tura 360°"', 'aria-label="360° virtual tour" title="360° virtual tour"'),
     ('aria-label="Kamere uživo" title="Kamere uživo"', 'aria-label="Live cameras" title="Live cameras"'),
-    ('>WEB SHOP<span class="jh-quick__l2">SKI KARTE<', '>WEB SHOP<span class="jh-quick__l2">SKI PASSES<'),
-    ('>UŽIVO<', '>LIVE<'),
+    ('>Kupi ski kartu<', '>Buy a ski pass<'),
+    ('>Uživo<', '>Live<'),
 ]
 html_en = html
 for a, b_ in EN:
     assert a in html_en, 'EN: nije pronađeno ' + a
     html_en = html_en.replace(a, b_)
+
+def only_ascii(text, css=False):
+    """Samo ASCII znakovi: č, ž, ° … kao \\uXXXX (JS) ili \\XXXX (CSS). Kod se lijepi ručno, a kopiranje u pogrešnom
+    kodiranju (3. 11.: „0¬∞“, „ƒået“ u prognozi na sajtu) tada ne može pokvariti slova."""
+    def esc(ch):
+        if css:
+            return '\\%X ' % ord(ch)
+        b = ch.encode('utf-16-be')
+        return ''.join('\\u%02X%02X' % (b[i], b[i + 1]) for i in range(0, len(b), 2))
+    return ''.join(c if ord(c) < 128 else esc(c) for c in text)
+
 
 for folder, prefix, h in (('slider-revolution', 'ZAMIJENI-URL-', html),
                           ('slider-revolution-spremno', MEDIA, html),
@@ -190,8 +205,8 @@ for folder, prefix, h in (('slider-revolution', 'ZAMIJENI-URL-', html),
     out = HERE / folder
     out.mkdir(exist_ok=True)
     (out / '1-html.html').write_text(with_urls(h, prefix) + '\n')
-    (out / '2-css.css').write_text(with_urls(css_out, prefix))
-    (out / '3-js.js').write_text(js_out)
+    (out / '2-css.css').write_text(only_ascii(with_urls(css_out, prefix), css=True))
+    (out / '3-js.js').write_text(only_ascii(js_out))
     for f in ('1-html.html', '2-css.css', '3-js.js'):
         assert 'assets/' not in (out / f).read_text(), f
 print('Gotovo: slider-revolution/, slider-revolution-spremno/ i slider-revolution-EN-spremno/')
