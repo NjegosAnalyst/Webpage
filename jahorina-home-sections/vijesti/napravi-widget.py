@@ -30,3 +30,16 @@ line = ('<div id="jv-vijesti"><a href="https://www.oc-jahorina.com/category/vije
         f'{loader(url, sri)}\n')
 (HERE / 'elementor-html-widget.html').write_text(line, encoding='utf-8')
 print(line)
+
+# Rezerva kad snimanje stranice u Elementoru pukne (greška 500 / Forbidden — firewall hostinga ne da skriptu u sadržaju):
+# u Elementor ide samo <div> bez skripte, a skriptu učitava WPCode (JavaScript snippet, Site Wide Footer),
+# samo na stranicama koje imaju taj <div>. Ako na stranici postoji i red sa skriptom, vijesti.js se svejedno nacrta jednom.
+div = '<div id="jv-vijesti"><a href="https://www.oc-jahorina.com/category/vijesti/">Sve vijesti</a></div>\n'
+(HERE / 'elementor-html-widget-bez-skripte.html').write_text(div, encoding='utf-8')
+wpcode = ("(function(d){if(!d.getElementById('jv-vijesti')||d.getElementById('jv-css'))return;"
+          "function g(a,b){var s=d.createElement('script');s.src=a;"
+          "if(b){s.integrity=b;s.crossOrigin='anonymous';s.onerror=function(){g(a.replace("
+          "'cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@','rawcdn.githack.com/NjegosAnalyst/Webpage/'))}}"
+          "(d.head||d.documentElement).appendChild(s)}g('" + url + "','" + sri + "')})(document);\n")
+(HERE / 'wpcode-vijesti.js').write_text(wpcode, encoding='utf-8')
+print(div + wpcode)
