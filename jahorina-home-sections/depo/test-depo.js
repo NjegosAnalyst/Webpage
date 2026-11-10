@@ -130,6 +130,8 @@ async function state(p) {
     return {
       h1: document.querySelectorAll('h1').length, h2: q('h2').textContent.replace(/\s+/g, ' ').trim(), h3: [...r.querySelectorAll('h3')].map((e) => e.textContent),
       kicker: q('.jsd-kicker').textContent, lead: q('.jsd-lead').textContent,
+      // vidljivi natpisi dugmadi (10. 11.: „Lokacija“ je jednom ostala bez teksta)
+      acts: [...r.querySelectorAll('.jsd-cta, .jsd-pill')].map((e) => [...e.childNodes].filter((n) => n.nodeType === 3 || (n.nodeType === 1 && n.tagName !== 'svg' && getComputedStyle(n).display !== 'none')).map((n) => n.textContent).join('').trim()),
       price: q('.jsd-pv').textContent + ' ' + q('.jsd-price i').textContent, priceA: q('.jsd-price').getAttribute('aria-label'),
       sets: q('.jsd-sets b').textContent, setsSub: q('.jsd-sets span').textContent,
       feat: [...r.querySelectorAll('.jsd-feat li')].filter((e) => cs(e).display !== 'none').map((e) => e.textContent).join('|'),
@@ -239,6 +241,7 @@ async function state(p) {
     S = await state(r.p);
     check(name + ': bez vodoravnog skrola, teksta < 12 px i grešaka', S.scrollW <= S.docW && S.small.length === 0 && r.errors.length === 0, [S.scrollW, S.docW, S.small, r.errors]);
     if (vw <= 760) check(name + ': telefon bez backdrop-filter', !S.blur, S.blur);
+    check(name + ': oba dugmeta imaju vidljiv natpis', S.acts.length === 2 && S.acts.every((t) => t.length > 2), S.acts);
     await r.p.locator('#jsd-depo').screenshot({ path: path.join(OUT, name + '.png') });
     await r.ctx.close();
   }

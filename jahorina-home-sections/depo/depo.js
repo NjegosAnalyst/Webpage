@@ -48,7 +48,7 @@
     door: 'Ski locker at a glance',
     how: 'How to get a locker',
     steps: [['Ski ticket office', 'at the {g} gondola base'], ['Locker card', '{d} deposit'], ['Scan your card', 'inside the base station']],
-    more: 'More about ski lockers', moreS: 'More', map: 'Location', mapS: 'Location',
+    more: 'More about ski lockers', moreS: 'Ski lockers', map: 'Location', mapS: 'Location',
     photo: 'Open ski locker 61 with drying holders, gloves, skis and poles',
     why: 'WordPress', whyTail: 'showing built-in content'
   } : {
@@ -61,7 +61,7 @@
     door: 'Ski depo ukratko',
     how: 'Kako do depoa',
     steps: [['Ski kasa', 'na polazu gondole {g}'], ['Kartica depoa', 'depozit {d}'], ['Skenirajte karticu', 'u polaznoj stanici']],
-    more: 'Više o ski depou', moreS: 'Više', map: 'Lokacija', mapS: 'Lokacija',
+    more: 'Više o ski depou', moreS: 'Više o depou', map: 'Lokacija', mapS: 'Lokacija',   // moreS: telefon, jasan natpis (ranije samo „Više“)
     photo: 'Otvoren ski depo 61 sa nosačima za sušenje, rukavicama, skijama i štapovima',
     why: 'WordPress', whyTail: 'prikazan je ugrađeni sadržaj'
   };
@@ -72,7 +72,6 @@
   /* ---------- izgled ---------- */
   var CSS = [
     '#R{--bg:#0A1120;--text:#fff;--text-2:rgba(255,255,255,.8);--text-3:rgba(255,255,255,.58);--accent:#00B9F2;--accent-2:#2CCBF8;',
-    '--nm-surface:rgba(16,25,42,.62);--nm-raised:4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16),inset 1px 1px 0 rgba(255,255,255,.05);',
     /* vrata: bijeli plastificirani lim kao pravi ormarići; tekst na njima tamno-plav, akcenat tamniji cyan (kontrast na bijelom) */
     '--door:#F2F5F8;--door-2:#DFE6ED;--ink:#0D1524;--ink-2:#46546A;--ink-acc:#0083BD;',
     "--fd:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;--fb:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;",
@@ -90,17 +89,18 @@
     '#R svg [stroke="currentColor"]{stroke:currentColor!important}',
     '#R a:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
     /* puna širina ekrana, isti rub kao kadar hero-a; --in poravnava sadržaj sa mrežom 1240px; --gap = ritam između blokova.
-       Kad je VIP gondola odmah iznad (.jsd--join), ona već daje cijeli razmak ispod sebe, pa ovdje ostaje samo rub */
+       Kad je VIP gondola odmah iznad (.jsd--join), ona već daje cijeli razmak ispod sebe, pa depo iznad kadra ne dodaje ništa
+       (pravilo od 10. 11.: između dvije naše sekcije jedan razmak — 100 px računar, 56 px telefon) */
     '#R .jsd-wrap{--g:clamp(14px,1.6vw,22px);--gap:clamp(56px,7vw,100px);--pt:calc(var(--gap) / 2 + var(--g));--in:max(0px,calc((100vw - 1240px) / 2 + 48px - var(--g)));position:relative;padding:var(--pt) var(--g) var(--gap)}',
-    '#R.jsd--join .jsd-wrap{--pt:var(--g)}',
+    '#R.jsd--join .jsd-wrap{--pt:0px}',
     '#R{container-type:inline-size}',
     '@supports (width:1cqw){#R .jsd-wrap{--in:max(0px,calc((100cqw - 1240px) / 2 + 48px - var(--g)))}}',
     '#R .jsd-wrap{--side:max(clamp(26px,3.2vw,52px),var(--in))}',
 
     /* kadar: fotografija lijevo (uspravna, kao ormarić), tekst desno */
     '#R .jsd-frame{position:relative;display:grid;grid-template-columns:minmax(0,44fr) minmax(0,56fr);min-height:clamp(620px,48vw,760px);border-radius:26px;overflow:hidden;isolation:isolate;',
-    'background:radial-gradient(80% 90% at 70% 40%,#121c30 0,#0b1322 60%,#080e1a 100%);box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22)}',
-    '#R .jsd-frame::after{content:"";position:absolute;inset:0;z-index:6;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.08)}',
+    'background:radial-gradient(80% 90% at 70% 40%,#121c30 0,#0b1322 60%,#080e1a 100%);box-shadow:0 50px 90px -50px rgba(0,0,0,.95),6px 6px 16px rgba(0,0,0,.55),-5px -5px 14px rgba(60,84,128,.14)}',   /* kao kartica vijesti i ostale sekcije */
+    '#R .jsd-frame::after{content:"";position:absolute;inset:0;z-index:6;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.09)}',
     '#R .jsd-shot{position:relative;margin:16px 0 16px 16px;min-height:calc(100% - 32px);border-radius:20px;overflow:hidden;background:#0b1322}',
     '#R .jsd-shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:46% 38%;filter:saturate(.42) brightness(.6) contrast(1.22)}',
     /* premium obrada: hladni noćni ton, tamni rubovi, tiho svjetlo iz otvorenog ormarića, tanka svijetla ivica panela */
@@ -170,9 +170,10 @@
     '#R .jsd-cta,#R .jsd-pill{display:inline-flex;align-items:center;justify-content:center;gap:9px;height:48px;padding:0 22px!important;border-radius:16px;white-space:nowrap;font:600 15px/1 var(--fd);letter-spacing:0;color:#fff!important;transition:transform .2s ease,box-shadow .25s ease,filter .2s,color .2s}',
     '#R .jsd-cta{font-weight:700;background:linear-gradient(160deg,#45D6FF 0%,#00AEE6 50%,#008BC7 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.18),0 10px 24px -10px rgba(0,185,242,.95)}',
     '#R .jsd-cta:hover,#R .jsd-cta:focus-visible{filter:brightness(1.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.3),0 12px 28px -8px rgba(0,185,242,1)}',
-    '#R .jsd-pill{background:var(--nm-surface);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(255,255,255,.08)}',
-    '#R .jsd-pill svg{width:16px;height:16px;color:var(--accent)}',
-    '#R .jsd-pill:hover,#R .jsd-pill:focus-visible{color:var(--accent)!important;box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(0,185,242,.4),0 0 22px rgba(0,185,242,.3)}',
+    /* „Lokacija“: staklena pločica (stil B) kao „Sve vijesti“ (10. 11.; ranije neumorfna) */
+    '#R .jsd-pill{color:rgba(255,255,255,.92)!important;background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.02));box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.11)}',
+    '#R .jsd-pill svg{width:16px;height:16px;color:#C4EEFF}',
+    '#R .jsd-pill:hover,#R .jsd-pill:focus-visible{color:#fff!important;transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(111,219,255,.38),inset 0 1px 0 rgba(255,255,255,.14),0 0 18px -4px rgba(0,185,242,.45)}',
     '#R .jsd-cta:active,#R .jsd-pill:active{transform:scale(.96)}',
     '#R .jsd-s{display:none}',
     '#R .jsd-why{display:block;margin-top:14px;font:500 12px/1.4 var(--fb);color:#FFB547}',
@@ -201,8 +202,7 @@
     '@media (max-width:760px){',
     '#R .jsd-frame{border-radius:24px}',
     '#R .jsd-shot{height:min(92vw,400px);margin:10px 10px 0;border-radius:16px}',
-    '#R .jsd-body{padding-top:24px}',
-    '#R .jsd-body{padding:0 20px 30px}',
+    '#R .jsd-body{padding:24px 20px 30px}',   /* razmak između fotografije i malog teksta (ranije 0 — „Ski depo“ je bio zalijepljen uz fotografiju) */
     '#R .jsd-kicker{font-size:13.5px;gap:10px;margin-bottom:14px}',
     '#R .jsd-kicker::before{width:22px}',
     '#R h2{font-size:clamp(38px,11.4vw,54px)}',
@@ -350,7 +350,7 @@
     }
     if (up > .5 && up <= 40) st.setProperty('margin-top', -up + 'px', 'important'); else st.removeProperty('margin-top');
     if (dn > .5 && dn <= 40) st.setProperty('margin-bottom', -dn + 'px', 'important'); else st.removeProperty('margin-bottom');
-    // VIP gondola je odmah iznad (bez razmaka) → ona već daje razmak, ovdje ostaje samo rub
+    // VIP gondola je odmah iznad (bez razmaka) → ona već daje razmak, depo ne dodaje svoj
     var gn = d.getElementById('jg-gondola');
     root.classList.toggle('jsd--join', !boxed && !!gn && !gn.classList.contains('jg--boxed') &&
       Math.abs(gn.getBoundingClientRect().bottom - root.getBoundingClientRect().top) < 3);
