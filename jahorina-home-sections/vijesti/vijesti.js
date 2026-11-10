@@ -39,10 +39,13 @@
 
   /* ---------- izgled (sve je pod #jv-vijesti da se ne sudara sa temom) ---------- */
   var CSS = [
-    '#V{--bg:#0A1120;--surface:#111A2C;--surface-2:#16213A;--line:rgba(255,255,255,.08);--text:#fff;--text-2:rgba(255,255,255,.76);--text-3:rgba(255,255,255,.52);',
+    '#V{--bg:#101B33;--surface:#18253E;--surface-2:#1D2C4C;--line:rgba(255,255,255,.08);--text:#fff;--text-2:rgba(255,255,255,.76);--text-3:rgba(255,255,255,.52);',
     '--accent:#00B9F2;--accent-2:#2CCBF8;--warn:#FFB547;--raised:6px 6px 16px rgba(0,0,0,.55),-5px -5px 14px rgba(60,84,128,.14);--inset:inset 4px 4px 10px rgba(0,0,0,.5),inset -4px -4px 9px rgba(70,96,142,.13);',
     "--fd:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;--fb:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;",
-    'display:block;background:var(--bg);color:var(--text);font:400 16px/1.55 var(--fb);text-align:left;color-scheme:dark}',
+    'display:block;position:relative;isolation:isolate;background:linear-gradient(180deg,#0C1424 0,var(--bg) 280px,var(--bg) calc(100% - 260px),#0A1120 100%);color:var(--text);font:400 16px/1.55 var(--fb);text-align:left;color-scheme:dark}',
+    /* prelaz iz hero-a bez šava: ista boja kao traka oko hero-a + tihi cyan horizont (svjetlo staze) */
+    '#V::before{content:"";position:absolute;z-index:-1;left:50%;top:0;width:min(1100px,84%);height:1px;transform:translateX(-50%);pointer-events:none;background:linear-gradient(90deg,transparent,rgba(0,185,242,.26) 50%,transparent)}',
+    '#V::after{content:"";position:absolute;z-index:-1;left:50%;top:0;width:min(1000px,90%);height:160px;transform:translateX(-50%);pointer-events:none;background:radial-gradient(50% 100% at 50% 0,rgba(0,185,242,.07),transparent 72%)}',
     '#V.jv--boxed{border-radius:28px;overflow:hidden}',
     '#V *,#V *::before,#V *::after{box-sizing:border-box}',
     '#V a{color:inherit;text-decoration:none;box-shadow:none}',
@@ -70,7 +73,7 @@
     '#V .jv-more--foot{display:none}',
 
     /* scena slajdera */
-    '#V .jv-stage{position:relative;height:clamp(500px,46vw,620px);border-radius:30px;overflow:hidden;background:var(--surface);isolation:isolate;touch-action:pan-y;',
+    '#V .jv-stage{position:relative;height:clamp(470px,42vw,570px);border-radius:30px;overflow:hidden;background:var(--surface);isolation:isolate;touch-action:pan-y;',
     'box-shadow:0 50px 90px -50px rgba(0,0,0,.95),var(--raised)}',
     '#V .jv-stage::after{content:"";position:absolute;inset:0;z-index:5;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.09)}',
     '#V .jv-slide{position:absolute;inset:0;display:flex;align-items:center;opacity:0;visibility:hidden;z-index:1;transition:opacity .9s ease,visibility 0s linear .9s}',
@@ -79,8 +82,8 @@
     '#V .jv-slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-3;filter:saturate(.7) brightness(.84) contrast(1.06)}',
     '#V .jv-tint{position:absolute;inset:0;z-index:-2;pointer-events:none;background:linear-gradient(160deg,#1E4F96 0%,#0E2A55 100%);mix-blend-mode:soft-light;opacity:.7}',
     '#V .jv-slide::before{content:"";position:absolute;inset:0;z-index:-1;',
-    'background:linear-gradient(90deg,rgba(10,17,32,.97) 0%,rgba(10,17,32,.86) 30%,rgba(10,17,32,.4) 60%,rgba(10,17,32,.08) 100%),linear-gradient(0deg,rgba(10,17,32,.92) 0%,rgba(10,17,32,.4) 20%,rgba(10,17,32,0) 40%)}',
-    '#V .jv-body{display:flex;flex-direction:column;align-items:flex-start;width:min(660px,64%);padding:56px 56px 112px}',
+    'background:linear-gradient(90deg,rgba(16,27,51,.97) 0%,rgba(16,27,51,.86) 30%,rgba(16,27,51,.4) 60%,rgba(16,27,51,.08) 100%),linear-gradient(0deg,rgba(16,27,51,.92) 0%,rgba(16,27,51,.4) 20%,rgba(16,27,51,0) 40%)}',
+    '#V .jv-body{display:flex;flex-direction:column;align-items:flex-start;width:min(660px,64%);padding:48px 56px 64px}',
     '#V .jv-body > *{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .8s cubic-bezier(.2,.7,.2,1)}',
     '#V .is-on .jv-body > *{opacity:1;transform:none}',
     '#V .is-on .jv-body > :nth-child(1){transition-delay:.22s}',
@@ -143,7 +146,7 @@
     '#V.jv-anim.jv-on .jv-car{opacity:1;transform:none;transition:opacity .8s ease,transform .9s cubic-bezier(.2,.7,.2,1)}',
 
     /* tablet / telefon */
-    '@media (max-width:1060px){#V .jv-body{width:min(640px,78%)}}',
+    '@media (max-width:1060px){#V .jv-stage{height:clamp(500px,52vw,560px)}#V .jv-body{width:min(640px,78%);padding-bottom:112px}}',
     '@media (max-width:760px){',
     '#V .jv-head{margin-bottom:24px}',
     '#V .jv-head .jv-more{display:none}',
@@ -151,13 +154,13 @@
     '#V .jv-stage{height:min(640px,max(560px,150vw));border-radius:24px}',
     '#V .jv-slide{align-items:flex-end}',
     '#V .jv-slide img,#V .jv-tint{bottom:auto;height:54%}',
-    '#V .jv-slide::before{background:linear-gradient(180deg,rgba(17,26,44,0) 0%,rgba(17,26,44,.1) 26%,rgba(17,26,44,.82) 46%,#111A2C 56%,#111A2C 100%)}',
+    '#V .jv-slide::before{background:linear-gradient(180deg,rgba(24,37,62,0) 0%,rgba(24,37,62,.1) 26%,rgba(24,37,62,.82) 46%,#18253E 56%,#18253E 100%)}',
     '#V .jv-body{width:100%;padding:24px 22px 92px}',
     '#V .jv-slide h3{font-size:27px;margin:16px 0 12px}',
     '#V .jv-slide h3.jv-long{font-size:22px}',
     '#V .jv-slide p{font-size:15.5px}',
     '#V .jv-cta{margin-top:20px;height:46px;padding:0 20px;font-size:14px}',
-    '#V .jv-bar{left:12px;right:12px;bottom:12px;justify-content:space-between;padding:6px;border-radius:20px;-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(9,14,26,.9)}',
+    '#V .jv-bar{left:12px;right:12px;bottom:12px;justify-content:space-between;padding:6px;border-radius:20px;-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(16,25,45,.92)}',
     /* tačkice: dodirna površina 16–32 × 40 px (ranije 8 × 8), tačka se crta unutra */
     '#V .jv-steps{gap:0;padding:0 6px;align-items:center}',
     '#V .jv-step{width:16px!important;height:40px!important;border-radius:0!important;font-size:0!important;background:none!important;box-shadow:none!important;transition:width .35s cubic-bezier(.2,.7,.2,1)}',
@@ -324,7 +327,16 @@
       '<button type="button" class="jv-btn jv-next" aria-label="' + esc(T.next) + '">' + ICON.next + '</button></div></div>' +
       '</div></div><a class="jv-more jv-more--foot" href="' + esc(ALL) + '" aria-label="' + esc(T.allLabel) + '">' + esc(T.all) + '</a>');
     reveal();
+    structured(items);
     if (n > 1) slider(n);
+  }
+  // SEO: JSON-LD ItemList (stranica-sažetak: svaka stavka samo pozicija + adresa vijesti, kako Google traži)
+  function structured(items) {
+    var el = d.getElementById('jv-ld') || (d.head || d.documentElement).appendChild(Object.assign(d.createElement('script'), { id: 'jv-ld', type: 'application/ld+json' }));
+    el.textContent = JSON.stringify({
+      '@context': 'https://schema.org', '@type': 'ItemList', name: T.t1 + ' ' + T.t2,
+      itemListElement: items.map(function (it, k) { return { '@type': 'ListItem', position: k + 1, url: it.link }; })
+    });
   }
 
   /* ---------- slajder ---------- */
@@ -416,6 +428,62 @@
     }
     // ako se ipak ne može raširiti — tamni blok dobija zaobljene ivice
     root.classList.toggle('jv--boxed', root.getBoundingClientRect().width < cw - 24);
+    closeGaps();
+  }
+  // tema/Elementor između sekcija ostavljaju razmak (bijela traka); blok se primakne susjedu iznad i ispod (najviše 160 px)
+  var GAP_MAX = 160, GAP_HERO = 260;
+  function neighbour(dir) {   // najbliži vidljivi element prije/poslije bloka (preskače skripte, fiksni header, prazne omotače)
+    for (var n = root; n && n !== d.body; n = n.parentElement) {
+      for (var s = dir < 0 ? n.previousElementSibling : n.nextElementSibling; s; s = dir < 0 ? s.previousElementSibling : s.nextElementSibling) {
+        if (/^(SCRIPT|STYLE|LINK|NOSCRIPT|TEMPLATE|META)$/.test(s.tagName)) continue;
+        var cs = getComputedStyle(s);
+        if (cs.position === 'fixed' || cs.position === 'absolute' || cs.display === 'none') continue;
+        var b = s.getBoundingClientRect();
+        if (b.height > 2 && b.width > 2) return { el: s, box: b };
+      }
+    }
+    return null;
+  }
+  function closeGaps() {
+    var st = root.style;
+    st.removeProperty('margin-top'); st.removeProperty('margin-bottom'); st.removeProperty('z-index');
+    var r = root.getBoundingClientRect(), up = neighbour(-1), dn = neighbour(1), gu = 0, gd = 0;
+    // iznad je naš hero: mjeri do stvarnog (vidljivog) dna hero-a (.jh-hero). Omotač Slider Revolutiona ili
+    // Elementor sekcija često su viši od hero-a, a na telefonu ga omotač i odsiječe — višak se vidi kao bijela traka
+    var hero = d.querySelector('.jh-hero'), hv = hero && hero.getBoundingClientRect().height > 50 ? visBottom(hero) : null;
+    if (hv !== null && hv <= r.top + 2) up = { el: hero, box: { bottom: hv }, hero: true };
+    if (up) {
+      var g = r.top - up.box.bottom;   // bez zaokruživanja: i 1,4 px se vidi kao bijela linija na telefonu
+      gu = Math.round(g * 10) / 10;
+      if (g > .3 && g <= (up.hero ? GAP_HERO : GAP_MAX)) {
+        st.setProperty('margin-top', -(g + (up.hero ? 1 : 0)) + 'px', 'important');   // uz hero 1 px preklopa (iste boje), da ne ostane ni dio piksela
+        st.setProperty('z-index', '2', 'important');
+      }
+    }
+    if (dn) { var g2 = dn.box.top - r.bottom; gd = Math.round(g2 * 10) / 10; if (g2 > .3 && g2 <= GAP_MAX) st.setProperty('margin-bottom', -g2 + 'px', 'important'); }
+    if (/[?&]jvdebug/.test(location.search)) debug(up, dn, gu, gd);
+  }
+  // dno elementa koje se stvarno vidi: roditelj sa overflow:hidden/clip ga može odsjeći ranije
+  function visBottom(el) {
+    var b = el.getBoundingClientRect().bottom;
+    for (var n = el.parentElement; n && n !== d.body && n !== d.documentElement; n = n.parentElement) {
+      var cs = getComputedStyle(n);
+      if (cs.overflowY === 'hidden' || cs.overflowY === 'clip' || cs.overflow === 'hidden') b = Math.min(b, n.getBoundingClientRect().bottom);
+    }
+    return b;
+  }
+  function who(el) { return el ? el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') + (el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\s+/).slice(0, 2).join('.') : '') : '—'; }
+  function debug(up, dn, gu, gd) {
+    var box = d.getElementById('jv-debug') || d.body.appendChild(Object.assign(d.createElement('pre'), { id: 'jv-debug' }));
+    box.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:2147483647;max-width:96vw;margin:0;padding:10px 12px;border-radius:10px;background:rgba(0,0,0,.85);color:#9BE6FF;font:11px/1.45 monospace;white-space:pre-wrap;pointer-events:none';
+    var lines = ['jv: širina ' + Math.round(root.getBoundingClientRect().width) + ' / ' + d.documentElement.clientWidth,
+      'iznad: ' + who(up && up.el) + (up && up.hero ? ' (hero)' : '') + '  razmak ' + gu + 'px' + (gu > (up && up.hero ? GAP_HERO : GAP_MAX) ? ' (preveliko — nije dirano)' : ''),
+      'ispod: ' + who(dn && dn.el) + '  razmak ' + gd + 'px' + (gd > GAP_MAX ? ' (preveliko — nije dirano)' : '')];
+    for (var n = root.parentElement, i = 0; n && n !== d.body && i < 6; n = n.parentElement, i++) {
+      var cs = getComputedStyle(n);
+      lines.push('  ' + who(n) + '  pad ' + cs.paddingTop + '/' + cs.paddingBottom + '  mar ' + cs.marginTop + '/' + cs.marginBottom + '  bg ' + cs.backgroundColor);
+    }
+    box.textContent = lines.join('\n');
   }
   function refit() { clearTimeout(fit.t); fit.t = setTimeout(fit, 120); }
   w.addEventListener('resize', refit);
