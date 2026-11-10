@@ -39,10 +39,10 @@
 
   /* ---------- izgled (sve je pod #jv-vijesti da se ne sudara sa temom) ---------- */
   var CSS = [
-    '#V{--bg:#0A1120;--surface:#111A2C;--surface-2:#16213A;--line:rgba(255,255,255,.08);--text:#fff;--text-2:rgba(255,255,255,.76);--text-3:rgba(255,255,255,.52);',
+    '#V{--bg:#101B33;--surface:#18253E;--surface-2:#1D2C4C;--line:rgba(255,255,255,.08);--text:#fff;--text-2:rgba(255,255,255,.76);--text-3:rgba(255,255,255,.52);',
     '--accent:#00B9F2;--accent-2:#2CCBF8;--warn:#FFB547;--raised:6px 6px 16px rgba(0,0,0,.55),-5px -5px 14px rgba(60,84,128,.14);--inset:inset 4px 4px 10px rgba(0,0,0,.5),inset -4px -4px 9px rgba(70,96,142,.13);',
     "--fd:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;--fb:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;",
-    'display:block;position:relative;isolation:isolate;background:linear-gradient(180deg,#0C1424 0,var(--bg) 280px);color:var(--text);font:400 16px/1.55 var(--fb);text-align:left;color-scheme:dark}',
+    'display:block;position:relative;isolation:isolate;background:linear-gradient(180deg,#0C1424 0,var(--bg) 280px,var(--bg) calc(100% - 260px),#0A1120 100%);color:var(--text);font:400 16px/1.55 var(--fb);text-align:left;color-scheme:dark}',
     /* prelaz iz hero-a bez šava: ista boja kao traka oko hero-a + tihi cyan horizont (svjetlo staze) */
     '#V::before{content:"";position:absolute;z-index:-1;left:50%;top:0;width:min(1100px,84%);height:1px;transform:translateX(-50%);pointer-events:none;background:linear-gradient(90deg,transparent,rgba(0,185,242,.26) 50%,transparent)}',
     '#V::after{content:"";position:absolute;z-index:-1;left:50%;top:0;width:min(1000px,90%);height:160px;transform:translateX(-50%);pointer-events:none;background:radial-gradient(50% 100% at 50% 0,rgba(0,185,242,.07),transparent 72%)}',
@@ -154,13 +154,13 @@
     '#V .jv-stage{height:min(640px,max(560px,150vw));border-radius:24px}',
     '#V .jv-slide{align-items:flex-end}',
     '#V .jv-slide img,#V .jv-tint{bottom:auto;height:54%}',
-    '#V .jv-slide::before{background:linear-gradient(180deg,rgba(17,26,44,0) 0%,rgba(17,26,44,.1) 26%,rgba(17,26,44,.82) 46%,#111A2C 56%,#111A2C 100%)}',
+    '#V .jv-slide::before{background:linear-gradient(180deg,rgba(24,37,62,0) 0%,rgba(24,37,62,.1) 26%,rgba(24,37,62,.82) 46%,#18253E 56%,#18253E 100%)}',
     '#V .jv-body{width:100%;padding:24px 22px 92px}',
     '#V .jv-slide h3{font-size:27px;margin:16px 0 12px}',
     '#V .jv-slide h3.jv-long{font-size:22px}',
     '#V .jv-slide p{font-size:15.5px}',
     '#V .jv-cta{margin-top:20px;height:46px;padding:0 20px;font-size:14px}',
-    '#V .jv-bar{left:12px;right:12px;bottom:12px;justify-content:space-between;padding:6px;border-radius:20px;-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(9,14,26,.9)}',
+    '#V .jv-bar{left:12px;right:12px;bottom:12px;justify-content:space-between;padding:6px;border-radius:20px;-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(16,25,45,.92)}',
     /* tačkice: dodirna površina 16–32 × 40 px (ranije 8 × 8), tačka se crta unutra */
     '#V .jv-steps{gap:0;padding:0 6px;align-items:center}',
     '#V .jv-step{width:16px!important;height:40px!important;border-radius:0!important;font-size:0!important;background:none!important;box-shadow:none!important;transition:width .35s cubic-bezier(.2,.7,.2,1)}',
