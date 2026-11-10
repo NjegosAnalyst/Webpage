@@ -49,19 +49,19 @@
 
   // naslov, uvod i natpisi su dizajn (brojke su sa stranice); EN je prevod
   var T = EN ? {
-    aria: 'The mountain in numbers', eyebrow: 'The mountain in numbers', h: ['An Olympic', 'mountain'],
+    aria: 'The mountain in numbers', h: ['An Olympic', 'mountain'],
     lead: 'Jahorina ski resort slopes are groomed to FIS standards, from the first morning run to night skiing under the floodlights.',
-    km: { u: 'km', l: 'of alpine ski slopes', s: 'Groomed to FIS standards' },
-    zicare: { u: '', l: 'lifts and ski tows', s: 'Vertical transport' },
+    km: { u: 'km', l: 'of alpine ski slopes', s: 'For every skiing level' },
+    zicare: { u: '', l: 'lifts and ski tows', s: 'Gondola, six-seat chairlifts and ski lifts' },
     nocne: { u: '', l: 'night skiing slopes', s: 'Homologated' },
     sankanje: { u: 'm', l: 'sledding track', s: 'For the whole family' },
     photo: 'Night skiing on Olympic Mountain Jahorina: a snowboarder on a floodlit slope between snow-covered spruces',
     why: 'WordPress', whyTail: 'showing built-in numbers'
   } : {
-    aria: 'Planina u brojkama', eyebrow: 'Planina u brojkama', h: ['Olimpijska', 'planina'],
+    aria: 'Planina u brojkama', h: ['Olimpijska', 'planina'],
     lead: 'Staze ski centra Jahorina uređene su po FIS standardima, od prvog jutarnjeg spusta do noćnog skijanja pod reflektorima.',
-    km: { u: 'km', l: 'alpskih skijaških staza', s: 'Uređene po FIS standardima' },
-    zicare: { u: '', l: 'žičara i ski liftova', s: 'Vertikalni transport' },
+    km: { u: 'km', l: 'alpskih skijaških staza', s: 'Za sve nivoe skijanja' },
+    zicare: { u: '', l: 'žičara i ski liftova', s: 'Gondola, šestosjedi i ski liftovi' },
     nocne: { u: '', l: 'staza za noćno skijanje', s: 'Homologovane' },
     sankanje: { u: 'm', l: 'staza sankališta', s: 'Za cijelu porodicu' },
     photo: 'Noćno skijanje na Olimpijskoj planini Jahorina: snowboarder na osvijetljenoj stazi između snijegom okovanih jela',
@@ -122,8 +122,6 @@
     'linear-gradient(180deg,rgba(6,11,22,.4) 0%,rgba(6,11,22,0) 22%),radial-gradient(140% 100% at 60% 40%,transparent 56%,rgba(4,8,18,.5) 100%)}',
 
     '#R .jpb-body{position:relative;z-index:2;padding:clamp(56px,6vw,92px) var(--side) 0;max-width:calc(700px + var(--side))}',
-    '#R .jpb-eye{display:flex;align-items:center;gap:14px;margin-bottom:22px;font:600 11px/1 var(--fd);letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.75)}',
-    '#R .jpb-eye::before{content:"";width:34px;height:1.5px;flex-shrink:0;background:linear-gradient(90deg,var(--accent),#fff,var(--accent));box-shadow:0 0 10px rgba(0,185,242,.8)}',
     '#R h2{font-size:clamp(48px,5.6vw,92px);font-weight:800;line-height:.93;letter-spacing:-.03em}',
     '#R h2 > span{display:block;filter:drop-shadow(0 6px 30px rgba(0,0,0,.45))}',
     '@supports (-webkit-text-stroke:1px #fff){#R h2 > span.jpb-o{color:transparent!important;-webkit-text-fill-color:transparent!important;-webkit-text-stroke:1.6px rgba(255,255,255,.94)!important}}',
@@ -137,7 +135,8 @@
     '#R .jpb-wire2{fill:none!important;stroke:rgba(0,0,0,.35);stroke-width:1}',
     '#R .jpb-nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(30px,4vw,48px) clamp(18px,2.4vw,40px)}',
     '#R .jpb-num{position:relative;display:flex!important;flex-direction:column;align-items:center;text-align:center}',
-    '#R .jpb-chair{position:relative;z-index:2;width:min(100%,300px);aspect-ratio:300/250;container-type:inline-size;transform-origin:50% 1.6%}',
+    '#R .jpb-chair{position:relative;z-index:2;width:min(100%,300px);aspect-ratio:300/250;container-type:inline-size;transform-origin:50% 1.6%;margin-bottom:calc(min(100%,300px) * -.13)}',   /* prazno ispod sjedala → natpis bliže brojci */
+    '#R .jpb-num .jpb-l,#R .jpb-num .jpb-s{position:relative;z-index:3;text-wrap:balance}',   /* uski stupci (telefon): redovi podjednake dužine */
     '#R .jpb-chair svg{position:absolute;inset:0;width:100%;height:100%}',
     '#R .jpb-cl{fill:none!important;stroke:rgba(255,255,255,.62);stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}',
     '#R .jpb-cl2{fill:none!important;stroke:rgba(255,255,255,.3);stroke-width:1;stroke-linecap:round;vector-effect:non-scaling-stroke}',
@@ -157,12 +156,12 @@
     '#R .jpb-d{position:relative;display:inline-block;height:1em;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent)}',
     '#R .jpb-reel{display:flex;flex-direction:column;transform:translateY(calc(var(--v) * -5%))}',
     '#R .jpb-reel i{display:block;height:1em;margin:0;padding:0;line-height:1;font-style:normal!important;text-align:center;color:inherit!important}',
-    '#R h3.jpb-l{display:block;margin:clamp(8px,1vw,14px) 0 0!important;padding:0!important;border:0;background:none!important;font:500 15.5px/1.35 var(--fb)!important;letter-spacing:0!important;text-transform:none!important;color:#fff!important;-webkit-text-fill-color:currentColor!important;text-shadow:none!important}',
-    '#R .jpb-s{display:block;margin-top:5px;font:600 10px/1.3 var(--fd);letter-spacing:1.8px;text-transform:uppercase;color:var(--text-3)}',
-    /* sjedišta se blago njišu kao na vjetru (samo dok je blok na ekranu); prelaz mišem ih zaljulja */
+    '#R h3.jpb-l{display:block;margin:clamp(8px,1vw,14px) 0 0!important;padding:0!important;border:0;background:none!important;font:500 17px/1.35 var(--fb)!important;letter-spacing:0!important;text-transform:none!important;color:#fff!important;-webkit-text-fill-color:currentColor!important;text-shadow:none!important}',
+    '#R .jpb-s{display:block;margin-top:4px;font:500 13px/1.35 var(--fb);letter-spacing:0;color:var(--text-3)}',   // ranije VELIKA slova 10 / 9 / 8.5 px
+    /* sjedišta se blago zanjišu kad blok dođe na ekran (2 zamaha, pa mir); prelaz mišem ih zaljulja */
     '#R .jpb-sw,#R .jpb-hit{position:absolute;inset:0;transform-origin:50% 1.6%}',
-    '#R.jpb-vis .jpb-num.is-on .jpb-sw,#R.jpb-vis:not(.jpb-anim) .jpb-sw{animation:jpbSway var(--sw,5.6s) ease-in-out var(--swd,0s) infinite}',
-    '@keyframes jpbSway{0%,100%{transform:rotate(-.6deg)}50%{transform:rotate(.6deg)}}',
+    '#R.jpb-vis .jpb-num.is-on .jpb-sw,#R.jpb-vis:not(.jpb-anim) .jpb-sw{animation:jpbSway var(--sw,5.6s) ease-in-out var(--swd,0s) 2}',
+    '@keyframes jpbSway{0%,100%{transform:none}25%{transform:rotate(-.6deg)}75%{transform:rotate(.6deg)}}',   /* počinje i završava mirno — bez skoka na kraju */
     '#R .jpb-num.is-hit .jpb-hit{animation:jpbHit 1.6s cubic-bezier(.3,.6,.3,1)}',
     '@keyframes jpbHit{0%{transform:none}18%{transform:rotate(3.4deg)}42%{transform:rotate(-2.2deg)}66%{transform:rotate(1deg)}84%{transform:rotate(-.35deg)}100%{transform:none}}',
     '#R .jpb-sr{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}',
@@ -170,36 +169,33 @@
     /* tih link ispod naslova (samo ako je zadan) */
     '#R .jpb-foot{margin-top:22px}',
     '#R .jpb-link{all:unset;box-sizing:border-box!important;display:inline-flex!important;align-items:center;gap:8px;padding:4px 0!important;cursor:pointer;font:500 13.5px/1.3 var(--fb)!important;color:rgba(255,255,255,.76)!important;transition:color .2s}',
-    '#R .jpb-link svg{width:15px;height:15px;color:var(--accent)}',
-    '#R .jpb-link:hover{color:var(--accent)!important}',
+    '#R .jpb-link:hover,#R .jpb-link:focus-visible{color:var(--accent)!important}',
     '#R .jpb-why{display:block;margin-top:16px;font:500 11.5px/1.4 var(--fb);color:#FFB547}',
 
     /* ulazak (jednom): klase jpb-anim/jpb-on dodaje skripta samo kad postoji IntersectionObserver i nije uključeno smanjeno kretanje */
     '#R.jpb-anim .jpb-frame{opacity:0;transform:translateY(28px)}',
-    '#R.jpb-anim.jpb-on .jpb-frame{opacity:1;transform:none;transition:opacity .8s ease,transform 1s cubic-bezier(.2,.7,.2,1)}',
+    '#R.jpb-anim.jpb-on .jpb-frame{opacity:1;transform:none;transition:opacity .5s ease,transform .7s cubic-bezier(.2,.7,.2,1)}',
     '#R.jpb-anim .jpb-ph img{opacity:0;filter:saturate(.8) brightness(.2) contrast(1.06) blur(6px)}',
-    '#R.jpb-anim.jpb-on .jpb-ph img{opacity:1;filter:saturate(.8) brightness(var(--lum,.86)) contrast(1.06) blur(0);transition:opacity .7s ease .1s,filter .9s ease .1s}',
+    '#R.jpb-anim.jpb-on .jpb-ph img{opacity:1;filter:saturate(.8) brightness(var(--lum,.86)) contrast(1.06) blur(0);transition:opacity .5s ease,filter .6s ease}',
     /* reflektor se upali poslije fotografije: kratko, kao da se lampa zagrije */
     '#R.jpb-anim .jpb-lamp,#R.jpb-anim .jpb-beam{opacity:0}',
-    '#R.jpb-anim.jpb-on .jpb-lamp{opacity:1;transition:opacity 1s cubic-bezier(.3,0,.2,1) .6s}',
-    '#R.jpb-anim.jpb-on .jpb-beam{opacity:1;transition:opacity 1.2s ease .8s}',
+    '#R.jpb-anim.jpb-on .jpb-lamp{opacity:1;transition:opacity .8s cubic-bezier(.3,0,.2,1) .3s}',
+    '#R.jpb-anim.jpb-on .jpb-beam{opacity:1;transition:opacity .9s ease .45s}',
     '#R.jpb-anim .jpb-up{opacity:0;transform:translateY(20px)}',
     '#R.jpb-anim.jpb-on .jpb-up{opacity:1;transform:none;transition:opacity .7s ease var(--d,0s),transform .95s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
-    '#R.jpb-anim .jpb-eye::before{transform:scaleX(0);transform-origin:left center}',
-    '#R.jpb-anim.jpb-on .jpb-eye::before{transform:none;transition:transform .6s cubic-bezier(.2,.7,.2,1) .5s}',
     /* uže se iscrta, pa sjedišta jedno za drugim doklize po užetu i zaljuljaju se kad stanu; brojka u naslonu se zavrti */
     '#R.jpb-anim .jpb-wire,#R.jpb-anim .jpb-wire2{stroke-dasharray:1;stroke-dashoffset:1}',
-    '#R.jpb-anim.jpb-on .jpb-wire,#R.jpb-anim.jpb-on .jpb-wire2{stroke-dashoffset:0;transition:stroke-dashoffset .9s cubic-bezier(.4,0,.2,1) .25s}',
+    '#R.jpb-anim.jpb-on .jpb-wire,#R.jpb-anim.jpb-on .jpb-wire2{stroke-dashoffset:0;transition:stroke-dashoffset .7s cubic-bezier(.4,0,.2,1) .15s}',
     '#R.jpb-anim .jpb-num:not(.is-on) .jpb-chair{opacity:0}',
-    '#R.jpb-anim .jpb-num.is-on .jpb-chair{animation:jpbRide 1.5s cubic-bezier(.22,.7,.25,1) both}',
+    '#R.jpb-anim .jpb-num.is-on .jpb-chair{animation:jpbRide 1.15s cubic-bezier(.22,.7,.25,1) both}',
     '@keyframes jpbRide{0%{opacity:0;transform:translateX(var(--ride,-160px))}12%{opacity:1}48%{transform:translateX(0) rotate(0)}64%{transform:rotate(2.6deg)}79%{transform:rotate(-1.5deg)}91%{transform:rotate(.5deg)}100%{opacity:1;transform:none}}',
     '#R.jpb-anim .jpb-num:not(.is-on) .jpb-reel{transform:none}',
-    '#R.jpb-anim .jpb-reel{transition:transform var(--t,1.6s) cubic-bezier(.16,.8,.22,1) .45s}',
-    '#R.jpb-anim .jpb-num .jpb-l,#R.jpb-anim .jpb-num .jpb-s,#R.jpb-anim .jpb-num .jpb-v em{opacity:0;transform:translateY(8px);transition:opacity .5s ease .6s,transform .7s cubic-bezier(.2,.7,.2,1) .6s}',
+    '#R.jpb-anim .jpb-reel{transition:transform var(--t,1.2s) cubic-bezier(.16,.8,.22,1) .3s}',
+    '#R.jpb-anim .jpb-num .jpb-l,#R.jpb-anim .jpb-num .jpb-s,#R.jpb-anim .jpb-num .jpb-v em{opacity:0;transform:translateY(8px);transition:opacity .5s ease .4s,transform .6s cubic-bezier(.2,.7,.2,1) .4s}',
     '#R.jpb-anim .jpb-num.is-on .jpb-l,#R.jpb-anim .jpb-num.is-on .jpb-s,#R.jpb-anim .jpb-num.is-on .jpb-v em{opacity:1;transform:none}',
 
     /* manji laptop */
-    '@media (max-width:1180px){#R h3.jpb-l{font-size:14.5px!important}}',
+    '@media (max-width:1180px){#R h3.jpb-l{font-size:16px!important}}',
     /* tablet: fotografija gore, naslov i brojke ispod (red od 4) */
     '@media (max-width:980px){',
     '#R .jpb-frame{--mh:min(60vw,500px);justify-content:flex-start;min-height:0}',
@@ -210,27 +206,25 @@
     '#R h2{font-size:clamp(42px,7.4vw,64px)}',
     '#R .jpb-lead{max-width:56ch}',
     '#R .jpb-stats{margin-top:clamp(36px,6vw,52px);padding:0 clamp(22px,6vw,56px) clamp(38px,6vw,56px)}',
-    '#R h3.jpb-l{font-size:14px!important}',
-    '#R .jpb-s{font-size:9px;letter-spacing:1.4px}}',
+    '#R h3.jpb-l{font-size:15.5px!important}',
+    '#R .jpb-s{font-size:12.5px}}',
     /* telefon: dva reda po dva sjedišta, svaki red na svom užetu */
     '@media (max-width:760px){',
     '#R .jpb-frame{--mh:min(96vw,420px);border-radius:24px}',
     '#R .jpb-ph img{object-position:66% 62%}',
     '#R .jpb-body{padding:10px 20px 0}',
-    '#R .jpb-eye{gap:10px;margin-bottom:16px;font-size:10px;letter-spacing:3px}',
-    '#R .jpb-eye::before{width:22px}',
     '#R h2{font-size:clamp(38px,11.4vw,54px)}',
     '#R .jpb-lead{margin-top:16px}',
     '#R .jpb-stats{margin-top:34px;padding:0 16px 34px}',
     '#R .jpb-nums{grid-template-columns:1fr 1fr;gap:34px 14px}',
     '#R .jpb-num{--ride:-44px}',   /* kratko klizanje, da sjedište ne prelazi preko susjednog */
-    '#R h3.jpb-l{font-size:13.5px!important}',
+    '#R h3.jpb-l{font-size:15px!important}',
     /* brzina na telefonu (SEO pravila početne): bez backdrop-filter, filtera i miješanja boja */
     '#R .jpb-back{-webkit-backdrop-filter:none;backdrop-filter:none;background:linear-gradient(180deg,rgba(22,33,56,.94),rgba(10,17,32,.96))}',
     '#R .jpb-ph img,#R.jpb-anim .jpb-ph img,#R.jpb-anim.jpb-on .jpb-ph img{filter:none}',
     '#R .jpb-tint{mix-blend-mode:normal;opacity:1;background:rgba(14,38,78,.32)}',
     '#R .jpb-lamp,#R .jpb-beam{mix-blend-mode:normal;opacity:.6}',
-    '#R .jpb-s{font-size:8.5px;letter-spacing:1.2px}}',
+    '#R .jpb-s{font-size:12px}}',
     '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}'
   ].join('\n').replace(/#R/g, '#jpb-brojke');
 
@@ -246,7 +240,6 @@
   }
 
   /* ---------- pomoćno ---------- */
-  var ARROW = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function clean(s) { return String(s || '').replace(/\s+/g, ' ').trim(); }
   function f1(x) { return Math.round(x * 100) / 100; }
@@ -280,7 +273,7 @@
       var strip = '';
       for (var r = 0; r < 20; r++) strip += '<i>' + (r % 10) + '</i>';
       // desne cifre se vrte duže, kao na mehaničkom brojaču
-      o += '<span class="jpb-d"><span class="jpb-reel" style="--v:' + (10 + +ch) + ';--t:' + (.9 + di++ * .2).toFixed(2) + 's;--d:' + D.toFixed(2) + 's">' + strip + '</span></span>';
+      o += '<span class="jpb-d"><span class="jpb-reel" style="--v:' + (10 + +ch) + ';--t:' + (.7 + di++ * .15).toFixed(2) + 's;--d:' + D.toFixed(2) + 's">' + strip + '</span></span>';
     }
     return '<span class="jpb-ds" aria-hidden="true">' + o + '</span>';
   }
@@ -315,10 +308,9 @@
         '<span class="jpb-beam"></span><span class="jpb-lamp"></span>' +
       '</div><span class="jpb-tint"></span><span class="jpb-scrim"></span></div>' +
       '<div class="jpb-body">' +
-        '<div class="jpb-eye jpb-up" style="--d:.26s">' + esc(T.eyebrow) + '</div>' +
-        '<h2 id="jpb-h"><span class="jpb-up" style="--d:.36s">' + esc(T.h[0]) + '</span> <span class="jpb-o jpb-up" style="--d:.46s">' + esc(T.h[1]) + '</span></h2>' +
-        '<p class="jpb-lead jpb-up" style="--d:.58s">' + esc(T.lead) + '</p>' +
-        (LINK ? '<div class="jpb-foot jpb-up" style="--d:.7s"><a class="jpb-link" href="' + esc(LINK) + '" data-jpb="link">' + esc(LINKT) + ' ' + ARROW + '</a></div>' : '') +
+        '<h2 id="jpb-h"><span class="jpb-up" style="--d:.1s">' + esc(T.h[0]) + '</span> <span class="jpb-o jpb-up" style="--d:.18s">' + esc(T.h[1]) + '</span></h2>' +
+        '<p class="jpb-lead jpb-up" style="--d:.26s">' + esc(T.lead) + '</p>' +
+        (LINK ? '<div class="jpb-foot jpb-up" style="--d:.34s"><a class="jpb-link" href="' + esc(LINK) + '" data-jpb="link">' + esc(LINKT) + '</a></div>' : '') +
       '</div>' +
       '<div class="jpb-stats"><svg class="jpb-cable" aria-hidden="true" focusable="false"></svg><ul class="jpb-nums"></ul></div>' +
     '</div></section>';
@@ -374,7 +366,7 @@
   }
   // sjedišta stižu jedno za drugim
   function ride() {
-    KEYS.forEach(function (k, i) { setTimeout(function () { light(i); }, i * 200); });
+    KEYS.forEach(function (k, i) { setTimeout(function () { light(i); }, i * 150); });
   }
   function now() { return w.performance && performance.now ? performance.now() : Date.now(); }
   render();
@@ -592,15 +584,24 @@
   // Bez IntersectionObservera ili uz smanjeno kretanje sve je odmah upaljeno.
   if ('IntersectionObserver' in w && !reduced) {
     root.classList.add('jpb-anim');
+    // ranije je cijeli kadar čekao red sa brojkama (dno bloka) — gornji dio je dugo stajao prazan dok se skroluje
+    var onAt = 0;
     var io = new IntersectionObserver(function (es) {
       if (es.some(function (e) { return e.isIntersecting; })) {
         io.disconnect();
         void root.offsetWidth;
-        root.classList.add('jpb-on');
-        setTimeout(ride, 650);
+        root.classList.add('jpb-on'); onAt = now();
+      }
+    }, { rootMargin: '0px 0px -10% 0px' });
+    io.observe(frame);
+    var io2 = new IntersectionObserver(function (es) {
+      if (es.some(function (e) { return e.isIntersecting; })) {
+        io2.disconnect();
+        if (!onAt) { root.classList.add('jpb-on'); onAt = now(); }
+        setTimeout(ride, Math.max(150, 450 - (now() - onAt)));   // uže se prvo iscrta
       }
     }, { rootMargin: '0px 0px -8% 0px' });
-    io.observe(stats);
+    io2.observe(stats);
   } else light(KEYS.length - 1);
   // njihanje samo dok je blok na ekranu
   if ('IntersectionObserver' in w) new IntersectionObserver(function (es) { root.classList.toggle('jpb-vis', es[es.length - 1].isIntersecting); }).observe(stats);

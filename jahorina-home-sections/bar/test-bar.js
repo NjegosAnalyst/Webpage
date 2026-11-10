@@ -316,7 +316,7 @@ async function waitIdle(p) { await p.waitForFunction(() => !document.querySelect
   ({ p, ctx, errors } = await open(browser, { wp: 'iframe', media: 'nema', admin: true }));
   S = await state(p);
   check('ugrađena korica i 12 strana', /slike\/meni\/mala-01\.webp/.test(S.bookCover) && S.cap === 'Meni · 12 strana', S.bookCover);
-  check('admin vidi da meni nije u Medijima', /meni u Medijima/.test(S.why), S.why);
+  check('meni nije u Medijima: redovno stanje, admin bez poruke (korisnik 30. 10.)', !/meni u Medijima/.test(S.why), S.why);
   await p.click('#jb-bar .jb-btn--ghost'); await p.waitForTimeout(300);
   check('video ID iz iframe-a', /embed\/ZyXwVuTsRq1/.test(await p.evaluate(() => document.querySelector('#jb-vid iframe').src)));
   check('bez grešaka u konzoli', errors.length === 0, errors);

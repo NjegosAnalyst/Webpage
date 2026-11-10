@@ -140,12 +140,12 @@ const info = (p) => p.evaluate(() => {
   return {
     h1: document.querySelectorAll('h1').length, h3: r.querySelectorAll('h3').length, vHidden: [...r.querySelectorAll('.jpb-v')].every((v) => v.getAttribute('aria-hidden') === 'true'),
     alt: q('.jpb-ph img').alt, lazy: window.__lazy, dims: q('.jpb-ph img').getAttribute('width') + 'x' + q('.jpb-ph img').getAttribute('height'),
-    eyeLs: cs(q('.jpb-eye')).letterSpacing, eyeCol: cs(q('.jpb-eye')).color,
+    eye: !!q('.jpb-eye'), subFs: cs(q('.jpb-s')).fontSize, subTt: cs(q('.jpb-s')).textTransform,
     backBlur: cs(q('.jpb-back')).backdropFilter || cs(q('.jpb-back')).webkitBackdropFilter || 'none', imgFilter: cs(q('.jpb-ph img')).filter, tintBlend: cs(q('.jpb-tint')).mixBlendMode,
-    nums, eyebrow: q('.jpb-eye').textContent, h2: q('h2').textContent, lead: q('.jpb-lead').textContent,
+    nums, h2: q('h2').textContent, lead: q('.jpb-lead').textContent,
     why: q('.jpb-why') ? q('.jpb-why').textContent : '', link: q('.jpb-link') ? q('.jpb-link').textContent.trim() : '',
     rootW: r.getBoundingClientRect().width, rootL: r.getBoundingClientRect().left, docW: document.documentElement.clientWidth, scrollW: document.documentElement.scrollWidth,
-    frameL: fr.left, frameW: fr.width, frameH: fr.height, frameTop: fr.top - r.getBoundingClientRect().top, bodyL: q('.jpb-eye').getBoundingClientRect().left, bodyR: body.right, bodyB: body.bottom, frameB: fr.bottom, phL: ph.left, phTop: ph.top, phH: ph.height,
+    frameL: fr.left, frameW: fr.width, frameH: fr.height, frameTop: fr.top - r.getBoundingClientRect().top, bodyL: q('h2').getBoundingClientRect().left, bodyR: body.right, bodyB: body.bottom, frameB: fr.bottom, phL: ph.left, phTop: ph.top, phH: ph.height,
     h2Color: cs(q('h2 span')).color, h2Font: cs(q('h2')).fontFamily, oStroke: cs(q('h2 .jpb-o')).webkitTextStrokeWidth,
     vFont: cs(q('.jpb-v')).fontFamily, vSize: parseFloat(cs(q('.jpb-v')).fontSize), liStyle: cs(q('.jpb-num')).listStyleType,
     lamp: [q('.jpb-ph').style.getPropertyValue('--lx'), q('.jpb-ph').style.getPropertyValue('--ly')], lampOp: +cs(q('.jpb-lamp')).opacity,
@@ -158,7 +158,7 @@ const info = (p) => p.evaluate(() => {
         for (let k = 0; k <= 400; k++) { const pt = wr.getPointAtLength(L * k / 400), sx = m.a * pt.x + m.c * pt.y + m.e, sy = m.b * pt.x + m.d * pt.y + m.f; if (Math.abs(sx - x) < 3) best = Math.min(best, Math.abs(sy - y)); }
         return best; })); })),
     mix: r.querySelectorAll('.jpb-mix, .jpb-key').length, sub1: r.querySelector('.jpb-num .jpb-s').textContent,
-    sway: cs(q('.jpb-sw')).animationName, vis: r.classList.contains('jpb-vis'),
+    sway: cs(q('.jpb-sw')).animationName, swayN: cs(q('.jpb-sw')).animationIterationCount, vis: r.classList.contains('jpb-vis'),
     numFits: [...r.querySelectorAll('.jpb-back')].every((bk) => { const v = bk.querySelector('.jpb-v').getBoundingClientRect(), b = bk.getBoundingClientRect(); return v.width <= b.width - 8 && v.height <= b.height; }),
     numsTop: r.querySelector('.jpb-nums').getBoundingClientRect().top, leadB: q('.jpb-lead').getBoundingClientRect().bottom, imgOk: q('.jpb-ph img').naturalWidth > 0, alt: q('.jpb-ph img').alt,
   };
@@ -181,8 +181,8 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   check('SEO: 0 × H1, H2 „Olimpijska planina“, 4 × H3, cifre u sjedištu aria-hidden', i.h1 === 0 && i.h2 === 'Olimpijska planina' && i.h3 === 4 && i.vHidden, [i.h1, i.h2, i.h3, i.vHidden]);
   check('SEO: slika alt (Olimpijska planina Jahorina), lazy u HTML-u (predučitavanje ga prebaci), width/height', /Olimpijskoj planini Jahorina/.test(i.alt) && /loading="lazy"/.test(fs.readFileSync(path.join(__dirname, 'brojke.js'), 'utf8')) && i.dims === '2000x1334', [i.alt, i.lazy, i.dims]);
   check('SEO: uvod sa „ski centra Jahorina“', /ski centra Jahorina/.test(i.lead), i.lead);
-  check('nadnaslov = mali tekst hero-a (5 px, .75)', i.eyeLs === '5px' && /0\.75\)$/.test(i.eyeCol), [i.eyeLs, i.eyeCol]);
-  check('nadnaslov i naslov', i.eyebrow === 'Planina u brojkama' && i.h2 === 'Olimpijska planina', [i.eyebrow, i.h2]);
+  check('bez nadnaslova (kao novi hero / vijesti), naslov „Olimpijska planina“', !i.eye && i.h2 === 'Olimpijska planina', [i.eye, i.h2]);
+  check('natpisi ispod brojki obična slova, ≥ 12 px', i.subTt === 'none' && parseFloat(i.subFs) >= 12, [i.subTt, i.subFs]);
   check('uvod bez brojki (ne ponavlja podatke)', !/\d/.test(i.lead), i.lead);
   check('puna širina ekrana bez horizontalnog skrola', Math.abs(i.rootW - i.docW) < 1 && i.rootL === 0 && i.scrollW <= i.docW, [i.rootW, i.docW, i.scrollW]);
   check('kadar: rub kao hero (22 px)', Math.abs(i.frameL - 22) < 1.5, i.frameL);
@@ -197,8 +197,8 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   check('uže prolazi kroz hvataljke sjedišta', i.gripGap < 4, i.gripGap);
   check('brojke stanu u naslone sjedišta', i.numFits, i.numFits);
   check('sjedišta ispod naslova', i.numsTop > i.leadB, [i.numsTop, i.leadB]);
-  check('bez trake staza po težini (korisnik); ispod km stoji FIS', i.mix === 0 && i.sub1 === 'Uređene po FIS standardima', [i.mix, i.sub1]);
-  check('sjedišta se njišu dok je blok na ekranu', i.sway === 'jpbSway' && i.vis, [i.sway, i.vis]);
+  check('bez trake staza po težini (korisnik); ispod km „Za sve nivoe skijanja“ (FIS je u uvodu)', i.mix === 0 && i.sub1 === 'Za sve nivoe skijanja', [i.mix, i.sub1]);
+  check('sjedišta se zanjišu kad je blok na ekranu (2 zamaha, pa mir)', i.sway === 'jpbSway' && i.swayN === '2' && i.vis, [i.sway, i.swayN, i.vis]);
   await r.p.mouse.move(5, 5);
   const ch = await r.p.locator('#jpb-brojke .jpb-num').nth(1).locator('.jpb-back').boundingBox();
   await r.p.mouse.move(ch.x + ch.width / 2, ch.y + ch.height / 2);
@@ -217,10 +217,12 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   console.log('\n2) Ulazak: koluti kreću od nule, pa se zavrte');
   r = await open(browser, { wait: false, sank: true });
   await r.p.evaluate(() => window.scrollTo(0, 0));
-  const pre = await r.p.evaluate(() => { const r = document.getElementById('jpb-brojke'); return { anim: r.classList.contains('jpb-anim'), on: r.classList.contains('jpb-on') }; });
-  check('prije ulaska: animacija spremna, nije pokrenuta', pre.anim && !pre.on, pre);
-  await r.p.locator('#jpb-brojke .jpb-frame').scrollIntoViewIfNeeded();
-  await r.p.waitForTimeout(1050);
+  const pre = await r.p.evaluate(() => { const r = document.getElementById('jpb-brojke'), f = r.querySelector('.jpb-frame').getBoundingClientRect(), s = r.querySelector('.jpb-stats').getBoundingClientRect();
+    return { anim: r.classList.contains('jpb-anim'), on: r.classList.contains('jpb-on'), frameVis: f.top < innerHeight * .9, statsVis: s.top < innerHeight * .92, seats: r.querySelectorAll('.jpb-num.is-on').length }; });
+  // od 30. 10.: kadar (slika + naslov) se pali čim se vidi vrh bloka; sjedišta tek kad je red sa brojkama na ekranu
+  check('prije ulaska: kadar upaljen samo ako se vidi, sjedišta čekaju red sa brojkama', pre.anim && pre.on === pre.frameVis && !pre.statsVis && pre.seats === 0, pre);
+  await r.p.locator('#jpb-brojke .jpb-stats').scrollIntoViewIfNeeded();
+  await r.p.waitForTimeout(380);
   const mid = await r.p.evaluate(() => document.querySelectorAll('#jpb-brojke .jpb-num.is-on').length);
   check('sjedišta stižu jedno za drugim', mid >= 1 && mid < 4, mid);
   await r.p.screenshot({ path: path.join(OUT, '2-ulazak-sjedista.png') });
@@ -283,7 +285,7 @@ const SHOWN = (i) => i.nums.map((n) => n.shown).join(' | ');
   console.log('\n8) EN (/en/), qTranslate');
   r = await open(browser, { path: '/en/pocetna-zima/', wp: 'en' });
   i = await info(r.p);
-  check('EN tekst', i.eyebrow === 'The mountain in numbers' && i.h2 === 'An Olympic mountain', [i.eyebrow, i.h2]);
+  check('EN tekst', i.h2 === 'An Olympic mountain', i.h2);
   check('EN brojke iz /en/wp-json', NUMS(i) === '54 km | 18 | 10 | 600 m' && r.rest[0].startsWith('/en/wp-json/'), [NUMS(i), r.rest[0]]);
   await r.ctx.close();
   r = await open(browser, { path: '/en/pocetna-zima/', wp: 'qtranslate' });

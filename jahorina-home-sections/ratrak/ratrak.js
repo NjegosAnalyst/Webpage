@@ -39,7 +39,7 @@
 
   // tekst je korisnikov, doslovno (EN je prevod)
   var T = EN ? {
-    kicker: 'Experience at Jahorina', t: ['Panoramic', 'snowcat'], o: 'ride', alt: 'Snowcat grooming a Jahorina slope at sunset',
+    t: ['Panoramic', 'snowcat'], o: 'ride', alt: 'Snowcat grooming a Jahorina slope at sunset',
     lead: 'For those who want to enjoy the view of the slopes and peaks of Jahorina a little longer, the 20-minute panoramic ride is the right choice.',
     tiles: [['time', CFG.trajanje, 'Duration'], ['pin', CFG.polazak, 'Poljice gondola'], ['ticket', CFG.cijena, 'Per person']],
     notes: ['Children under 6 ride free.', 'Payment at the Poljice ski ticket office.'],
@@ -47,7 +47,7 @@
     mail: 'Book by email', mailS: 'Book by email', call: PHONE, callS: 'Call', shop: 'Book online', mail2: 'Email',
     gal: 'Gallery', galLabel: 'Panoramic snowcat ride gallery', galOpen: 'Open gallery', photo: 'Photo', close: 'Close', prev: 'Previous photo', next: 'Next photo'
   } : {
-    kicker: 'Doživljaj na Jahorini', t: ['Panoramska', 'vožnja'], o: 'ratrakom', alt: 'Ratrak uređuje stazu na Jahorini u zalasku sunca',
+    t: ['Panoramska', 'vožnja'], o: 'ratrakom', alt: 'Ratrak uređuje stazu na Jahorini u zalasku sunca',
     lead: 'Za one koji žele duže uživati u pogledu na staze i vrhove Jahorine, panoramska vožnja u trajanju od 20 minuta pravi je izbor.',
     tiles: [['time', CFG.trajanje, 'Trajanje'], ['pin', CFG.polazak, 'Polaz gondole Poljice'], ['ticket', CFG.cijena, 'Po osobi']],
     notes: ['Za djecu do 6 godina vožnja je besplatna.', 'Plaćanje na ski kasi Poljice.'],
@@ -124,9 +124,6 @@
 
     /* tekst preko kadra */
     '#R .jr-body{grid-column:2;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-width:0;padding:clamp(44px,4.4vw,64px) max(clamp(28px,4.4vw,68px),var(--in)) clamp(44px,4.4vw,64px) clamp(8px,1.2vw,18px)}',
-    /* nadnaslov kao u hero-u: svijetla linija + razmaknuta slova */
-    '#R .jr-kicker{display:flex;align-items:center;gap:14px;font:600 11px/1 var(--fd);letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:22px}',
-    '#R .jr-kicker::before{content:"";width:34px;height:1.5px;flex-shrink:0;background:linear-gradient(90deg,var(--accent),#fff,var(--accent));box-shadow:0 0 10px rgba(0,185,242,.8)}',
     /* naslov u tri reda, zadnja riječ samo obris (kao "Jahorine") */
     '#R h2{font-size:clamp(44px,4.7vw,70px);font-weight:800;line-height:.94;letter-spacing:-.02em}',
     '#R h2 > span{display:block;filter:drop-shadow(0 6px 30px rgba(0,0,0,.4))}',
@@ -143,7 +140,7 @@
     'background:var(--nm-surface-2);box-shadow:var(--nm-raised-sm)}',
     '#R .jr-tile svg{width:18px;height:18px;color:rgba(255,255,255,.72)}',
     '#R .jr-tile b{font:700 17px/1 var(--fd);letter-spacing:-.005em;color:#fff;white-space:nowrap;font-variant-numeric:tabular-nums}',
-    '#R .jr-tile small{font:600 9px/1.25 var(--fd);letter-spacing:.6px;text-transform:uppercase;color:rgba(255,255,255,.56)}',
+    '#R .jr-tile small{font:500 12.5px/1.25 var(--fb);letter-spacing:0;color:rgba(255,255,255,.62)}',
     '#R .jr-tile--accent{box-shadow:var(--nm-raised-sm),inset 0 0 0 1px rgba(0,185,242,.3)}',
     '#R .jr-tile--accent svg,#R .jr-tile--accent b{color:#2CCBF8}',
     '#R .jr-notes{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:16px!important}',
@@ -170,23 +167,20 @@
     '#R .jr-btn--ghost:hover{color:var(--accent)!important;box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(0,185,242,.4),0 0 22px rgba(0,185,242,.35)}',
     '#R .jr-btn--ghost:active{box-shadow:inset 2px 2px 5px rgba(0,0,0,.4),inset -2px -2px 5px rgba(78,104,150,.13)}',
     '#R .jr-book{margin-top:16px;font-size:13.5px;line-height:1.55;color:var(--text-3)!important;max-width:62ch}',
-    '#R .jr-book a{color:var(--text-2)!important;border-bottom:1px solid rgba(0,185,242,.4);white-space:nowrap}',
+    '#R .jr-book a{color:var(--text-2)!important;border:0!important;padding:0!important;white-space:nowrap;text-decoration:underline!important;text-decoration-color:rgba(0,185,242,.5)!important;text-decoration-thickness:1px!important;text-underline-offset:3px}',   /* ranije border-bottom — tema ga je pomjerala ispod reda */
     '#R .jr-book a:hover{color:var(--accent)!important}',
 
     /* ulazak (jednom): klase jr-anim/jr-on dodaje skripta samo kad postoji IntersectionObserver i nije uključeno smanjeno kretanje */
     '#R.jr-anim .jr-frame{opacity:0;transform:translateY(28px)}',
-    '#R.jr-anim.jr-on .jr-frame{opacity:1;transform:none;transition:opacity .8s ease,transform 1s cubic-bezier(.2,.7,.2,1)}',
+    '#R.jr-anim.jr-on .jr-frame{opacity:1;transform:none;transition:opacity .5s ease,transform .7s cubic-bezier(.2,.7,.2,1)}',
     /* fotografija: ulazi slijeva, mrak se razilazi i izoštri se (kao fotografija u hero-u) */
     '#R.jr-anim .jr-shot{opacity:0;transform:translateX(-56px);filter:brightness(.3) blur(8px)}',
-    '#R.jr-anim.jr-on .jr-shot{opacity:1;transform:none;filter:none;transition:opacity 1s ease .1s,transform 1.3s cubic-bezier(.2,.7,.2,1) .1s,filter 1.4s cubic-bezier(.2,.7,.2,1) .1s}',
+    '#R.jr-anim.jr-on .jr-shot{opacity:1;transform:none;filter:none;transition:opacity .7s ease,transform .9s cubic-bezier(.2,.7,.2,1),filter 1s cubic-bezier(.2,.7,.2,1)}',
     '#R.jr-anim .jr-amb{opacity:0}',
-    '#R.jr-anim.jr-on .jr-amb{opacity:1;transition:opacity 1.6s ease .2s}',
+    '#R.jr-anim.jr-on .jr-amb{opacity:1;transition:opacity 1.1s ease .1s}',
     /* tekst: ulazi zdesna, red po red (kašnjenje u --d) */
     '#R.jr-anim .jr-sl{opacity:0;transform:translateX(44px)}',
-    '#R.jr-anim.jr-on .jr-sl{opacity:1;transform:none;transition:opacity .7s ease var(--d,0s),transform .95s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
-    /* svijetla linija nadnaslova se upali slijeva nadesno */
-    '#R.jr-anim .jr-kicker::before{transform:scaleX(0);transform-origin:left center}',
-    '#R.jr-anim.jr-on .jr-kicker::before{transform:none;transition:transform .6s cubic-bezier(.2,.7,.2,1) .55s}',
+    '#R.jr-anim.jr-on .jr-sl{opacity:1;transform:none;transition:opacity .55s ease var(--d,0s),transform .75s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
     /* pločice se upale jedna za drugom (kao brzi linkovi u hero-u) */
     '#R.jr-anim .jr-tile{opacity:0}',
     '#R.jr-anim.jr-on .jr-tile{animation:jrTileOn .6s cubic-bezier(.2,.7,.2,1) var(--d,0s) both}',
@@ -212,13 +206,11 @@
     '#R .jr-shot{height:min(96vw,460px)}',
     '#R .jr-shot img{object-position:36% 50%}',
     '#R .jr-body{margin-top:-96px;padding:0 22px 30px}',
-    '#R .jr-kicker{letter-spacing:2.6px;font-size:10px;gap:10px;margin-bottom:16px}',
-    '#R .jr-kicker::before{width:22px}',
     '#R h2{font-size:clamp(40px,12vw,54px)}',
     '#R .jr-lead{margin-top:18px}',
     '#R .jr-dock{width:100%;margin-top:24px!important}',
     '#R .jr-tile{padding:14px 4px 8px!important}',
-    '#R .jr-tile small{letter-spacing:.3px}',
+    '#R .jr-tile small{font-size:12px}',
     '#R .jr-notes{flex-direction:column;gap:6px}',
     '#R .jr-acts{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:24px;width:100%}',
     '#R .jr-acts--3{display:flex;flex-wrap:wrap}',
@@ -237,7 +229,7 @@
     '#L.is-open figure{transform:none}',
     '#L img{display:block;max-width:100%;max-height:calc(100vh - 150px);width:auto;height:auto;border:0;border-radius:18px;user-select:none;-webkit-user-drag:none;',
     'box-shadow:0 40px 80px -30px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.06)}',
-    "#L figcaption{font:600 11.5px/1 'Archivo',system-ui,sans-serif;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.6);font-variant-numeric:tabular-nums}",
+    "#L figcaption{font:600 13px/1 'Archivo',system-ui,sans-serif;letter-spacing:.5px;color:rgba(255,255,255,.66);font-variant-numeric:tabular-nums}",
     '#L button{all:unset;position:absolute!important;box-sizing:border-box!important;width:48px!important;height:48px!important;padding:0!important;margin:0!important;border:0!important;border-radius:50%!important;display:grid!important;place-items:center;cursor:pointer;',
     'color:rgba(255,255,255,.82)!important;background:#131D31!important;box-shadow:3px 3px 7px rgba(0,0,0,.45),-2px -2px 6px rgba(70,96,142,.1)!important;transition:color .2s}',
     '#L button svg{display:block;width:20px;height:20px}',
@@ -272,7 +264,6 @@
     ticket: svg('<path d="M4 7.5 H20 V10 A2 2 0 0 0 20 14 V16.5 H4 V14 A2 2 0 0 0 4 10 Z" ' + S + '/><path d="M14.5 8.5 V15.5" ' + S + ' stroke-dasharray="1.5 2.2"/>'),
     mail: svg('<rect x="3.5" y="5.5" width="17" height="13" rx="2.5" ' + S + '/><path d="M4.5 7 L12 12.5 L19.5 7" ' + S + '/>'),
     gallery: svg('<rect x="3.5" y="5.5" width="17" height="13" rx="2.5" ' + S + '/><path d="M3.8 15.5 L8.5 11 L12 14.2 L14.6 12 L20.2 16.8" ' + S + '/><circle cx="15.5" cy="9" r="1.4" ' + S + '/>'),
-    arrow: svg('<path d="M5 12 H19 M13 6 L19 12 L13 18" ' + S + '/>'),
     prev: svg('<path d="M19 12 H5 M11 6 L5 12 L11 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
     next: svg('<path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
     close: svg('<path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'),
@@ -296,22 +287,21 @@
         (GAL.length ? '<button type="button" class="jr-gal" aria-haspopup="dialog" aria-label="' + esc(T.galOpen + ' (' + GAL.length + ')') + '">' + ICON.gallery + esc(T.gal) + ' <i>' + GAL.length + '</i></button>' : '') +
       '</figure>' +
       '<div class="jr-body">' +
-        '<div class="jr-kicker jr-sl" style="--d:.3s">' + esc(T.kicker) + '</div>' +
-        '<h2 id="jr-h"><span class="jr-sl" style="--d:.4s">' + esc(T.t[0]) + '</span> <span class="jr-sl" style="--d:.5s">' + esc(T.t[1]) + '</span>' +
-          ' <span class="jr-o jr-sl" style="--d:.6s">' + esc(T.o) + '</span></h2>' +
-        '<p class="jr-lead jr-sl" style="--d:.72s">' + esc(T.lead) + '</p>' +
-        '<ul class="jr-dock jr-sl" style="--d:.84s">' + T.tiles.map(function (t, k) {
-          return '<li class="jr-tile' + (k === 2 ? ' jr-tile--accent' : '') + '" style="--d:' + (1.08 + k * .09).toFixed(2) + 's">' + ICON[t[0]] + '<b>' + esc(t[1]) + '</b><small>' + esc(t[2]) + '</small></li>';
+        '<h2 id="jr-h"><span class="jr-sl" style="--d:.15s">' + esc(T.t[0]) + '</span> <span class="jr-sl" style="--d:.22s">' + esc(T.t[1]) + '</span>' +
+          ' <span class="jr-o jr-sl" style="--d:.29s">' + esc(T.o) + '</span></h2>' +
+        '<p class="jr-lead jr-sl" style="--d:.38s">' + esc(T.lead) + '</p>' +
+        '<ul class="jr-dock jr-sl" style="--d:.46s">' + T.tiles.map(function (t, k) {
+          return '<li class="jr-tile' + (k === 2 ? ' jr-tile--accent' : '') + '" style="--d:' + (.6 + k * .07).toFixed(2) + 's">' + ICON[t[0]] + '<b>' + esc(t[1]) + '</b><small>' + esc(t[2]) + '</small></li>';
         }).join('') + '</ul>' +
-        '<ul class="jr-notes jr-sl" style="--d:1.02s">' + T.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('') + '</ul>' +
-        '<div class="jr-acts' + (CFG.shop ? ' jr-acts--3' : '') + ' jr-sl" style="--d:1.14s">' +
+        '<ul class="jr-notes jr-sl" style="--d:.54s">' + T.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('') + '</ul>' +
+        '<div class="jr-acts' + (CFG.shop ? ' jr-acts--3' : '') + ' jr-sl" style="--d:.62s">' +
           (CFG.shop
-            ? '<a class="jr-btn jr-btn--solid" href="' + esc(CFG.shop) + '" data-jr="webshop">' + esc(T.shop) + ICON.arrow + '</a>' +
+            ? '<a class="jr-btn jr-btn--solid" href="' + esc(CFG.shop) + '" data-jr="webshop">' + esc(T.shop) + '</a>' +
               '<a class="jr-btn jr-btn--ghost" href="mailto:' + MAIL + '" data-jr="mail">' + ICON.mail + esc(T.mail2) + '</a>'
             : '<a class="jr-btn jr-btn--solid" href="mailto:' + MAIL + '" data-jr="mail">' + ICON.mail + lbl(T.mail, T.mailS) + '</a>') +
           '<a class="jr-btn jr-btn--ghost" href="tel:' + TEL + '" data-jr="telefon" aria-label="' + esc(T.callS + ' ' + PHONE) + '">' + ICON.phone + lbl(T.call, T.callS) + '</a>' +
         '</div>' +
-        '<p class="jr-book jr-sl" style="--d:1.24s">' + linkify(T.book) + '</p>' +
+        '<p class="jr-book jr-sl" style="--d:.7s">' + linkify(T.book) + '</p>' +
       '</div>' +
     '</div></section>';
 
