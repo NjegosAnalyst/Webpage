@@ -94,8 +94,8 @@ Drugi broj: `data-gss="+387 …"` na `#jm-mapa`.
   (zvanična slika 2000 × 1200, 25/14, sa jsDelivr-a); `PREUZMI` u `napravi-widget.py` = adresa iz WordPress Medija.
 - **Bijele trake:** `paint()` oboji omotače u kojima je samo mapa (Elementor kontejner/kolona, `#Content` teme) bojom
   sekcije, pa padding ispod naslova stranice i iznad footera postane tamni dio sekcije. Test provjerava piksele.
-- **Telefon:** filteri u dva reda (bez povlačenja), okvir `clamp(230px, 64vw, 340px)` sa cijelim skijalištem pri
-  otvaranju, oznake žičara tek na zumu, kontrole vodoravno (+, −, cijeli ekran; „cijela mapa“ u cijelom ekranu).
+- **Telefon:** filteri u dva reda (bez povlačenja), okvir `min(65svh, 62,9vw + 170px)` (najviše 65 % ekrana: cijelo
+  skijalište uz vrh + tamni pojas sa uputstvom, u kojem se otvara kartica) sa cijelim skijalištem pri otvaranju, oznake žičara tek na zumu, kontrole vodoravno (+, −, cijeli ekran; „cijela mapa“ u cijelom ekranu).
 - **Kartica staze:** „Žičara do starta“ za staze koje ne kreću od žičare (npr. 3b: žičara 2 preko staze 2); naziv i
   dužina se prikazuju čim se upišu u `STAZE_INFO` (`ulaz.py`). Status otvoreno/zatvoreno čeka izvor podataka.
 
