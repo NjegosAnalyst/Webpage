@@ -49,6 +49,8 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
     const ctx = await browser.newContext({ viewport: v.viewport, hasTouch: v.touch, isMobile: v.touch, deviceScaleFactor: v.dpr || 1 });
     const page = await ctx.newPage();
     const errors = [];
+    // „cijela mapa“: dugme (na telefonu postoji samo u cijelom ekranu, inače početni prikaz)
+    const home = () => page.evaluate(() => { const b = document.querySelector('#jm-mapa [data-a="fit"]'); if (b && b.offsetParent) b.click(); else document.getElementById('jm-mapa').__jm.home(0); });
     page.on('pageerror', (e) => errors.push(e.message));
     page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
     await serve(page);
@@ -65,8 +67,8 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
       };
     });
     ok(info.runs >= 25, `${v.name}: oznake staza ${info.runs}`);
-    ok(info.lifts === 13, `${v.name}: žičare ${info.lifts}`);
-    ok(info.paths === 24, `${v.name}: staze u SVG-u ${info.paths}`);
+    ok(info.lifts === 14, `${v.name}: žičare ${info.lifts}`);
+    ok(info.paths === 25, `${v.name}: staze u SVG-u ${info.paths}`);
     ok(info.overflow <= 0, `${v.name}: bez vodoravnog skrola (${info.overflow})`);
     ok(info.h1 === 0, `${v.name}: bez H1`);
     ok(/Mapa staza\s+Jahorine/.test(info.h2), `${v.name}: H2 "${info.h2}"`);
@@ -83,9 +85,26 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
       pop: document.querySelectorAll('#jm-mapa .jm-pop, #jm-mapa .jm-lists').length,
     }));
     ok(bez.chip <= 34, `${v.name}: filteri ${bez.chip}px`);
+    // 25 staza / 14 žičara kao ski info; preuzimanje; svi filteri na ekranu (telefon: dva reda, bez povlačenja)
+    const ui = await page.evaluate(() => {
+      const r = document.getElementById('jm-mapa'), dl = r.querySelector('.jm-dl'), fr = r.querySelector('.jm-frame').getBoundingClientRect();
+      const chips = [...r.querySelectorAll('.jm-bar .jm-chip, .jm-bar .jm-nt')].map((c) => c.getBoundingClientRect());
+      const inF = (sel) => { const e = r.querySelector(sel); if (!e) return false; const b = e.getBoundingClientRect(); return b.left >= fr.left - 2 && b.right <= fr.right + 2 && b.top >= fr.top - 2 && b.bottom <= fr.bottom + 2; };
+      return { lead: r.querySelector('.jm-lead').textContent, dl: dl && dl.getAttribute('href'), chipsIn: chips.every((b) => b.left >= 0 && b.right <= innerWidth), rows: new Set(chips.map((b) => Math.round(b.top))).size,
+        fh: Math.round(fr.height), vh: innerHeight, edges: inF('.jm-pm[data-run="6c"]') && inF('.jm-pm[data-run="7"]') && inF('.jm-pm[data-run="9b"]') };
+    });
+    ok(/^25 staza,.* 14 žičara/.test(ui.lead), `${v.name}: uvod „${ui.lead.slice(0, 48)}…“`);
+    ok(/preuzimanje\/mapa-staza-jahorina\.jpg$/.test(ui.dl || ''), `${v.name}: dugme za preuzimanje (${ui.dl})`);
+    ok(ui.chipsIn, `${v.name}: svi filteri na ekranu (${ui.rows} ${ui.rows === 1 ? 'red' : 'reda'})`);
+    ok(ui.edges, `${v.name}: na otvaranju se vidi cijelo skijalište (6c, 7, 9b u kadru)`);
+    if (v.touch) ok(ui.fh <= ui.vh * 0.45, `${v.name}: okvir mape ${ui.fh}px od ${ui.vh}px ekrana`);
     ok(bez.poi === 0 && bez.pop === 0 && bez.chips === 'laka,srednja,teska,zicare', `${v.name}: bez usluga/topova/popisa (oznaka ${bez.poi}, popis ${bez.pop}, filteri ${bez.chips})`);
 
     // izbor staze (oznaka na mapi)
+    // 3b ne kreće od žičare: kartica nudi žičaru 2 preko staze 2
+    await page.evaluate(() => document.querySelector('#jm-mapa .jm-pm[data-run="3b"]').click()); await sleep(700);
+    const c3b = await page.evaluate(() => document.querySelector('#jm-mapa .jm-card').textContent);
+    ok(/Žičara do starta/.test(c3b) && /2 · Ogorjelica I/.test(c3b) && /preko staze\s*2/.test(c3b), `${v.name}: kartica 3b ima žičaru do starta (${c3b.replace(/\s+/g, ' ').slice(0, 90)})`);
     await page.evaluate(() => document.querySelector('#jm-mapa .jm-pm[data-run="4a"]').click());
     await sleep(800);
     const card = await page.evaluate(() => { const c = document.querySelector('#jm-mapa .jm-card'); return c.classList.contains('on') && c.textContent; });
@@ -134,15 +153,16 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
     await page.click('#jm-mapa .jm-bar .jm-nt');
 
     // zum dugmetom (vezne staze se pojave)
-    await page.click('#jm-mapa [data-a="fit"]'); await sleep(500);
-    await page.click('#jm-mapa [data-a="in"]'); await sleep(400);
-    await page.click('#jm-mapa [data-a="in"]'); await sleep(600);
+    await home(); await sleep(500);
+    for (let i = 0; i < (v.touch ? 4 : 2); i++) { await page.click('#jm-mapa [data-a="in"]'); await sleep(450); }
+    await sleep(300);
     const veze = await page.evaluate(() => getComputedStyle(document.querySelector('#jm-mapa .jm-lod2')).opacity);
     ok(veze === '1', `${v.name}: vezne staze vidljive poslije zuma`);
     await frame.screenshot({ path: path.join(OUT, `${v.name}-6-zum.png`) });
 
     // klik na stazu na mapi (putanja)
-    await page.click('#jm-mapa [data-a="fit"]'); await sleep(500);
+    await home(); await sleep(500);
+    if (v.touch) { await page.click('#jm-mapa [data-a="in"]'); await sleep(450); await page.click('#jm-mapa [data-a="in"]'); await sleep(600); } await sleep(500);
     const hit = await page.evaluate(() => {
       // tačka na liniji staze 3 koja je unutar okvira (dalje od ivica i kontrola)
       const p = document.querySelector('#jm-mapa .jm-hits [data-run="3"]'), fr = document.querySelector('#jm-mapa .jm-frame').getBoundingClientRect();

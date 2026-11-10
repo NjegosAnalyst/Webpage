@@ -25,6 +25,7 @@
     help: 'Drag to move · Ctrl + scroll to zoom · Click a run for details', helpTouch: 'Swipe sideways · pinch to zoom · full screen for more room',
     lit: 'Floodlit for night skiing', fis: 'FIS homologated', upper: 'Upper part black, lower part red',
     gore: 'Lift to the top', dole: 'At the bottom', od: 'Branches off run', u: 'Joins run', fromTop: 'Runs from the top',
+    doStarta: 'Lift to the start', preko: 'via run', duz: 'length', dl: 'Download the ski map',
     ride: 'ride', listLifts: 'Lifts', listRuns: 'Runs', listSum: 'Lifts and runs list', nLifts: 'lifts', nRuns: 'runs', mapLabel: 'Interactive piste map of Jahorina. Runs and lifts on the map are buttons.',
     tip: { gondola: 'Gondola', sestosjed: 'Six-seater chairlift', dvosjed: 'Double chairlift', tanjir: 'Platter lift', sidro: 'T-bar lift' },
     lvl: { laka: 'Blue run', srednja: 'Red run', teska: 'Black run' },
@@ -49,6 +50,7 @@
     help: 'Prevuci za pomjeranje · Ctrl + točkić za zum · klik na stazu za detalje', helpTouch: 'Prevuci lijevo-desno · dva prsta za zum · cijeli ekran za više prostora',
     lit: 'Osvijetljena za noćno skijanje', fis: 'FIS homologovana', upper: 'Gornji dio crna, donji dio crvena staza',
     gore: 'Žičara do vrha', dole: 'Na dnu', od: 'Odvaja se od staze', u: 'Spaja se sa stazom', fromTop: 'Staze sa vrha',
+    doStarta: 'Žičara do starta', preko: 'preko staze', duz: 'dužina', dl: 'Preuzmi mapu staza',
     ride: 'vožnje', listLifts: 'Žičare', listRuns: 'Staze', listSum: 'Popis žičara i staza', nLifts: 'žičara', nRuns: 'staza', mapLabel: 'Interaktivna mapa staza Jahorine. Staze i žičare na mapi su dugmad.',
     tip: { gondola: 'Gondola', sestosjed: 'Šestosjed', dvosjed: 'Dvosjed', tanjir: 'Ski lift tanjir', sidro: 'Ski lift sidro' },
     lvl: { laka: 'Plava staza', srednja: 'Crvena staza', teska: 'Crna staza' },
@@ -100,6 +102,11 @@
   '#jm-mapa h2.jm-title span{display:block}' +
   '#jm-mapa h2.jm-title .jm-o{color:transparent!important;-webkit-text-stroke:1.6px rgba(255,255,255,.92)}' +
   '#jm-mapa .jm-lead{font:400 17px/1.55 var(--fb);color:var(--text-2);margin:0;max-width:60ch}' +
+  '#jm-mapa .jm-lead-w{display:flex;flex-direction:column;align-items:flex-start;gap:14px}' +
+  '#jm-mapa .jm-dl{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:0 16px 0 13px;border-radius:40px;font:600 12px/1 var(--fd)!important;letter-spacing:1.4px;text-transform:uppercase;color:#fff!important;' +
+  'background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.02));box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);transition:box-shadow .2s,transform .12s}' +
+  '#jm-mapa .jm-dl svg{width:16px;height:16px;color:var(--accent-2)}#jm-mapa .jm-dl small{font:600 10px/1 var(--fd);letter-spacing:1px;color:var(--text-3)}' +
+  '#jm-mapa .jm-dl:hover{box-shadow:inset 0 0 0 1px rgba(0,185,242,.55),0 0 14px rgba(0,185,242,.15)}#jm-mapa .jm-dl:active{transform:scale(.97)}#jm-mapa .jm-dl:focus-visible{outline:2px solid var(--accent);outline-offset:2px}' +
   /* traka filtera */
   '#jm-mapa .jm-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px}' +
   '#jm-mapa .jm-chips{display:flex;flex-wrap:wrap;gap:6px}' +
@@ -211,6 +218,7 @@
   '#jm-mapa .jm-poi.k-bar{width:auto;padding:0 8px;gap:5px;display:inline-flex;align-items:center;font:700 11px/1 var(--fd)!important;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}' +
   '#jm-mapa.jm-z2 .jm-poi.l1,#jm-mapa.jm-z3 .jm-poi{opacity:1;visibility:visible}' +
   '#jm-mapa .jm-rb{opacity:0}#jm-mapa.jm-z2 .jm-rb{opacity:1}' +
+  '#jm-mapa.jm-z0 .jm-world .jm-lb:not(.on){opacity:0;pointer-events:none}' +
   '#jm-mapa.jm-sel .jm-world .jm-poi{opacity:.4}' +
   '#jm-mapa .jm-pk{display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;transform:translate(-50%,-100%) scale(calc(var(--inv)*var(--ms)))!important;transform-origin:50% 100%!important}' +
   '#jm-mapa .jm-pk span{font:700 11px/1 var(--fd);letter-spacing:2px;text-transform:uppercase;color:#fff;padding:6px 10px;border-radius:8px;background:rgba(10,17,32,.72);white-space:nowrap}' +
@@ -262,7 +270,7 @@
   '#jm-mapa .jm-stats strong{font:800 19px/1 var(--fd);color:#fff;font-variant-numeric:tabular-nums}' +
   '#jm-mapa .jm-stats strong small{font:600 11.5px/1 var(--fd);color:var(--text-2);margin-left:3px}' +
   '#jm-mapa .jm-stats span{font:600 9.5px/1 var(--fd);letter-spacing:1.2px;text-transform:uppercase;color:var(--text-3)}' +
-  '#jm-mapa .jm-rcs{display:flex;flex-wrap:wrap;gap:5px}' +
+  '#jm-mapa .jm-rcs{display:flex;flex-wrap:wrap;gap:5px}#jm-mapa .jm-via{display:inline-flex;align-items:center;gap:5px;font:500 12px/1 var(--fb);color:var(--text-3)}' +
   '#jm-mapa .jm-rc{position:relative;display:inline-grid;place-items:center;min-width:26px;height:22px;padding:0 7px;border-radius:11px;color:#fff!important;font:800 11px/1 var(--fd)!important}' +
   '#jm-mapa .jm-rc.t-laka{background:var(--c-laka)}#jm-mapa .jm-rc.t-srednja{background:var(--c-srednja)}#jm-mapa .jm-rc.t-teska{background:var(--c-teska);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}' +
   '#jm-mapa .jm-rc.z{background:rgba(196,238,255,.1);color:var(--ice)!important;box-shadow:inset 0 0 0 1px rgba(196,238,255,.2)}' +
@@ -307,13 +315,13 @@
   '@media (max-width:900px){#jm-mapa .jm-head{grid-template-columns:1fr}#jm-mapa .jm-lists{grid-template-columns:1fr}}' +
   '@media (max-width:760px){' +
   '#jm-mapa{padding-left:0;padding-right:0}#jm-mapa .jm-head,#jm-mapa .jm-bar,#jm-mapa .jm-foot{padding-left:16px;padding-right:16px}#jm-mapa .jm-sos{flex:1 1 100%}#jm-mapa .jm-sos-t{font-size:12.5px}#jm-mapa .jm-sos-t .jm-sos-x{display:none}#jm-mapa .jm-sos a{margin-left:auto;padding:0 13px;font-size:14px!important}#jm-mapa .jm-pop{margin:0 16px}' +
-  '#jm-mapa .jm-frame{border-radius:0;height:min(72vh,520px);box-shadow:inset 0 1px 0 var(--line),inset 0 -1px 0 var(--line)}' +
-  '#jm-mapa .jm-bar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;justify-content:flex-start}#jm-mapa .jm-bar::-webkit-scrollbar{display:none}' +
-  '#jm-mapa .jm-chips{flex-wrap:nowrap}#jm-mapa .jm-chip,#jm-mapa .jm-nt{flex:none}' +
+  '#jm-mapa .jm-frame{border-radius:0;height:clamp(230px,64vw,340px);box-shadow:inset 0 1px 0 var(--line),inset 0 -1px 0 var(--line)}' +
+  '#jm-mapa .jm-bar{justify-content:flex-start}#jm-mapa .jm-chips{gap:8px 6px}#jm-mapa .jm-chip,#jm-mapa .jm-nt{flex:none}' +
   '#jm-mapa .jm-card{left:8px;right:8px;bottom:8px;width:auto;max-height:46%;padding:12px 12px 10px;border-radius:16px;backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(9,14,26,.95)}' +
   '#jm-mapa .jm-lifts{grid-template-columns:1fr}#jm-mapa .jm-lists{padding:4px 10px 14px}' +
   '#jm-mapa .jm-runs .jm-rc{min-width:38px;height:32px;border-radius:16px}#jm-mapa .jm-card .jm-rc{height:28px;padding:0 10px;border-radius:14px}#jm-mapa .jm-rc::before{content:"";position:absolute;inset:-6px -3px}' +
-  '#jm-mapa .jm-ctls{right:10px;top:auto;bottom:12px;border-radius:13px}#jm-mapa .jm-ctl{width:40px;height:40px}#jm-mapa .jm-ctl svg{width:17px;height:17px}#jm-mapa.jm-cardon .jm-ctls{opacity:0;pointer-events:none}' +
+  '#jm-mapa .jm-ctls{right:8px;top:auto;bottom:8px;flex-direction:row;border-radius:13px}#jm-mapa .jm-ctl{width:44px;height:44px}#jm-mapa .jm-ctl+.jm-ctl{border-top:0;border-left:1px solid rgba(255,255,255,.07)}#jm-mapa .jm-ctl-gap,#jm-mapa [data-a="fit"]{display:none}#jm-mapa .jm-ctl svg{width:17px;height:17px}#jm-mapa.jm-cardon .jm-ctls{opacity:0;pointer-events:none}' +
+  '#jm-mapa.jm-fs .jm-ctls{flex-direction:column}#jm-mapa.jm-fs .jm-ctl+.jm-ctl{border-left:0;border-top:1px solid rgba(255,255,255,.07)}#jm-mapa.jm-fs [data-a="fit"]{display:grid}#jm-mapa.jm-fs .jm-ctl-gap{display:block}' +
   '#jm-mapa.jm-fs .jm-ctls{top:auto;bottom:calc(12px + env(safe-area-inset-bottom,0px))}' +
   '#jm-mapa.jm-fs .jm-fsbar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}' +
   '}' +
@@ -367,11 +375,17 @@
   var isTouch = window.matchMedia && matchMedia('(pointer:coarse)').matches;
 
   /* ---------- kostur ---------- */
+  // statični tekst iz reda za Elementor (za pretraživače i AI): sklanja se, a vraća ako se mapa ne može učitati
+  var STAT = [].slice.call(root.querySelectorAll('.jm-static, style'));
+  STAT.forEach(function (n) { n.parentNode.removeChild(n); });
+  var DL = root.getAttribute('data-preuzmi') || BASE + 'preuzimanje/mapa-staza-jahorina.jpg';
+  var DLX = (DL.split(/[?#]/)[0].split('.').pop() || '').toUpperCase();
   root.innerHTML =
     '<div class="jm-in">' +
       '<div class="jm-head"><div><div class="jm-kicker">' + T.kicker + '</div>' +
       '<h2 class="jm-title"><span>' + T.h1 + '</span> <span class="jm-o">' + T.h2 + '</span></h2></div>' +
-      '<p class="jm-lead">' + T.lead + '</p></div>' +
+      '<div class="jm-lead-w"><p class="jm-lead">' + T.lead + '</p>' +
+        '<a class="jm-dl" href="' + esc(DL) + '" target="_blank" rel="noopener" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>' + T.dl + (/^(JPG|JPEG|PNG|PDF|WEBP)$/.test(DLX) ? '<small>' + DLX + '</small>' : '') + '</a></div></div>' +
       '<div class="jm-bar"><div class="jm-chips" role="group"></div></div>' +
       '<div class="jm-frame">' +
         '<div class="jm-view" tabindex="0" role="application" aria-label="' + esc(T.mapLabel) + '"><div class="jm-world"></div></div>' +
@@ -418,7 +432,7 @@
     var txt = function (v) { return String(v == null ? '' : v); };   // tekst ide kroz esc() ili textContent
     return {
       w: n(D.w), h: n(D.h),
-      staze: D.staze.map(function (r) { return { id: id(r.id), tez: t(r.tez), seg: r.seg.map(function (g) { return { t: t(g.t), d: d(g.d) }; }), o: r.o.map(xy),
+      staze: D.staze.map(function (r) { return { id: id(r.id), ime: txt(r.ime || ''), m: r.m ? n(r.m) : 0, tez: t(r.tez), seg: r.seg.map(function (g) { return { t: t(g.t), d: d(g.d) }; }), o: r.o.map(xy),
         noc: !!r.noc, fis: !!r.fis, bb: r.bb.map(n), gore: ids(r.gore), dole: ids(r.dole), od: ids(r.od), u: ids(r.u) }; }),
       neimenovane: (D.neimenovane || []).map(function (v) { return { t: t(v.t), d: d(v.d) }; }),
       veze: (D.veze || []).map(function (v) { return { t: t(v.t), d: d(v.d) }; }),
@@ -481,8 +495,18 @@
       return;
     }
   }
-  function reseam() { clearTimeout(reseam.t); reseam.t = setTimeout(function () { fit(); seam(); seamDown(); }, 160); }
-  seam(); seamDown();
+  // bijele trake (korisnik 10. 11.: ispod naslova stranice i iznad podnožja): to su padding/razmaci omotača oko mape
+  // (Elementor kontejner, kolona, sadržaj stranice teme). Svaki omotač u kojem je samo mapa dobije boju sekcije, pa
+  // razmak postane dio tamne sekcije; staje se na prvom omotaču koji ima i drugi vidljiv sadržaj.
+  function paint() {
+    for (var el = root.parentElement; el && el !== document.body && el !== document.documentElement; el = el.parentElement) {
+      if ([].some.call(el.children, function (c) { return !c.contains(root) && !empty(c); })) break;
+      el.style.setProperty('background-color', '#0A1120', 'important');
+      el.style.setProperty('background-image', 'none', 'important');
+    }
+  }
+  function reseam() { clearTimeout(reseam.t); reseam.t = setTimeout(function () { fit(); paint(); seam(); seamDown(); }, 160); }
+  paint(); seam(); seamDown();
   window.addEventListener('load', reseam);
   if ('ResizeObserver' in window) new ResizeObserver(reseam).observe(document.body);
 
@@ -494,6 +518,8 @@
       world.innerHTML = '';
       view.insertAdjacentHTML('beforeend', '<p style="position:absolute;inset:auto 0 45%;text-align:center;color:rgba(255,255,255,.7);font:500 15px var(--fb)">' +
         (EN ? 'The map could not be loaded.' : 'Mapa se trenutno ne može učitati.') + '</p>');
+      // tekst o stazama i žičarama iz reda ostaje dostupan ispod
+      STAT.forEach(function (n) { root.appendChild(n); }); root.classList.remove('jm-js');
       if (window.console) console.warn('jm-mapa', e);
     });
   }
@@ -650,7 +676,8 @@
     function bounds() {
       vw = view.clientWidth || 1; vh = view.clientHeight || 1;
       // najmanji zum: računar = cijela širina bez praznih traka; telefon = visina skijališta (bez sitne cijele mape)
-      kMin = narrowView() ? Math.max(vw / W, vh / 1650) : Math.max(vw / W, vh / (H - BY0));
+      // telefon (uski okvir): cijelo skijalište (x 40–3170, y 330–1900) u kadru; nikad praznih traka oko slike
+      kMin = vw < 700 || narrowView() ? Math.max(vw / W, vh / H, Math.min(vw / 3130, vh / 1570)) : Math.max(vw / W, vh / (H - BY0));
       kMax = 1.1; if (vw < 700) kMax = 1.25;   // podloga je u izvoru 1593 px: dalje od ovoga samo mutnija slika
     }
     function clamp() {
@@ -671,7 +698,8 @@
         setVar('--inv', (1 / k).toFixed(5));
         var f = Math.max(.7, Math.min(1.8, Math.pow(k / .4, .5)));
         setVar('--lw', (f / k).toFixed(5));
-        setVar('--ms', Math.max(.6, Math.min(1.05, Math.pow(k / .72, .55))).toFixed(3));
+        setVar('--ms', Math.max(vw < 700 ? .5 : .6, Math.min(1.05, Math.pow(k / .72, .55))).toFixed(3));
+        root.classList.toggle('jm-z0', vw < 700 && k < .2);   // telefon, cijelo skijalište: brojevi staza, oznake žičara tek na zumu
         root.classList.toggle('jm-z2', k >= .5);
         root.classList.toggle('jm-z3', k >= .75);
         if (k > .62) upgrade();
@@ -710,7 +738,7 @@
     function home(ms) {
       bounds();
       // telefon: jezgro skijališta (vrh, staze 2–8, gondola), bez praznog šumskog dijela; računar: cijelo skijalište
-      if (narrowView()) { var nk = Math.max(kMin, vh / 1180); goTo(nk, vw / 2 - 1720 * nk, vh / 2 - 1010 * nk, ms); }
+      if (vw < 700 || narrowView()) goTo(kMin, vw / 2 - 1605 * kMin, vh / 2 - 1115 * kMin, ms);
       else goTo(kMin, (vw - W * kMin) / 2, vh / 2 - 1090 * kMin, ms);
     }
     bounds(); home(0);
@@ -781,10 +809,19 @@
       mark('[data-run="' + id + '"]');
       r.gore.forEach(function (l) { mark('.jm-l[data-lift="' + l + '"],.jm-lb[data-lift="' + l + '"]'); });
       var mixed = r.seg.length > 1 && r.seg[0].t !== r.seg[r.seg.length - 1].t;
+      // staza koja ne kreće od žičare (npr. 3b se odvaja od 2): žičara staze od koje se odvaja, preko nje
+      var doS = [], seenS = {};
+      (function walk(x, via) {
+        if (seenS[x.id]) return; seenS[x.id] = 1;
+        if (x.gore.length) { x.gore.forEach(function (l) { if (!doS.some(function (q) { return q.l === l; })) doS.push({ l: l, via: via }); }); return; }
+        x.od.forEach(function (o) { if (byRun[o]) walk(byRun[o], via || o); });
+      })(r, null);
+      var doRow = r.gore.length ? row(T.gore, r.gore.map(liftChip).join('')) :
+        row(T.doStarta, doS.map(function (q) { return liftChip(q.l) + (q.via ? '<span class="jm-via">' + T.preko + ' ' + runChip(q.via) + '</span>' : ''); }).join(''));
       var tags = (r.noc ? '<span class="jm-tag w">' + T.lit + '</span>' : '') + (r.fis ? '<span class="jm-tag">' + T.fis + '</span>' : '');
       cardBody.innerHTML = '<div class="jm-ch"><span class="jm-pm t-' + r.tez + '" aria-hidden="true">' + num(r.id) + '</span><div class="jm-ct"><h3>' + T.run + ' ' + esc(r.id) + '</h3><p>' +
-        (mixed ? T.upper : T.lvl[r.tez]) + '</p></div></div>' + (tags ? '<div class="jm-tags">' + tags + '</div>' : '') +
-        '<ul class="jm-cl">' + row(T.gore, r.gore.map(liftChip).join('')) + row(T.od, r.od.map(runChip).join('')) +
+        (r.ime ? esc(r.ime) + ' · ' : '') + (mixed ? T.upper : T.lvl[r.tez]) + (r.m ? ' · ' + r.m + ' m' : '') + '</p></div></div>' + (tags ? '<div class="jm-tags">' + tags + '</div>' : '') +
+        '<ul class="jm-cl">' + doRow + row(T.od, r.od.map(runChip).join('')) +
         row(T.u, r.u.map(runChip).join('')) + row(T.dole, r.dole.map(liftChip).join('')) + '</ul>';
       card.classList.add('on'); root.classList.add('jm-cardon');
       if (focus !== false) fitBox(r.bb[0], r.bb[1], r.bb[2], r.bb[3], 520);

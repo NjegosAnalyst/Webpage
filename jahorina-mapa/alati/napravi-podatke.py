@@ -22,7 +22,7 @@ from skimage.graph import route_through_array
 from skimage.morphology import dilation, opening, disk, skeletonize, remove_small_objects
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-from ulaz import STAZE, OZNAKE, NEIMENOVANE, VEZE_RUCNO, ROMBOIDI, ZICARE, USLUGE, USLUGE_INFO, FIS, VRHOVI, SANKE, NATPISI
+from ulaz import STAZE, STAZE_INFO, OZNAKE, NEIMENOVANE, VEZE_RUCNO, ROMBOIDI, ZICARE, USLUGE, USLUGE_INFO, FIS, VRHOVI, SANKE, NATPISI
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 BB = pymupdf.Rect(0, 134, 3805.92, 2494)          # područje podloge u PDF tačkama
@@ -187,8 +187,13 @@ la_d = dilation(la, disk(8))
 staze = []; sve_rute = {}
 for sid, segs in STAZE.items():
     seg = []; svi = []
-    for boja, t in segs:
-        p = ruta(boja, t); svi.append(p)
+    for sg in segs:
+        boja, t = sg[0], sg[1]
+        if len(sg) > 2 and sg[2] == 'rucno':          # staza koje nema na sloju oznaka: zadate tačke, samo izglađene
+            p = rdp(izgladi(np.array(t, float), 5), .8)
+        else:
+            p = ruta(boja, t)
+        svi.append(p)
         seg.append({'t': TEZ[boja], 'd': put(p), 'p': np.round(p, 1).tolist()})
     sve = np.vstack(svi); sve_rute[sid] = sve
     lit = float(np.mean([la_d[int(round(y)), int(round(x))] for x, y in sve]))
@@ -197,7 +202,8 @@ for sid, segs in STAZE.items():
     for ox, oy in OZNAKE.get(sid, []):                        # oznaka tačno na liniji
         i = int(np.argmin(np.hypot(sve[:, 0] - ox, sve[:, 1] - oy))); om.append([round(sve[i, 0], 1), round(sve[i, 1], 1)])
     tez = max((s['t'] for s in seg), key=RANG.get)
-    staze.append({'id': sid, 'tez': tez, 'seg': [{'t': s['t'], 'd': s['d']} for s in seg], 'o': om,
+    inf = STAZE_INFO.get(sid, {})
+    staze.append({'id': sid, **({'ime': inf['ime']} if inf.get('ime') else {}), **({'m': inf['m']} if inf.get('m') else {}), 'tez': tez, 'seg': [{'t': s['t'], 'd': s['d']} for s in seg], 'o': om,
                   'noc': lit >= .6, 'fis': False, 'bb': [round(v) for v in (*sve.min(0), *sve.max(0))], 'px': round(duz)})
 
 for fx, fy in FIS:
