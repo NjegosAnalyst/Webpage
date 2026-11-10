@@ -180,9 +180,9 @@ async function lb(p) {
   check('dugme Galerija', S.gal === 'Galerija', S.gal);
   check('kabina iznutra diskretno lijevo: učitana, boca desno od teksta, utapa se prije kabina', S.inside.ok && S.inside.bottle > S.inside.textRight - 40 && S.inside.fadeEnd <= S.inside.cabLeft + 1, S.inside);
   check('nadnaslov = naslov stranice', S.kicker === 'VIP gondola', S.kicker);
-  check('uvod = rečenica "Priuštite sebi …" sa stranice', /^Priuštite sebi nezaboravnu vožnju.*ljubavlju\.$/.test(S.lead), S.lead);
+  check('uvod: kratka rečenica (10. 11.), bez „meze“', S.lead === 'Panoramska vožnja u VIP kabini, uz šampanjac i domaće specijalitete.', S.lead);
   check('paketi iz teksta: VIP 1 izabran, VIP 2', S.tog === 'VIP 1*|VIP 2', S.tog);
-  check('VIP 1: vožnja do 1 h, šampanjac, meze prigušeno; 150 KM', S.inc === 'Vožnja do 1 h|Šampanjac|Meze(-)' && S.price === '150KM', [S.inc, S.price]);
+  check('VIP 1: vožnja do 1 h, šampanjac, domaći specijaliteti prigušeno; 150 KM', S.inc === 'Vožnja do 1 h|Šampanjac|Domaći specijaliteti(-)' && S.price === '150KM', [S.inc, S.price]);
   check('Rezerviši VIP 1 → mail sa stranice, naslov i tekst sa paketom', /^mailto:vip@oc-jahorina\.com\?subject=Rezervacija: VIP gondola 1&body=Poštovani,\n\nželim da rezervišem paket VIP gondola 1 \(150 KM\)\./.test(S.rez[0]) && S.rez[1] === 'Rezerviši VIP 1', S.rez);
   check('napomena: najmanje dan ranije + link stranice', S.note === 'Rezervacija e-poštom, najmanje dan ranije Više o VIP gondoli' && S.page === SITE + '/vip-gondola/', [S.note, S.page]);
   check('ulaznica i dugmad iste širine, poravnati', S.passW === S.actsW && S.passL === S.actsL, [S.passW, S.actsW, S.passL, S.actsL]);
@@ -212,7 +212,7 @@ async function lb(p) {
   const mid = await p.evaluate(() => document.querySelector('#jg-gondola .jg-price b').textContent);
   await p.waitForTimeout(600);
   S = await state(p);
-  check('VIP 2: cijena se prebroji (150 → 250), meze uključeno', +mid > 150 && +mid < 250 && S.price === '250KM' && S.inc === 'Vožnja do 1 h|Šampanjac|Meze' && S.tog === 'VIP 1|VIP 2*', [mid, S.price, S.inc, S.tog]);
+  check('VIP 2: cijena se prebroji (150 → 250), domaći specijaliteti uključeni', +mid > 150 && +mid < 250 && S.price === '250KM' && S.inc === 'Vožnja do 1 h|Šampanjac|Domaći specijaliteti' && S.tog === 'VIP 1|VIP 2*', [mid, S.price, S.inc, S.tog]);
   check('Rezerviši VIP 2 → mail za VIP 2 (250 KM)', /subject=Rezervacija: VIP gondola 2&body=.*paket VIP gondola 2 \(250 KM\)/s.test(S.rez[0]) && S.rez[1] === 'Rezerviši VIP 2', S.rez);
   await p.locator('#jg-gondola .jg-frame').screenshot({ path: path.join(OUT, 'sr-racunar-vip2.png') });
   // tastatura: strelica lijevo vraća VIP 1
@@ -281,21 +281,21 @@ async function lb(p) {
   console.log('WordPress ispiše PHP upozorenje prije JSON-a');
   ({ p, ctx, errors } = await open(browser, { wp: 'upozorenje', ga: 'none', admin: true }));
   S = await state(p);
-  check('podaci se ipak pročitaju, admin bez poruke', S.tog === 'VIP 1*|VIP 2' && /^Priuštite/.test(S.lead) && S.why === '', [S.tog, S.why]);
+  check('podaci se ipak pročitaju, admin bez poruke', S.tog === 'VIP 1*|VIP 2' && /^Panoramska vožnja u VIP kabini/.test(S.lead) && S.why === '', [S.tog, S.why]);
   await ctx.close();
 
   console.log('Stranica bez paketa → ugrađeni paketi ostaju, admin vidi razlog');
   ({ p, ctx, errors } = await open(browser, { wp: 'bezpaketa', ga: 'none', admin: true }));
   S = await state(p);
-  check('ugrađeni paketi (150 KM), novi uvod; admin: paketi i mail', S.price === '150KM' && S.tog === 'VIP 1*|VIP 2' && /nova ponuda/.test(S.lead) && /paketi/.test(S.why) && /mail/.test(S.why), [S.price, S.lead, S.why]);
+  check('ugrađeni paketi (150 KM), kratki uvod ostaje; admin: paketi i mail', S.price === '150KM' && S.tog === 'VIP 1*|VIP 2' && /^Panoramska vožnja u VIP kabini/.test(S.lead) && /paketi/.test(S.why) && /mail/.test(S.why), [S.price, S.lead, S.why]);
   check('bez "dan ranije" na stranici → samo "Rezervacija e-poštom"', /^Rezervacija e-poštom Više/.test(S.note), S.note);
   await ctx.close();
 
   console.log('EN, računar, Google Tag Manager, qTranslate oznake (/en/wp-json ne radi → /wp-json)');
   ({ p, ctx, errors, rest } = await open(browser, { path: '/en/pocetna-zima/', ga: 'gtm', wp: 'qtranslate' }));
   S = await state(p);
-  check('engleski naslov i uvod iz WP-a', S.lines.join('|') === 'Ride in the|VIP gondola' && S.gal === 'Gallery' && /^Treat yourself to an unforgettable night ride/.test(S.lead), [S.lines, S.lead]);
-  check('engleski paketi: Ride up to 1 h, Champagne, Meze platter(-), 150 KM', S.inc === 'Ride up to 1 h|Champagne|Meze platter(-)' && S.price === '150KM', [S.inc, S.price]);
+  check('engleski naslov iz WP-a i kratak uvod', S.lines.join('|') === 'Ride in the|VIP gondola' && S.gal === 'Gallery' && S.lead === 'A panoramic ride in a VIP cabin, with champagne and local specialities.', [S.lines, S.lead]);
+  check('engleski paketi: Ride up to 1 h, Champagne, Local specialities(-), 150 KM', S.inc === 'Ride up to 1 h|Champagne|Local specialities(-)' && S.price === '150KM', [S.inc, S.price]);
   check('Book VIP 1 → mail, engleski predmet; link /en/', /^mailto:vip@oc-jahorina\.com\?subject=Booking: VIP gondola 1/.test(S.rez[0]) && S.rez[1] === 'Book VIP 1' && S.page === SITE + '/en/vip-gondola/', [S.rez, S.page]);
   check('napomena: at least a day in advance', /Book by email at least a day in advance/.test(S.note), S.note);
   check('prvo /en/wp-json, pa /wp-json', /^\/en\/wp-json/.test(rest[0]) && rest.some((x) => /^\/wp-json\/wp\/v2\/pages/.test(x)), rest);
@@ -310,7 +310,7 @@ async function lb(p) {
   console.log('WordPress ne odgovara (403): posjetilac vidi ugrađeni sadržaj, admin i razlog');
   ({ p, ctx, errors } = await open(browser, { wp: 'greska', ga: 'none' }));
   S = await state(p);
-  check('ugrađeni tekst, paketi i mail', /^Priuštite/.test(S.lead) && S.tog === 'VIP 1*|VIP 2' && /^mailto:skipass@oc-jahorina\.com/.test(S.rez[0]) && S.why === '', [S.lead, S.rez]);
+  check('ugrađeni tekst, paketi i mail', /^Panoramska vožnja u VIP kabini/.test(S.lead) && S.tog === 'VIP 1*|VIP 2' && /^mailto:skipass@oc-jahorina\.com/.test(S.rez[0]) && S.why === '', [S.lead, S.rez]);
   await ctx.close();
   ({ p, ctx, errors } = await open(browser, { wp: 'greska', ga: 'none', admin: true }));
   S = await state(p);

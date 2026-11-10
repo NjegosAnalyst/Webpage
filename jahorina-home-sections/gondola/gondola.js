@@ -10,7 +10,7 @@
        dugme "Rezerviši VIP N" otvara mail sa već upisanim paketom; "Galerija" = fotografije preko ekrana.
 
    SADRŽAJ JE IZ WORDPRESSA (stranica VIP gondole, data-stranica = slug; ako slug ne postoji, traži se stranica sa "VIP"):
-     nadnaslov = naslov stranice; uvod = rečenica "Priuštite sebi …" (ili prva rečenica); paketi = "VIP gondola 1/2 …
+     nadnaslov = naslov stranice; uvod = kratka rečenica u kodu (10. 11., zamjena data-uvod); paketi = "VIP gondola 1/2 …
      cijena … KM … do 1h … šampanjac … meze" iz teksta; mail = prvi mailto: link (ili link "OVDJE"); "dan ranije" iz
      teksta; fotografije = 3 naše + sve slike sa stranice; "Više o VIP gondoli" = link stranice.
      Dok WordPress ne odgovori, stoji ugrađeni tekst (isti kao na stranici 9. 10. 2026). Prijavljeni admin vidi razlog.
@@ -19,6 +19,7 @@
    Podešavanja na <div id="jg-gondola"> (sva su neobavezna):
      data-stranica="vip-gondola"   (slug WordPress stranice)
      data-mail="…@oc-jahorina.com" (zamjena za mail sa stranice)
+     data-uvod="…" / data-uvod-en="…" (zamjena za kratak uvod)
      data-galerija="url1, url2"    (zamjena za fotografije)
    GA: izbor paketa → gondola_paket (paket), Rezerviši → gondola_rezervacija (nacin: mail, paket),
        fotografije → gondola_galerija, "Više o VIP gondoli" → gondola_klik (cilj: stranica).
@@ -39,11 +40,11 @@
   var MAIL = opt('mail', 'skipass@oc-jahorina.com'), RES_URL = '';   // mail prodaje (kao za ratrak) dok ga stranica ne da
   var reduced = w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // ugrađeni tekst = tekst stranice VIP gondole (9. 10. 2026); naslov je korisnikov dizajn; EN je prevod
+  // ugrađeni tekst = tekst stranice VIP gondole (9. 10. 2026); naslov je korisnikov dizajn; uvod kratak (10. 11.); EN je prevod
   var T = EN ? {
     kicker: 'VIP gondola', h: ['Ride in the', 'VIP gondola'],
-    lead: 'Treat yourself to a panoramic ride in a VIP cabin: settle into the leather seats, open a bottle of champagne and taste a fine meze platter of delicious local products, prepared for you with great care and love.',
-    pick: 'Choose your package', price: 'Package price', ride: 'Ride up to', rideX: 'Panoramic ride', ch: 'Champagne', mz: 'Meze platter', no: ' (not included)',
+    lead: 'A panoramic ride in a VIP cabin, with champagne and local specialities.',
+    pick: 'Choose your package', price: 'Package price', ride: 'Ride up to', rideX: 'Panoramic ride', ch: 'Champagne', mz: 'Local specialities', no: ' (not included)',
     book: 'Book', bookS: 'Book', inside: 'Gallery', insideS: 'Gallery', more: 'More about the VIP gondola',
     adv: function (n) { return 'Book by email at least ' + (n ? n + ' days' : 'a day') + ' in advance'; }, advX: 'Book by email',
     name: 'VIP gondola', subj: 'Booking: ', body: 'Hello,\n\nI would like to book the {p} package.\n\nDate:\nPreferred time:\nNumber of guests:\nName:\nPhone:\n\nThank you!',
@@ -53,8 +54,8 @@
       'Two hands toasting with champagne in front of a snowy mountain', 'Gondola Poljice at night: cabins with blue LED lights on the cable']
   } : {
     kicker: 'VIP gondola', h: ['Vožnja', 'VIP gondolom'],
-    lead: 'Priuštite sebi panoramsku vožnju u VIP kabini, udobno se smjestite u kožna sjedišta, otvorite bocu šampanjca i probajte izvrsnu mezu sačinjenu od velikog broja preukusnih domaćih proizvoda, pripremljenu za vas sa velikom pažnjom i ljubavlju.',
-    pick: 'Izaberite paket', price: 'Cijena paketa', ride: 'Vožnja do', rideX: 'Panoramska vožnja', ch: 'Šampanjac', mz: 'Meze', no: ' (nije uključeno)',
+    lead: 'Panoramska vožnja u VIP kabini, uz šampanjac i domaće specijalitete.',   // korisnik 10. 11.: kratko, bez „meze“
+    pick: 'Izaberite paket', price: 'Cijena paketa', ride: 'Vožnja do', rideX: 'Panoramska vožnja', ch: 'Šampanjac', mz: 'Domaći specijaliteti', no: ' (nije uključeno)',
     book: 'Rezerviši', bookS: 'Rezerviši', inside: 'Galerija', insideS: 'Galerija', more: 'Više o VIP gondoli',
     adv: function (n) { return 'Rezervacija e-poštom, najmanje ' + (n ? n + ' dana' : 'dan') + ' ranije'; }, advX: 'Rezervacija e-poštom',
     name: 'VIP gondola', subj: 'Rezervacija: ', body: 'Poštovani,\n\nželim da rezervišem paket {p}.\n\nDatum vožnje:\nOkvirno vrijeme:\nBroj osoba:\nIme i prezime:\nKontakt telefon:\n\nHvala!',
@@ -378,7 +379,7 @@
       '<div class="jg-body">' +
         '<div class="jg-kicker jg-up" style="--d:.26s">' + esc(T.kicker) + '</div>' +
         '<h2 id="jg-h"><span class="jg-up" style="--d:.36s">' + esc(T.h[0]) + '</span> <span class="jg-o jg-up" style="--d:.46s">' + esc(T.h[1]) + '</span></h2>' +
-        '<p class="jg-lead jg-up" style="--d:.62s">' + esc(T.lead) + '</p>' +
+        '<p class="jg-lead jg-up" style="--d:.62s">' + esc(opt(EN ? 'uvod-en' : 'uvod', T.lead)) + '</p>' +
         '<div class="jg-pass jg-up" style="--d:.74s">' + passHTML() + '</div>' +
         '<div class="jg-acts jg-up" style="--d:.86s">' +
           '<a class="jg-btn jg-btn--solid" data-jg="rezervacija"></a>' +
@@ -728,8 +729,7 @@
   function apply(r) {
     var miss = [];
     if (r.title && r.title.length <= 32 && r.title !== q('.jg-kicker').textContent) q('.jg-kicker').textContent = r.title;
-    if (r.lead) { if (r.lead !== q('.jg-lead').textContent) q('.jg-lead').textContent = r.lead; }
-    else miss.push('tekst');
+    // uvod ostaje kratak (10. 11.): duga rečenica sa stranice („Priuštite sebi …“) se više ne prepisuje u blok
     if (r.pk.length) {
       var same = JSON.stringify(r.pk) === JSON.stringify(PK);
       PK = r.pk;
