@@ -8,7 +8,8 @@ const path = require('path');
 
 const OUT = process.argv[2] || path.join(__dirname, 'screenshots');
 const FONTS = process.argv[3] || '';
-const LINE = fs.readFileSync(path.join(__dirname, 'elementor-html-widget.html'), 'utf8').trim();
+const LINE0 = fs.readFileSync(path.join(__dirname, 'elementor-html-widget.html'), 'utf8').trim();
+let LINE = LINE0;
 fs.mkdirSync(OUT, { recursive: true });
 const TYPES = { '.js': 'application/javascript', '.json': 'application/json', '.webp': 'image/webp' };
 
@@ -41,10 +42,13 @@ const JQ = `window.$=function(s){var el=document.querySelector(s);return{html:fu
 async function serve(pg, opts) {
   await pg.route('**/*', async (route) => {
     const url = new URL(route.request().url());
-    const send = (rel) => {
+    const send = (rel, host) => {
       const f = path.join(__dirname, rel);
       if (!fs.existsSync(f)) return route.fulfill({ status: 404, body: 'nema' });
-      return route.fulfill({ status: 200, contentType: TYPES[path.extname(f)] || 'application/octet-stream', headers: { 'Access-Control-Allow-Origin': '*' }, body: fs.readFileSync(f) });
+      let body = fs.readFileSync(f);
+      // napad: izmijenjen mapa.json (HTML ubačen u putanju staze)
+      if (rel.endsWith('mapa.json') && (opts.tamper === 'all' || (opts.tamper === 'cdn' && host === 'cdn'))) body = body.toString().replace('"d":"M', '"d":"\\"><img src=x onerror=window.__pwn=1>M');
+      return route.fulfill({ status: 200, contentType: TYPES[path.extname(f)] || 'application/octet-stream', headers: { 'Access-Control-Allow-Origin': '*' }, body });
     };
     const rel = (p) => p.replace(/^.*?\/jahorina-mapa\//, '');
     if (url.hostname === 'www.oc-jahorina.com') return route.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: page(opts.lang, opts.editor) });
@@ -52,7 +56,7 @@ async function serve(pg, opts) {
     if (url.hostname === 'cdn.jsdelivr.net') {
       if (opts.cdnDown) return route.abort();
       if (opts.cdnAssetsDown && !url.pathname.endsWith('mapa.js')) return route.fulfill({ status: 503, body: 'x' });
-      return send(rel(url.pathname));
+      return send(rel(url.pathname), 'cdn');
     }
     if (url.hostname === 'rawcdn.githack.com' || url.hostname === 'raw.githubusercontent.com') { opts.used.add(url.hostname); return send(rel(url.pathname)); }
     if (url.hostname === 'fonts.googleapis.com' && FONTS) return route.fulfill({ status: 200, contentType: 'text/css', body: fs.readFileSync(path.join(FONTS, 'fonts.css'), 'utf8') });
@@ -83,7 +87,8 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
     const pg = await ctx.newPage();
     const errors = [];
     pg.on('pageerror', (e) => errors.push(e.message));
-    pg.on('console', (m) => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push(m.text()); });
+    // namjerno pokvareni odgovori: preglednik sam prijavi neuspio SRI (očekivano, rezerva ga zamijeni)
+    pg.on('console', (m) => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text()) && !(c.cdnAssetsDown && /integrity|SRI/.test(m.text()))) errors.push(m.text()); });
     const opts = { lang: c.lang, editor: !!c.editor, cdnDown: !!c.cdnDown, cdnAssetsDown: !!c.cdnAssetsDown, used: new Set() };
     await serve(pg, opts);
     await pg.goto('https://www.oc-jahorina.com' + c.url, { waitUntil: 'load' });
@@ -117,6 +122,25 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
     ok(errors.length === 0, `${c.name}: bez grešaka ${errors.join(' | ')}`);
     await ctx.close();
   }
+  // napad na podatke: izmijenjen mapa.json se odbije (heš iz reda), u stranicu ne ulazi ništa
+  for (const t of [
+    { name: 'podaci-izmijenjeni-na-jsdelivr', tamper: 'cdn', line: LINE0, expectMap: true },
+    { name: 'podaci-izmijenjeni-svuda', tamper: 'all', line: LINE0, expectMap: false },
+    { name: 'podaci-izmijenjeni-bez-heša', tamper: 'all', line: LINE0.replace(/ data-podaci="[^"]*"/, ''), expectMap: false },
+  ]) {
+    LINE = t.line;
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+    const pg = await ctx.newPage();
+    const opts = { lang: 'sr', used: new Set(), tamper: t.tamper };
+    await serve(pg, opts);
+    await pg.goto('https://www.oc-jahorina.com/mapa-staza/', { waitUntil: 'load' });
+    await sleep(2500);
+    const r = await pg.evaluate(() => ({ pwn: window.__pwn, runs: document.querySelectorAll('#jm-mapa .jm-world .jm-pm').length, img: document.querySelectorAll('#jm-mapa img[src="x"]').length, msg: (document.querySelector('#jm-mapa .jm-view') || {}).textContent }));
+    ok(r.pwn === undefined && r.img === 0, `${t.name}: ubačeni kod se nije izvršio`);
+    ok(t.expectMap ? r.runs >= 24 : r.runs === 0 && /ne može učitati/.test(r.msg), `${t.name}: ${t.expectMap ? 'mapa iz rezerve (' + r.runs + ')' : 'mapa odbijena, poruka prikazana'}`);
+    await ctx.close();
+  }
+  LINE = LINE0;
   await browser.close();
   console.log(fails ? `\n${fails} grešaka` : '\nSve provjere prošle');
   process.exit(fails ? 1 : 0);

@@ -72,6 +72,16 @@ Drugi broj: `data-gss="+387 …"` na `#jm-mapa`.
 - `test-widget.js`: simulacija Betheme + Elementor (uži kontejner, stilovi teme, footer), SR, EN (`/en/`), telefon,
   Elementor editor (jQuery ubacivanje), jsDelivr pao (githack), podaci/slike sa GitHuba.
 
+## Sigurnost (10. 11. 2026)
+- `mapa.js`: jsDelivr zaključan na puni commit + SRI (preglednik ne pokrene izmijenjen fajl).
+- `mapa.json`: heš u redu (`data-podaci="sha384-…"`), `fetch(…, {integrity})`; izmijenjen fajl se odbije i uzme se rezerva
+  sa GitHuba (isti heš). Uz to `clean()` propusti u HTML samo provjerene vrijednosti (putanje `M/C` + brojevi, oznake staza,
+  brojevi, poznate vrste) — i u pregledu bez heša. Test: `test-widget.js` (napad na podatke na jsDelivr-u / svuda / bez heša).
+- Slike: samo `<img>` (ne mogu pokrenuti kod).
+- Preostalo: rezerva za sam `mapa.js` sa githack-a je bez SRI (isti loader kao ostale sekcije; githack nije bilo moguće
+  provjeriti iz ovog okruženja — ako šalje CORS, SRI se može dodati i rezervi u svim redovima).
+- Commit mora ostati na GitHubu: grana se ne smije brisati prije spajanja u `main`.
+
 ## Otvoreno
 - Dužine i nazivi staza nisu na mapi (samo brojevi i težina) — mogu se dodati u `ulaz.py` kad stignu.
 - Podloga u većoj rezoluciji (od dizajnerke), ako postoji.

@@ -116,7 +116,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - **9. 11. (korisnik):** bez usluga, bez osnježavanja i bez popisa žičara ispod mape (vraćaju se sa `data-usluge/topovi/popis="1"`); filteri: plave, crvene, crne, žičare, noćno skijanje.
 - **10. 11.:** živi detalji (svjetlosna linija niz izabranu stazu, kabina po izabranoj žičari, mekano učitavanje slike); ispravljena visina svijeta (1996 → iz podataka, 2198) — linije i oznake su bile pomjerene u odnosu na sliku. Slika mape koju je korisnik poslao 10. 11. je starija verzija (14 žičara); važi AI od 5. 11. Nazivi i dužine staza i dalje nisu ni na jednoj mapi.
 - **10. 11.:** ispod mape broj Gorske službe spasavanja +387 66 636 636 (dugme za poziv; `data-gss` mijenja broj).
-- **Red za Elementor (10. 11.):** `jahorina-mapa/elementor-html-widget.html` (@73a9a71, puni hash + SRI). Preporuka: posebna stranica „Mapa staza“ (`/mapa-staza/`, EN `/en/mapa-staza/`), kontejner pune širine sa padding/margin/gap 0, bez subheadera. Simulacija `test-widget.js` prolazi (SR, EN, telefon, editor, jsDelivr pao).
+- **Red za Elementor (10. 11.):** `jahorina-mapa/elementor-html-widget.html` (@1e4a6c4, puni hash + SRI; od 10. 11. i heš podataka `data-podaci`). Preporuka: posebna stranica „Mapa staza“ (`/mapa-staza/`, EN `/en/mapa-staza/`), kontejner pune širine sa padding/margin/gap 0, bez subheadera. Simulacija `test-widget.js` prolazi (SR, EN, telefon, editor, jsDelivr pao).
 - Pregled (artifact): https://claude.ai/artifact/X8xC3r94DjZxFT5KZGsX99
 - Otvoreno: dužine/nazivi staza, gdje ide na sajtu (posebna stranica ili početna), pa red za Elementor.
 
