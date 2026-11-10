@@ -26,6 +26,7 @@
     lit: 'Floodlit for night skiing', fis: 'FIS homologated', upper: 'Upper part black, lower part red',
     gore: 'Lift to the top', dole: 'At the bottom', od: 'Branches off run', u: 'Joins run', fromTop: 'Runs from the top',
     doStarta: 'Lift to the start', preko: 'via run', duz: 'length', dl: 'Download the ski map',
+    uputa: 'Tap a run number or a lift for details. Pinch or + to zoom, full screen for more room.',
     ride: 'ride', listLifts: 'Lifts', listRuns: 'Runs', listSum: 'Lifts and runs list', nLifts: 'lifts', nRuns: 'runs', mapLabel: 'Interactive piste map of Jahorina. Runs and lifts on the map are buttons.',
     tip: { gondola: 'Gondola', sestosjed: 'Six-seater chairlift', dvosjed: 'Double chairlift', tanjir: 'Platter lift', sidro: 'T-bar lift' },
     lvl: { laka: 'Blue run', srednja: 'Red run', teska: 'Black run' },
@@ -51,6 +52,7 @@
     lit: 'Osvijetljena za noćno skijanje', fis: 'FIS homologovana', upper: 'Gornji dio crna, donji dio crvena staza',
     gore: 'Žičara do vrha', dole: 'Na dnu', od: 'Odvaja se od staze', u: 'Spaja se sa stazom', fromTop: 'Staze sa vrha',
     doStarta: 'Žičara do starta', preko: 'preko staze', duz: 'dužina', dl: 'Preuzmi mapu staza',
+    uputa: 'Dodirni broj staze ili žičaru za detalje. Dva prsta ili + za zum, cijeli ekran za više prostora.',
     ride: 'vožnje', listLifts: 'Žičare', listRuns: 'Staze', listSum: 'Popis žičara i staza', nLifts: 'žičara', nRuns: 'staza', mapLabel: 'Interaktivna mapa staza Jahorine. Staze i žičare na mapi su dugmad.',
     tip: { gondola: 'Gondola', sestosjed: 'Šestosjed', dvosjed: 'Dvosjed', tanjir: 'Ski lift tanjir', sidro: 'Ski lift sidro' },
     lvl: { laka: 'Plava staza', srednja: 'Crvena staza', teska: 'Crna staza' },
@@ -275,6 +277,7 @@
   '#jm-mapa .jm-rc.t-laka{background:var(--c-laka)}#jm-mapa .jm-rc.t-srednja{background:var(--c-srednja)}#jm-mapa .jm-rc.t-teska{background:var(--c-teska);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}' +
   '#jm-mapa .jm-rc.z{background:rgba(196,238,255,.1);color:var(--ice)!important;box-shadow:inset 0 0 0 1px rgba(196,238,255,.2)}' +
   '#jm-mapa .jm-help{font:500 13px/1.4 var(--fb);color:var(--text-3);margin:0}' +
+  '#jm-mapa .jm-tip{display:none;position:absolute;left:20px;right:20px;top:0;z-index:2;text-align:center;font:500 13.5px/1.5 var(--fb);color:var(--text-2);pointer-events:none}' +
   '#jm-mapa .jm-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px}' +
   '#jm-mapa .jm-sos{display:flex;align-items:center;gap:12px;padding:6px 6px 6px 8px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));box-shadow:inset 0 0 0 1px var(--line)}' +
   '#jm-mapa .jm-sos-i{flex:none;width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:rgba(227,52,60,.16);color:#FF6B72}#jm-mapa .jm-sos-i svg{width:18px;height:18px}' +
@@ -315,7 +318,10 @@
   '@media (max-width:900px){#jm-mapa .jm-head{grid-template-columns:1fr}#jm-mapa .jm-lists{grid-template-columns:1fr}}' +
   '@media (max-width:760px){' +
   '#jm-mapa{padding-left:0;padding-right:0}#jm-mapa .jm-head,#jm-mapa .jm-bar,#jm-mapa .jm-foot{padding-left:16px;padding-right:16px}#jm-mapa .jm-sos{flex:1 1 100%}#jm-mapa .jm-sos-t{font-size:12.5px}#jm-mapa .jm-sos-t .jm-sos-x{display:none}#jm-mapa .jm-sos a{margin-left:auto;padding:0 13px;font-size:14px!important}#jm-mapa .jm-pop{margin:0 16px}' +
-  '#jm-mapa .jm-frame{border-radius:0;height:clamp(230px,64vw,340px);box-shadow:inset 0 1px 0 var(--line),inset 0 -1px 0 var(--line)}' +
+  // telefon: okvir = cijelo skijalište u širinu (62,9vw) + pojas za uputstvo/karticu (170px), najviše 65 % visine ekrana
+  '#jm-mapa .jm-frame{border-radius:0;height:min(65vh,calc(62.9vw + 170px));height:min(65svh,calc(62.9vw + 170px));min-height:300px;box-shadow:inset 0 1px 0 var(--line),inset 0 -1px 0 var(--line)}' +
+  '#jm-mapa.jm-phone .jm-world::after{content:"";position:absolute;left:0;right:0;bottom:0;height:320px;pointer-events:none;background:linear-gradient(180deg,rgba(12,20,36,0),#0c1424)}' +
+  '#jm-mapa.jm-phone.jm-band:not(.jm-cardon) .jm-tip{display:block}#jm-mapa.jm-phone .jm-help{display:none}' +
   '#jm-mapa .jm-bar{justify-content:flex-start}#jm-mapa .jm-chips{gap:8px 6px}#jm-mapa .jm-chip,#jm-mapa .jm-nt{flex:none}' +
   '#jm-mapa .jm-card{left:8px;right:8px;bottom:8px;width:auto;max-height:46%;padding:12px 12px 10px;border-radius:16px;backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(9,14,26,.95)}' +
   '#jm-mapa .jm-lifts{grid-template-columns:1fr}#jm-mapa .jm-lists{padding:4px 10px 14px}' +
@@ -397,7 +403,7 @@
           '<span class="jm-ctl-gap"></span>' +
           '<button class="jm-ctl" type="button" data-a="fs" aria-label="' + T.full + '" title="' + T.full + '">' + I.full + '</button>' +
         '</div>' +
-        '<div class="jm-hint" aria-hidden="true"></div><div class="jm-tt" aria-hidden="true"></div>' +
+        '<div class="jm-tip" aria-hidden="true">' + T.uputa + '</div><div class="jm-hint" aria-hidden="true"></div><div class="jm-tt" aria-hidden="true"></div>' +
         '<div class="jm-card" role="dialog" aria-live="polite"><button class="jm-x" type="button" aria-label="' + T.close + '">' + I.x + '</button><div class="jm-cb"></div></div>' +
       '</div>' +
       '<div class="jm-foot"><p class="jm-help">' + (isTouch ? T.helpTouch : T.help) + '</p>' +
@@ -410,7 +416,7 @@
 
   var $ = function (s) { return root.querySelector(s); };
   var frame = $('.jm-frame'), view = $('.jm-view'), world = $('.jm-world'), card = $('.jm-card'), cardBody = $('.jm-cb');
-  var hint = $('.jm-hint'), tt = $('.jm-tt');
+  var hint = $('.jm-hint'), tt = $('.jm-tt'), tipEl = $('.jm-tip');
 
   /* ---------- na sajtu: rezerva sa GitHuba, puna širina, šavovi ---------- */
   // ako jsDelivr ne isporuči podatke ili sliku: isti fajl iz istog punog commita sa raw.githubusercontent.com
@@ -677,7 +683,9 @@
       vw = view.clientWidth || 1; vh = view.clientHeight || 1;
       // najmanji zum: računar = cijela širina bez praznih traka; telefon = visina skijališta (bez sitne cijele mape)
       // telefon (uski okvir): cijelo skijalište (x 40–3170, y 330–1900) u kadru; nikad praznih traka oko slike
-      kMin = vw < 700 || narrowView() ? Math.max(vw / W, vh / H, Math.min(vw / 3130, vh / 1570)) : Math.max(vw / W, vh / (H - BY0));
+      // telefon: cijelo skijalište (x 40–3170, y 330–1900) staje u okvir; ako je okvir viši, iznad i ispod je zamućena podloga
+      var ph = vw < 700 && !root.classList.contains('jm-fs'); root.classList.toggle('jm-phone', ph);
+      kMin = ph ? Math.min(vw / 3130, vh / 1570) : vw < 700 || narrowView() ? Math.max(vw / W, vh / H, Math.min(vw / 3130, vh / 1570)) : Math.max(vw / W, vh / (H - BY0));
       kMax = 1.1; if (vw < 700) kMax = 1.25;   // podloga je u izvoru 1593 px: dalje od ovoga samo mutnija slika
     }
     function clamp() {
@@ -687,12 +695,16 @@
       var open = card.classList.contains('on'), eb = open && vw < 700 ? card.offsetHeight + 10 : 0, el = open && vw >= 700 ? card.offsetWidth + 24 : 0;
       var tL = el, tR = vw - w, tT = -BY0 * k, tB = vh - h - eb;
       tx = tR > tL ? (tL + tR) / 2 : Math.min(tL, Math.max(tR, tx));
-      ty = tB > tT ? (tT + tB) / 2 : Math.min(tT, Math.max(tB, ty));
+      // telefon: cijelo skijalište je niže od okvira → mapa uz vrh, ispod tamni pojas (uputstvo, kartica, dugmad)
+      ty = tB > tT ? (root.classList.contains('jm-phone') ? tT : (tT + tB) / 2) : Math.min(tT, Math.max(tB, ty));
     }
     var lastK = -1;
     function apply() {
       clamp();
       world.style.transform = 'translate3d(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px,0) scale(' + k.toFixed(5) + ')';
+      var bot = ty + H * k, band = vh - bot > 76 && root.classList.contains('jm-phone');
+      root.classList.toggle('jm-band', band);
+      if (band) tipEl.style.top = Math.round(bot + 14) + 'px';
       if (Math.abs(k - lastK) > 1e-6) {
         lastK = k;
         setVar('--inv', (1 / k).toFixed(5));
@@ -738,7 +750,7 @@
     function home(ms) {
       bounds();
       // telefon: jezgro skijališta (vrh, staze 2–8, gondola), bez praznog šumskog dijela; računar: cijelo skijalište
-      if (vw < 700 || narrowView()) goTo(kMin, vw / 2 - 1605 * kMin, vh / 2 - 1115 * kMin, ms);
+      if (vw < 700 || narrowView()) goTo(kMin, vw / 2 - 1605 * kMin, root.classList.contains('jm-phone') ? 0 : vh / 2 - 1115 * kMin, ms);
       else goTo(kMin, (vw - W * kMin) / 2, vh / 2 - 1090 * kMin, ms);
     }
     bounds(); home(0);

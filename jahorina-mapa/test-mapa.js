@@ -97,7 +97,8 @@ const ok = (c, msg) => { console.log((c ? 'OK   ' : 'GREŠKA ') + msg); if (!c) 
     ok(/preuzimanje\/mapa-staza-jahorina\.jpg$/.test(ui.dl || ''), `${v.name}: dugme za preuzimanje (${ui.dl})`);
     ok(ui.chipsIn, `${v.name}: svi filteri na ekranu (${ui.rows} ${ui.rows === 1 ? 'red' : 'reda'})`);
     ok(ui.edges, `${v.name}: na otvaranju se vidi cijelo skijalište (6c, 7, 9b u kadru)`);
-    if (v.touch) ok(ui.fh <= ui.vh * 0.45, `${v.name}: okvir mape ${ui.fh}px od ${ui.vh}px ekrana`);
+    if (v.touch) ok(ui.fh <= ui.vh * 0.66, `${v.name}: okvir mape ${ui.fh}px od ${ui.vh}px ekrana (${Math.round(ui.fh / ui.vh * 100)} %, najviše 65 %)`);
+    if (v.touch) { const tip = await page.evaluate(() => { const t = document.querySelector('#jm-mapa .jm-tip'); return t && getComputedStyle(t).display !== 'none' && t.getBoundingClientRect().bottom <= document.querySelector('#jm-mapa .jm-frame').getBoundingClientRect().bottom; }); ok(tip, `${v.name}: uputstvo u pojasu ispod mape`); }
     ok(bez.poi === 0 && bez.pop === 0 && bez.chips === 'laka,srednja,teska,zicare', `${v.name}: bez usluga/topova/popisa (oznaka ${bez.poi}, popis ${bez.pop}, filteri ${bez.chips})`);
 
     // izbor staze (oznaka na mapi)
