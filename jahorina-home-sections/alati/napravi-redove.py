@@ -5,7 +5,7 @@ import pathlib, sys
 H = pathlib.Path(__file__).resolve().parent.parent
 DATUM = sys.argv[1] if len(sys.argv) > 1 else ''
 def line(s): return (H / s / 'elementor-html-widget.html').read_text(encoding='utf-8').strip()
-ORDER = [('stanje', 'Stanje skijališta i brzi linkovi', 'Novi HTML widget odmah ispod hero-a (iznad vijesti).'),
+ORDER = [('stanje', 'Stanje skijališta', 'Novi HTML widget odmah ispod hero-a (iznad vijesti).'),
          ('vijesti', 'Obavještenja i vijesti', 'Ako na sajtu postoji i WPCode snippet „Jahorina vijesti“, zamijeni i njega (sadržaj `vijesti/wpcode-vijesti.js`) — inače se može učitati stara verzija.'),
          ('ratrak', 'Panoramska vožnja ratrakom', ''), ('suvenirnica', 'Suvenirnica', ''), ('bar', 'Olimpijski bar', ''),
          ('gondola', 'VIP gondola', ''), ('depo', 'Ski depo', ''), ('park', 'Snowboard park i Ski bike', ''),
