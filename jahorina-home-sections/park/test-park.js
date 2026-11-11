@@ -229,7 +229,7 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
   check('podaci parka sa stranice: 3.000 m², Trnovo, Šator', S.facts.join('|') === '3.000 m² / Površina parka|Trnovo / Staza|Šator / Kod vikend naselja', S.facts);
   check('ski bike (pretraga "bike"): uvod = šta je ski bike; poligon Trnovo, bez iskustva, za sve', S.leadBike === BIKE_LEAD && S.factsBike.join('|') === BIKE_FACTS, [S.leadBike, S.factsBike]);
   check('linkovi stranica', S.pages.join('|') === SITE + '/snowboard-park/|' + SITE + '/ski-bike-jahorina/', S.pages);
-  check('dugmad: Više o snowboard parku + Galerija, isti red, 44px, natpisi staju', S.btxt.join('|') === 'Više o snowboard parku|Galerija' && S.acts[0][0] === S.acts[1][0] && S.acts[0][1] === S.acts[1][1] && S.acts[0][2] === 44 && S.fit, [S.btxt, S.acts, S.fit]);
+  check('dugmad: Više o snowboard parku + Galerija, isti red, 48px (cyan + staklo, od 10. 11.), natpisi staju', S.btxt.join('|') === 'Više o snowboard parku|Galerija' && S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 48 && S.acts[1][2] === 48 && S.fit, [S.btxt, S.acts, S.fit]);
   check('podaci i dugmad iste širine', S.factsW === S.actsW, [S.factsW, S.actsW]);
   check('sve vidljivo poslije ulaska, tekst u kadru', S.hidden === 0 && S.bodyIn, [S.hidden, S.bodyIn]);
   const textL0 = S.textL;
@@ -240,9 +240,10 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
     const r = document.getElementById('jsb-park'), a = document.querySelector('#jsd-depo .jsd-frame').getBoundingClientRect(), b = r.querySelector('.jsb-frame').getBoundingClientRect();
     const tmp = document.createElement('div'); tmp.style.cssText = 'position:absolute;width:var(--gap);height:var(--g)'; r.querySelector('.jsb-wrap').appendChild(tmp);
     const gap = tmp.getBoundingClientRect().width, gg = tmp.getBoundingClientRect().height; tmp.remove();
-    return { join: r.classList.contains('jsb--join'), space: Math.round(b.top - a.bottom), want: Math.round(gap + gg) };
+    return { join: r.classList.contains('jsb--join'), space: Math.round(b.top - a.bottom), want: Math.round(gap) };
   });
-  check('Ski depo iznad: jsb--join, razmak kadar → kadar = --gap + --g', j.join && Math.abs(j.space - j.want) <= 2, j);
+  // od 10. 11.: između dvije naše sekcije jedan razmak (--gap)
+  check('Ski depo iznad: jsb--join, razmak kadar → kadar = --gap', j.join && Math.abs(j.space - j.want) <= 2, j);
   await p.screenshot({ path: path.join(OUT, 'depo-park.png'), fullPage: true });
   await shot(p, '1-racunar-park');
   // ivični natpis povučen ulijevo preko pola (sredina snimljena), pušteno → ski bike se potpuno otvori
@@ -380,7 +381,7 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
     check('ivični natpis ski bike-a: vidljiv, u kadru, na fotografiji, ne preko teksta', S.edge === 'bike' && S.edgeOp === 1 && S.edgeIn && S.edgeFree && S.edgeOnPhoto, [S.edgeIn, S.edgeFree, S.edgeOnPhoto]);
     if (vw > 980) check('park: tekst lijevo', S.side === 'L', S.side);
     else check('fotografija iznad teksta', S.stageAbove, S.stageAbove);
-    if (vw <= 760 && vw > 360) check('telefon: oba dugmeta u jednom redu, 44px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 44, S.acts);
+    if (vw <= 760 && vw > 360) check('telefon: oba dugmeta u jednom redu, 46px', S.acts[0][0] === S.acts[1][0] && S.acts[0][2] === 46 && S.acts[1][2] === 46, S.acts);
     await shot(p, name + '-park');
     await drag(p, -.65); await settle(p);
     S = await state(p);
@@ -404,8 +405,11 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
   S = await state(p);
   const y1 = await p.evaluate(() => window.scrollY);
   check('stranica skrolovana, ostaje park', y1 > y0 + 50 && S.act === 'jsb-p0' && S.p === 0, [y0, y1, S.act]);
-  await tp('touchStart', sb2.x + 300, sb2.y + 200 - (y1 - y0));
-  for (let i = 1; i <= 10; i++) await tp('touchMove', sb2.x + 300 - i * 24, sb2.y + 200 - (y1 - y0));
+  // fotografija se ponovo izmjeri: zalet skrola poslije okomitog pokreta nije uvijek isti (ranije se računalo sb2.y − skrol)
+  await p.locator('#jsb-park .jsb-sc.is-on .jsb-bg').scrollIntoViewIfNeeded(); await p.waitForTimeout(400);
+  const sb3 = await p.locator('#jsb-park .jsb-sc.is-on .jsb-bg').boundingBox(), hy = sb3.y + Math.min(200, sb3.height / 2);
+  await tp('touchStart', sb3.x + 300, hy);
+  for (let i = 1; i <= 10; i++) await tp('touchMove', sb3.x + 300 - i * 24, hy);
   await tp('touchEnd'); await settle(p);
   S = await state(p);
   check('vodoravni pokret prsta po fotografiji: ski bike', S.act === 'jsb-p1' && S.p === 1, [S.act, S.p]);
