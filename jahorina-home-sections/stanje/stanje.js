@@ -1,16 +1,15 @@
 /* =====================================================================
-   JAHORINA — STANJE SKIJALIŠTA I BRZI LINKOVI (početna, odmah ispod hero-a) · v1 (11. 11. 2026)
-   Analiza nove početne (11. 11.): posjetilac odmah traži stanje staza, cijene ski karata, mapu i kamere, a početna ih
-   nije imala. Sekcija ima dva dijela:
-     · staklena traka STANJA: žičare (rade / ukupno), staze (otvorene / ukupno), snijeg, radno vrijeme dnevnog
-       skijanja i vrijeme ažuriranja — podaci uživo sa stranice Ski info (dodatak „OC dnevni info“, REST API);
-     · pet BRZIH KARTICA: Kupi ski kartu (web shop, cyan), Cijene ski karata, Ski mapa, Kamere uživo, Noćno skijanje.
-   Tema sekcija (TEMA.md): tamna noćna pozadina (#0C1424, ista boja kao traka oko hero-a i vrh vijesti), staklene
-   pločice, jedno cyan dugme, obična slova; bez fotografija i bez dugih animacija (sekcija je visoko na stranici).
+   JAHORINA — STANJE SKIJALIŠTA (početna, odmah ispod hero-a) · v2 (11. 11. 2026)
+   Analiza nove početne (11. 11.): posjetilac odmah traži stanje staza, a početna ga nije imala.
+   Staklena traka STANJA: žičare (rade / ukupno), staze (otvorene / ukupno), snijeg, radno vrijeme dnevnog skijanja,
+   vrijeme ažuriranja i Radi sada / Trenutno ne radi — podaci uživo sa stranice Ski info (dodatak „OC dnevni info“,
+   REST API) + dugme „Sve staze i žičare“. v2 (korisnik 11. 11.: „ostavi samo gornju traku“): bez pet brzih kartica.
+   Tema sekcija (TEMA.md): tamna noćna pozadina (#0C1424, ista boja kao traka oko hero-a i vrh vijesti), staklo,
+   obična slova; bez fotografija i bez animacija (sekcija je visoko na stranici).
    Ugradnja: Elementor HTML widget odmah ispod hero-a (red iz elementor-html-widget.html: <div id="jst-stanje"> sa
-   statičkim linkovima za pretraživače + loader). Podešavanja na <div> (neobavezna): data-shop, data-cijene,
-   data-mapa, data-kamere, data-nocno, data-info (adrese), data-stranica (slug stranice Ski info, „ski-info“).
-   GA: klik na karticu ili „Sve staze i žičare“ → stanje_klik (cilj: webshop / cijene / mapa / kamere / nocno / ski_info).
+   statičnim tekstom za pretraživače + loader). Podešavanja na <div> (neobavezna): data-info (adresa dugmeta),
+   data-stranica (slug stranice Ski info, „ski-info“).
+   GA: „Sve staze i žičare“ → stanje_klik (cilj: ski_info).
    ===================================================================== */
 (function (w, d) {
   'use strict';
@@ -23,43 +22,21 @@
   var L = EN ? '/en' : '';
   function opt(k, def) { var v = root.getAttribute('data-' + k); return v == null || !v.trim() ? def : v.trim(); }
   var SLUG = opt('stranica', 'ski-info');
-  var LINK = {
-    shop: opt('shop', 'https://webshop.oc-jahorina.com/'),
-    cijene: opt('cijene', O + L + '/cjenovnik-ski-karata-sezona-2026-27/'),
-    mapa: opt('mapa', O + L + '/ski-mapa/'),
-    kamere: opt('kamere', O + L + '/jahorina-tv-web-kamere/'),
-    nocno: opt('nocno', O + L + '/nocno-skijanje/'),
-    info: opt('info', O + L + '/' + SLUG + '/')
-  };
+  var LINK = { info: opt('info', O + L + '/' + SLUG + '/') };
 
   var T = EN ? {
     h: 'Jahorina ski resort today', open: 'Open now', closed: 'Currently closed', wait: 'Loading the status…',
     upd: function (dd, mm, hm) { return 'Updated ' + dd + ' ' + ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][mm - 1] + ', ' + hm; },
     lifts: 'lifts open', slopes: 'slopes open', snow: 'snow depth', hours: 'day skiing',
-    all: 'All slopes and lifts', allAria: 'Live status of all slopes and lifts on Jahorina', nav: 'Quick links',
-    noData: 'Live status of slopes and lifts', why: 'Ski info', whyTail: 'showing links only',
-    cards: [
-      ['shop', 'Buy a ski pass', 'Online, skip the queue'],
-      ['cijene', 'Ski pass prices', 'Season 2026/27'],
-      ['mapa', 'Ski map', '54 km of slopes'],
-      ['kamere', 'Live cameras', 'Jahorina TV'],
-      ['nocno', 'Night skiing', 'Floodlit slopes']
-    ]
+    all: 'All slopes and lifts', allAria: 'Live status of all slopes and lifts on Jahorina',
+    noData: 'Live status of slopes and lifts', why: 'Ski info', whyTail: 'showing the link only'
   } : {
     h: 'Stanje skijališta Jahorina', open: 'Radi sada', closed: 'Trenutno ne radi', wait: 'Učitava se stanje…',
     upd: function (dd, mm, hm) { return 'Ažurirano ' + dd + '. ' + mm + '. u ' + hm; },
     lifts: 'žičare rade', slopes: 'staze otvorene', snow: 'snijega', hours: 'dnevno skijanje',
-    all: 'Sve staze i žičare', allAria: 'Stanje svih staza i žičara na Jahorini uživo', nav: 'Brzi linkovi',
-    noData: 'Stanje staza i žičara uživo', why: 'Ski info', whyTail: 'prikazani su samo linkovi',
-    cards: [
-      ['shop', 'Kupi ski kartu', 'Online, bez čekanja'],
-      ['cijene', 'Cijene ski karata', 'Sezona 2026/27'],
-      ['mapa', 'Ski mapa', '54 km staza'],
-      ['kamere', 'Kamere uživo', 'Jahorina TV'],
-      ['nocno', 'Noćno skijanje', 'Pod reflektorima']
-    ]
+    all: 'Sve staze i žičare', allAria: 'Stanje svih staza i žičara na Jahorini uživo',
+    noData: 'Stanje staza i žičara uživo', why: 'Ski info', whyTail: 'prikazan je samo link'
   };
-  var GOAL = { shop: 'webshop', cijene: 'cijene', mapa: 'mapa', kamere: 'kamere', nocno: 'nocno' };
 
   /* ---------- izgled (sve pod #jst-stanje; Betheme nameće naslove i linkove, pa !important) ---------- */
   var CSS = [
@@ -106,27 +83,12 @@
     '#S .jst-all:hover{color:#fff!important;transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(111,219,255,.38),inset 0 1px 0 rgba(255,255,255,.14),0 0 18px -4px rgba(0,185,242,.45)!important}',
     '#S .jst-all:active{transform:scale(.96)}',
 
-    /* brze kartice: 5 u redu (računar), staklo; prva = glavno cyan dugme */
-    '#S .jst-links{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:14px}',
-    '#S .jst-card{all:unset;position:relative!important;box-sizing:border-box!important;display:flex!important;align-items:center;gap:12px;min-width:0;min-height:72px;padding:14px 16px!important;border-radius:18px!important;cursor:pointer;',
-    'background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.02))!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.11)!important;transition:transform .2s,box-shadow .2s,filter .2s}',
-    '#S .jst-card svg{width:24px;height:24px;color:var(--ice)}',
-    '#S .jst-card span{display:flex;flex-direction:column;gap:4px;min-width:0}',
-    '#S .jst-card b{font:700 15px/1.2 var(--fd);color:#fff;letter-spacing:0}',
-    '#S .jst-card small{font:500 13px/1.25 var(--fb);color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
-    '#S .jst-card:hover{transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(111,219,255,.38),inset 0 1px 0 rgba(255,255,255,.14),0 0 18px -4px rgba(0,185,242,.45)!important}',
-    '#S .jst-card:active{transform:scale(.97)}',
-    '#S .jst-card--buy{background:linear-gradient(160deg,#45D6FF 0%,#00AEE6 50%,#008BC7 100%)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 10px 24px -12px rgba(0,174,230,.8)!important}',
-    '#S .jst-card--buy svg{color:#fff}',
-    '#S .jst-card--buy small{color:rgba(255,255,255,.88)}',
-    '#S .jst-card--buy:hover{filter:brightness(1.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 12px 26px -12px rgba(0,174,230,.9)!important}',
     '#S .jst-why{display:block;margin-top:10px;font:400 12.5px/1.4 var(--fb);color:#FFB547}',
 
-    /* manji laptop i tablet: stanje u dva reda (naslov + dugme, pa brojke), kartice 3 + 2 */
+    /* manji laptop i tablet: stanje u dva reda (naslov + dugme, pa brojke) */
     '@media (max-width:1100px){#S .jst-panel{grid-template-columns:1fr auto}#S .jst-stats{grid-column:1 / -1;grid-row:2;margin:4px -2px 0}',
-    '#S .jst-stats li:first-child{border-left:0;padding-left:2px!important}#S .jst-links{grid-template-columns:repeat(6,minmax(0,1fr))}',
-    '#S .jst-card{grid-column:span 2}#S .jst-card:nth-child(n+4){grid-column:span 3}}',
-    /* telefon: brojke 2 × 2, kupovina preko cijele širine, ostale kartice 2 × 2; bez sjena i zamućenja */
+    '#S .jst-stats li:first-child{border-left:0;padding-left:2px!important}}',
+    /* telefon: brojke 2 × 2, dugme preko cijele širine; bez sjena i zamućenja */
     '@media (max-width:760px){',
     '#S .jst-wrap{padding:24px 16px 0}',
     '#S .jst-panel{grid-template-columns:1fr;gap:16px;padding:18px 18px 16px;border-radius:20px}',
@@ -135,13 +97,7 @@
     '#S .jst-stats li:nth-child(odd){border-left:0;padding-left:0!important}',
     '#S .jst-stats b{font-size:24px}',
     '#S .jst-all{width:100%;height:46px}',
-    '#S .jst-panel.is-none{grid-template-columns:1fr}',
-    '#S .jst-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}',
-    '#S .jst-card,#S .jst-card:nth-child(n+4){grid-column:auto;min-height:64px;padding:12px 14px!important;gap:10px;border-radius:16px!important}',
-    '#S .jst-card--buy{grid-column:1 / -1!important;justify-content:center}',
-    '#S .jst-card svg{width:22px;height:22px}',
-    '#S .jst-card b{font-size:14px}}',
-    '@media (max-width:360px){#S .jst-card small{display:none}#S .jst-card--buy small{display:block}}',
+    '#S .jst-panel.is-none{grid-template-columns:1fr}}',
     '@media (prefers-reduced-motion:reduce){#S *{transition:none!important}}'
   ].join('\n').replace(/#S/g, '#jst-stanje');
 
@@ -156,24 +112,13 @@
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function clean(s) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
-  function ext(u) { try { return new URL(u, location.href).host !== location.host; } catch (e) { return false; } }
 
-  // ikonice (crte, kao u hero-u)
+  // ikonica dugmeta (strelica, kao u hero-u)
   var I = {
-    shop: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7.5C4 6.7 4.7 6 5.5 6h13c.8 0 1.5.7 1.5 1.5v2.1a2.4 2.4 0 0 0 0 4.8v2.1c0 .8-.7 1.5-1.5 1.5h-13C4.7 18 4 17.3 4 16.5v-2.1a2.4 2.4 0 0 0 0-4.8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14.5 6.4V8M14.5 11.2v1.6M14.5 16v1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-    cijene: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3.5 12.6V5a1.5 1.5 0 0 1 1.5-1.5h7.6l8 8a1.5 1.5 0 0 1 0 2.1l-7 7a1.5 1.5 0 0 1-2.1 0Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="8.3" cy="8.3" r="1.6" stroke="currentColor" stroke-width="1.6"/></svg>',
-    mapa: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 4.5 3.5 6.5v13l5.5-2 6 2 5.5-2v-13l-5.5 2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 4.5v13M15 6.5v13" stroke="currentColor" stroke-width="1.6"/></svg>',
-    kamere: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m16 10.2 5-3v9.6l-5-3" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
-    nocno: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19.5 14.5A7.5 7.5 0 0 1 9.5 4.5a7.5 7.5 0 1 0 10 10Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M17 3.5v3M15.5 5h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
     info: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
 
   /* ---------- crtanje ---------- */
-  function cardHTML(c) {
-    var u = LINK[c[0]], x = ext(u);
-    return '<a class="jst-card' + (c[0] === 'shop' ? ' jst-card--buy' : '') + '" href="' + esc(u) + '"' + (x ? ' target="_blank" rel="noopener"' : '') +
-      ' data-jst="' + GOAL[c[0]] + '">' + I[c[0]] + '<span><b>' + esc(c[1]) + '</b><small>' + esc(c[2]) + '</small></span></a>';
-  }
   root.innerHTML =
     '<section class="jst-wrap" aria-labelledby="jst-h">' +
       '<div class="jst-panel is-wait">' +
@@ -187,7 +132,6 @@
         '</ul>' +
         '<a class="jst-all" href="' + esc(LINK.info) + '" data-jst="ski_info" aria-label="' + esc(T.allAria) + '">' + esc(T.all) + I.info + '</a>' +
       '</div>' +
-      '<nav class="jst-links" aria-label="' + esc(T.nav) + '">' + T.cards.map(cardHTML).join('') + '</nav>' +
     '</section>';
   function q(s) { return root.querySelector(s); }
 

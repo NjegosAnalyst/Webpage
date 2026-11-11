@@ -27,13 +27,7 @@ TEXT = {
         '<h2>Stanje skijališta Jahorina</h2>'
         '<p>Jahorina ima 54 km uređenih staza i 14 žičara. Stanje staza i žičara, visinu snijega i radno vrijeme '
         'pratite uživo na stranici <a href="/ski-info/">Ski info</a>.</p>'
-        '<ul>'
-        '<li><a href="https://webshop.oc-jahorina.com/">Kupi ski kartu online</a></li>'
-        f'<li><a href="{CIJENE}">Cijene ski karata, sezona 2026/27</a></li>'
-        '<li><a href="/ski-mapa/">Ski mapa Jahorine</a></li>'
-        '<li><a href="/jahorina-tv-web-kamere/">Kamere uživo (Jahorina TV)</a></li>'
-        '<li><a href="/nocno-skijanje/">Noćno skijanje</a></li>'
-        '</ul>'),
+        '<p><a href="/ski-info/">Sve staze i žičare</a></p>'),   # v2 (11. 11.): samo traka stanja, bez brzih kartica
     'vijesti': (
         '<h2>Obavještenja i vijesti sa Jahorine</h2>'
         '<p>Najnovija obavještenja, vijesti i akcije Olimpijske planine Jahorina.</p>'

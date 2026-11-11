@@ -1,4 +1,4 @@
-// Simulacija sajta za sekciju „Stanje skijališta i brzi linkovi“ (sajt se iz cloud okruženja ne može koristiti za test).
+// Simulacija sajta za sekciju „Stanje skijališta“ (v2: samo traka stanja) (sajt se iz cloud okruženja ne može koristiti za test).
 // Stranica kao „Početna 2027“: hero u omotaču Slider Revolutiona (omotač niži od hero-a, overflow hidden), pa Elementor
 // kontejneri (bijela pozadina, razmak i padding) sa stanjem, vijestima i ratrakom. REST: stranica Ski info sa brojačima
 // dodatka „OC dnevni info“ (i <style> ISPRED JSON-a, kao na sajtu 11. 11.), vijesti.
@@ -37,7 +37,7 @@ function skiInfo({ lifts = '0/14', slopes = '0/25', snow = '0 cm', hours = '09:0
 const iso = (dd) => new Date(Date.now() - dd * 864e5).toISOString().slice(0, 19);
 const POSTS = [1, 2, 3].map((i) => ({ id: i, date: iso(i * 9), link: SITE + '/vijest-' + i + '/', featured_media: 0,
   title: { rendered: 'Pretprodaja ski karata, vijest ' + i }, excerpt: { rendered: '<p>Kratak opis vijesti ' + i + '.</p>' } }));
-const STATIC = '<h2>Stanje skijališta Jahorina</h2><p>Jahorina ima 54 km uređenih staza i 14 žičara.</p><ul><li><a href="https://webshop.oc-jahorina.com/">Kupi ski kartu online</a></li></ul>';
+const STATIC = '<h2>Stanje skijališta Jahorina</h2><p>Jahorina ima 54 km uređenih staza i 14 žičara.</p><p><a href="/ski-info/">Sve staze i žičare</a></p>';
 
 function page({ admin = false } = {}) {
   const box = (inner) => `<div class="e-con" style="margin-top:24px;padding:10px;background:#fff;display:flex;flex-direction:column"><div class="elementor-widget elementor-widget-html">${inner}</div></div>`;
@@ -105,7 +105,10 @@ const info = (p) => p.evaluate(() => {
     st: q('.jst-st span').textContent, upd: q('.jst-st small').textContent, open: q('.jst-st').classList.contains('is-open'),
     none: q('.jst-panel').classList.contains('is-none'),
     lifts: stat('lifts'), slopes: stat('slopes'), snow: stat('snow'), hours: stat('hours'),
-    all: q('.jst-all').getAttribute('href'), cards, small, blur, why: (q('.jst-why') || {}).textContent || '',
+    all: q('.jst-all').getAttribute('href'), allT: q('.jst-all').textContent, cards, small, blur, why: (q('.jst-why') || {}).textContent || '',
+    panelH: Math.round(q('.jst-panel').getBoundingClientRect().height), allW: Math.round(q('.jst-all').getBoundingClientRect().width), allH: Math.round(q('.jst-all').getBoundingClientRect().height),
+    statsBelow: q('.jst-stats').getBoundingClientRect().top > q('h2').getBoundingClientRect().bottom,
+    grid2: (() => { const l = [...r.querySelectorAll('.jst-stats li')].map((x) => x.getBoundingClientRect()); return l.length === 4 && Math.round(l[0].top) === Math.round(l[1].top) && l[2].top > l[0].bottom - 1; })(),
     scrollW: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth,
     w: Math.round(r.getBoundingClientRect().width), h: Math.round(r.getBoundingClientRect().height),
   };
@@ -146,17 +149,15 @@ const seams = async (p) => {
   check('SEO: 0 × H1, H2 „Stanje skijališta Jahorina“; statični linkovi zamijenjeni', i.h1 === 0 && i.h2 === 'Stanje skijališta Jahorina' && i.staticGone, [i.h1, i.h2, i.staticGone]);
   check('brojke: žičare 0/14, staze 0/25, snijeg 0 cm, 9–16 h', i.lifts === '0/14' && i.slopes === '0/25' && i.snow === '0 cm' && i.hours === '9–16 h', [i.lifts, i.slopes, i.snow, i.hours]);
   check('status: Trenutno ne radi · Ažurirano 9. 11. u 18:20 (podaci i kad je <style> ispred JSON-a)', i.st === 'Trenutno ne radi' && !i.open && i.upd === 'Ažurirano 9. 11. u 18:20', [i.st, i.upd]);
-  check('5 kartica u jednom redu, prva Kupi ski kartu (web shop, nova kartica)', i.cards.length === 5 && new Set(i.cards.map((c) => c.y)).size === 1 && i.cards[0].t === 'Kupi ski kartu' && i.cards[0].href === 'https://webshop.oc-jahorina.com/' && i.cards[0].target === '_blank', i.cards.map((c) => c.t + ' ' + c.y));
-  check('linkovi: cjenovnik 2026/27, ski mapa, kamere (naša stranica), noćno skijanje, ski info',
-    i.cards[1].href === SITE + '/cjenovnik-ski-karata-sezona-2026-27/' && i.cards[2].href === SITE + '/ski-mapa/' && i.cards[3].href === SITE + '/jahorina-tv-web-kamere/' && i.cards[4].href === SITE + '/nocno-skijanje/' && i.all === SITE + '/ski-info/', i.cards.map((c) => c.href).concat(i.all));
+  check('v2 (11. 11.): samo traka stanja — bez brzih kartica; dugme Sve staze i žičare → /ski-info/', i.cards.length === 0 && i.all === SITE + '/ski-info/', [i.cards.length, i.all]);
+  check('traka u jednom redu: naslov, brojke, dugme (računar)', i.panelH <= 120, i.panelH);
   check('puna širina, bez vodoravnog skrola, tekst ≥ 13 px', i.w === i.cw && i.scrollW <= i.cw && i.small.length === 0, [i.w, i.cw, i.scrollW, i.small]);
   s = await seams(o.p);
   check('spoj hero → stanje → vijesti bez razmaka i bez bijelog', s.g.g1 <= 0.01 && s.g.g2 <= 0.01 && s.white.length === 0, s);
   await o.p.evaluate(() => scrollTo(0, 0));
-  await o.p.click('#jst-stanje .jst-card[data-jst="kamere"]');
   await o.p.click('#jst-stanje .jst-all');
   const ev = await o.p.evaluate(() => window.__ev.filter((e) => e[1] === 'stanje_klik').map((e) => e[2].cilj + '/' + e[2].jezik));
-  check('GA4: stanje_klik (kamere, ski_info)', ev.join(',') === 'kamere/sr,ski_info/sr', ev);
+  check('GA4: stanje_klik (ski_info)', ev.join(',') === 'ski_info/sr', ev);
   await o.p.locator('#jst-stanje').screenshot({ path: path.join(OUT, '1-racunar-1440.png') });
   await o.ctx.close();
 
@@ -169,8 +170,7 @@ const seams = async (p) => {
   for (const vw of [1024, 820]) {
     o = await open(browser, { vw, vh: 1000 });
     i = await info(o.p);
-    const rows = [...new Set(i.cards.map((c) => c.y))].length;
-    check(vw + ' px: kartice u 2 reda (3 + 2), bez skrola, bez grešaka', rows === 2 && i.scrollW <= vw && o.errors.length === 0, [rows, i.scrollW, o.errors]);
+    check(vw + ' px: brojke ispod naslova, bez skrola, bez grešaka', i.statsBelow && i.scrollW <= vw && o.errors.length === 0, [i.statsBelow, i.scrollW, o.errors]);
     s = await seams(o.p);
     check(vw + ' px: spojevi bez bijelog', s.g.g1 <= 0.01 && s.g.g2 <= 0.01 && s.white.length === 0, s);
     await o.p.locator('#jst-stanje').screenshot({ path: path.join(OUT, '3-' + vw + '.png') });
@@ -181,10 +181,9 @@ const seams = async (p) => {
   for (const vw of [390, 340]) {
     o = await open(browser, { vw, vh: 844 });
     i = await info(o.p);
-    const c = i.cards;
-    check(vw + ' px: Kupi ski kartu preko cijele širine, ostale 2 × 2', c[0].w > vw - 40 && c[1].y === c[2].y && c[3].y === c[4].y && c[3].y > c[1].y && c[1].x < c[2].x, c.map((k) => [k.x, k.y, k.w]));
-    check(vw + ' px: kartice najmanje 44 px, tekst ≥ 13 px, bez backdrop-filter, bez skrola', c.every((k) => k.h >= 44) && i.small.length === 0 && i.blur === 0 && i.scrollW <= vw, [c.map((k) => k.h), i.small, i.blur, i.scrollW]);
-    check(vw + ' px: visina sekcije razumna (≤ 620 px)', i.h <= 620, i.h);
+    check(vw + ' px: brojke 2 × 2, dugme preko cijele širine (≥ 44 px)', i.grid2 && i.allW > vw - 70 && i.allH >= 44, [i.grid2, i.allW, i.allH]);
+    check(vw + ' px: tekst ≥ 13 px, bez backdrop-filter, bez skrola', i.small.length === 0 && i.blur === 0 && i.scrollW <= vw, [i.small, i.blur, i.scrollW]);
+    check(vw + ' px: niska sekcija (≤ 360 px)', i.h <= 360, i.h);
     s = await seams(o.p);
     check(vw + ' px: spojevi bez bijelog', s.g.g1 <= 0.01 && s.g.g2 <= 0.01 && s.white.length === 0, s);
     await o.p.locator('#jst-stanje').screenshot({ path: path.join(OUT, '4-telefon-' + vw + '.png') });
@@ -195,14 +194,13 @@ const seams = async (p) => {
   o = await open(browser, { pth: '/en/pocetna-2027/' });
   i = await info(o.p);
   check('EN: naslov, status, ažurirano', i.h2 === 'Jahorina ski resort today' && i.st === 'Currently closed' && i.upd === 'Updated 9 Nov, 18:20', [i.h2, i.st, i.upd]);
-  check('EN: kartice i linkovi na /en/ (web shop isti)', i.cards.map((c) => c.t).join('|') === 'Buy a ski pass|Ski pass prices|Ski map|Live cameras|Night skiing' &&
-    i.cards[1].href === SITE + '/en/cjenovnik-ski-karata-sezona-2026-27/' && i.cards[3].href === SITE + '/en/jahorina-tv-web-kamere/' && i.all === SITE + '/en/ski-info/' && i.cards[0].href === 'https://webshop.oc-jahorina.com/', i.cards.map((c) => c.href));
+  check('EN: dugme All slopes and lifts → /en/ski-info/', i.all === SITE + '/en/ski-info/' && i.allT === 'All slopes and lifts', [i.all, i.allT]);
   await o.ctx.close();
 
   console.log('\n5) Greška i stranica bez brojača');
   o = await open(browser, { rest: 'fail', admin: true });
   i = await info(o.p);
-  check('REST ne radi: bez brojki, kartice i link ostaju; admin vidi razlog', i.none && i.cards.length === 5 && /Stanje staza i žičara uživo/.test(i.st) && /HTTP 403/.test(i.why) && o.errors.length === 0, [i.none, i.st, i.why, o.errors]);
+  check('REST ne radi: bez brojki, dugme ostaje; admin vidi razlog', i.none && i.all === SITE + '/ski-info/' && /Stanje staza i žičara uživo/.test(i.st) && /HTTP 403/.test(i.why) && o.errors.length === 0, [i.none, i.st, i.why, o.errors]);
   s = await seams(o.p);
   check('i tada spojevi bez bijelog', s.g.g1 <= 0.01 && s.g.g2 <= 0.01 && s.white.length === 0, s);
   await o.p.locator('#jst-stanje').screenshot({ path: path.join(OUT, '5-greska.png') });
