@@ -1024,7 +1024,7 @@
         // ostatak (bijeli padding kontejnera iznad i ispod) prekrije blok
         var rest = root.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;
         if (rest > .5 && rest <= 160) pe.style.setProperty('margin-top', (parseFloat(getComputedStyle(pe).marginTop) || 0) - rest + 'px', 'important');
-        root.style.boxShadow = '0 -2px 0 0 #0A1120';   // pola piksela između tamnih blokova
+        SH.up = true; shadow();   // pola piksela između tamnih blokova
         return;
       }
     }
@@ -1035,6 +1035,15 @@
       return !x.offsetHeight || /^(SCRIPT|STYLE|LINK|NOSCRIPT|TEMPLATE)$/.test(x.tagName) ||
         (x.offsetHeight <= 200 && !x.matches(DARK + ',' + FOOT) && !x.querySelector(DARK + ',' + FOOT + ',img,svg,video,iframe,canvas,input,button') && !(x.textContent || '').trim());
     }
+    // tamna sjenka od 2 px iznad (spoj sa blokom iznad) i ispod (spoj sa footerom): spoj na dijelu piksela preko bijele
+    // pozadine stranice inače daje tanku svijetlu liniju (mjereno: telefon DPR 2,625 — red na spoju 40 umjesto ~18)
+    var SH = { up: false, down: false };
+    function shadow() {
+      var a = [];
+      if (SH.up) a.push('0 -2px 0 0 #0A1120');
+      if (SH.down) a.push('0 2px 0 0 #0A1120');
+      root.style.boxShadow = a.join(',');
+    }
     function seamDown() {
       for (var el = root.parentElement; el && el !== d.body && el !== d.documentElement; el = el.parentElement) {
         var nx = el.nextElementSibling;
@@ -1042,8 +1051,10 @@
         if (!nx) continue;
         if (!(nx.matches(FOOT) || nx.querySelector('.jf-wp, .jf-footer'))) return;
         el.style.removeProperty('margin-bottom');
+        // bez zaokruživanja (i razmak od dijela piksela) i sa 1 px preklopa: footer sjedne 1 px preko dna bloka (oba su #0A1120)
         var gap = nx.getBoundingClientRect().top - root.getBoundingClientRect().bottom;
-        if (gap > .5 && gap <= 240) el.style.setProperty('margin-bottom', (parseFloat(getComputedStyle(el).marginBottom) || 0) - gap + 'px', 'important');
+        if (gap > -1 && gap <= 240) el.style.setProperty('margin-bottom', (parseFloat(getComputedStyle(el).marginBottom) || 0) - gap - 1 + 'px', 'important');
+        SH.down = true; shadow();
         return;
       }
     }

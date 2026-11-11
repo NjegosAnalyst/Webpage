@@ -160,7 +160,10 @@ const info = (p, id) => p.evaluate((id) => {
       await p.waitForSelector('#jsk-sankaliste h2');
       const gs = [];
       for (let k = 0; k < 5; k++) { await p.waitForTimeout(600); gs.push(await p.evaluate(() => Math.round((document.querySelector('.jf-wp').getBoundingClientRect().top - document.getElementById('jsk-sankaliste').getBoundingClientRect().bottom) * 100) / 100)); }
-      check(vw + ' px: footer odmah ispod zadnje sekcije (5 mjerenja u 3 s)', gs.every((x) => Math.abs(x) <= 0.01), gs);
+      // od 11. 11.: footer sjedne 1 px preko dna sekcije (spoj na dijelu piksela je davao svijetlu liniju na telefonu)
+      check(vw + ' px: footer odmah ispod zadnje sekcije, 1 px preko nje (5 mjerenja u 3 s)', gs.every((x) => Math.abs(x + 1) <= 0.01), gs);
+      const sh = await p.evaluate(() => document.getElementById('jsk-sankaliste').style.boxShadow);
+      check(vw + ' px: tamna sjenka ispod sekcije (pokriva spoj)', /0px 2px 0px 0px/.test(sh), sh);
       await ctx.close();
     }
   }
