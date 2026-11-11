@@ -70,7 +70,7 @@ function check(name, ok, info) {
 }
 
 // wp: 'sank', 'novo', 'vjetar', 'qtranslate', 'upozorenje', 'greska', 'nema', 'pretraga' (slug ne postoji, nađe se pretragom)
-async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900, attrs = '', ga = 'gtag', reduced = false, wp = 'sank', park = false, admin = false, touch = false, boxed = false, wait = true } = {}) {
+async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900, attrs = '', ga = 'gtag', reduced = false, wp = 'sank', park = false, admin = false, touch = false, boxed = false, wait = true, info = null } = {}) {
   const ctx = await browser.newContext({ viewport: { width: vw, height: vh }, reducedMotion: reduced ? 'reduce' : 'no-preference', hasTouch: touch, isMobile: touch, deviceScaleFactor: touch ? 2 : 1 });
   const p = await ctx.newPage();
   const errors = [], rest = [];
@@ -103,6 +103,10 @@ async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900
           content: { rendered: CONTENT[['novo', 'vjetar', 'qtranslate'].indexOf(wp) > -1 ? wp : 'sank'] } };
         const other = { id: 12, link: SITE + '/sankanje-ljeto/', slug: 'x', title: { rendered: 'Ljetna ponuda' }, content: { rendered: '<p>Ljeti.</p>' } };
         const json = (a) => route.fulfill({ contentType: 'application/json', body: (wp === 'upozorenje' ? '<br />\n<b>Warning</b>:  Undefined array key "x" in <b>/home/oc/public_html/wp-content/themes/betheme/functions.php</b> on line <b>12</b><br />\n' : '') + JSON.stringify(a) });
+        // 11. 11.: stranica Ski info sa brojačima dodatka „OC dnevni info“ (<style> ispred JSON-a, kao na sajtu)
+        if (/slug=ski-info(&|$)/.test(q)) return route.fulfill({ contentType: 'application/json', body: !info ? '[]' : '<style>.e{}</style>' + JSON.stringify([{ content: { rendered:
+          `<div class="oc-dsi-summary-grid"><div class="oc-dsi-summary-tile"><span class="oc-dsi-summary-value">${info.lifts}</span><span class="oc-dsi-summary-label">Žičare · rade</span></div>` +
+          `<div class="oc-dsi-summary-tile"><span class="oc-dsi-summary-value">${info.sank}</span><span class="oc-dsi-summary-label">Sankalište · radi</span></div></div>` } }]) });
         if (wp === 'nema') return json([]);
         if (/slug=sankaliste(&|$)/.test(q)) return json(wp === 'pretraga' ? [] : [pg]);
         if (/search=sank/.test(q)) return json([other, pg]);
@@ -256,6 +260,20 @@ const rect = (p, s) => p.evaluate((s) => { const r = document.querySelector(s).g
   check('zadnji dan sezone uveče → van sezone', !s.open && s.s === 'van sezone', s);
   check('nadnaslov bez admina nema razlog', !(await info(o.p)).why);
   await o.ctx.close();
+
+  console.log('stanje uživo sa stranice Ski info (11. 11.: datum otvaranja nije poznat)');
+  for (const [inf, sat, want, name] of [
+    [{ sank: '0/1', lifts: '0/14' }, '2026-11-20 16:30', (x) => !x.open && x.b === 'Ne radi' && x.s === 'van sezone', 'sankalište 0/1, žičare 0/14 → Ne radi · van sezone (ne „otvara se u 16:00“)'],
+    [{ sank: '0/1', lifts: '6/14' }, '2026-12-20 16:30', (x) => !x.open && x.b === 'Danas ne radi' && x.s === '', 'sankalište 0/1, žičare rade → Danas ne radi'],
+    [{ sank: '1/1', lifts: '6/14' }, '2026-12-20 16:30', (x) => x.open && x.b === 'Radi sada', 'sankalište 1/1 u 16:30 → Radi sada'],
+    [{ sank: '1/1', lifts: '6/14' }, '2026-12-20 10:00', (x) => !x.open && x.s === 'otvara se u 16:00', 'sankalište 1/1 u 10:00 → otvara se u 16:00'],
+  ]) {
+    o = await open(browser, { info: inf, attrs: 'data-sat="' + sat + '"', wait: false });
+    await o.p.waitForTimeout(900);
+    s = await st(o.p);
+    check(name, want(s) && o.errors.length === 0, [s, o.errors]);
+    await o.ctx.close();
+  }
 
   console.log('WordPress: vjetar (danas ne radi), novo radno vrijeme, pretraga, prljav JSON, greška');
   o = await open(browser, { wp: 'vjetar', attrs: 'data-sat="2026-12-20 16:30"', wait: false });

@@ -28,6 +28,9 @@
      data-stranica="sankaliste"   (slug WordPress stranice)
      data-sezona="15.12-31.3"     (van tih datuma status je "Ne radi · van sezone"; prazno = bez provjere sezone)
      data-status="ne-radi"        (ručno: danas ne radi, npr. vjetar; podrazumijevano "auto")
+     data-info-stranica="ski-info" (11. 11.: stanje uživo sa stranice Ski info, dodatak „OC dnevni info“: kad tamo piše
+                                  da sankalište ne radi (0/1), status je „Ne radi“ — „van sezone“ kad ne radi ni jedna
+                                  žičara, inače „Danas ne radi“; kad piše da radi, važi radno vrijeme; „ne“ = bez toga)
      data-cijene="https://…"      (zamjena za stranicu cjenovnika /cjenovnik-ski-karata-sezona-2026-27/)
      data-video="https://youtu.be/…"  (zamjena za video sa stranice)
      data-sat="2026-12-20 16:30"  (samo za probu: zamišljeno vrijeme umjesto stvarnog)
@@ -522,7 +525,8 @@
   }
   render();
 
-  /* ---------- STATUS: radi / ne radi (radno vrijeme sa stranice, vrijeme na Jahorini, sezona, ručno) ---------- */
+  /* ---------- STATUS: radi / ne radi (radno vrijeme sa stranice, vrijeme na Jahorini, sezona, Ski info, ručno) ---------- */
+  var LIVE = null;   // { sank: [radi, ukupno], lifts: [rade, ukupno] } sa stranice Ski info
   // sada na Jahorini (Europe/Sarajevo); data-sat="2026-12-20 16:30" = zamišljeno vrijeme (proba)
   function jahNow() {
     var fx = root.getAttribute('data-sat');
@@ -553,6 +557,12 @@
     var man = (root.getAttribute('data-status') || '').toLowerCase().replace(/\s+/g, '-');
     if (/^ne-?radi|^zatvoren|^closed/.test(man)) return { open: false, b: T.closedToday, s: '', min: n.min };
     if (DATA.closed) return { open: false, b: T.closedToday, s: DATA.why, min: n.min };
+    // stanje uživo (Ski info): sankalište ne radi → crveno; ne radi ni jedna žičara → van sezone (11. 11.: datum otvaranja
+    // nije poznat, a „otvara se u 16:00“ prije sezone je pogrešno). Kad radi, ide se dalje na radno vrijeme.
+    if (LIVE && LIVE.sank && LIVE.sank[0] === 0) {
+      var off = !!(LIVE.lifts && LIVE.lifts[0] === 0);
+      return { open: false, b: off ? T.closed : T.closedToday, s: off ? T.season : '', min: n.min };
+    }
     if (s && !inSeason(s, n.mo, n.d)) {
       // van sezone: do 45 dana prije početka piše datum otvaranja
       var t0 = Date.UTC(n.y, n.mo - 1, n.d), st0 = Date.UTC(n.y, s.sm - 1, s.sd);
@@ -972,7 +982,26 @@
     });
   }
   ld();
+  // stanje uživo sa stranice Ski info (brojači dodatka „OC dnevni info“; SR i EN natpisi)
+  function live() {
+    var slug = opt('info-stranica', 'ski-info');
+    if (/^(ne|no|0|false)$/i.test(slug)) return;
+    api('pages', 'slug=' + encodeURIComponent(slug) + '&_fields=content').then(function (j) {
+      var html = j && j[0] && j[0].content && j[0].content.rendered;
+      if (!html) return;
+      var b = new DOMParser().parseFromString('<!doctype html><body>' + html, 'text/html').body, r = {};
+      [].forEach.call(b.querySelectorAll('.oc-dsi-summary-tile'), function (t) {
+        var v = clean((t.querySelector('.oc-dsi-summary-value') || {}).textContent).match(/^(\d+)\s*\/\s*(\d+)$/);
+        var l = clean((t.querySelector('.oc-dsi-summary-label') || {}).textContent);
+        if (!v) return;
+        if (/sank|sled|toboggan/i.test(l) && !r.sank) r.sank = [+v[1], +v[2]];
+        else if (/žičar|lift/i.test(l) && !r.lifts) r.lifts = [+v[1], +v[2]];
+      });
+      if (r.sank) { LIVE = r; tick(true); }
+    }).catch(function () {});   // bez stanja uživo: radno vrijeme kao do sada
+  }
   if (w.fetch && w.DOMParser && w.Promise) {
+    live();
     load().then(apply).catch(function (e) {
       if (w.console) console.warn('[Jahorina Sankalište]', e);
       why(e && e.message || 'REST');
