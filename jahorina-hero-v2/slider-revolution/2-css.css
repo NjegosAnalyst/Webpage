@@ -72,13 +72,12 @@
     position:absolute;inset:-3%;
     background:url('ZAMIJENI-URL-jahorina-hero-desktop.webp') center 58%/cover no-repeat;   /* 150 KB (bilo 200 KB + JPG rezerva 410 KB) */
     transform:translate3d(calc(var(--mx,0) * -14px),calc(var(--my,0) * -10px),0);
-    animation:jhZoom 2.2s cubic-bezier(.2,.7,.2,1) both;
+    animation:jhZoom 1s cubic-bezier(.2,.7,.2,1) both;   /* 11. 11. (analiza: LCP 6,3 s na telefonu): kra\107 e i vidljiva od prvog kadra */
     will-change:transform;
   }
-  /* 1) mrak se razilazi: fotografija kre\107 e tamna i mutna, pa se izo\161 tri */
+  /* 1) mrak se razilazi: fotografija kre\107 e tamnija i mutna, pa se izo\161 tri \2014  bez opacity:0, da se iscrta odmah (LCP) */
   @keyframes jhZoom{
-    0%{opacity:0;scale:1.08;filter:brightness(.15) blur(14px)}
-    35%{opacity:1}
+    0%{scale:1.05;filter:brightness(.45) blur(8px)}
     100%{opacity:1;scale:1;filter:brightness(1) contrast(1.07) saturate(1.06) blur(0)}   /* blagi filmski kontrast */
   }
 
@@ -538,7 +537,7 @@
   @media (max-width:760px){
     .jh-title{font-size:clamp(48px,15vw,76px)}   /* ~20% ve\107 i nego ranije */
     /* telefon: bez zamu\107 enja pri ulasku (blur preko cijele slike je skup za telefon) */
-    @keyframes jhZoomM{0%{opacity:0;scale:1.06}100%{opacity:1;scale:1}}
+    @keyframes jhZoomM{0%{scale:1.04}100%{scale:1}}   /* bez opacity:0: fotografija vidljiva od prvog kadra (LCP) */
     .jh-photo{animation-name:jhZoomM}
   }
   /* ===== telefon: lak\161 i efekti da otvaranje bude glatko =====

@@ -179,6 +179,7 @@ EN = [
     ('aria-label="Noćno skijanje" title="Noćno skijanje"', 'aria-label="Night skiing" title="Night skiing"'),
     ('>Noćno<span class="jh-quick__l2">skijanje<', '>Night<span class="jh-quick__l2">skiing<'),
     ('aria-label="Virtuelna tura 360°" title="Virtuelna tura 360°"', 'aria-label="360° virtual tour" title="360° virtual tour"'),
+    ('https://www.oc-jahorina.com/jahorina-tv-web-kamere/', 'https://www.oc-jahorina.com/en/jahorina-tv-web-kamere/'),   # 11. 11.: naša stranica sa kamerama umjesto vivo.ba
     ('aria-label="Kamere uživo" title="Kamere uživo"', 'aria-label="Live cameras" title="Live cameras"'),
     ('>Kupi ski kartu<', '>Buy a ski pass<'),
     ('>Uživo<', '>Live<'),
