@@ -29,7 +29,10 @@ function page({ menu = 'shop', attrs = '', admin = false } = {}) {
   <script src="${CDN}jahorina-home-sections/brojke/brojke.js" defer></script></div>
   <div style="height:400px;background:#0a1120"><input id="polje" placeholder="pretraga"></div>
   <div class="elementor-widget-html"><div id="jks-skipass" ${attrs}></div><script src="${CDN}jahorina-home-sections/skipass/skipass.js" defer></script></div>
-  <footer class="jf-wp">Footer: kontakti</footer></body></html>`;
+  <footer id="Footer" style="display:none">Betheme footer (sakriven snippetom)</footer>
+  <div id="body_overlay" style="position:fixed;inset:0;display:none"></div>
+  <div id="Side_slide" style="position:fixed;top:0;right:-250px;width:250px;height:100%"><input placeholder="Traži"><a href="/">Početna</a></div>
+  <div class="jf jf-wp">Footer: kontakti</div></body></html>`;
 }
 let fails = 0;
 function check(name, ok, info) {
@@ -89,6 +92,9 @@ const scrollTo = async (p, y) => { await p.evaluate((y) => window.scrollTo(0, y)
   check('ispod hero-a: dugme klizne odozdo', s.on && s.op > .95 && s.tab === '0', s);
   check('kompaktna pilula dolje desno (16 px), 56 px, ne preko cijele širine', s.bottom === 16 && s.right === 16 && s.h === 56 && s.w < 230 && s.w > 150, [s.bottom, s.right, s.w, s.h]);
   check('tekst: Ski pass · Kupi online, Archivo', s.text === 'Ski passKupi online' && /Archivo/.test(s.font), [s.text, s.font]);
+  const look = await r.p.evaluate(() => { const a = document.querySelector('#jks-dock a'), sm = a.querySelector('small'), ic = a.querySelector('.jks-ico');
+    return { tt: getComputedStyle(sm).textTransform, bf: getComputedStyle(a).backdropFilter || 'none', ico: getComputedStyle(ic).backgroundImage }; });
+  check('tema: „Kupi online“ obična slova, bez backdrop-filter, cyan gradijent kao glavno dugme', look.tt === 'none' && look.bf === 'none' && /69, 214, 255.*0, 174, 230.*0, 139, 199/.test(look.ico), look);
   await scrollTo(r.p, 1500);
   s = await st(r.p);
   check('skrol nadolje (čitanje) → skupi se u krug', s.mini && s.w === 56 && s.on, [s.mini, s.w]);
@@ -113,7 +119,7 @@ const scrollTo = async (p, y) => { await p.evaluate((y) => window.scrollTo(0, y)
   check('prozor zatvoren → dugme se vrati', (await st(r.p)).on, '');
   await scrollTo(r.p, 99999);
   s = await st(r.p);
-  check('footer na ekranu → dugme se skloni (ne prekriva kontakte)', !s.on, s.on);
+  check('footer na ekranu → dugme se skloni (ne prekriva kontakte; prvi je sakriveni Betheme #Footer)', !s.on, s.on);
   await scrollTo(r.p, 0);
   check('nazad na vrh → skriveno', !(await st(r.p)).on, '');
   await r.ctx.close();

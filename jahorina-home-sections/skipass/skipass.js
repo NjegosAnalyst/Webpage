@@ -1,6 +1,9 @@
 /* =====================================================================
-   JAHORINA — "KUPI SKI PASS" NA TELEFONU (plutajuće dugme pri dnu ekrana) · v2
-   Tema hero-a i ostalih blokova: tamno staklo, jedan cyan akcenat, Archivo/Barlow, bijelo glavno dugme.
+   JAHORINA — "KUPI SKI PASS" NA TELEFONU (plutajuće dugme pri dnu ekrana) · v3
+   Tema hero-a i ostalih blokova: tamno staklo, jedan cyan akcenat (cyan glavno dugme), Archivo/Barlow, obična slova.
+     · v3 (11. 11., „Početna 2027“): krug u cyan gradijentu kao glavno dugme sekcija, staklo kao trake sekcija (bez
+       backdrop-filter — telefon), „Kupi online“ običnim slovima, bijeli okvir fokusa; footer: na sajtu je prvi u
+       dokumentu Betheme #Footer (sakriven) → posmatraju se SVI footeri, dugme se skloni kad se bilo koji vidi;
      · samo na telefonu (do 760 px); na računaru i tabletu se ne prikazuje;
      · v2 (korisnik: „ljepši i profesionalniji, istaknut, ali da ne ometa pretragu i preglednost“): kompaktna plutajuća
        pilula DOLJE DESNO (ne preko cijele širine): tamno staklo, cyan krug sa ikonom karte + "Ski pass" / "KUPI ONLINE";
@@ -36,18 +39,18 @@
   /* kompaktna plutajuća pilula dolje desno (kao dugme u aplikacijama): tamno staklo (vidi se i na bijelim i na tamnim
      stranicama), cyan krug sa ikonom karte, tekst pored; dok se skroluje nadolje skupi se u krug, nagore se raširi */
   var CSS = [
-    '#D{--accent:#00B9F2;--accent-2:#2CCBF8;--fd:\'Archivo\',system-ui,-apple-system,\'Segoe UI\',sans-serif;--fb:\'Barlow\',system-ui,-apple-system,\'Segoe UI\',sans-serif;',
+    '#D{--fd:\'Archivo\',system-ui,-apple-system,\'Segoe UI\',sans-serif;--fb:\'Barlow\',system-ui,-apple-system,\'Segoe UI\',sans-serif;',
     'position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:2147482000;display:none;pointer-events:none;color-scheme:dark}',
     '@media (max-width:760px){#D{display:block}}',
     '#D *,#D *::before,#D *::after{box-sizing:border-box}',
     '#D a.jks-pill{all:unset;box-sizing:border-box!important;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;display:flex!important;align-items:center;height:56px;padding:5px!important;border-radius:30px!important;',
-    'background:rgba(11,18,33,.86)!important;-webkit-backdrop-filter:blur(16px) saturate(1.3);backdrop-filter:blur(16px) saturate(1.3);',
-    'box-shadow:0 14px 30px -10px rgba(4,9,20,.7),0 2px 6px rgba(4,9,20,.35),inset 0 0 0 1px rgba(255,255,255,.14),inset 0 1px 0 rgba(255,255,255,.12)!important;',
+    'background:linear-gradient(180deg,rgba(18,27,45,.95),rgba(9,14,26,.97))!important;',
+    'box-shadow:0 14px 30px -10px rgba(4,9,20,.7),0 2px 6px rgba(4,9,20,.35),inset 0 0 0 1px rgba(255,255,255,.1),inset 0 1px 0 rgba(255,255,255,.11)!important;',
     'transform:translateY(calc(100% + 30px)) scale(.9);opacity:0;transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .35s ease,box-shadow .3s}',
     '#D.is-on a.jks-pill{transform:none;opacity:1}',
-    /* cyan krug sa ikonom karte (jedini akcenat) */
+    /* cyan krug sa ikonom karte (jedini akcenat; isti gradijent kao glavno dugme sekcija) */
     '#D .jks-ico{position:relative;flex-shrink:0;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;color:#fff;',
-    'background:radial-gradient(circle at 32% 28%,#4FD8FF,#00B9F2 55%,#0791C9);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -3px 6px rgba(0,60,100,.35),0 4px 14px -4px rgba(0,185,242,.8)}',
+    'background:linear-gradient(160deg,#45D6FF 0%,#00AEE6 50%,#008BC7 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 14px -4px rgba(0,185,242,.7)}',
     '#D .jks-ico svg{display:block;width:22px;height:22px;transform:rotate(-12deg)}',
     '#D .jks-ico::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1.5px solid rgba(0,185,242,.75);opacity:0;pointer-events:none}',
     '#D.is-new .jks-ico::after{animation:jksPing 1.8s ease-out .5s 2}',
@@ -56,10 +59,10 @@
     '#D .jks-txt{display:flex;flex-direction:column;justify-content:center;gap:4px;max-width:160px;overflow:hidden;padding:0 18px 0 12px;white-space:nowrap;',
     'transition:max-width .45s cubic-bezier(.2,.8,.2,1),padding .45s cubic-bezier(.2,.8,.2,1),opacity .3s ease}',
     '#D .jks-txt b{font:700 15px/1 var(--fd)!important;letter-spacing:.1px;color:#fff!important}',
-    '#D .jks-txt small{font:600 10.5px/1 var(--fd)!important;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent-2)!important}',
+    '#D .jks-txt small{font:600 12.5px/1 var(--fd)!important;letter-spacing:.2px;text-transform:none;color:#9BE6FF!important}',
     '#D.is-mini .jks-txt{max-width:0;padding:0;opacity:0}',
     '#D a.jks-pill:active{transform:scale(.96)!important}',
-    '#D a.jks-pill:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
+    '#D a.jks-pill:focus-visible{outline:2px solid #fff!important;outline-offset:3px!important}',
     '@media (prefers-reduced-motion:reduce){#D a.jks-pill,#D .jks-txt{transition:opacity .2s ease!important}#D a.jks-pill{transform:none!important}#D .jks-ico::after{animation:none!important}}'
   ].join('\n').replace(/#D/g, '#jks-dock');
 
@@ -145,9 +148,22 @@
     d.addEventListener('focusin', req); d.addEventListener('focusout', function () { setTimeout(req, 50); });
     // prozori preko ekrana (galerija, meni bara, video) zaključaju skrol na <html> → dugme se skloni
     if ('MutationObserver' in w) new MutationObserver(req).observe(d.documentElement, { attributes: true, attributeFilter: ['style'] });
-    // footer (naš ili Betheme): kad se pojavi, dugme se skloni
-    var foot = d.querySelector('.jf-wp, .jf-footer, #Footer, footer');
-    if (foot && 'IntersectionObserver' in w) new IntersectionObserver(function (es) { footVis = es[es.length - 1].isIntersecting; req(); }).observe(foot);
+    // footer: kad se bilo koji vidi, dugme se skloni. Posmatraju se SVI (na sajtu je prvi u dokumentu Betheme #Footer,
+    // sakriven snippetom — samo on nikad ne „uđe“ na ekran, pa je dugme ostajalo preko našeg footera i kontakata)
+    if ('IntersectionObserver' in w) {
+      var seen = [], vis = [];
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { var i = vis.indexOf(e.target); if (e.isIntersecting && i < 0) vis.push(e.target); else if (!e.isIntersecting && i > -1) vis.splice(i, 1); });
+        footVis = vis.length > 0; req();
+      });
+      var feet = function () {
+        [].forEach.call(d.querySelectorAll('.jf-wp, .jf-footer, #Footer, footer, .elementor-location-footer'), function (f) {
+          if (seen.indexOf(f) < 0) { seen.push(f); io.observe(f); }
+        });
+      };
+      feet();
+      w.addEventListener('load', feet);   // footer koji tema/snippet doda kasnije
+    }
     req();
   }
   if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', function () { start(); }); else start();
