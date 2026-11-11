@@ -1,0 +1,4 @@
+/* 11. 11. 2026: hero fotografija vidljiva od prvog kadra (brze ucitavanje, LCP) */
+.jh-photo{animation-duration:1s}
+@keyframes jhZoom{0%{scale:1.05;filter:brightness(.45) blur(8px)}100%{opacity:1;scale:1;filter:brightness(1) contrast(1.07) saturate(1.06) blur(0)}}
+@keyframes jhZoomM{0%{scale:1.04}100%{scale:1}}
