@@ -1031,8 +1031,11 @@
     // dno: ako je ispod bloka footer (naš .jf-wp ili footer teme), razmak do njega (padding/margin omotača stranice) se zatvori
     // negativnim margin-bottom na nivou čiji je sljedeći susjed footer, pa footer sjedne odmah ispod bloka
     var FOOT = '.jf-wp, .jf-footer, #Footer, footer, .mfn-footer-tmpl, .elementor-location-footer';
+    // prazno = nevidljivo, skripta/stil, van toka stranice (fiksirano/apsolutno: Betheme #Side_slide i #body_overlay između
+    // stranice i footera — 11. 11. su zaustavljali spoj, pa je ostajala bijela traka) ili mali element bez sadržaja
+    function outOfFlow(x) { var cs = getComputedStyle(x); return cs.position === 'fixed' || cs.position === 'absolute' || cs.display === 'none'; }
     function empty(x) {
-      return !x.offsetHeight || /^(SCRIPT|STYLE|LINK|NOSCRIPT|TEMPLATE)$/.test(x.tagName) ||
+      return !x.offsetHeight || /^(SCRIPT|STYLE|LINK|NOSCRIPT|TEMPLATE)$/.test(x.tagName) || (!x.matches(FOOT) && outOfFlow(x)) ||
         (x.offsetHeight <= 200 && !x.matches(DARK + ',' + FOOT) && !x.querySelector(DARK + ',' + FOOT + ',img,svg,video,iframe,canvas,input,button') && !(x.textContent || '').trim());
     }
     // tamna sjenka od 2 px iznad (spoj sa blokom iznad) i ispod (spoj sa footerom): spoj na dijelu piksela preko bijele

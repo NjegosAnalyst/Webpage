@@ -152,7 +152,12 @@ const info = (p, id) => p.evaluate((id) => {
         if (u.origin === SITE) return route.fulfill({ contentType: 'text/html; charset=utf-8', body: `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
           <body style="margin:0;background:#fff"><div id="Wrapper" style="padding-bottom:50px;background:#fff"><div id="Content" style="padding-bottom:20px"><div class="elementor">
           <div class="e-con" style="padding:10px;background:#fff"><div class="elementor-widget elementor-widget-html"><div id="jsk-sankaliste"></div><script src="${CDN}jahorina-home-sections/sankaliste/sankaliste.js" defer></script></div></div>
-          </div></div><footer id="Footer" style="display:none">stari</footer></div><script>/* wpcode */</script><style>.x{}</style>
+          </div></div><section class="section section-page-footer" style="padding:14px 0"><div class="section_wrapper"><div class="column one page-pager"></div></div></section>
+          <footer id="Footer" style="display:none">stari</footer></div>
+          <!-- Betheme: zatamnjenje i bočni meni za telefon (fiksirani, van toka stranice; 11. 11. su zaustavljali spoj sa footerom) -->
+          <div id="body_overlay" style="position:fixed;inset:0;display:none"></div>
+          <div id="Side_slide" style="position:fixed;top:0;right:-250px;width:250px;height:100%;background:#191919"><a href="#" class="close">x</a><form><input type="text" placeholder="Pretraga"></form><div class="menu_wrapper">Meni</div></div>
+          <script>/* wpcode */</script><style>.x{}</style>
           <div class="jf-wp" style="height:300px;background:#0a1120;color:#fff">Footer: kontakti</div></body></html>` });
         return route.abort();
       });
