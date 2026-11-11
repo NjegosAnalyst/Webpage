@@ -673,7 +673,7 @@
       seen[h.n] = 1;
       var dm = s.match(/(?:\bdo|up\s+to|until)\s*(\d+(?:[.,]\d+)?)\s*(h\b|sat|hour|hr|min)/i);
       out.push({ n: h.n, price: pm[1], cur: /€|eur/i.test(pm[2]) ? '€' : 'KM', dur: dm ? dm[1] + ' ' + (/min/i.test(dm[2]) ? 'min' : 'h') : '',
-        ch: /šampanj|champagne|prosecco|pjenuš|sparkling/i.test(s), mz: /\bmez[aeiu]|\bhran[aeiu]|\bfood|platter|zakusk|snack/i.test(s) });
+        ch: /šampanj|champagne|prosecco|pjenuš|sparkling/i.test(s), mz: /\bmez[aeiu]|\bmezze|specialt|specialit|\bhran[aeiu]|\bfood|platter|zakusk|snack/i.test(s) });
     });
     return out.sort(function (a, b) { return a.n - b.n; });
   }

@@ -48,7 +48,7 @@
     edge: ['Show the snowboard park', 'Show the ski bike'],
     park: { name: 'Snowboard park', h: ['Snowboard', 'park'], more: 'More about the park', moreS: 'Learn more',
       lead: 'This truly authentic mountain gives snowboarders a space they could only dream of until now, and it is reserved just for them.',
-      fArea: 'Park area', fSlope: 'Slope', fNear: 'Near the chalet village', photos: ['Snowboarder in a burst of powder in front of a wooden fence, blue sky'] },
+      fArea: 'Park area', fSlope: 'Slope', fNear: 'Chalet village nearby', photos: ['Snowboarder in a burst of powder in front of a wooden fence, blue sky'] },
     bike: { name: 'Ski bike', h: ['Ski', 'bike'], more: 'More about the ski bike', moreS: 'Learn more',
       lead: 'The Ski Bike is a unique combination of a bike and skis that lets you ride down the slopes in a whole new way.',
       fPrice: 'Rental', fSlope: 'Slope', fPoly: 'Riding area', fEasy: ['No experience', 'Easy to learn'], fAll: ['For everyone', 'Any age'],
@@ -326,7 +326,7 @@
   function abs(u) { try { return new URL(u, O + '/').href; } catch (e) { return u; } }
   function now() { return w.performance && performance.now ? performance.now() : Date.now(); }
   // qTranslate-XT: "[:SH]tekst[:en]text[:]" → samo jezik ove stranice (isto kao u ostalim blokovima)
-  function pickLang(s) {
+  function pickLang(s, lang) {
     s = s || '';
     var re = /\[:([a-z]{2})?\]|\{:([a-z]{2})?\}|<!--:([a-z]{2})?-->/gi;
     if (!re.test(s)) return s;
@@ -339,7 +339,8 @@
       last = re.lastIndex;
     }
     segs.push([cur, s.slice(last)]);
-    var want = EN ? 'en' : langs.filter(function (l) { return l !== 'en'; })[0];
+    var other = langs.filter(function (l) { return l !== 'en'; })[0];
+    var want = lang === 'sr' ? other : lang === 'en' ? 'en' : EN ? 'en' : other;
     if (!want || langs.indexOf(want) < 0) want = langs[0];
     return segs.filter(function (g) { return !g[0] || g[0] === want; }).map(function (g) { return g[1]; }).join('');
   }
@@ -725,28 +726,35 @@
   var OFF = /fudbal|navija|olimpijski\s+sport|popularn|\b(?:19|20)\d{2}\b|sezon|football|\bfans?\b|olympic\s+sport|popular/i;
   var CUR = '(KM|BAM|€|EUR)';
   function money(m) { return { v: m[1], cur: /€|eur/i.test(m[2]) ? '€' : 'KM' }; }
+  // tekst srpske verzije (za EN stranicu: podaci kojih nema u prevodu, npr. dužina, lift, staza)
+  function srText(raw) {
+    var h = pickLang(raw, 'sr'); if (!h) return '';
+    var bb = new DOMParser().parseFromString('<!doctype html><body>' + h, 'text/html').body;
+    [].forEach.call(bb.querySelectorAll('p,li,div,br,h1,h2,h3,h4,h5,h6,td'), function (e) { e.parentNode.insertBefore(bb.ownerDocument.createTextNode(' '), e.nextSibling); });
+    return clean(bb.textContent);
+  }
   function parse(k, pg) {
     var raw = pg.content && pg.content.rendered || '', html = pickLang(raw);
     var b = new DOMParser().parseFromString('<!doctype html><body>' + html, 'text/html').body;   // ne izvršava skripte, ne učitava slike
     // razmak poslije svakog bloka, da se pasusi ne slijepe u tekstu
     [].forEach.call(b.querySelectorAll('p,li,div,br,h1,h2,h3,h4,h5,h6,td'), function (e) { e.parentNode.insertBefore(b.ownerDocument.createTextNode(' '), e.nextSibling); });
     var ps = [].slice.call(b.querySelectorAll('p')).map(function (p) { return clean(p.textContent); }).filter(function (t) { return t.length > 30; });
-    var txt = clean(b.textContent), m, r = { facts: [] };
+    var txt = clean(b.textContent), txtF = EN ? txt + ' \u2016 ' + srText(raw) : txt, m, r = { facts: [] };
     var all = [].concat.apply([], ps.map(sentences)).filter(function (s) { return s.length > 40 && !OFF.test(s) && !/\d\s*(KM|BAM|€)/i.test(s); });
     var hit = '';
     LEAD[k].forEach(function (re) { if (!hit) hit = all.filter(function (s) { return re.test(s); })[0] || ''; });
     hit = hit || all[0] || '';
     r.lead = hit ? clip(hit, 260) : '';
     // staza: "na stazi Trnovo" / "Trnovo slope"
-    var slope = (m = txt.match(/\bstaz[aeiu]\s+[„"“]?(?!Jahorin)([A-ZŠĐČĆŽ][a-zšđčćž]+(?:\s+\d)?)/)) ? m[1] : (m = txt.match(/\b([A-ZŠĐČĆŽ][a-zšđčćž]+)\s+(?:slope|run|piste)\b/)) ? m[1] : '';
+    var slope = (m = txtF.match(/\bstaz[aeiu]\s+[„"“]?(?!Jahorin)([A-ZŠĐČĆŽ][a-zšđčćž]+(?:\s+\d)?)/)) ? m[1] : (m = txtF.match(/\b([A-ZŠĐČĆŽ][a-zšđčćž]+)\s+(?:slope|run|piste)\b/)) ? m[1] : '';
     if (k === 'park') {
       // površina: "3.000 kvadratnih metara" / "3.000 metara kvadratnih" / "3,000 m²"
-      if ((m = txt.match(/(\d{1,3}(?:[.,]\d{3})+|\d+)\s*(?:kvadratn[a-z]*\s+metar[a-z]*|metar[a-z]*\s+kvadratn[a-z]*|m²|m2\b|sq(?:uare)?\.?\s*met[a-z]*|sq\.?\s*m\b)/i)))
+      if ((m = txtF.match(/(\d{1,3}(?:[.,]\d{3})+|\d+)\s*(?:kvadratn[a-z]*\s+metar[a-z]*|metar[a-z]*\s+kvadratn[a-z]*|m²|m2\b|sq(?:uare)?\.?\s*met[a-z]*|sq\.?\s*m\b)/i)))
         r.facts.push({ v: m[1] + ' m²', l: T.park.fArea });
       if (slope) r.facts.push({ v: slope, l: T.park.fSlope });
       // naselje u blizini: "vikend naselja „Šator“" / "Šator chalet village"
-      if ((m = txt.match(/naselj[a-z]*\s+[„"“]?([A-ZŠĐČĆŽ][a-zšđčćž]+)/)) || (m = txt.match(/([A-ZŠĐČĆŽ][a-zšđčćž]+)["”]?\s+(?:chalet|weekend|holiday)\s+(?:village|settlement|resort)/)) ||
-          (m = txt.match(/(?:village|settlement)\s+(?:of\s+)?[„"“]?([A-ZŠĐČĆŽ][a-zšđčćž]+)/)))
+      if ((m = txtF.match(/naselj[a-z]*\s+[„"“]?([A-ZŠĐČĆŽ][a-zšđčćž]+)/)) || (m = txtF.match(/([A-ZŠĐČĆŽ][a-zšđčćž]+)["”]?\s+(?:chalet|weekend|holiday)\s+(?:village|settlement|resort)/)) ||
+          (m = txtF.match(/(?:village|settlement)\s+(?:of\s+)?[„"“]?([A-ZŠĐČĆŽ][a-zšđčćž]+)/)))
         r.facts.push({ v: m[1], l: T.park.fNear });
     } else {
       // najam: "20 KM po satu" / "20 KM / 1 h" / "20 KM per hour"
@@ -755,7 +763,7 @@
         r.facts.push({ v: pr.v + ' ' + pr.cur, l: T.bike.fPrice + (u ? ' ' + T.bike.per[/^(sat|h|hour)/.test(u) ? 'h' : /^(dan|day)/.test(u) ? 'd' : 'r'] : '') });
       }
       // gdje se vozi: "na poligonu Trnovo" (ili staza)
-      var poly = (m = txt.match(/poligon[a-z]*\s+[„"“]?(?!Jahorin)([A-ZŠĐČĆŽ][a-zšđčćž]+)/)) ? m[1] : '';
+      var poly = (m = txtF.match(/poligon[a-z]*\s+[„"“]?(?!Jahorin)([A-ZŠĐČĆŽ][a-zšđčćž]+)/)) ? m[1] : '';
       if (poly) r.facts.push({ v: poly, l: T.bike.fPoly }); else if (slope) r.facts.push({ v: slope, l: T.bike.fSlope });
       // karakteristike sa stranice: bez iskustva (lako se savladava) i za sve uzraste
       if (/posebn[a-z]*\s+vještin|prethodn[a-z]*\s+iskustv|nikada\s+niste\s+stali|lako\s+se\s+savlad|no\s+(?:prior\s+|previous\s+|special\s+)?(?:experience|skills)|easy\s+to\s+learn/i.test(txt))
