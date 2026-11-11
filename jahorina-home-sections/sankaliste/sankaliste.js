@@ -54,7 +54,7 @@
     prices: 'Ticket prices', pricesS: 'Prices', gal: 'Gallery', more: 'More about the sledding track', video: 'Watch the video', vid: 'Video: sledding track',
     fLen: 'Length', fWhere: 'Location', slope: 'Slope', fLift: 'Lift', lift: function (n) { return n + ' T-bar'; },
     fSled: 'Sleds', sled: function (n) { return 'Rent at the ' + n + ' ski desk'; }, sledAny: 'Rent at the ski desk', own: 'Bring none: the T-bar takes adapted sleds only',
-    dial: 'Sledding', daily: 'every day', day: 'DAY SKIING', sk: 'SLEDDING', night: 'NIGHT SKIING', clockAria: function (a, b) { return 'Sledding track hours: every day from ' + a + ' to ' + b + ', between day and night skiing'; },
+    dial: 'Sledding', daily: 'Every day', day: 'DAY SKIING', sk: 'SLEDDING', night: 'NIGHT SKIING', clockAria: function (a, b) { return 'Sledding track hours: every day from ' + a + ' to ' + b + ', between day and night skiing'; },
     open: 'Open now', closed: 'Closed', closedToday: 'Closed today', until: function (t) { return 'until ' + t; },
     opens: function (t) { return 'opens at ' + t; }, opensTmr: function (t) { return 'opens tomorrow at ' + t; },
     season: 'off season', seasonFrom: function (dd, mm) { return 'opens ' + dd + ' ' + ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][mm - 1]; },
@@ -67,7 +67,7 @@
     prices: 'Cijene karata', pricesS: 'Cijene', gal: 'Galerija', more: 'Više o sankalištu', video: 'Pogledaj video', vid: 'Video: Sankalište',
     fLen: 'Dužina', fWhere: 'Lokacija', slope: 'Staza', fLift: 'Lift', lift: function (n) { return 'Sidro ' + n; },
     fSled: 'Sanke', sled: function (n) { return 'Najam na ski kasi ' + n; }, sledAny: 'Najam na ski kasi', own: 'Svoje ostavite kod kuće: za sidro trebaju sanke sa adapterom',
-    dial: 'Sankanje', daily: 'svaki dan', day: 'DNEVNO SKIJANJE', sk: 'SANKANJE', night: 'NOĆNO SKIJANJE', clockAria: function (a, b) { return 'Radno vrijeme sankališta: svaki dan od ' + a + ' do ' + b + ', između dnevnog i noćnog skijanja'; },
+    dial: 'Sankanje', daily: 'Svaki dan', day: 'DNEVNO SKIJANJE', sk: 'SANKANJE', night: 'NOĆNO SKIJANJE', clockAria: function (a, b) { return 'Radno vrijeme sankališta: svaki dan od ' + a + ' do ' + b + ', između dnevnog i noćnog skijanja'; },
     open: 'Radi sada', closed: 'Ne radi', closedToday: 'Danas ne radi', until: function (t) { return 'do ' + t; },
     opens: function (t) { return 'otvara se u ' + t; }, opensTmr: function (t) { return 'otvara se sutra u ' + t; },
     season: 'van sezone', seasonFrom: function (dd, mm) { return 'otvara se ' + dd + '. ' + mm + '.'; },
@@ -100,8 +100,7 @@
   /* ---------- izgled ---------- */
   var CSS = [
     '#R{--bg:#0A1120;--line:rgba(255,255,255,.1);--text:#fff;--text-2:rgba(255,255,255,.8);--text-3:rgba(255,255,255,.56);--accent:#00B9F2;--accent-2:#2CCBF8;',
-    '--ok:#4ADE80;--no:#FF5C5C;--surface:#111A2C;--nm-surface:rgba(16,25,42,.62);--nm-dark:rgba(0,0,0,.42);--nm-light:rgba(78,104,150,.16);',
-    '--nm-raised:4px 4px 10px var(--nm-dark),-3px -3px 9px var(--nm-light),inset 1px 1px 0 rgba(255,255,255,.05);',
+    '--ok:#4ADE80;--no:#FF5C5C;--surface:#111A2C;',
     "--fd:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;--fb:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;",
     'display:block;background:var(--bg);color:var(--text);font:400 16px/1.55 var(--fb);text-align:left;color-scheme:dark}',
     '#R.jsk--boxed{border-radius:28px;overflow:hidden}',
@@ -117,9 +116,10 @@
     '#R svg [stroke="currentColor"]{stroke:currentColor!important}',
     '#R a:focus-visible,#R button:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}',
     /* puna širina ekrana, isti rub kao kadar hero-a; --in poravnava sadržaj sa mrežom 1240px; --gap = ritam između blokova.
-       Kad je Snowboard park odmah iznad (.jsk--join), on već daje cijeli razmak ispod sebe, pa ovdje ostaje samo rub */
+       Kad je Snowboard park odmah iznad (.jsk--join), on već daje cijeli razmak ispod sebe, pa sankalište iznad kadra ne dodaje ništa
+       (pravilo od 10. 11.: između dvije naše sekcije jedan razmak — 100 px računar, 56 px telefon) */
     '#R .jsk-wrap{--g:clamp(14px,1.6vw,22px);--gap:clamp(56px,7vw,100px);--pt:calc(var(--gap) / 2 + var(--g));--in:max(0px,calc((100vw - 1240px) / 2 + 48px - var(--g)));position:relative;padding:var(--pt) var(--g) var(--gap)}',
-    '#R.jsk--join .jsk-wrap{--pt:var(--g)}',
+    '#R.jsk--join .jsk-wrap{--pt:0px}',
     '#R{container-type:inline-size}',
     '@supports (width:1cqw){#R .jsk-wrap{--in:max(0px,calc((100cqw - 1240px) / 2 + 48px - var(--g)))}}',
     '#R .jsk-wrap{--side:max(clamp(26px,3.2vw,52px),var(--in))}',
@@ -127,8 +127,8 @@
     /* kadar kao u hero-u; --L = širina dijela sa tekstom (desno), fotografija je lijevo od njega i utapa se u tamu */
     '#R .jsk-frame{--st:var(--no);--L:min(calc(var(--side) + 560px),50%);--dz:clamp(196px,15vw,250px);--cx:max(clamp(24px,2.6vw,44px),calc(var(--side) - var(--in) * .45));--cy:clamp(40px,4.4vw,70px);',
     'position:relative;transform-origin:50% 0;display:flex;align-items:center;justify-content:flex-end;min-height:clamp(640px,46vw,800px);border-radius:26px;overflow:hidden;isolation:isolate;background:var(--bg);',
-    'box-shadow:10px 10px 26px rgba(0,0,0,.55),-8px -8px 22px rgba(46,64,98,.22)}',
-    '#R .jsk-frame::after{content:"";position:absolute;inset:0;z-index:8;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.08)}',
+    'box-shadow:0 50px 90px -50px rgba(0,0,0,.95),6px 6px 16px rgba(0,0,0,.55),-5px -5px 14px rgba(60,84,128,.14)}',   /* kao kartica vijesti i ostale sekcije */
+    '#R .jsk-frame::after{content:"";position:absolute;inset:0;z-index:8;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.09)}',
     '#R .jsk-bg{position:absolute;inset:0;overflow:hidden;cursor:zoom-in;-webkit-tap-highlight-color:transparent}',
     '#R .jsk-ph{position:absolute;top:0;bottom:0;left:0;right:calc(var(--L) - 120px);-webkit-mask-image:linear-gradient(270deg,transparent 0,#000 300px);mask-image:linear-gradient(270deg,transparent 0,#000 300px)}',
     '#R .jsk-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--pos,72% 50%);filter:saturate(.8) brightness(var(--lum,.8)) contrast(1.06)}',
@@ -179,7 +179,7 @@
     '#R.jsk--open .jsk-hand circle.jsk-ping{animation:jskPing 2.6s ease-out infinite}',
     '@keyframes jskPing{0%{transform:scale(.8);opacity:.75}70%,100%{transform:scale(2.4);opacity:0}}',
     '#R .jsk-dial-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:5px}',
-    '#R .jsk-dial-c small{font:600 calc(var(--dz) * .04)/1 var(--fd);letter-spacing:2.4px;text-transform:uppercase;color:rgba(255,255,255,.6)}',
+    '#R .jsk-dial-c small{font:600 calc(var(--dz) * .056)/1 var(--fd);letter-spacing:.2px;color:rgba(255,255,255,.66)}',   /* obična slova (natpisi po obodu sata ostaju kao na brojčaniku) */
     '#R .jsk-dial-c b{font:800 calc(var(--dz) * .13)/1 var(--fd);letter-spacing:-.02em;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}',
     '#R .jsk-dial-c b i{font-style:normal;font-weight:600;font-size:.5em;margin-left:2px;color:rgba(255,255,255,.7)}',
     /* status (radi / ne radi) se ne ispisuje, ali ga čitač ekrana čuje */
@@ -187,7 +187,7 @@
 
     /* tekst desno (cik-cak sa Snowboard parkom iznad), desna ivica poravnata sa mrežom 1240px */
     '#R .jsk-body{position:relative;z-index:2;width:calc(480px + var(--side));max-width:50%;padding:clamp(56px,6vw,90px) var(--side) clamp(56px,6vw,90px) 0}',
-    '#R .jsk-eye{display:flex;align-items:center;gap:14px;margin-bottom:22px;font:600 11px/1 var(--fd);letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.86)}',
+    '#R .jsk-eye{display:flex;align-items:center;gap:14px;margin-bottom:22px;font:600 15px/1.2 var(--fd);letter-spacing:.2px;color:rgba(255,255,255,.82)}',   /* kao mali tekst hero-a (ranije VELIKA razmaknuta) */
     '#R .jsk-eye::before{content:"";width:34px;height:1.5px;flex-shrink:0;background:linear-gradient(90deg,var(--accent),#fff,var(--accent));box-shadow:0 0 10px rgba(0,185,242,.8)}',
     '#R h2{font-size:clamp(46px,5vw,80px);font-weight:800;line-height:.95;letter-spacing:-.025em}',
     '#R h2 > span{display:block;filter:drop-shadow(0 6px 30px rgba(0,0,0,.45))}',
@@ -201,30 +201,29 @@
     '#R .jsk-spec small{flex-shrink:0;font:500 13px/1.3 var(--fb);color:var(--text-3)}',
     '#R .jsk-spec b{font:600 15px/1.3 var(--fd);letter-spacing:.005em;color:#fff;text-align:right;font-variant-numeric:tabular-nums}',
     '#R .jsk-spec b em{display:block;margin-top:3px;font:400 12px/1.35 var(--fb);font-style:normal;letter-spacing:0;color:var(--text-3)}',
-    /* dugmad kao u ostalim blokovima: bijelo glavno + stakleno sporedno, iste širine i visine, široka kao spisak */
-    '#R .jsk-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:26px;width:min(100%,480px)}',
-    '#R .jsk-btn{all:unset;position:relative!important;isolation:isolate;box-sizing:border-box!important;display:inline-flex!important;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px!important;border-radius:40px!important;cursor:pointer;',
-    'white-space:nowrap;font:600 13.5px/1 var(--fb)!important;letter-spacing:.2px!important}',
+    /* dugmad kao u ratraku i baru (10. 11.): glavno = cyan pločica kao „Kupi ski kartu“ (ranije bijelo), sporedno = staklena pločica
+       kao „Sve vijesti“; širina po tekstu, red širok kao spisak; kad ne stanu, svako ide u svoj red */
+    '#R .jsk-acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;width:min(100%,480px)}',
+    '#R .jsk-btn{all:unset;position:relative!important;flex:1 1 auto;box-sizing:border-box!important;display:inline-flex!important;align-items:center;justify-content:center;gap:9px;height:48px;padding:0 20px!important;border-radius:16px!important;cursor:pointer;',
+    'white-space:nowrap;font:700 15px/1 var(--fd)!important;letter-spacing:0!important;transition:transform .2s ease,box-shadow .25s ease,filter .2s,color .2s}',
     '#R .jsk-btn svg{width:16px;height:16px}',
+    '#R .jsk-btn:active{transform:scale(.96)}',
     '#R .jsk-s{display:none}',
-    '#R .jsk-btn--solid{overflow:hidden;color:#0d1524!important;background:linear-gradient(145deg,#fff,#E6EEF6)!important;transition:transform .2s,box-shadow .2s;',
-    'box-shadow:inset -2px -2px 4px rgba(13,21,36,.1),inset 2px 2px 3px #fff,4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(78,104,150,.16)!important}',
-    '#R .jsk-btn--solid::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:45%;pointer-events:none;transform:skewX(-20deg);',
-    'background:linear-gradient(100deg,transparent,rgba(0,185,242,.35),rgba(255,255,255,.9),rgba(0,185,242,.35),transparent)}',
-    '#R .jsk-btn--solid:hover{transform:translateY(-2px);box-shadow:inset -2px -2px 4px rgba(13,21,36,.1),inset 2px 2px 3px #fff,0 0 0 1px rgba(0,185,242,.5),0 0 26px rgba(0,185,242,.55)!important}',
-    '#R .jsk-btn--solid:hover::after{animation:jskShine 1.6s ease-in-out}',
-    '@keyframes jskShine{0%{left:-60%}35%,100%{left:130%}}',
-    '#R .jsk-btn--solid:active{transform:none;box-shadow:inset 3px 3px 7px rgba(13,21,36,.25),inset -3px -3px 6px #fff!important}',
-    '#R .jsk-btn--ghost{color:#fff!important;background:var(--nm-surface)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(255,255,255,.08)!important;transition:color .2s,box-shadow .25s}',
-    '#R .jsk-btn--ghost svg{color:var(--accent)}',
-    '#R .jsk-btn--ghost:hover{color:var(--accent)!important;box-shadow:var(--nm-raised),inset 0 0 0 1px rgba(0,185,242,.4),0 0 22px rgba(0,185,242,.35)!important}',
-    '#R .jsk-btn--ghost:active{box-shadow:inset 2px 2px 5px rgba(0,0,0,.4),inset -2px -2px 5px rgba(78,104,150,.13)!important}',
+    '#R .jsk-btn--solid{color:#fff!important;background:linear-gradient(160deg,#45D6FF 0%,#00AEE6 50%,#008BC7 100%)!important;',
+    'box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.18),0 10px 24px -10px rgba(0,185,242,.95)!important}',
+    '#R .jsk-btn--solid:hover,#R .jsk-btn--solid:focus-visible{filter:brightness(1.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.3),0 12px 28px -8px rgba(0,185,242,1)!important}',
+    '#R .jsk-btn--solid:focus-visible{outline-color:#fff!important}',
+    '#R .jsk-btn--ghost{font-weight:600!important;color:rgba(255,255,255,.92)!important;background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.02))!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.11)!important}',
+    '#R .jsk-btn--ghost svg{color:#C4EEFF}',
+    '#R .jsk-btn--ghost:hover{color:#fff!important;transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(111,219,255,.38),inset 0 1px 0 rgba(255,255,255,.14),0 0 18px -4px rgba(0,185,242,.45)!important}',
+    '#R .jsk-btn--ghost:active{transform:scale(.96)}',
     /* tihi linkovi ispod dugmadi: "Više o sankalištu" | video (ako ga stranica ima) */
     '#R .jsk-foot{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px;margin-top:18px;font:500 13px/1.3 var(--fb);color:var(--text-3)}',
     '#R .jsk-link{position:relative!important}',
     '#R .jsk-link::after{content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}',
     '#R .jsk-link{all:unset;box-sizing:border-box!important;display:inline-flex!important;align-items:center;gap:7px;padding:4px 0!important;cursor:pointer;font:500 13px/1.3 var(--fb)!important;color:rgba(255,255,255,.72)!important;transition:color .2s}',
-    '#R .jsk-link svg{width:15px;height:15px;color:var(--accent)}',
+    '#R .jsk-link svg{width:15px;height:15px;color:#C4EEFF}',
+    '#R a.jsk-link{text-decoration:underline!important;text-decoration-color:rgba(0,185,242,.4)!important;text-underline-offset:4px}',   /* bez strelice (kao „Više o Olimpijskom baru“) */
     '#R .jsk-link:hover{color:var(--accent)!important}',
     '#R .jsk-foot > i{width:1px;height:14px;background:rgba(255,255,255,.2)}',
     '#R .jsk-why{display:block;margin-top:14px;font:500 11.5px/1.4 var(--fb);color:#FFB547}',
@@ -269,7 +268,7 @@
     '#R .jsk-clock{left:14px;top:14px}',
     '#R .jsk-ph img{object-position:54% 58%}',   /* sankaši malo desnije, dalje od sata */
     '#R .jsk-body{padding:12px 20px 30px}',
-    '#R .jsk-eye{gap:10px;margin-bottom:16px;font-size:10px;letter-spacing:3px}',
+    '#R .jsk-eye{gap:10px;margin-bottom:16px;font-size:13.5px;letter-spacing:.1px}',
     '#R .jsk-eye::before{width:22px}',
     '#R h2{font-size:clamp(38px,11.4vw,54px)}',
     '#R .jsk-lead{margin-top:16px}',
@@ -278,10 +277,10 @@
     '#R .jsk-spec small{font-size:12.5px}',
     '#R .jsk-spec b{font-size:14px}',
     '#R .jsk-acts{gap:8px;margin-top:22px;width:100%}',
-    '#R .jsk-btn{height:44px;padding:0 12px!important;font-size:13px!important}',
+    '#R .jsk-btn{height:46px;padding:0 16px!important;font-size:14px!important}',
     '#R .jsk-l{display:none}',
     '#R .jsk-s{display:inline}}',
-    '@media (max-width:360px){#R .jsk-acts{grid-template-columns:1fr}#R .jsk-frame{--dz:136px}}',
+    '@media (max-width:360px){#R .jsk-frame{--dz:136px}}',
     '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}',
 
     /* fotografije preko cijelog ekrana (iste kao u ostalim blokovima) */
@@ -294,7 +293,7 @@
     '#L.is-open figure{transform:none}',
     '#L img{display:block;max-width:100%;max-height:calc(100vh - 150px);width:auto;height:auto;border:0;border-radius:18px;user-select:none;-webkit-user-drag:none;',
     'box-shadow:0 40px 80px -30px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.06)}',
-    "#L figcaption{font:600 11.5px/1 'Archivo',system-ui,sans-serif;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.6);font-variant-numeric:tabular-nums}",
+    "#L figcaption{font:600 13px/1 'Archivo',system-ui,sans-serif;letter-spacing:.5px;color:rgba(255,255,255,.66);font-variant-numeric:tabular-nums}",
     '#L button{all:unset;position:absolute!important;box-sizing:border-box!important;width:48px!important;height:48px!important;padding:0!important;margin:0!important;border:0!important;border-radius:50%!important;display:grid!important;place-items:center;cursor:pointer;',
     'color:rgba(255,255,255,.82)!important;background:#131D31!important;box-shadow:3px 3px 7px rgba(0,0,0,.45),-2px -2px 6px rgba(70,96,142,.1)!important;transition:color .2s}',
     '#L button svg{display:block;width:20px;height:20px}',
@@ -339,7 +338,6 @@
   function svg(p) { return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">' + p + '</svg>'; }
   var S = 'stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"';
   var ICON = {
-    arrow: svg('<path d="M5 12 H19 M13 6 L19 12 L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'),
     ticket: svg('<path d="M4 7.5 C4 6.7 4.7 6 5.5 6 H18.5 C19.3 6 20 6.7 20 7.5 V9.6 C18.9 9.8 18.1 10.8 18.1 12 C18.1 13.2 18.9 14.2 20 14.4 V16.5 C20 17.3 19.3 18 18.5 18 H5.5 C4.7 18 4 17.3 4 16.5 V14.4 C5.1 14.2 5.9 13.2 5.9 12 C5.9 10.8 5.1 9.8 4 9.6 Z M14.5 6.4 V8 M14.5 11.2 V12.8 M14.5 16 V17.6" ' + S + '/>'),
     photos: svg('<rect x="3.5" y="6" width="13.5" height="12" rx="2.2" ' + S + '/><path d="M7 3.8 H18.3 C19.5 3.8 20.5 4.8 20.5 6 V14.6 M3.9 15.6 L8 11.6 L11 14.4 L12.8 12.8 L16.8 16.4" ' + S + '/><circle cx="12.6" cy="9.6" r="1.1" ' + S + '/>'),
     play: svg('<circle cx="12" cy="12" r="8.6" ' + S + '/><path d="M10.4 8.9 L15.2 12 L10.4 15.1 Z" fill="currentColor" stroke="none"/>'),
@@ -473,7 +471,7 @@
     }).join('');
   }
   function footHTML() {
-    return '<a class="jsk-link" href="' + esc(DATA.link) + '" data-jsk="stranica">' + esc(T.more) + ' ' + ICON.arrow + '</a>' +
+    return '<a class="jsk-link" href="' + esc(DATA.link) + '" data-jsk="stranica">' + esc(T.more) + '</a>' +
       (DATA.yt ? '<i></i><button type="button" class="jsk-link" data-jsk="video" aria-haspopup="dialog">' + ICON.play + esc(T.video) + '</button>' : '');
   }
   root.innerHTML =
@@ -627,7 +625,7 @@
     }
     if (up > .5 && up <= 40) st.setProperty('margin-top', -up + 'px', 'important'); else st.removeProperty('margin-top');
     if (dn > .5 && dn <= 40) st.setProperty('margin-bottom', -dn + 'px', 'important'); else st.removeProperty('margin-bottom');
-    // Snowboard park je odmah iznad (bez razmaka) → on već daje razmak, ovdje ostaje samo rub
+    // Snowboard park je odmah iznad (bez razmaka) → on već daje razmak, sankalište ne dodaje svoj
     var pk = d.getElementById('jsb-park');
     root.classList.toggle('jsk--join', !boxed && !!pk && !pk.classList.contains('jsb--boxed') &&
       Math.abs(pk.getBoundingClientRect().bottom - root.getBoundingClientRect().top) < 3);

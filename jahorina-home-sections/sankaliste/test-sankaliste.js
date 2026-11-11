@@ -311,7 +311,8 @@ const rect = (p, s) => p.evaluate((s) => { const r = document.querySelector(s).g
     check(name + ': sat i status u kadru', c.x >= f.x && c.r <= f.r + .5 && c.y >= f.y, { c, f: [f.x, f.r] });
     check(name + ': sat ne prekriva tekst', vw <= 980 ? c.b <= b.y + 30 : c.r < b.x + 10, { c: [c.r, c.b], b: [b.x, b.y] });
     if (vw <= 980) check(name + ': sat gore lijevo na fotografiji', c.y - f.y < 34 && c.x - f.x < 44, [c.x - f.x, c.y - f.y]);
-    check(name + ': dugmad iste veličine', btns.length === 2 && btns[0][0] === btns[1][0] && btns[0][1] === btns[1][1], btns);
+    // od 10. 11. (kao ratrak i bar): širina po tekstu, ista visina (48 px, telefon 46) i isti red
+    check(name + ': dugmad iste visine i u istom redu', btns.length === 2 && btns[0][1] === btns[1][1] && btns[0][1] === (vw <= 760 ? 46 : 48) && btns[0][2] === btns[1][2], btns);
     await o.p.locator('#jsk-sankaliste .jsk-frame').screenshot({ path: path.join(OUT, name + '.png') });
     check(name + ': bez grešaka', o.errors.length === 0, o.errors);
     await o.ctx.close();
