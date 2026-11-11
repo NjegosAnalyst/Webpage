@@ -7,6 +7,7 @@ Redoslijed: izmijeni vijesti.js → commit + push → python3 napravi-widget.py 
 import base64, hashlib, pathlib, subprocess
 
 HERE = pathlib.Path(__file__).resolve().parent
+import sys; sys.path.insert(0, str(HERE.parent / 'alati')); import staticni   # statičan tekst za pretraživače (11. 11.)
 REL = 'jahorina-home-sections/vijesti/vijesti.js'
 
 def git(*a):
@@ -26,7 +27,7 @@ def loader(url, sri):
             "'cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@','rawcdn.githack.com/NjegosAnalyst/Webpage/'))}}"
             "(d.head||d.documentElement).appendChild(s)}g(u,i)})(document,'" + url + "','" + sri + "')</script>")
 
-line = ('<div id="jv-vijesti"><a href="https://www.oc-jahorina.com/category/vijesti/">Sve vijesti</a></div>'
+line = ('<div id="jv-vijesti">' + staticni.html('vijesti') + '</div>'
         f'{loader(url, sri)}\n')
 (HERE / 'elementor-html-widget.html').write_text(line, encoding='utf-8')
 print(line)
@@ -34,7 +35,7 @@ print(line)
 # Rezerva kad snimanje stranice u Elementoru pukne (greška 500 / Forbidden — firewall hostinga ne da skriptu u sadržaju):
 # u Elementor ide samo <div> bez skripte, a skriptu učitava WPCode (JavaScript snippet, Site Wide Footer),
 # samo na stranicama koje imaju taj <div>. Ako na stranici postoji i red sa skriptom, vijesti.js se svejedno nacrta jednom.
-div = '<div id="jv-vijesti"><a href="https://www.oc-jahorina.com/category/vijesti/">Sve vijesti</a></div>\n'
+div = '<div id="jv-vijesti">' + staticni.html('vijesti') + '</div>\n'
 (HERE / 'elementor-html-widget-bez-skripte.html').write_text(div, encoding='utf-8')
 wpcode = ("(function(d){if(!d.getElementById('jv-vijesti')||d.getElementById('jv-css'))return;"
           "function g(a,b){var s=d.createElement('script');s.src=a;"

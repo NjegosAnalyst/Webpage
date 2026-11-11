@@ -10,6 +10,7 @@ prazno = bez provjere sezone.
 import base64, hashlib, pathlib, subprocess
 
 HERE = pathlib.Path(__file__).resolve().parent
+import sys; sys.path.insert(0, str(HERE.parent / 'alati')); import staticni   # statičan tekst za pretraživače (11. 11.)
 REL = 'jahorina-home-sections/sankaliste/sankaliste.js'
 SLUG = 'sankaliste'
 SEZONA = ''
@@ -33,7 +34,7 @@ def loader(url, sri):
             "(d.head||d.documentElement).appendChild(s)}g(u,i)})(document,'" + url + "','" + sri + "')</script>")
 
 sez = f' data-sezona="{SEZONA}"' if SEZONA else ''
-line = (f'<div id="jsk-sankaliste" data-stranica="{SLUG}"{sez}><a href="/{SLUG}/">Sankalište</a></div>'
+line = (f'<div id="jsk-sankaliste" data-stranica="{SLUG}"{sez}>' + staticni.html('sankaliste') + '</div>'
         f'{loader(url, sri)}\n')
 (HERE / 'elementor-html-widget.html').write_text(line, encoding='utf-8')
 print(line)

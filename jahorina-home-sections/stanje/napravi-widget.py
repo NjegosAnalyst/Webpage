@@ -9,6 +9,7 @@ pretraživači i AI alati i kad ne izvrše skriptu); skripta ga zamijeni izgledo
 import base64, hashlib, pathlib, subprocess
 
 HERE = pathlib.Path(__file__).resolve().parent
+import sys; sys.path.insert(0, str(HERE.parent / 'alati')); import staticni   # statičan tekst za pretraživače (11. 11.)
 REL = 'jahorina-home-sections/stanje/stanje.js'
 
 def git(*a):
@@ -27,17 +28,6 @@ def loader(url, sri):
             "'cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@','rawcdn.githack.com/NjegosAnalyst/Webpage/'))}}"
             "(d.head||d.documentElement).appendChild(s)}g(u,i)})(document,'" + url + "','" + sri + "')</script>")
 
-# statičan sadržaj (SEO): naslov, rečenica sa ključnim pojmovima i isti linkovi kao kartice
-STATIC = ('<h2>Stanje skijališta Jahorina</h2>'
-          '<p>Jahorina ima 54 km uređenih staza i 14 žičara. Stanje staza i žičara, visinu snijega i radno vrijeme '
-          'pratite uživo na stranici <a href="/ski-info/">Ski info</a>.</p>'
-          '<ul>'
-          '<li><a href="https://webshop.oc-jahorina.com/">Kupi ski kartu online</a></li>'
-          '<li><a href="/cjenovnik-ski-karata-sezona-2026-27/">Cijene ski karata, sezona 2026/27</a></li>'
-          '<li><a href="/ski-mapa/">Ski mapa Jahorine</a></li>'
-          '<li><a href="/jahorina-tv-web-kamere/">Kamere uživo (Jahorina TV)</a></li>'
-          '<li><a href="/nocno-skijanje/">Noćno skijanje</a></li>'
-          '</ul>')
-line = f'<div id="jst-stanje">{STATIC}</div>{loader(url, sri)}\n'
+line = '<div id="jst-stanje">' + staticni.html('stanje') + '</div>' + loader(url, sri) + '\n'
 (HERE / 'elementor-html-widget.html').write_text(line, encoding='utf-8')
 print(line)

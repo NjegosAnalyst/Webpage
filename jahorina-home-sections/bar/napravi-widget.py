@@ -9,6 +9,7 @@ WordPress stranice (data-stranica = slug). Od 10. 11. bez menija (cjenovnika).
 import base64, hashlib, pathlib, subprocess
 
 HERE = pathlib.Path(__file__).resolve().parent
+import sys; sys.path.insert(0, str(HERE.parent / 'alati')); import staticni   # statičan tekst za pretraživače (11. 11.)
 REL = 'jahorina-home-sections/bar/bar.js'
 
 def git(*a):
@@ -29,7 +30,7 @@ def loader(url, sri):
             "(d.head||d.documentElement).appendChild(s)}g(u,i)})(document,'" + url + "','" + sri + "')</script>")
 
 line = ('<div id="jb-bar" data-stranica="olimpijski-bar">'
-        '<a href="/olimpijski-bar/">Olimpijski bar</a></div>'
+        + staticni.html('bar') + '</div>'
         f'{loader(url, sri)}\n')
 (HERE / 'elementor-html-widget.html').write_text(line, encoding='utf-8')
 print(line)

@@ -10,8 +10,9 @@ nema, kod traži stranicu sa "depo" u naslovu).
 import base64, hashlib, pathlib, subprocess
 
 HERE = pathlib.Path(__file__).resolve().parent
+import sys; sys.path.insert(0, str(HERE.parent / 'alati')); import staticni   # statičan tekst za pretraživače (11. 11.)
 REL = 'jahorina-home-sections/depo/depo.js'
-SLUG = 'ski-depo'
+SLUG = 'ski-depoi'   # 11. 11.: stvarna adresa stranice (/ski-depo/ se preusmjerava na početnu)
 FILES = ['depo.js', 'slike']
 
 def git(*a):
@@ -32,7 +33,7 @@ def loader(url, sri):
             "(d.head||d.documentElement).appendChild(s)}g(u,i)})(document,'" + url + "','" + sri + "')</script>")
 
 line = (f'<div id="jsd-depo" data-stranica="{SLUG}">'
-        f'<a href="/{SLUG}/">Ski depo</a></div>'
+        + staticni.html('depo') + '</div>'
         f'{loader(url, sri)}\n')
 (HERE / 'elementor-html-widget.html').write_text(line, encoding='utf-8')
 print(line)

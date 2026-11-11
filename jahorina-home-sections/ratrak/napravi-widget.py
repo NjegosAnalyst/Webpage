@@ -9,6 +9,7 @@ za web shop su podešavanja u samom redu (data-…), pa ih korisnik mijenja u El
 import base64, hashlib, pathlib, subprocess
 
 HERE = pathlib.Path(__file__).resolve().parent
+import sys; sys.path.insert(0, str(HERE.parent / 'alati')); import staticni   # statičan tekst za pretraživače (11. 11.)
 REL = 'jahorina-home-sections/ratrak/ratrak.js'
 
 def git(*a):
@@ -29,7 +30,7 @@ def loader(url, sri):
             "(d.head||d.documentElement).appendChild(s)}g(u,i)})(document,'" + url + "','" + sri + "')</script>")
 
 line = ('<div id="jr-ratrak" data-trajanje="20 min" data-polazak="16–18h" data-polazak-en="4–6 pm" data-cijena="50 KM" data-webshop="">'
-        '<a href="mailto:skipass@oc-jahorina.com">Panoramska vožnja ratrakom: rezervacija</a></div>'
+        + staticni.html('ratrak', trajanje='20 min', polazak='16–18h', cijena='50 KM') + '</div>'
         f'{loader(url, sri)}\n')
 (HERE / 'elementor-html-widget.html').write_text(line, encoding='utf-8')
 print(line)

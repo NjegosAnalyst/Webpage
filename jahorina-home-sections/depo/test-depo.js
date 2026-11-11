@@ -30,7 +30,7 @@ function page({ attrs = '', gondola = false, admin = false } = {}) {
   ${gondola ? `<div class="boxed"><div class="elementor-widget-html"><div id="jg-gondola"></div>
     <script src="${CDN}jahorina-home-sections/gondola/gondola.js" defer></script></div></div>` : ''}
   <div class="boxed"><div class="elementor-widget-html">
-    <div id="jsd-depo" ${attrs}><a href="/ski-depo/">Ski depo</a></div>
+    <div id="jsd-depo" ${attrs}><a href="/ski-depoi/">Ski depo</a></div>
     <script src="${CDN}jahorina-home-sections/depo/depo.js" defer></script>
   </div></div>
   <div class="after">Sljedeća sekcija</div></body></html>`;
@@ -65,7 +65,7 @@ function check(name, ok, info) {
   if (!ok) fails++;
 }
 
-async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900, attrs = '', ga = 'gtag', reduced = false, wp = 'stranica', slug = 'ski-depo', gondola = false, admin = false, touch = false, wait = 2400 } = {}) {
+async function open(browser, { path: pth = '/pocetna-zima/', vw = 1440, vh = 900, attrs = '', ga = 'gtag', reduced = false, wp = 'stranica', slug = 'ski-depoi', gondola = false, admin = false, touch = false, wait = 2400 } = {}) {
   const ctx = await browser.newContext({ viewport: { width: vw, height: vh }, reducedMotion: reduced ? 'reduce' : 'no-preference', hasTouch: touch, isMobile: touch, deviceScaleFactor: touch ? 2 : 1 });
   const p = await ctx.newPage();
   const errors = [], rest = [];
@@ -164,7 +164,7 @@ async function state(p) {
   check('vrata: 2 kompletna seta, za dvije osobe', S.sets === '2 kompletna seta opreme' && /dvije osobe$/.test(S.setsSub), [S.sets, S.setsSub]);
   check('vrata: sušenje, grijanje, ventilacija', S.feat === 'Sušenje|Grijanje|Ventilacija', S.feat);
   check('koraci redom, mjesto i depozit iz teksta', S.steps === '1Ski kasana polazu gondole Poljice | 2Kartica depoadepozit 10 KM | 3Skenirajte karticuu polaznoj stanici', S.steps);
-  check('linkovi: stranica i mapa', /\/ski-depo\/$/.test(S.more) && /google\.com\/maps/.test(S.map), [S.more, S.map]);
+  check('linkovi: stranica i mapa', /\/ski-depoi\/$/.test(S.more) && /google\.com\/maps/.test(S.map), [S.more, S.map]);
   check('vrata su svijetla (biser-bijela površina)', /rgb\(249, 251, 252\)/.test(S.doorBg), S.doorBg);
   check('ulazak: vrata se zatvore', S.on && !S.ajar && (S.doorT === 'none' || /matrix3d\(1, 0, -?0, 0, 0, 1, 0, 0, -?0, 0, 1, 0/.test(S.doorT) || S.doorT === 'matrix(1, 0, 0, 1, 0, 0)'), [S.on, S.ajar, S.doorT]);
   // loading: SEO blok postavi lazy, a test (i predučitavanje ~2 ekrana ranije) ga prebaci na eager
@@ -210,9 +210,9 @@ async function state(p) {
   await r.ctx.close();
 
   console.log('Pogrešan slug → stranica sa "depo" u naslovu');
-  r = await open(browser, { slug: 'ski-depoi' });
+  r = await open(browser, { slug: 'ski-depo-stari' });   // slug na stranici drugačiji → pretraga
   S = await state(r.p);
-  check('nađena preko pretrage', /\/ski-depoi\/$/.test(S.more) && S.price === '15 KM', S.more);
+  check('nađena preko pretrage', /\/ski-depo-stari\/$/.test(S.more) && S.price === '15 KM', S.more);
   await r.ctx.close();
 
   console.log('EN (/en/), qTranslate');
@@ -220,7 +220,7 @@ async function state(p) {
   S = await state(r.p);
   check('EN tekst', S.h2 === 'Leave your gear on the mountain' && S.kicker === 'Ski lockers' && S.sets === '2 full sets of gear' && /per day/.test(S.priceA), [S.h2, S.kicker, S.sets]);
   check('EN uvod iz qTranslate', /^Ski lockers are the easiest way/.test(S.lead), S.lead);
-  check('EN link stranice /en/', /\/en\/ski-depo\/$/.test(S.more), S.more);
+  check('EN link stranice /en/', /\/en\/ski-depoi\/$/.test(S.more), S.more);
   await r.ctx.close();
 
   console.log('Smanjeno kretanje: vrata odmah zatvorena, bez klasa za ulazak');

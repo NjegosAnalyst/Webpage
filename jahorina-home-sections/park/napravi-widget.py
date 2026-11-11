@@ -9,6 +9,7 @@ Tekst i podaci se čitaju sa dvije WordPress stranice (data-park i data-bike = s
 import base64, hashlib, pathlib, subprocess
 
 HERE = pathlib.Path(__file__).resolve().parent
+import sys; sys.path.insert(0, str(HERE.parent / 'alati')); import staticni   # statičan tekst za pretraživače (11. 11.)
 REL = 'jahorina-home-sections/park/park.js'
 PARK = 'snowboard-park'
 BIKE = 'ski-bike'
@@ -32,7 +33,7 @@ def loader(url, sri):
             "(d.head||d.documentElement).appendChild(s)}g(u,i)})(document,'" + url + "','" + sri + "')</script>")
 
 line = (f'<div id="jsb-park" data-park="{PARK}" data-bike="{BIKE}">'
-        f'<a href="/{PARK}/">Snowboard park</a> · <a href="/{BIKE}/">Ski bike</a></div>'
+        + staticni.html('park') + '</div>'
         f'{loader(url, sri)}\n')
 (HERE / 'elementor-html-widget.html').write_text(line, encoding='utf-8')
 print(line)

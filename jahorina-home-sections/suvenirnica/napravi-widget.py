@@ -9,6 +9,7 @@ stranice (data-stranica = slug), a link za "Kako do nas" je podešavanje u samom
 import base64, hashlib, pathlib, subprocess
 
 HERE = pathlib.Path(__file__).resolve().parent
+import sys; sys.path.insert(0, str(HERE.parent / 'alati')); import staticni   # statičan tekst za pretraživače (11. 11.)
 REL = 'jahorina-home-sections/suvenirnica/suvenirnica.js'
 
 def git(*a):
@@ -29,7 +30,7 @@ def loader(url, sri):
             "(d.head||d.documentElement).appendChild(s)}g(u,i)})(document,'" + url + "','" + sri + "')</script>")
 
 line = ('<div id="jsu-suvenirnica" data-stranica="suvenirnica" data-mapa="">'
-        '<a href="/suvenirnica/">Suvenirnica</a></div>'
+        + staticni.html('suvenirnica') + '</div>'
         f'{loader(url, sri)}\n')
 (HERE / 'elementor-html-widget.html').write_text(line, encoding='utf-8')
 print(line)

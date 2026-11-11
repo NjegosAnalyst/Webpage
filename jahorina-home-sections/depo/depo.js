@@ -16,7 +16,7 @@
 
    Ugradnja: Elementor HTML widget sa <div id="jsd-depo"></div> + ovaj fajl sa jsDelivr-a (fotografija iz istog commita).
    Podešavanja na <div id="jsd-depo"> (sva su neobavezna):
-     data-stranica="ski-depo"      (slug WordPress stranice)
+     data-stranica="ski-depoi"     (slug WordPress stranice; 11. 11.: /ski-depo/ se preusmjerava na početnu)
      data-mapa="https://…"         (link dugmeta Lokacija; podrazumijevano Google Maps: gondola Poljice, Jahorina)
      data-slika="https://…"        (zamjena za fotografiju ormarića)
    GA: "Više o ski depou" i Lokacija → depo_klik (cilj: stranica | mapa).
@@ -32,7 +32,7 @@
   var SCRIPT = d.currentScript && d.currentScript.src || '';
   var HERE = SCRIPT.replace(/[^\/]*$/, '');
   function opt(k, def) { var v = root.getAttribute('data-' + k); return v == null || !v.trim() ? def : v.trim(); }
-  var SLUG = opt('stranica', 'ski-depo').replace(/^\/+|\/+$/g, '');
+  var SLUG = opt('stranica', 'ski-depoi').replace(/^\/+|\/+$/g, '');
   var PAGE = O + (EN ? '/en/' : '/') + SLUG + '/';
   var MAP = opt('mapa', 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Gondola Poljice, Jahorina'));
   var reduced = w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches;

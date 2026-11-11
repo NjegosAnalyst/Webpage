@@ -9,6 +9,7 @@ se čitaju sa WordPress stranice VIP gondole (data-stranica = slug; ako ga nema,
 import base64, hashlib, pathlib, subprocess
 
 HERE = pathlib.Path(__file__).resolve().parent
+import sys; sys.path.insert(0, str(HERE.parent / 'alati')); import staticni   # statičan tekst za pretraživače (11. 11.)
 REL = 'jahorina-home-sections/gondola/gondola.js'
 SLUG = 'vip-gondola'
 
@@ -30,7 +31,7 @@ def loader(url, sri):
             "(d.head||d.documentElement).appendChild(s)}g(u,i)})(document,'" + url + "','" + sri + "')</script>")
 
 line = (f'<div id="jg-gondola" data-stranica="{SLUG}">'
-        f'<a href="/{SLUG}/">VIP gondola</a></div>'
+        + staticni.html('gondola') + '</div>'
         f'{loader(url, sri)}\n')
 (HERE / 'elementor-html-widget.html').write_text(line, encoding='utf-8')
 print(line)
