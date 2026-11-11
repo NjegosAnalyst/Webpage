@@ -180,7 +180,7 @@ async function lb(p) {
   check('dugme Galerija', S.gal === 'Galerija', S.gal);
   check('kabina iznutra diskretno lijevo: učitana, boca desno od teksta, utapa se prije kabina', S.inside.ok && S.inside.bottle > S.inside.textRight - 40 && S.inside.fadeEnd <= S.inside.cabLeft + 1, S.inside);
   check('nadnaslov = naslov stranice', S.kicker === 'VIP gondola', S.kicker);
-  check('uvod: kratka rečenica (10. 11.), bez „meze“', S.lead === 'Panoramska vožnja u VIP kabini, uz šampanjac i domaće specijalitete.', S.lead);
+  check('uvod: kratka rečenica bez „meze“, specijaliteti samo uz VIP 2 (11. 11.)', S.lead === 'Panoramska vožnja u VIP kabini uz šampanjac, a u paketu VIP 2 i domaći specijaliteti.', S.lead);
   check('paketi iz teksta: VIP 1 izabran, VIP 2', S.tog === 'VIP 1*|VIP 2', S.tog);
   check('VIP 1: vožnja do 1 h, šampanjac, domaći specijaliteti prigušeno; 150 KM', S.inc === 'Vožnja do 1 h|Šampanjac|Domaći specijaliteti(-)' && S.price === '150KM', [S.inc, S.price]);
   check('Rezerviši VIP 1 → mail sa stranice, naslov i tekst sa paketom', /^mailto:vip@oc-jahorina\.com\?subject=Rezervacija: VIP gondola 1&body=Poštovani,\n\nželim da rezervišem paket VIP gondola 1 \(150 KM\)\./.test(S.rez[0]) && S.rez[1] === 'Rezerviši VIP 1', S.rez);
@@ -294,7 +294,7 @@ async function lb(p) {
   console.log('EN, računar, Google Tag Manager, qTranslate oznake (/en/wp-json ne radi → /wp-json)');
   ({ p, ctx, errors, rest } = await open(browser, { path: '/en/pocetna-zima/', ga: 'gtm', wp: 'qtranslate' }));
   S = await state(p);
-  check('engleski naslov iz WP-a i kratak uvod', S.lines.join('|') === 'Ride in the|VIP gondola' && S.gal === 'Gallery' && S.lead === 'A panoramic ride in a VIP cabin, with champagne and local specialities.', [S.lines, S.lead]);
+  check('engleski naslov iz WP-a i kratak uvod', S.lines.join('|') === 'Ride in the|VIP gondola' && S.gal === 'Gallery' && S.lead === 'A panoramic ride in a VIP cabin with champagne, plus local specialities in the VIP 2 package.', [S.lines, S.lead]);   // 11. 11.: specijaliteti samo uz VIP 2
   check('engleski paketi: Ride up to 1 h, Champagne, Local specialities(-), 150 KM', S.inc === 'Ride up to 1 h|Champagne|Local specialities(-)' && S.price === '150KM', [S.inc, S.price]);
   check('Book VIP 1 → mail, engleski predmet; link /en/', /^mailto:vip@oc-jahorina\.com\?subject=Booking: VIP gondola 1/.test(S.rez[0]) && S.rez[1] === 'Book VIP 1' && S.page === SITE + '/en/vip-gondola/', [S.rez, S.page]);
   check('napomena: at least a day in advance', /Book by email at least a day in advance/.test(S.note), S.note);

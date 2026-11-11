@@ -180,11 +180,11 @@
 
     /* ulazak (jednom): kadar i tekst se pojave, a odškrinuta vrata se zatvore (jedini veći pokret u sekciji) */
     '#R.jsd-anim .jsd-frame{opacity:0;transform:translateY(24px)}',
-    '#R.jsd-anim.jsd-on .jsd-frame{opacity:1;transform:none;transition:opacity .5s ease,transform .7s cubic-bezier(.2,.7,.2,1)}',
+    '#R.jsd-anim.jsd-on .jsd-frame{opacity:1;transform:none;transition:opacity .25s ease,transform .35s cubic-bezier(.2,.7,.2,1)}',
     '#R.jsd-anim .jsd-shot img{opacity:0;transform:scale(1.04)}',
-    '#R.jsd-anim.jsd-on .jsd-shot img{opacity:1;transform:none;transition:opacity .7s ease,transform 1.2s cubic-bezier(.2,.7,.2,1)}',
+    '#R.jsd-anim.jsd-on .jsd-shot img{opacity:1;transform:none;transition:opacity .35s ease,transform .4s cubic-bezier(.2,.7,.2,1)}',
     '#R.jsd-anim .jsd-up{opacity:0;transform:translateY(16px)}',
-    '#R.jsd-anim.jsd-on .jsd-up{opacity:1;transform:none;transition:opacity .55s ease var(--d,0s),transform .75s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
+    '#R.jsd-anim.jsd-on .jsd-up{opacity:1;transform:none;transition:opacity .28s ease calc(var(--d,0s) * .3),transform .38s cubic-bezier(.2,.7,.2,1) calc(var(--d,0s) * .3)}',
     /* odškrinuta dok sekcija ne uđe (pravilo je poslije :hover, pa ima prednost dok traje ulazak) */
     '#R .jsd-hinge.is-ajar{--open:1}',
     '#R .jsd-hinge.is-closing .jsd-door{transition-duration:1.1s}',
@@ -514,7 +514,7 @@
       setTimeout(function () {
         hinge.classList.add('is-closing'); hinge.classList.remove('is-ajar');
         setTimeout(function () { hinge.classList.remove('is-closing'); hinge.classList.add('is-shine'); }, 1100);   // jedan tihi odsjaj kad se zatvore
-      }, 650);
+      }, 250);
     }, { rootMargin: '0px 0px -12% 0px' });
     io.observe(frame);
   }
@@ -549,7 +549,7 @@
       pio.observe(root);
     }
     // šav: bijela traka između ovog bloka i tamnog bloka iznad (razmak između Elementor kontejnera/sekcija, pola piksela)
-    var DARK = '#jv-vijesti,#jr-ratrak,#jsu-suvenirnica,#jb-bar,#jg-gondola,#jsd-depo,#jsb-park,#jsk-sankaliste,#jpb-brojke,.jh-hero,rs-module-wrap,rs-fullwidth-wrap';
+    var DARK = '#jst-stanje,#jv-vijesti,#jr-ratrak,#jsu-suvenirnica,#jb-bar,#jg-gondola,#jsd-depo,#jsb-park,#jsk-sankaliste,#jpb-brojke,.jh-hero,rs-module-wrap,rs-fullwidth-wrap';
     // od bloka nagore: prvi nivo (widget, kolona, kontejner, sekcija) koji ima prethodnog vidljivog susjeda; ako je u tom
     // susjedu tamni blok, zatvara se sve od dna tog bloka do vrha ovog: razmak između kontejnera (margin/gap) negativnim
     // margin-top na tom nivou, a bijeli padding oba kontejnera negativnim margin-top na samom bloku (blok ih prekrije)
@@ -557,8 +557,8 @@
       for (var el = root.parentElement; el && el.parentElement && el !== d.body && el !== d.documentElement; el = el.parentElement) {
         // preskaču se nevidljivi i prazni elementi (prazan kontejner, Spacer, prazan widget: bez teksta, slika i videa)
         var prev = el.previousElementSibling;
-        while (prev && (!prev.offsetHeight || /^(SCRIPT|STYLE|LINK)$/.test(prev.tagName) ||
-          (prev.offsetHeight <= 200 && !prev.matches(DARK) && !prev.querySelector(DARK + ',img,svg,video,iframe,canvas,input,button') && !(prev.textContent || '').trim()))) prev = prev.previousElementSibling;
+        // (11. 11.: ista provjera kao za footer — i elementi van toka stranice, fiksirani/apsolutni, se preskaču)
+        while (prev && empty(prev)) prev = prev.previousElementSibling;
         if (!prev) continue;
         var dk = prev.matches(DARK) ? [prev] : [].slice.call(prev.querySelectorAll(DARK));
         if (!dk.length) return;
@@ -568,20 +568,34 @@
         el.style.removeProperty('margin-top');
         if (pe !== el) pe.style.removeProperty('margin-top');
         var gap = el.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;   // i preko praznih elemenata između
-        if (gap > .5 && gap <= 160) el.style.setProperty('margin-top', (parseFloat(getComputedStyle(el).marginTop) || 0) - gap + 'px', 'important');
+        // 11. 11. (analiza: bijela linija iznad ratraka na ~1000 px): zatvara se i razmak manji od pola piksela (ekrani sa
+        // skaliranjem, npr. 125 %), a blok sjedne 1 px preko prethodnog — kao spoj sa footerom
+        if (gap > .01 && gap <= 160) el.style.setProperty('margin-top', (parseFloat(getComputedStyle(el).marginTop) || 0) - gap + 'px', 'important');
         // ostatak (bijeli padding kontejnera iznad i ispod) prekrije blok
         var rest = root.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;
-        if (rest > .5 && rest <= 160) pe.style.setProperty('margin-top', (parseFloat(getComputedStyle(pe).marginTop) || 0) - rest + 'px', 'important');
-        root.style.boxShadow = '0 -2px 0 0 #0A1120';   // pola piksela između tamnih blokova
+        if (rest > -1 && rest <= 160) pe.style.setProperty('margin-top', (parseFloat(getComputedStyle(pe).marginTop) || 0) - rest - 1 + 'px', 'important');
+        SH.up = true; shadow();   // pola piksela između tamnih blokova
         return;
       }
     }
     // dno: ako je ispod bloka footer (naš .jf-wp ili footer teme), razmak do njega (padding/margin omotača stranice) se zatvori
     // negativnim margin-bottom na nivou čiji je sljedeći susjed footer, pa footer sjedne odmah ispod bloka
     var FOOT = '.jf-wp, .jf-footer, #Footer, footer, .mfn-footer-tmpl, .elementor-location-footer';
+    // prazno = nevidljivo, skripta/stil, van toka stranice (fiksirano/apsolutno: Betheme #Side_slide i #body_overlay između
+    // stranice i footera — 11. 11. su zaustavljali spoj, pa je ostajala bijela traka) ili mali element bez sadržaja
+    function outOfFlow(x) { var cs = getComputedStyle(x); return cs.position === 'fixed' || cs.position === 'absolute' || cs.display === 'none'; }
     function empty(x) {
-      return !x.offsetHeight || /^(SCRIPT|STYLE|LINK|NOSCRIPT|TEMPLATE)$/.test(x.tagName) ||
+      return !x.offsetHeight || /^(SCRIPT|STYLE|LINK|NOSCRIPT|TEMPLATE)$/.test(x.tagName) || (!x.matches(FOOT) && outOfFlow(x)) ||
         (x.offsetHeight <= 200 && !x.matches(DARK + ',' + FOOT) && !x.querySelector(DARK + ',' + FOOT + ',img,svg,video,iframe,canvas,input,button') && !(x.textContent || '').trim());
+    }
+    // tamna sjenka od 2 px iznad (spoj sa blokom iznad) i ispod (spoj sa footerom): spoj na dijelu piksela preko bijele
+    // pozadine stranice inače daje tanku svijetlu liniju (mjereno: telefon DPR 2,625 — red na spoju 40 umjesto ~18)
+    var SH = { up: false, down: false };
+    function shadow() {
+      var a = [];
+      if (SH.up) a.push('0 -2px 0 0 #0A1120');
+      if (SH.down) a.push('0 2px 0 0 #0A1120');
+      root.style.boxShadow = a.join(',');
     }
     function seamDown() {
       for (var el = root.parentElement; el && el !== d.body && el !== d.documentElement; el = el.parentElement) {
@@ -590,8 +604,10 @@
         if (!nx) continue;
         if (!(nx.matches(FOOT) || nx.querySelector('.jf-wp, .jf-footer'))) return;
         el.style.removeProperty('margin-bottom');
+        // bez zaokruživanja (i razmak od dijela piksela) i sa 1 px preklopa: footer sjedne 1 px preko dna bloka (oba su #0A1120)
         var gap = nx.getBoundingClientRect().top - root.getBoundingClientRect().bottom;
-        if (gap > .5 && gap <= 240) el.style.setProperty('margin-bottom', (parseFloat(getComputedStyle(el).marginBottom) || 0) - gap + 'px', 'important');
+        if (gap > -1 && gap <= 240) el.style.setProperty('margin-bottom', (parseFloat(getComputedStyle(el).marginBottom) || 0) - gap - 1 + 'px', 'important');
+        SH.down = true; shadow();
         return;
       }
     }

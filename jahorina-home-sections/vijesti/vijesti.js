@@ -7,7 +7,9 @@
    Ugradnja: Elementor HTML widget sa redom iz elementor-html-widget.html
    (<div id="jv-vijesti"></div> + ovaj fajl sa jsDelivr-a).
    Opcije na <div id="jv-vijesti">: data-kategorija="vijesti" (slug),
-   data-kategorija-id="123" (preskače traženje ID-a), data-broj="5".
+   data-kategorija-id="123" (preskače traženje ID-a), data-broj="3", data-dana="90".
+   11. 11. (analiza početne): najviše 3 vijesti, samo novije od 90 dana (bez ljetnih u novembru; ako nijedna nije
+   novija, prikaže se samo najnovija), a na engleskoj stranici samo prevedene (bez „only available in Serbian“).
    ===================================================================== */
 (function (w, d) {
   'use strict';
@@ -18,7 +20,8 @@
   var O = location.origin;
   var EN = /^\/en(\/|$)/i.test(location.pathname);
   var SLUG = root.getAttribute('data-kategorija') || 'vijesti';
-  var COUNT = Math.max(1, Math.min(8, parseInt(root.getAttribute('data-broj'), 10) || 5));
+  var COUNT = Math.max(1, Math.min(8, parseInt(root.getAttribute('data-broj'), 10) || 3));
+  var DAYS = Math.max(7, parseInt(root.getAttribute('data-dana'), 10) || 90);
   var DUR = 7000;   // koliko jedna vijest stoji prije sljedeće (ms)
   var NIGHT = O + '/wp-content/uploads/2026/10/jahorina-hero-desktop.webp';   // ista noćna fotografija kao u hero-u (lakša verzija)
 
@@ -143,7 +146,7 @@
 
     /* tihi ulazak kad sekcija dođe u vidno polje */
     '#V.jv-anim .jv-car{opacity:0;transform:translateY(18px)}',
-    '#V.jv-anim.jv-on .jv-car{opacity:1;transform:none;transition:opacity .8s ease,transform .9s cubic-bezier(.2,.7,.2,1)}',
+    '#V.jv-anim.jv-on .jv-car{opacity:1;transform:none;transition:opacity .4s ease,transform .4s cubic-bezier(.2,.7,.2,1)}',
 
     /* tablet / telefon */
     '@media (max-width:1060px){#V .jv-stage{height:clamp(500px,52vw,560px)}#V .jv-body{width:min(640px,78%);padding-bottom:112px}}',
@@ -452,6 +455,9 @@
     // Elementor sekcija često su viši od hero-a, a na telefonu ga omotač i odsiječe — višak se vidi kao bijela traka
     var hero = d.querySelector('.jh-hero'), hv = hero && hero.getBoundingClientRect().height > 50 ? visBottom(hero) : null;
     if (hv !== null && hv <= r.top + 2) up = { el: hero, box: { bottom: hv }, hero: true };
+    // 11. 11.: između hero-a i vijesti je traka stanja (#jst-stanje) → susjed iznad je ona (bez nje bi ostala bijela traka)
+    var mid = d.getElementById('jst-stanje'), mb = mid && mid.getBoundingClientRect();
+    if (mb && mb.height > 20 && mb.bottom <= r.top + 2 && (hv === null || mb.bottom > hv)) up = { el: mid, box: { bottom: mb.bottom }, hero: true };
     if (up) {
       var g = r.top - up.box.bottom;   // bez zaokruživanja: i 1,4 px se vidi kao bijela linija na telefonu
       gu = Math.round(g * 10) / 10;
@@ -525,8 +531,22 @@
     });
   }
   function posts(cat) {
-    return api('posts', 'categories=' + cat + '&per_page=' + COUNT + '&_embed=wp:featuredmedia' +
+    return api('posts', 'categories=' + cat + '&per_page=' + Math.min(20, COUNT * 4) + '&_embed=wp:featuredmedia' +
       '&_fields=id,date,link,title,excerpt,featured_media,_links,_embedded');
+  }
+  // izbor: na EN samo prevedene (qTranslate za neprevedenu vraća srpski naslov i „Sorry, this entry is only available in …“),
+  // pa samo novije od DAYS dana; ako nijedna nije dovoljno nova, samo najnovija (sekcija ne ostaje prazna)
+  var ONLY = /only\s+available\s+in|samo\s+na\s+(?:srpskom|engleskom)/i;
+  function pick(list) {
+    var ok = (list || []).filter(function (p) {
+      if (!EN) return true;
+      var t = (p.title && p.title.rendered) || '', x = (p.excerpt && p.excerpt.rendered) || '';
+      if (ONLY.test(x) || ONLY.test(t)) return false;
+      return !/\[:[a-z]{2}\]/i.test(t + x) || /\[:en\]/i.test(t + x);   // sirovi qTranslate tekst bez engleskog dijela
+    });
+    var lim = Date.now() - DAYS * 864e5;
+    var fresh = ok.filter(function (p) { var t = Date.parse(p.date); return !t || t >= lim; });
+    return (fresh.length ? fresh : ok.slice(0, 1)).slice(0, COUNT);
   }
   // ako server ne ugradi slike u odgovor, dohvati ih jednim dodatnim pozivom
   function withMedia(list) {
@@ -545,7 +565,7 @@
     return categoryId(fresh).then(function (cat) {
       return posts(cat.id).then(function (list) {
         if ((!list || !list.length) && cat.cached) { store(CK, null); return load(true); }   // stari ID iz memorije — pitaj ponovo
-        return withMedia(list || []).then(function (r) {
+        return withMedia(pick(list)).then(function (r) {
           render(r.list.map(function (p) { return normalize(p, r.map[p.featured_media]); }));
         });
       });

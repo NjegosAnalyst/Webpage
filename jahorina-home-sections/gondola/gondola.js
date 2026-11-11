@@ -43,7 +43,7 @@
   // ugrađeni tekst = tekst stranice VIP gondole (9. 10. 2026); naslov je korisnikov dizajn; uvod kratak (10. 11.); EN je prevod
   var T = EN ? {
     kicker: 'VIP gondola', h: ['Ride in the', 'VIP gondola'],
-    lead: 'A panoramic ride in a VIP cabin, with champagne and local specialities.',
+    lead: 'A panoramic ride in a VIP cabin with champagne, plus local specialities in the VIP 2 package.',   // 11. 11. (analiza): VIP 1 nema specijalitete
     pick: 'Choose your package', price: 'Package price', ride: 'Ride up to', rideX: 'Panoramic ride', ch: 'Champagne', mz: 'Local specialities', no: ' (not included)',
     book: 'Book', bookS: 'Book', inside: 'Gallery', insideS: 'Gallery', more: 'More about the VIP gondola',
     adv: function (n) { return 'Book by email at least ' + (n ? n + ' days' : 'a day') + ' in advance'; }, advX: 'Book by email',
@@ -54,7 +54,7 @@
       'Two hands toasting with champagne in front of a snowy mountain', 'Gondola Poljice at night: cabins with blue LED lights on the cable']
   } : {
     kicker: 'VIP gondola', h: ['Vožnja', 'VIP gondolom'],
-    lead: 'Panoramska vožnja u VIP kabini, uz šampanjac i domaće specijalitete.',   // korisnik 10. 11.: kratko, bez „meze“
+    lead: 'Panoramska vožnja u VIP kabini uz šampanjac, a u paketu VIP 2 i domaći specijaliteti.',   // korisnik 10. 11.: kratko, bez „meze“; 11. 11. (analiza): uvod ne smije obećati specijalitete za VIP 1
     pick: 'Izaberite paket', price: 'Cijena paketa', ride: 'Vožnja do', rideX: 'Panoramska vožnja', ch: 'Šampanjac', mz: 'Domaći specijaliteti', no: ' (nije uključeno)',
     book: 'Rezerviši', bookS: 'Rezerviši', inside: 'Galerija', insideS: 'Galerija', more: 'Više o VIP gondoli',
     adv: function (n) { return 'Rezervacija e-poštom, najmanje ' + (n ? n + ' dana' : 'dan') + ' ranije'; }, advX: 'Rezervacija e-poštom',
@@ -214,15 +214,15 @@
 
     /* ulazak (jednom): klase jg-anim/jg-on dodaje skripta samo kad postoji IntersectionObserver i nije uključeno smanjeno kretanje */
     '#R.jg-anim .jg-frame{opacity:0;transform:translateY(28px)}',
-    '#R.jg-anim.jg-on .jg-frame{opacity:1;transform:none;transition:opacity .8s ease,transform 1s cubic-bezier(.2,.7,.2,1)}',
+    '#R.jg-anim.jg-on .jg-frame{opacity:1;transform:none;transition:opacity .4s ease,transform .4s cubic-bezier(.2,.7,.2,1)}',
     '#R.jg-anim .jg-in{opacity:0}',
-    '#R.jg-anim.jg-on .jg-in{opacity:1;transition:opacity 1.5s ease .1s}',
+    '#R.jg-anim.jg-on .jg-in{opacity:1;transition:opacity .4s ease .03s}',
     '#R.jg-anim .jg-ph{opacity:0}',
-    '#R.jg-anim.jg-on .jg-ph{opacity:1;transition:opacity 1.3s ease .25s}',
+    '#R.jg-anim.jg-on .jg-ph{opacity:1;transition:opacity .4s ease .08s}',
     '#R.jg-anim .jg-up{opacity:0;transform:translateY(20px)}',
-    '#R.jg-anim.jg-on .jg-up{opacity:1;transform:none;transition:opacity .7s ease var(--d,0s),transform .95s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
+    '#R.jg-anim.jg-on .jg-up{opacity:1;transform:none;transition:opacity .35s ease calc(var(--d,0s) * .3),transform .4s cubic-bezier(.2,.7,.2,1) calc(var(--d,0s) * .3)}',
     '#R.jg-anim .jg-kicker::before{transform:scaleX(0);transform-origin:left center}',
-    '#R.jg-anim.jg-on .jg-kicker::before{transform:none;transition:transform .6s cubic-bezier(.2,.7,.2,1) .5s}',
+    '#R.jg-anim.jg-on .jg-kicker::before{transform:none;transition:transform .3s cubic-bezier(.2,.7,.2,1) .15s}',
 
     /* manji laptop */
     '@media (max-width:1180px){#R .jg-body{width:min(calc(var(--side) + 500px),60%)}#R .jg-price b{font-size:38px}#R .jg-btn{padding:0 16px!important}}',
@@ -265,6 +265,9 @@
     '#R .jg-note{flex-direction:column;align-items:flex-start;gap:12px;font-size:12px}',
     '#R .jg-more{padding-left:0;border-left:0;font-size:13px}}',
     '@media (max-width:360px){#R .jg-inc li{font-size:12px}}',
+    /* 11. 11. (analiza početne): telefon — dodirne površine najmanje 44 px, tekst najmanje 13 px */
+    '@media (max-width:760px){#R .jg-tb{height:44px}#R .jg-lab{font-size:13px}#R .jg-inc li{font-size:13px}#R .jg-price i{font-size:13px}#R .jg-note{font-size:13px}}',
+    '@media (max-width:360px){#R .jg-inc li{font-size:12.5px}}',
     '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}',
 
     /* fotografije preko cijelog ekrana (iste kao u ratraku i suvenirnici) */
@@ -774,7 +777,7 @@
     var io = new IntersectionObserver(function (es) {
       if (es.some(function (e) { return e.isIntersecting; })) {
         root.classList.add('jg-on'); io.disconnect();
-        setTimeout(ledOn, 850);
+        setTimeout(ledOn, 300);
       }
     }, { rootMargin: '0px 0px -10% 0px' });
     io.observe(q('.jg-frame'));
@@ -809,7 +812,7 @@
       pio.observe(root);
     }
     // šav: bijela traka između ovog bloka i tamnog bloka iznad (razmak između Elementor kontejnera/sekcija, pola piksela)
-    var DARK = '#jv-vijesti,#jr-ratrak,#jsu-suvenirnica,#jb-bar,#jg-gondola,#jsd-depo,#jsb-park,#jsk-sankaliste,#jpb-brojke,.jh-hero,rs-module-wrap,rs-fullwidth-wrap';
+    var DARK = '#jst-stanje,#jv-vijesti,#jr-ratrak,#jsu-suvenirnica,#jb-bar,#jg-gondola,#jsd-depo,#jsb-park,#jsk-sankaliste,#jpb-brojke,.jh-hero,rs-module-wrap,rs-fullwidth-wrap';
     // od bloka nagore: prvi nivo (widget, kolona, kontejner, sekcija) koji ima prethodnog vidljivog susjeda; ako je u tom
     // susjedu tamni blok, zatvara se sve od dna tog bloka do vrha ovog: razmak između kontejnera (margin/gap) negativnim
     // margin-top na tom nivou, a bijeli padding oba kontejnera negativnim margin-top na samom bloku (blok ih prekrije)
@@ -817,8 +820,8 @@
       for (var el = root.parentElement; el && el.parentElement && el !== d.body && el !== d.documentElement; el = el.parentElement) {
         // preskaču se nevidljivi i prazni elementi (prazan kontejner, Spacer, prazan widget: bez teksta, slika i videa)
         var prev = el.previousElementSibling;
-        while (prev && (!prev.offsetHeight || /^(SCRIPT|STYLE|LINK)$/.test(prev.tagName) ||
-          (prev.offsetHeight <= 200 && !prev.matches(DARK) && !prev.querySelector(DARK + ',img,svg,video,iframe,canvas,input,button') && !(prev.textContent || '').trim()))) prev = prev.previousElementSibling;
+        // (11. 11.: ista provjera kao za footer — i elementi van toka stranice, fiksirani/apsolutni, se preskaču)
+        while (prev && empty(prev)) prev = prev.previousElementSibling;
         if (!prev) continue;
         var dk = prev.matches(DARK) ? [prev] : [].slice.call(prev.querySelectorAll(DARK));
         if (!dk.length) return;
@@ -828,20 +831,34 @@
         el.style.removeProperty('margin-top');
         if (pe !== el) pe.style.removeProperty('margin-top');
         var gap = el.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;   // i preko praznih elemenata između
-        if (gap > .5 && gap <= 160) el.style.setProperty('margin-top', (parseFloat(getComputedStyle(el).marginTop) || 0) - gap + 'px', 'important');
+        // 11. 11. (analiza: bijela linija iznad ratraka na ~1000 px): zatvara se i razmak manji od pola piksela (ekrani sa
+        // skaliranjem, npr. 125 %), a blok sjedne 1 px preko prethodnog — kao spoj sa footerom
+        if (gap > .01 && gap <= 160) el.style.setProperty('margin-top', (parseFloat(getComputedStyle(el).marginTop) || 0) - gap + 'px', 'important');
         // ostatak (bijeli padding kontejnera iznad i ispod) prekrije blok
         var rest = root.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;
-        if (rest > .5 && rest <= 160) pe.style.setProperty('margin-top', (parseFloat(getComputedStyle(pe).marginTop) || 0) - rest + 'px', 'important');
-        root.style.boxShadow = '0 -2px 0 0 #0A1120';   // pola piksela između tamnih blokova
+        if (rest > -1 && rest <= 160) pe.style.setProperty('margin-top', (parseFloat(getComputedStyle(pe).marginTop) || 0) - rest - 1 + 'px', 'important');
+        SH.up = true; shadow();   // pola piksela između tamnih blokova
         return;
       }
     }
     // dno: ako je ispod bloka footer (naš .jf-wp ili footer teme), razmak do njega (padding/margin omotača stranice) se zatvori
     // negativnim margin-bottom na nivou čiji je sljedeći susjed footer, pa footer sjedne odmah ispod bloka
     var FOOT = '.jf-wp, .jf-footer, #Footer, footer, .mfn-footer-tmpl, .elementor-location-footer';
+    // prazno = nevidljivo, skripta/stil, van toka stranice (fiksirano/apsolutno: Betheme #Side_slide i #body_overlay između
+    // stranice i footera — 11. 11. su zaustavljali spoj, pa je ostajala bijela traka) ili mali element bez sadržaja
+    function outOfFlow(x) { var cs = getComputedStyle(x); return cs.position === 'fixed' || cs.position === 'absolute' || cs.display === 'none'; }
     function empty(x) {
-      return !x.offsetHeight || /^(SCRIPT|STYLE|LINK|NOSCRIPT|TEMPLATE)$/.test(x.tagName) ||
+      return !x.offsetHeight || /^(SCRIPT|STYLE|LINK|NOSCRIPT|TEMPLATE)$/.test(x.tagName) || (!x.matches(FOOT) && outOfFlow(x)) ||
         (x.offsetHeight <= 200 && !x.matches(DARK + ',' + FOOT) && !x.querySelector(DARK + ',' + FOOT + ',img,svg,video,iframe,canvas,input,button') && !(x.textContent || '').trim());
+    }
+    // tamna sjenka od 2 px iznad (spoj sa blokom iznad) i ispod (spoj sa footerom): spoj na dijelu piksela preko bijele
+    // pozadine stranice inače daje tanku svijetlu liniju (mjereno: telefon DPR 2,625 — red na spoju 40 umjesto ~18)
+    var SH = { up: false, down: false };
+    function shadow() {
+      var a = [];
+      if (SH.up) a.push('0 -2px 0 0 #0A1120');
+      if (SH.down) a.push('0 2px 0 0 #0A1120');
+      root.style.boxShadow = a.join(',');
     }
     function seamDown() {
       for (var el = root.parentElement; el && el !== d.body && el !== d.documentElement; el = el.parentElement) {
@@ -850,8 +867,10 @@
         if (!nx) continue;
         if (!(nx.matches(FOOT) || nx.querySelector('.jf-wp, .jf-footer'))) return;
         el.style.removeProperty('margin-bottom');
+        // bez zaokruživanja (i razmak od dijela piksela) i sa 1 px preklopa: footer sjedne 1 px preko dna bloka (oba su #0A1120)
         var gap = nx.getBoundingClientRect().top - root.getBoundingClientRect().bottom;
-        if (gap > .5 && gap <= 240) el.style.setProperty('margin-bottom', (parseFloat(getComputedStyle(el).marginBottom) || 0) - gap + 'px', 'important');
+        if (gap > -1 && gap <= 240) el.style.setProperty('margin-bottom', (parseFloat(getComputedStyle(el).marginBottom) || 0) - gap - 1 + 'px', 'important');
+        SH.down = true; shadow();
         return;
       }
     }

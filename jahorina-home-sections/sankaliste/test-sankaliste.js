@@ -47,7 +47,7 @@ const P = [
 const LEAD = 'Ukoliko sada imate mališane, ili ste se i sami uželjeli tog bezbrižnog osjećaja od prije 20, 30 ili više godina, vrijeme je da počnete da se radujete, jer je na Jahorini izgrađeno prvo Sankalište!';
 const SPEC = 'Dužina=600 m|Lokacija=Staza 7 · Poljice|Lift=Sidro Poljice|Sanke=Najam na ski kasi PoljiceSvoje ostavite kod kuće: za sidro trebaju sanke sa adapterom';
 const PRICES = SITE + '/cjenovnik-zima/#sankaliste';   // stari link „OVDJE“ na WP stranici (više se ne koristi)
-const CJENOVNIK = SITE + '/cjenovnik-ski-karata-zima-2026-27/';
+const CJENOVNIK = SITE + '/cjenovnik-ski-karata-sezona-2026-27/';   // 11. 11.: nova adresa (stara zima-2026-27 se preusmjerava)
 const SANK = `<h3>Sankalište</h3><p>${P[0]}</p><p>${P[1]}</p><p>${P[2]}</p><p>${P[3]}</p>
 <p>Cijene karata za Sankalište pronađite <a href="${PRICES}">OVDJE</a>!</p>
 <div class="elementor-widget-video" data-settings="{&quot;youtube_url&quot;:&quot;https:\\/\\/www.youtube.com\\/watch?v=${YT}&quot;}"></div>
@@ -178,8 +178,10 @@ const rect = (p, s) => p.evaluate((s) => { const r = document.querySelector(s).g
   check('kuglica kazaljke zelena', s.bead === 'rgb(74, 222, 128)', s.bead);
   check('nema natpisa statusa iznad sata', await o.p.evaluate(() => { const e = document.querySelector('#jsk-sankaliste .jsk-sr'); return !document.querySelector('#jsk-sankaliste .jsk-st') && e.offsetWidth <= 1 && e.offsetHeight <= 1; }));
   const dd = await o.p.evaluate(() => { const d = document.querySelector('#jsk-sankaliste .jsk-dial'); return { num: [...d.querySelectorAll('.jsk-num')].map((n) => n.textContent).join(','), q: d.querySelectorAll('.jsk-tk--q').length, sun: !!d.querySelector('.jsk-sun'), moon: !!d.querySelector('.jsk-moon'), stars: d.querySelectorAll('.jsk-star').length, ends: d.querySelectorAll('.jsk-end').length, bands: [...d.querySelectorAll('.jsk-bl')].map((n) => n.textContent).join(','), fa: d.style.getPropertyValue('--fa'), ta: d.style.getPropertyValue('--ta') }; });
-  const skLen = await o.p.evaluate(() => document.querySelector('#jsk-sankaliste .jsk-bl--sk').getComputedTextLength());
-  check('natpis SANKANJE staje u polje 16–18 h (luk 30° ≈ 36,2)', skLen > 20 && skLen < 34.5, skLen);
+  // 11. 11. (analiza početne): natpisi po obodu (5–8 px) nečitljivi → sklonjeni; brojevi sata 9 px (na telefonu sklonjeni), sredina ≥ 12 px
+  const lbl = await o.p.evaluate(() => { const r = document.querySelector('#jsk-sankaliste'); return { bl: [...r.querySelectorAll('.jsk-bl')].every((e) => getComputedStyle(e).display === 'none'),
+    c: Math.min(...[...r.querySelectorAll('.jsk-dial-c small')].map((e) => parseFloat(getComputedStyle(e).fontSize))) }; });
+  check('sat: natpisi po obodu sklonjeni, sredina najmanje 12 px', lbl.bl && lbl.c >= 12, lbl);
   check('detalji sata: brojevi, četvrtine, sunce, mjesec, zvijezde, krajevi luka, polja dnevno/sankanje/noćno', dd.num === '24,6,12,18' && dd.q === 72 && dd.sun && dd.moon && dd.stars >= 5 && dd.ends === 2 && dd.bands === 'DNEVNO SKIJANJE,SANKANJE,NOĆNO SKIJANJE' && dd.fa === '60.0deg' && dd.ta === '90.0deg', dd);
   const fr = await rect(o.p, '#jsk-sankaliste .jsk-frame'), bd = await rect(o.p, '#jsk-sankaliste .jsk-body'), dl = await rect(o.p, '#jsk-sankaliste .jsk-dial');
   check('tekst desno, sat lijevo', bd.x > fr.x + fr.w * .45 && dl.r < bd.x, { bd: bd.x, dl: dl.r });

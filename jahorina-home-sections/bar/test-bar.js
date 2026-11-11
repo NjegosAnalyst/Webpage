@@ -131,7 +131,8 @@ async function state(p) {
       noMenu: !document.querySelector('#jb-bar .jb-book, #jb-bar .jb-fb, #jb-meni') && !/\b(meni|menu|cjenovnik)\b/i.test(r.querySelector('.jb-frame').textContent),
       bgs: r.querySelectorAll('.jb-bg').length, tint: r.querySelectorAll('.jb-tint').length,
       photoW: Math.round(r.querySelector('.jb-bg').getBoundingClientRect().width / f.width * 100),
-      rez: [r.querySelector('.jb-btn').getAttribute('href'), r.querySelector('.jb-btn').innerText.trim(), r.querySelector('.jb-tel').getAttribute('href'), r.querySelector('.jb-tel').textContent],
+      rez: [r.querySelector('.jb-btn').getAttribute('href'), r.querySelector('.jb-btn').innerText.replace(/\s+/g, ' ').trim(), r.querySelector('.jb-tel').getAttribute('href'), r.querySelector('.jb-tel').textContent],
+      telRow: getComputedStyle(r.querySelector('.jb-meta > span')).display,
       txtIn: txt.every((a) => a.left >= f.left - 1 && a.right <= f.right + 1 && a.top >= f.top - 1 && a.bottom <= f.bottom + 1),
       bodyIn: (() => { const q = r.querySelector('.jb-body').getBoundingClientRect(); return q.left >= f.left - 1 && q.right <= f.right + 1 && q.bottom <= f.bottom + 1; })(),
       page: r.querySelector('a[data-jb="stranica"]').getAttribute('href'),
@@ -157,7 +158,8 @@ async function state(p) {
   check('tihi red: Otvoreno 9–21h · Terasa sa pogledom (bez tri podatka i 40+ događaja)', S.place === 'Otvoreno 9–21h·Terasa sa pogledom' && S.facts === 0, [S.place, S.facts]);
   check('bez menija (cjenovnika) u kadru i preko ekrana', S.noMenu, S.noMenu);
   check('jedna fotografija, bez plave noćne obrade, lijevih 60% kadra', S.bgs === 1 && S.tint === 0 && S.photoW === 60, [S.bgs, S.tint, S.photoW]);
-  check('Rezerviši sto → kontakt telefon; ispod: Rezervacije 057 270 003', S.rez.join('|') === 'tel:+38757270003|Rezerviši sto|tel:+38757270003|057 270 003', S.rez);
+  // 11. 11. (analiza): na računaru broj u samom dugmetu (poziv iz pregledača često ne radi), red „Rezervacije“ se ne ponavlja
+  check('Rezerviši sto · 057 270 003 (računar) → kontakt telefon; red ispod skriven', S.rez.join('|') === 'tel:+38757270003|Rezerviši sto · 057 270 003|tel:+38757270003|057 270 003' && S.telRow === 'none', [S.rez, S.telRow]);
   check('tekst u kadru', S.txtIn && S.bodyIn, [S.txtIn, S.bodyIn]);
   check('link = stranica iz WP-a', S.page === SITE + '/olimpijski-bar/', S.page);
   rest = rest.filter((x) => !/suvenirnica/.test(x));
@@ -222,7 +224,7 @@ async function state(p) {
   S = await state(p);
   check('engleski naslov iz WP-a: Olympic / Bar; Après-ski & restaurant · 1,879 m', S.lines.join('|') === 'Olympic|Bar' && S.kicker === 'Après-ski & restaurant · 1,879 m', [S.lines, S.kicker]);
   check('engleski uvod i red', /^Home-style cooking and fine drinks/.test(S.lead) && S.place === 'Open 9 am – 9 pm·Terrace with a view', [S.lead, S.place]);
-  check('link vodi na /en/; Book a table: +387 57 270 003; bez menija', S.noMenu && S.page === SITE + '/en/olimpijski-bar/' && S.rez[1] === 'Book a table' && S.rez[3] === '+387 57 270 003', [S.page, S.rez]);
+  check('link vodi na /en/; Book a table: +387 57 270 003; bez menija', S.noMenu && S.page === SITE + '/en/olimpijski-bar/' && S.rez[1] === 'Book a table · +387 57 270 003' && S.rez[3] === '+387 57 270 003', [S.page, S.rez]);
   check('prvo /en/wp-json, pa /wp-json', /^\/en\/wp-json/.test(rest[0]) && rest.some((x) => /^\/wp-json\/wp\/v2\/pages/.test(x)), rest);
   await p.click('#jb-bar .jb-more');
   ev = await p.evaluate(() => window.__ev);

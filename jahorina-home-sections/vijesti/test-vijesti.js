@@ -46,6 +46,14 @@ const posts = [
 ];
 // redoslijed kao na sajtu: najnovije prvo
 let sorted = [posts[2], posts[3], posts[0], posts[1]];
+// 11. 11. (analiza): kao na sajtu — najnovija neprevedena (EN „only available in Serbian“), dvije nove, pa ljetne od prije 5–6 mjeseci
+const DAY = 864e5, iso = (d) => new Date(Date.now() - d * DAY).toISOString().slice(0, 19);
+const mixed = [
+  { id: 201, date: iso(10), link: SITE + '/pretprodaja-24h/', featured_media: 12, title: { rendered: 'Pretprodaja ski karata ponovo otvorena – samo 24 sata' },
+    excerpt: { rendered: '<p>Sorry, this entry is only available in Serbian.</p>' }, srOnly: true },
+  Object.assign({}, posts[2], { id: 202, date: iso(44) }), Object.assign({}, posts[3], { id: 203, date: iso(53) }),
+  Object.assign({}, posts[0], { id: 204, date: iso(150) }), Object.assign({}, posts[1], { id: 205, date: iso(170) }),
+];
 const noticeFirst = [Object.assign({}, posts[0], { date: '2026-10-02T09:12:00' }), posts[2], posts[3], posts[1]];
 
 const theme = `
@@ -70,7 +78,7 @@ function page(boxed) {
 async function run(name, { url, viewport, boxed = false, rest = 'ok', fullPage = false, order = 'normal', clip = false }) {
   CLIP = clip;
   const longFirst = [Object.assign({}, posts[2], { title: { rendered: 'Najduži mogući naslov vijesti: počinje prodaja sezonskih ski karata za sezonu 2026/27 po povoljnijim cijenama do kraja novembra' }, excerpt: { rendered: '<p>' + 'Pretprodaja sezonskih ski karata počinje na blagajnama i u web shopu, a povoljnije cijene važe do kraja mjeseca za sve kategorije, porodične pakete i djecu. '.repeat(2) + '</p>' } }), posts[3], posts[0], posts[1]];
-  sorted = order === 'notice' ? noticeFirst : order === 'long' ? longFirst : [posts[2], posts[3], posts[0], posts[1]];
+  sorted = order === 'notice' ? noticeFirst : order === 'long' ? longFirst : order === 'mixed' ? mixed : [posts[2], posts[3], posts[0], posts[1]];
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: 2 });
   const p = await ctx.newPage();
@@ -165,4 +173,7 @@ async function run(name, { url, viewport, boxed = false, rest = 'ok', fullPage =
   await run('8-dug-naslov-1100', { url: SITE + '/pocetna-zima/', viewport: { width: 1100, height: 800 }, order: 'long' });
   await run('8b-dug-naslov-1440', { url: SITE + '/pocetna-zima/', viewport: { width: 1440, height: 900 }, order: 'long' });
   await run('6-tablet-sr', { url: SITE + '/pocetna-zima/', viewport: { width: 820, height: 1180 } });
+  // 11. 11.: SR = 3 nove (bez ljetnih od prije 5–6 mjeseci); EN = 2 (bez neprevedene)
+  await run('9-mjesano-sr', { url: SITE + '/pocetna-zima/', viewport: { width: 1440, height: 900 }, order: 'mixed' });
+  await run('9b-mjesano-en', { url: SITE + '/en/pocetna-zima/', viewport: { width: 1440, height: 900 }, order: 'mixed' });
 })().catch((e) => { console.error(e); process.exit(1); });

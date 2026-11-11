@@ -48,7 +48,7 @@
     edge: ['Show the snowboard park', 'Show the ski bike'],
     park: { name: 'Snowboard park', h: ['Snowboard', 'park'], more: 'More about the park', moreS: 'About the park',
       lead: 'This truly authentic mountain gives snowboarders a space they could only dream of until now, and it is reserved just for them.',
-      fArea: 'Park area', fSlope: 'Slope', fNear: 'Near the chalet village', photos: ['Snowboarder in a burst of powder in front of a wooden fence, blue sky'] },
+      fArea: 'Park area', fSlope: 'Slope', fNear: 'Nearby', photos: ['Snowboarder in a burst of powder in front of a wooden fence, blue sky'] },
     bike: { name: 'Ski bike', h: ['Ski', 'bike'], more: 'More about the ski bike', moreS: 'About ski bike',
       lead: 'The Ski Bike is a unique combination of a bike and skis that lets you ride down the slopes in a whole new way.',
       fPrice: 'Rental', fSlope: 'Slope', fPoly: 'Riding area', fEasy: ['No experience', 'Easy to learn'], fAll: ['For everyone', 'Any age'],
@@ -74,7 +74,7 @@
   };
   // podaci sa stranica (ugrađeni = stranice parka i ski bike-a od 9. 10. 2026); WordPress ih zamijeni kad se tekst promijeni
   var DATA = {
-    park: { lead: T.park.lead, facts: [{ v: EN ? '3,000 m²' : '3.000 m²', l: T.park.fArea }, { v: 'Trnovo', l: T.park.fSlope }, { v: 'Šator', l: T.park.fNear }],
+    park: { lead: T.park.lead, facts: [{ v: EN ? '3,000 m²' : '3.000 m²', l: T.park.fArea }, { v: 'Trnovo', l: T.park.fSlope }, { v: EN ? 'Šator chalets' : 'Šator', l: T.park.fNear }],
       link: O + (EN ? '/en/' : '/') + SLUG.park + '/' },
     bike: { lead: T.bike.lead, facts: [{ v: 'Trnovo', l: T.bike.fPoly }, { v: T.bike.fEasy[0], l: T.bike.fEasy[1] }, { v: T.bike.fAll[0], l: T.bike.fAll[1] }],
       link: O + (EN ? '/en/' : '/') + SLUG.bike + '/' }
@@ -215,13 +215,13 @@
 
     /* ulazak (jednom): klase jsb-anim/jsb-on dodaje skripta samo kad postoji IntersectionObserver i nije uključeno smanjeno kretanje */
     '#R.jsb-anim .jsb-frame{opacity:0;transform:translateY(28px)}',
-    '#R.jsb-anim.jsb-on .jsb-frame{opacity:1;transform:none;transition:opacity .8s ease,transform 1s cubic-bezier(.2,.7,.2,1)}',
+    '#R.jsb-anim.jsb-on .jsb-frame{opacity:1;transform:none;transition:opacity .4s ease,transform .4s cubic-bezier(.2,.7,.2,1)}',
     '#R.jsb-anim .jsb-sc img{opacity:0;filter:saturate(.72) brightness(.2) contrast(1.06) blur(6px)}',
-    '#R.jsb-anim.jsb-on .jsb-sc img{opacity:1;filter:saturate(.72) brightness(var(--lum,.8)) contrast(1.06) blur(0);transition:opacity 1.2s ease .2s,filter 1.6s ease .2s}',
+    '#R.jsb-anim.jsb-on .jsb-sc img{opacity:1;filter:saturate(.72) brightness(var(--lum,.8)) contrast(1.06) blur(0);transition:opacity .4s ease .06s,filter .4s ease .06s}',
     '#R.jsb-anim .jsb-up{opacity:0;transform:translateY(20px)}',
-    '#R.jsb-anim.jsb-on .jsb-up{opacity:1;transform:none;transition:opacity .7s ease var(--d,0s),transform .95s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
+    '#R.jsb-anim.jsb-on .jsb-up{opacity:1;transform:none;transition:opacity .35s ease calc(var(--d,0s) * .3),transform .4s cubic-bezier(.2,.7,.2,1) calc(var(--d,0s) * .3)}',
     '#R.jsb-anim .jsb-tabs::before{transform:scaleX(0);transform-origin:left center}',
-    '#R.jsb-anim.jsb-on .jsb-tabs::before{transform:none;transition:transform .6s cubic-bezier(.2,.7,.2,1) .5s}',
+    '#R.jsb-anim.jsb-on .jsb-tabs::before{transform:none;transition:transform .3s cubic-bezier(.2,.7,.2,1) .15s}',
 
     /* manji laptop: uži tekst */
     '@media (max-width:1180px){#R .jsb-frame{--L:min(calc(var(--side) + 520px),53%)}#R .jsb-body{width:min(calc(var(--side) + 460px),49%)}#R .jsb-sc--bike .jsb-body{width:calc(430px + var(--side))}',
@@ -261,6 +261,8 @@
     '#R .jsb-l{display:none}',
     '#R .jsb-s{display:inline}}',
     '@media (max-width:360px){#R .jsb-facts b{font-size:15px}}',
+    /* 11. 11. (analiza početne): telefon — dodirne površine najmanje 44 px, tekst najmanje 13 px */
+    '@media (max-width:760px){#R .jsb-tab{padding:14px 0!important}#R .jsb-tabs{margin-bottom:4px}#R .jsb-facts small{font-size:13px}#R .jsb-edge b{font-size:13px}}',
     '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}',
 
     /* fotografije preko cijelog ekrana (iste kao u ostalim blokovima) */
@@ -323,7 +325,7 @@
   function abs(u) { try { return new URL(u, O + '/').href; } catch (e) { return u; } }
   function now() { return w.performance && performance.now ? performance.now() : Date.now(); }
   // qTranslate-XT: "[:SH]tekst[:en]text[:]" → samo jezik ove stranice (isto kao u ostalim blokovima)
-  function pickLang(s) {
+  function pickLang(s, lang) {
     s = s || '';
     var re = /\[:([a-z]{2})?\]|\{:([a-z]{2})?\}|<!--:([a-z]{2})?-->/gi;
     if (!re.test(s)) return s;
@@ -336,7 +338,7 @@
       last = re.lastIndex;
     }
     segs.push([cur, s.slice(last)]);
-    var want = EN ? 'en' : langs.filter(function (l) { return l !== 'en'; })[0];
+    var want = EN && lang !== 'sr' ? 'en' : langs.filter(function (l) { return l !== 'en'; })[0];
     if (!want || langs.indexOf(want) < 0) want = langs[0];
     return segs.filter(function (g) { return !g[0] || g[0] === want; }).map(function (g) { return g[1]; }).join('');
   }
@@ -722,8 +724,8 @@
   var OFF = /fudbal|navija|olimpijski\s+sport|popularn|\b(?:19|20)\d{2}\b|sezon|football|\bfans?\b|olympic\s+sport|popular/i;
   var CUR = '(KM|BAM|€|EUR)';
   function money(m) { return { v: m[1], cur: /€|eur/i.test(m[2]) ? '€' : 'KM' }; }
-  function parse(k, pg) {
-    var raw = pg.content && pg.content.rendered || '', html = pickLang(raw);
+  function parse(k, pg, lang) {
+    var raw = pg.content && pg.content.rendered || '', html = pickLang(raw, lang);
     var b = new DOMParser().parseFromString('<!doctype html><body>' + html, 'text/html').body;   // ne izvršava skripte, ne učitava slike
     // razmak poslije svakog bloka, da se pasusi ne slijepe u tekstu
     [].forEach.call(b.querySelectorAll('p,li,div,br,h1,h2,h3,h4,h5,h6,td'), function (e) { e.parentNode.insertBefore(b.ownerDocument.createTextNode(' '), e.nextSibling); });
@@ -739,12 +741,12 @@
     if (k === 'park') {
       // površina: "3.000 kvadratnih metara" / "3.000 metara kvadratnih" / "3,000 m²"
       if ((m = txt.match(/(\d{1,3}(?:[.,]\d{3})+|\d+)\s*(?:kvadratn[a-z]*\s+metar[a-z]*|metar[a-z]*\s+kvadratn[a-z]*|m²|m2\b|sq(?:uare)?\.?\s*met[a-z]*|sq\.?\s*m\b)/i)))
-        r.facts.push({ v: m[1] + ' m²', l: T.park.fArea });
+        r.facts.push({ v: (EN ? m[1].replace(/\./g, ',') : m[1]) + ' m²', l: T.park.fArea });   // EN: 3,000 (i kad podatak dolazi sa srpske stranice)
       if (slope) r.facts.push({ v: slope, l: T.park.fSlope });
       // naselje u blizini: "vikend naselja „Šator“" / "Šator chalet village"
       if ((m = txt.match(/naselj[a-z]*\s+[„"“]?([A-ZŠĐČĆŽ][a-zšđčćž]+)/)) || (m = txt.match(/([A-ZŠĐČĆŽ][a-zšđčćž]+)["”]?\s+(?:chalet|weekend|holiday)\s+(?:village|settlement|resort)/)) ||
           (m = txt.match(/(?:village|settlement)\s+(?:of\s+)?[„"“]?([A-ZŠĐČĆŽ][a-zšđčćž]+)/)))
-        r.facts.push({ v: m[1], l: T.park.fNear });
+        r.facts.push({ v: EN ? m[1] + ' chalets' : m[1], l: T.park.fNear });   // EN: „Šator chalets · Nearby“ (analiza 11. 11.: samo „Šator“ strancu nije jasno)
     } else {
       // najam: "20 KM po satu" / "20 KM / 1 h" / "20 KM per hour"
       if ((m = txt.match(new RegExp('(\\d+(?:[.,]\\d{1,2})?)\\s*' + CUR + '\\s*(?:po|per|\\/|za)?\\s*(?:1\\s*)?(sat[a-z]*|h\\b|hour|dan[a-z]*|day|vožnj[a-z]*|ride)?', 'i')))) {
@@ -783,9 +785,24 @@
       });
     });
   }
+  // EN: brojke i nazivi sa SRPSKE stranice (11. 11., analiza: engleski tekst u WordPressu ih često nema, pa je engleska
+  // verzija imala manje podataka); uvod ostaje engleski. Kad se srpska stranica promijeni, mijenjaju se obje verzije.
+  function srPage(slug, id) {
+    return fetch(O + '/wp-json/wp/v2/pages?slug=' + encodeURIComponent(slug) + '&_fields=id,content', { credentials: 'same-origin', headers: { Accept: 'application/json' } })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+      .then(function (t) { var j = json(t, 'pages'); return (j || []).filter(function (x) { return !id || x.id === id; })[0] || null; })
+      .catch(function () { return null; });
+  }
   function load(k) {
     return page(k).then(function (pg) {
       var r = parse(k, pg);
+      if (!EN) return r;
+      return srPage(SLUG[k], pg.id).then(function (sp) {
+        if (sp) { var sf = parse(k, sp, 'sr').facts, ls = sf.map(function (x) { return x.l; });
+          r.facts = sf.concat(r.facts.filter(function (x) { return ls.indexOf(x.l) < 0; })); }   // srpski podaci prvi, pa ono što ima samo EN
+        return r;
+      });
+    }).then(function (r) {
       if (r.imgs.length) return r;
       // tekst stranice bez fotografija (npr. galerija kao poseban blok) → slike priložene uz stranicu
       return api('media', 'parent=' + r.id + '&media_type=image&per_page=24&_fields=id,source_url,media_details,alt_text')
@@ -846,7 +863,7 @@
     var io = new IntersectionObserver(function (es) {
       if (es.some(function (e) { return e.isIntersecting; })) {
         root.classList.add('jsb-on'); io.disconnect();
-        setTimeout(function () { if (!touched) openEdge(); else setOpen(1); }, 1050);
+        setTimeout(function () { if (!touched) openEdge(); else setOpen(1); }, 400);
       }
     }, { rootMargin: '0px 0px -10% 0px' });
     io.observe(frame);
@@ -881,7 +898,7 @@
       pio.observe(root);
     }
     // šav: bijela traka između ovog bloka i tamnog bloka iznad (razmak između Elementor kontejnera/sekcija, pola piksela)
-    var DARK = '#jv-vijesti,#jr-ratrak,#jsu-suvenirnica,#jb-bar,#jg-gondola,#jsd-depo,#jsb-park,#jsk-sankaliste,#jpb-brojke,.jh-hero,rs-module-wrap,rs-fullwidth-wrap';
+    var DARK = '#jst-stanje,#jv-vijesti,#jr-ratrak,#jsu-suvenirnica,#jb-bar,#jg-gondola,#jsd-depo,#jsb-park,#jsk-sankaliste,#jpb-brojke,.jh-hero,rs-module-wrap,rs-fullwidth-wrap';
     // od bloka nagore: prvi nivo (widget, kolona, kontejner, sekcija) koji ima prethodnog vidljivog susjeda; ako je u tom
     // susjedu tamni blok, zatvara se sve od dna tog bloka do vrha ovog: razmak između kontejnera (margin/gap) negativnim
     // margin-top na tom nivou, a bijeli padding oba kontejnera negativnim margin-top na samom bloku (blok ih prekrije)
@@ -889,8 +906,8 @@
       for (var el = root.parentElement; el && el.parentElement && el !== d.body && el !== d.documentElement; el = el.parentElement) {
         // preskaču se nevidljivi i prazni elementi (prazan kontejner, Spacer, prazan widget: bez teksta, slika i videa)
         var prev = el.previousElementSibling;
-        while (prev && (!prev.offsetHeight || /^(SCRIPT|STYLE|LINK)$/.test(prev.tagName) ||
-          (prev.offsetHeight <= 200 && !prev.matches(DARK) && !prev.querySelector(DARK + ',img,svg,video,iframe,canvas,input,button') && !(prev.textContent || '').trim()))) prev = prev.previousElementSibling;
+        // (11. 11.: ista provjera kao za footer — i elementi van toka stranice, fiksirani/apsolutni, se preskaču)
+        while (prev && empty(prev)) prev = prev.previousElementSibling;
         if (!prev) continue;
         var dk = prev.matches(DARK) ? [prev] : [].slice.call(prev.querySelectorAll(DARK));
         if (!dk.length) return;
@@ -900,20 +917,34 @@
         el.style.removeProperty('margin-top');
         if (pe !== el) pe.style.removeProperty('margin-top');
         var gap = el.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;   // i preko praznih elemenata između
-        if (gap > .5 && gap <= 160) el.style.setProperty('margin-top', (parseFloat(getComputedStyle(el).marginTop) || 0) - gap + 'px', 'important');
+        // 11. 11. (analiza: bijela linija iznad ratraka na ~1000 px): zatvara se i razmak manji od pola piksela (ekrani sa
+        // skaliranjem, npr. 125 %), a blok sjedne 1 px preko prethodnog — kao spoj sa footerom
+        if (gap > .01 && gap <= 160) el.style.setProperty('margin-top', (parseFloat(getComputedStyle(el).marginTop) || 0) - gap + 'px', 'important');
         // ostatak (bijeli padding kontejnera iznad i ispod) prekrije blok
         var rest = root.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;
-        if (rest > .5 && rest <= 160) pe.style.setProperty('margin-top', (parseFloat(getComputedStyle(pe).marginTop) || 0) - rest + 'px', 'important');
-        root.style.boxShadow = '0 -2px 0 0 #0A1120';   // pola piksela između tamnih blokova
+        if (rest > -1 && rest <= 160) pe.style.setProperty('margin-top', (parseFloat(getComputedStyle(pe).marginTop) || 0) - rest - 1 + 'px', 'important');
+        SH.up = true; shadow();   // pola piksela između tamnih blokova
         return;
       }
     }
     // dno: ako je ispod bloka footer (naš .jf-wp ili footer teme), razmak do njega (padding/margin omotača stranice) se zatvori
     // negativnim margin-bottom na nivou čiji je sljedeći susjed footer, pa footer sjedne odmah ispod bloka
     var FOOT = '.jf-wp, .jf-footer, #Footer, footer, .mfn-footer-tmpl, .elementor-location-footer';
+    // prazno = nevidljivo, skripta/stil, van toka stranice (fiksirano/apsolutno: Betheme #Side_slide i #body_overlay između
+    // stranice i footera — 11. 11. su zaustavljali spoj, pa je ostajala bijela traka) ili mali element bez sadržaja
+    function outOfFlow(x) { var cs = getComputedStyle(x); return cs.position === 'fixed' || cs.position === 'absolute' || cs.display === 'none'; }
     function empty(x) {
-      return !x.offsetHeight || /^(SCRIPT|STYLE|LINK|NOSCRIPT|TEMPLATE)$/.test(x.tagName) ||
+      return !x.offsetHeight || /^(SCRIPT|STYLE|LINK|NOSCRIPT|TEMPLATE)$/.test(x.tagName) || (!x.matches(FOOT) && outOfFlow(x)) ||
         (x.offsetHeight <= 200 && !x.matches(DARK + ',' + FOOT) && !x.querySelector(DARK + ',' + FOOT + ',img,svg,video,iframe,canvas,input,button') && !(x.textContent || '').trim());
+    }
+    // tamna sjenka od 2 px iznad (spoj sa blokom iznad) i ispod (spoj sa footerom): spoj na dijelu piksela preko bijele
+    // pozadine stranice inače daje tanku svijetlu liniju (mjereno: telefon DPR 2,625 — red na spoju 40 umjesto ~18)
+    var SH = { up: false, down: false };
+    function shadow() {
+      var a = [];
+      if (SH.up) a.push('0 -2px 0 0 #0A1120');
+      if (SH.down) a.push('0 2px 0 0 #0A1120');
+      root.style.boxShadow = a.join(',');
     }
     function seamDown() {
       for (var el = root.parentElement; el && el !== d.body && el !== d.documentElement; el = el.parentElement) {
@@ -922,8 +953,10 @@
         if (!nx) continue;
         if (!(nx.matches(FOOT) || nx.querySelector('.jf-wp, .jf-footer'))) return;
         el.style.removeProperty('margin-bottom');
+        // bez zaokruživanja (i razmak od dijela piksela) i sa 1 px preklopa: footer sjedne 1 px preko dna bloka (oba su #0A1120)
         var gap = nx.getBoundingClientRect().top - root.getBoundingClientRect().bottom;
-        if (gap > .5 && gap <= 240) el.style.setProperty('margin-bottom', (parseFloat(getComputedStyle(el).marginBottom) || 0) - gap + 'px', 'important');
+        if (gap > -1 && gap <= 240) el.style.setProperty('margin-bottom', (parseFloat(getComputedStyle(el).marginBottom) || 0) - gap - 1 + 'px', 'important');
+        SH.down = true; shadow();
         return;
       }
     }

@@ -348,7 +348,7 @@ const evs = (p) => p.evaluate(() => window.__ev.filter((e) => /^park_/.test(e[1]
   ({ p, ctx, errors, rest } = await open(browser, { path: '/en/pocetna-zima/', ga: 'gtm', wp: 'qtranslate' }));
   S = await state(p);
   check('engleski nadnaslov, naslov i uvod parka iz WP-a', S.tabs === 'Snowboard park*|Ski bike' && S.lines.join('|') === 'Snowboard|park' && /^This truly authentic mountain offers snowboarders a terrain/.test(S.lead), [S.tabs, S.lead]);
-  check('engleski podaci parka: 3,000 m², Trnovo, Šator', S.facts.join('|') === '3,000 m² / Park area|Trnovo / Slope|Šator / Near the chalet village', S.facts);
+  check('engleski podaci parka: 3,000 m², Trnovo, Šator chalets · Nearby (11. 11.)', S.facts.join('|') === '3,000 m² / Park area|Trnovo / Slope|Šator chalets / Nearby', S.facts);
   check('engleski ski bike: uvod, najam 20 KM per hour', /^The ski bike is a bike with skis/.test(S.leadBike) && S.factsBike[0] === '20 KM / Rental per hour', [S.leadBike, S.factsBike]);
   check('dugmad, ivični natpis i link /en/', S.btxt.join('|') === 'More about the park|Gallery' && S.edgeLabel === 'Show the ski bike' && S.pages[0] === SITE + '/en/snowboard-park/', [S.btxt, S.edgeLabel, S.pages]);
   check('prvo /en/wp-json, pa /wp-json', /^\/en\/wp-json/.test(rest[0]) && rest.some((x) => /^\/wp-json\/wp\/v2\/pages/.test(x)), rest);

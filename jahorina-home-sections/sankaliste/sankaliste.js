@@ -28,7 +28,7 @@
      data-stranica="sankaliste"   (slug WordPress stranice)
      data-sezona="15.12-31.3"     (van tih datuma status je "Ne radi · van sezone"; prazno = bez provjere sezone)
      data-status="ne-radi"        (ručno: danas ne radi, npr. vjetar; podrazumijevano "auto")
-     data-cijene="https://…"      (zamjena za stranicu cjenovnika /cjenovnik-ski-karata-zima-2026-27/)
+     data-cijene="https://…"      (zamjena za stranicu cjenovnika /cjenovnik-ski-karata-sezona-2026-27/)
      data-video="https://youtu.be/…"  (zamjena za video sa stranice)
      data-sat="2026-12-20 16:30"  (samo za probu: zamišljeno vrijeme umjesto stvarnog)
    GA: Cijene karata → sankaliste_klik (cilj: cijene), "Više o sankalištu" → sankaliste_klik (cilj: stranica),
@@ -84,13 +84,14 @@
   // podaci sa stranice (ugrađeni = stranica od 10. 10. 2026); WordPress ih zamijeni kad se tekst promijeni
   var PAGE = O + (EN ? '/en/' : '/') + SLUG + '/';
   // cijene karata: stranica cjenovnika za sezonu 2026/27 (link „OVDJE“ sa WP stranice vodi na stari PDF, pa se više ne koristi)
-  var PRICES = O + (EN ? '/en' : '') + '/cjenovnik-ski-karata-zima-2026-27/';
+  var PRICES = O + (EN ? '/en' : '') + '/cjenovnik-ski-karata-sezona-2026-27/';   // 11. 11.: nova adresa (stara zima-2026-27 se preusmjerava)
   var FIX = { prices: opt('cijene', ''), yt: ytId(opt('video', '')) };
   var DATA = {
     eyebrow: T.eyebrow, lead: T.lead, from: 16 * 60, to: 18 * 60, closed: false, why: '',
     facts: [], link: PAGE, prices: FIX.prices || PRICES, yt: FIX.yt
   };
-  DATA.facts = factsOf({ len: '600', slope: '7', place: 'Poljice', lift: 'Poljice', rent: true, desk: 'Poljice', own: true });
+  var DEF = { len: '600', slope: '7', place: 'Poljice', lift: 'Poljice', rent: true, desk: 'Poljice', own: true };
+  DATA.facts = factsOf(DEF);
 
   // fotografije: roditelj i dijete u sumrak (pozadina kadra), noćna vožnja i šuma idu u galeriju; galerija dobije i slike sa stranice
   var IMG = { main: HERE + 'slike/sank-glavna.webp', mainS: HERE + 'slike/sank-glavna-1000.webp' };
@@ -230,23 +231,23 @@
 
     /* ulazak (jednom): klase jsk-anim/jsk-on dodaje skripta samo kad postoji IntersectionObserver i nije uključeno smanjeno kretanje */
     '#R.jsk-anim .jsk-frame{opacity:0;transform:translateY(28px)}',
-    '#R.jsk-anim.jsk-on .jsk-frame{opacity:1;transform:none;transition:opacity .8s ease,transform 1s cubic-bezier(.2,.7,.2,1)}',
+    '#R.jsk-anim.jsk-on .jsk-frame{opacity:1;transform:none;transition:opacity .4s ease,transform .4s cubic-bezier(.2,.7,.2,1)}',
     '#R.jsk-anim .jsk-ph img{opacity:0;filter:saturate(.8) brightness(.2) contrast(1.06) blur(6px)}',
-    '#R.jsk-anim.jsk-on .jsk-ph img{opacity:1;filter:saturate(.8) brightness(var(--lum,.8)) contrast(1.06) blur(0);transition:opacity 1.2s ease .2s,filter 1.6s ease .2s}',
+    '#R.jsk-anim.jsk-on .jsk-ph img{opacity:1;filter:saturate(.8) brightness(var(--lum,.8)) contrast(1.06) blur(0);transition:opacity .4s ease .06s,filter .4s ease .06s}',
     '#R.jsk-anim .jsk-up{opacity:0;transform:translateY(20px)}',
-    '#R.jsk-anim.jsk-on .jsk-up{opacity:1;transform:none;transition:opacity .7s ease var(--d,0s),transform .95s cubic-bezier(.2,.7,.2,1) var(--d,0s)}',
+    '#R.jsk-anim.jsk-on .jsk-up{opacity:1;transform:none;transition:opacity .35s ease calc(var(--d,0s) * .3),transform .4s cubic-bezier(.2,.7,.2,1) calc(var(--d,0s) * .3)}',
     '#R.jsk-anim .jsk-eye::before{transform:scaleX(0);transform-origin:left center}',
-    '#R.jsk-anim.jsk-on .jsk-eye::before{transform:none;transition:transform .6s cubic-bezier(.2,.7,.2,1) .5s}',
+    '#R.jsk-anim.jsk-on .jsk-eye::before{transform:none;transition:transform .3s cubic-bezier(.2,.7,.2,1) .15s}',
     /* sat: brojčanik se pojavi, podjele i lukovi se iscrtaju, kazaljka prođe dan do sada, pa se upali status */
     '#R.jsk-anim .jsk-dial{opacity:0;transform:scale(.94)}',
-    '#R.jsk-anim.jsk-on .jsk-dial{opacity:1;transform:none;transition:opacity .9s ease .55s,transform 1.1s cubic-bezier(.2,.7,.2,1) .55s}',
+    '#R.jsk-anim.jsk-on .jsk-dial{opacity:1;transform:none;transition:opacity .4s ease .17s,transform .4s cubic-bezier(.2,.7,.2,1) .17s}',
     '#R.jsk-anim .jsk-tk,#R.jsk-anim .jsk-num,#R.jsk-anim .jsk-bl,#R.jsk-anim .jsk-cut,#R.jsk-anim .jsk-dial-c,#R.jsk-anim .jsk-sky,#R.jsk-anim .jsk-end,#R.jsk-anim .jsk-dial::before{opacity:0}',
-    '#R.jsk-anim.jsk-on .jsk-tk,#R.jsk-anim.jsk-on .jsk-num,#R.jsk-anim.jsk-on .jsk-bl,#R.jsk-anim.jsk-on .jsk-cut,#R.jsk-anim.jsk-on .jsk-dial-c,#R.jsk-anim.jsk-on .jsk-sky,#R.jsk-anim.jsk-on .jsk-end,#R.jsk-anim.jsk-on .jsk-dial::before{opacity:1;transition:opacity .6s ease var(--d,.9s)}',
-    '#R.jsk-anim.jsk-on .jsk-dial::before{transition:opacity 1.4s ease 1.2s}',
+    '#R.jsk-anim.jsk-on .jsk-tk,#R.jsk-anim.jsk-on .jsk-num,#R.jsk-anim.jsk-on .jsk-bl,#R.jsk-anim.jsk-on .jsk-cut,#R.jsk-anim.jsk-on .jsk-dial-c,#R.jsk-anim.jsk-on .jsk-sky,#R.jsk-anim.jsk-on .jsk-end,#R.jsk-anim.jsk-on .jsk-dial::before{opacity:1;transition:opacity .3s ease calc(var(--d,.9s) * .3)}',
+    '#R.jsk-anim.jsk-on .jsk-dial::before{transition:opacity .4s ease .36s}',
     '#R.jsk-anim .jsk-bd,#R.jsk-anim .jsk-arc{stroke-dasharray:1;stroke-dashoffset:1}',
-    '#R.jsk-anim.jsk-on .jsk-bd,#R.jsk-anim.jsk-on .jsk-arc{stroke-dashoffset:0;transition:stroke-dashoffset .55s cubic-bezier(.4,0,.2,1) var(--d,1s)}',
+    '#R.jsk-anim.jsk-on .jsk-bd,#R.jsk-anim.jsk-on .jsk-arc{stroke-dashoffset:0;transition:stroke-dashoffset .28s cubic-bezier(.4,0,.2,1) calc(var(--d,1s) * .3)}',
     '#R.jsk-anim .jsk-hand{opacity:0}',
-    '#R.jsk-anim.jsk-on .jsk-hand{opacity:1;transition:opacity .4s ease 1.5s}',
+    '#R.jsk-anim.jsk-on .jsk-hand{opacity:1;transition:opacity .2s ease .45s}',
 
     /* manji laptop: uži tekst, manji sat */
     '@media (max-width:1180px){#R .jsk-frame{--L:min(calc(var(--side) + 500px),53%);--dz:clamp(184px,16.5vw,200px)}#R .jsk-body{width:calc(430px + var(--side))}',
@@ -281,6 +282,10 @@
     '#R .jsk-l{display:none}',
     '#R .jsk-s{display:inline}}',
     '@media (max-width:360px){#R .jsk-frame{--dz:136px}}',
+    /* 11. 11. (analiza početne): telefon — dodirne površine najmanje 44 px, tekst najmanje 13 px */
+    /* sat: natpisi po obodu (5–8 px) se ne mogu povećati u uskom prstenu → sklonjeni (boje dana, sankanja i noći ostaju); brojevi veći, na telefonu sklonjeni; sredina najmanje 12 px */
+    '#R .jsk-bl{display:none}#R .jsk-num{font-size:9px}#R .jsk-dial-c small{font-size:max(12px,calc(var(--dz) * .056))}#R .jsk-dial-c b i{font-size:max(12px,.5em)}',
+    '@media (max-width:760px){#R .jsk-num{display:none}#R .jsk-spec small{font-size:13px}#R .jsk-spec b em{font-size:13px}}',
     '@media (prefers-reduced-motion:reduce){#R *{animation:none!important;transition:none!important}}',
 
     /* fotografije preko cijelog ekrana (iste kao u ostalim blokovima) */
@@ -360,7 +365,7 @@
   function hm(min) { return pad(Math.floor(min / 60) % 24) + ':' + pad(min % 60); }
   function hh(min) { return min % 60 ? hm(min) : String(min / 60 | 0); }
   // qTranslate-XT: "[:SH]tekst[:en]text[:]" → samo jezik ove stranice (isto kao u ostalim blokovima)
-  function pickLang(s) {
+  function pickLang(s, lang) {
     s = s || '';
     var re = /\[:([a-z]{2})?\]|\{:([a-z]{2})?\}|<!--:([a-z]{2})?-->/gi;
     if (!re.test(s)) return s;
@@ -373,7 +378,7 @@
       last = re.lastIndex;
     }
     segs.push([cur, s.slice(last)]);
-    var want = EN ? 'en' : langs.filter(function (l) { return l !== 'en'; })[0];
+    var want = EN && lang !== 'sr' ? 'en' : langs.filter(function (l) { return l !== 'en'; })[0];
     if (!want || langs.indexOf(want) < 0) want = langs[0];
     return segs.filter(function (g) { return !g[0] || g[0] === want; }).map(function (g) { return g[1]; }).join('');
   }
@@ -578,7 +583,7 @@
     var h = q('.jsk-hand'), r = status(), to = ang(r.min), from = ang(DATA.from - 7 * 60 - 60);
     while (to < from) to += 360;
     if (!h || reduced) { tick(true); return; }
-    var t0 = now(), D = 1500 + Math.min(1, (to - from) / 300) * 700;
+    var t0 = now(), D = 700 + Math.min(1, (to - from) / 300) * 400;
     handA = from; tick(true);
     (function step() {
       var t = Math.min(1, (now() - t0) / D), e = t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -833,8 +838,8 @@
   var NOLEAD = /cijen|ovdje|price|\bhere\b|\d+\s*h\b|\d+\s*metar|\d+\s*m\b|kas[ia]\b|desk|office/i;
   // "Poljicama" → "Poljice" (mjesto u lokativu → naziv)
   function nom(s) { return s.replace(/ama$/, 'e').replace(/ima$/, 'a').replace(/(sk|čk|šk|ck)oj$/, '$1a'); }
-  function parse(pg) {
-    var raw = pg.content && pg.content.rendered || '', html = pickLang(raw);
+  function parse(pg, lang) {
+    var raw = pg.content && pg.content.rendered || '', html = pickLang(raw, lang);
     var b = new DOMParser().parseFromString('<!doctype html><body>' + html, 'text/html').body;   // ne izvršava skripte, ne učitava slike
     // razmak poslije svakog bloka, da se pasusi ne slijepe u tekstu
     [].forEach.call(b.querySelectorAll('p,li,div,br,h1,h2,h3,h4,h5,h6,td'), function (e) { e.parentNode.insertBefore(b.ownerDocument.createTextNode(' '), e.nextSibling); });
@@ -908,9 +913,23 @@
       });
     });
   }
+  // EN: brojke i nazivi sa SRPSKE stranice (11. 11., analiza: engleski tekst u WordPressu ih često nema, pa je engleska
+  // verzija imala manje podataka); uvod ostaje engleski. Kad se srpska stranica promijeni, mijenjaju se obje verzije.
+  function srPage(slug, id) {
+    return fetch(O + '/wp-json/wp/v2/pages?slug=' + encodeURIComponent(slug) + '&_fields=id,content', { credentials: 'same-origin', headers: { Accept: 'application/json' } })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+      .then(function (t) { var j = json(t, 'pages'); return (j || []).filter(function (x) { return !id || x.id === id; })[0] || null; })
+      .catch(function () { return null; });
+  }
   function load() {
     return page().then(function (pg) {
       var r = parse(pg);
+      if (!EN) return r;
+      return srPage(SLUG, pg.id).then(function (sp) {
+        if (sp) { var sf = parse(sp, 'sr').f; for (var k in sf) if (sf[k]) r.f[k] = sf[k]; r.facts = factsOf(r.f); }
+        return r;
+      });
+    }).then(function (r) {
       if (r.imgs.length) return r;
       // tekst stranice bez fotografija (npr. galerija kao poseban blok) → slike priložene uz stranicu
       return api('media', 'parent=' + r.id + '&media_type=image&per_page=24&_fields=id,source_url,media_details,alt_text')
@@ -966,7 +985,7 @@
     var io = new IntersectionObserver(function (es) {
       if (es.some(function (e) { return e.isIntersecting; })) {
         root.classList.add('jsk-on'); io.disconnect();
-        setTimeout(sweep, 1450);
+        setTimeout(sweep, 450);
       }
     }, { rootMargin: '0px 0px -10% 0px' });
     io.observe(frame);
@@ -1001,7 +1020,7 @@
       pio.observe(root);
     }
     // šav: bijela traka između ovog bloka i tamnog bloka iznad (razmak između Elementor kontejnera/sekcija, pola piksela)
-    var DARK = '#jv-vijesti,#jr-ratrak,#jsu-suvenirnica,#jb-bar,#jg-gondola,#jsd-depo,#jsb-park,#jsk-sankaliste,#jpb-brojke,.jh-hero,rs-module-wrap,rs-fullwidth-wrap';
+    var DARK = '#jst-stanje,#jv-vijesti,#jr-ratrak,#jsu-suvenirnica,#jb-bar,#jg-gondola,#jsd-depo,#jsb-park,#jsk-sankaliste,#jpb-brojke,.jh-hero,rs-module-wrap,rs-fullwidth-wrap';
     // od bloka nagore: prvi nivo (widget, kolona, kontejner, sekcija) koji ima prethodnog vidljivog susjeda; ako je u tom
     // susjedu tamni blok, zatvara se sve od dna tog bloka do vrha ovog: razmak između kontejnera (margin/gap) negativnim
     // margin-top na tom nivou, a bijeli padding oba kontejnera negativnim margin-top na samom bloku (blok ih prekrije)
@@ -1009,8 +1028,8 @@
       for (var el = root.parentElement; el && el.parentElement && el !== d.body && el !== d.documentElement; el = el.parentElement) {
         // preskaču se nevidljivi i prazni elementi (prazan kontejner, Spacer, prazan widget: bez teksta, slika i videa)
         var prev = el.previousElementSibling;
-        while (prev && (!prev.offsetHeight || /^(SCRIPT|STYLE|LINK)$/.test(prev.tagName) ||
-          (prev.offsetHeight <= 200 && !prev.matches(DARK) && !prev.querySelector(DARK + ',img,svg,video,iframe,canvas,input,button') && !(prev.textContent || '').trim()))) prev = prev.previousElementSibling;
+        // (11. 11.: ista provjera kao za footer — i elementi van toka stranice, fiksirani/apsolutni, se preskaču)
+        while (prev && empty(prev)) prev = prev.previousElementSibling;
         if (!prev) continue;
         var dk = prev.matches(DARK) ? [prev] : [].slice.call(prev.querySelectorAll(DARK));
         if (!dk.length) return;
@@ -1020,10 +1039,12 @@
         el.style.removeProperty('margin-top');
         if (pe !== el) pe.style.removeProperty('margin-top');
         var gap = el.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;   // i preko praznih elemenata između
-        if (gap > .5 && gap <= 160) el.style.setProperty('margin-top', (parseFloat(getComputedStyle(el).marginTop) || 0) - gap + 'px', 'important');
+        // 11. 11. (analiza: bijela linija iznad ratraka na ~1000 px): zatvara se i razmak manji od pola piksela (ekrani sa
+        // skaliranjem, npr. 125 %), a blok sjedne 1 px preko prethodnog — kao spoj sa footerom
+        if (gap > .01 && gap <= 160) el.style.setProperty('margin-top', (parseFloat(getComputedStyle(el).marginTop) || 0) - gap + 'px', 'important');
         // ostatak (bijeli padding kontejnera iznad i ispod) prekrije blok
         var rest = root.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;
-        if (rest > .5 && rest <= 160) pe.style.setProperty('margin-top', (parseFloat(getComputedStyle(pe).marginTop) || 0) - rest + 'px', 'important');
+        if (rest > -1 && rest <= 160) pe.style.setProperty('margin-top', (parseFloat(getComputedStyle(pe).marginTop) || 0) - rest - 1 + 'px', 'important');
         SH.up = true; shadow();   // pola piksela između tamnih blokova
         return;
       }

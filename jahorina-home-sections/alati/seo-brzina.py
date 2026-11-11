@@ -8,8 +8,38 @@ Blok ide na kraj IIFE-a sekcije, između oznaka /* SEO-BRZINA:POCETAK */ … /* 
   · telefon (≤ 760 px): bez backdrop-filter, bez filtera na slikama, plavi sloj (…-tint) bez mix-blend-mode; EXTRA = posebna pravila.
 Upotreba: python3 alati/seo-brzina.py ratrak suvenirnica …
 """
-import json, pathlib, re, sys
-from PIL import Image
+import json, pathlib, re, struct, sys
+
+
+def img_size(f):
+    """Širina i visina slike (webp, png, jpg) iz zaglavlja fajla — bez PIL-a (11. 11.: PIL u kontejneru ne radi)."""
+    b = pathlib.Path(f).read_bytes()
+    if b[:8] == b'\x89PNG\r\n\x1a\n':
+        return list(struct.unpack('>II', b[16:24]))
+    if b[:4] == b'RIFF' and b[8:12] == b'WEBP':
+        c = b[12:16]
+        if c == b'VP8X':
+            return [int.from_bytes(b[24:27], 'little') + 1, int.from_bytes(b[27:30], 'little') + 1]
+        if c == b'VP8L':
+            v = int.from_bytes(b[21:25], 'little')
+            return [(v & 0x3FFF) + 1, ((v >> 14) & 0x3FFF) + 1]
+        if c == b'VP8 ':
+            w, h = struct.unpack('<HH', b[26:30])
+            return [w & 0x3FFF, h & 0x3FFF]
+    if b[:2] == b'\xff\xd8':
+        i = 2
+        while i < len(b):
+            while b[i] == 0xFF:
+                i += 1
+            m = b[i]; i += 1
+            if m in (0xD8, 0x01) or 0xD0 <= m <= 0xD7:
+                continue
+            ln = struct.unpack('>H', b[i:i + 2])[0]
+            if 0xC0 <= m <= 0xCF and m not in (0xC4, 0xC8, 0xCC):
+                h, w = struct.unpack('>HH', b[i + 3:i + 7])
+                return [w, h]
+            i += ln
+    raise ValueError('nepoznat format slike: %s' % f)
 HERE = pathlib.Path(__file__).resolve().parent.parent
 IDS = {'ratrak': 'jr-ratrak', 'suvenirnica': 'jsu-suvenirnica', 'bar': 'jb-bar', 'gondola': 'jg-gondola', 'depo': 'jsd-depo',
        'park': 'jsb-park', 'sankaliste': 'jsk-sankaliste', 'brojke': 'jpb-brojke'}
@@ -25,8 +55,7 @@ for name in sys.argv[1:]:
     dims = {}
     for f in sorted((HERE / name / 'slike').rglob('*')):
         if f.suffix.lower() in ('.webp', '.jpg', '.jpeg', '.png'):
-            with Image.open(f) as im:
-                dims[f.name] = list(im.size)
+            dims[f.name] = img_size(f)
     phone = ('@media (max-width:760px){#ID *,#ID *::before,#ID *::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}'
              '#ID img{filter:none!important}#ID [class$="-tint"]{mix-blend-mode:normal!important;opacity:1!important;background:rgba(14,38,78,.32)!important}'
              + EXTRA.get(name, '') + '}').replace('#ID', '#' + rid)
@@ -60,7 +89,7 @@ for name in sys.argv[1:]:
       pio.observe(root);
     }
     // šav: bijela traka između ovog bloka i tamnog bloka iznad (razmak između Elementor kontejnera/sekcija, pola piksela)
-    var DARK = '#jv-vijesti,#jr-ratrak,#jsu-suvenirnica,#jb-bar,#jg-gondola,#jsd-depo,#jsb-park,#jsk-sankaliste,#jpb-brojke,.jh-hero,rs-module-wrap,rs-fullwidth-wrap';
+    var DARK = '#jst-stanje,#jv-vijesti,#jr-ratrak,#jsu-suvenirnica,#jb-bar,#jg-gondola,#jsd-depo,#jsb-park,#jsk-sankaliste,#jpb-brojke,.jh-hero,rs-module-wrap,rs-fullwidth-wrap';
     // od bloka nagore: prvi nivo (widget, kolona, kontejner, sekcija) koji ima prethodnog vidljivog susjeda; ako je u tom
     // susjedu tamni blok, zatvara se sve od dna tog bloka do vrha ovog: razmak između kontejnera (margin/gap) negativnim
     // margin-top na tom nivou, a bijeli padding oba kontejnera negativnim margin-top na samom bloku (blok ih prekrije)
@@ -68,8 +97,8 @@ for name in sys.argv[1:]:
       for (var el = root.parentElement; el && el.parentElement && el !== d.body && el !== d.documentElement; el = el.parentElement) {
         // preskaču se nevidljivi i prazni elementi (prazan kontejner, Spacer, prazan widget: bez teksta, slika i videa)
         var prev = el.previousElementSibling;
-        while (prev && (!prev.offsetHeight || /^(SCRIPT|STYLE|LINK)$/.test(prev.tagName) ||
-          (prev.offsetHeight <= 200 && !prev.matches(DARK) && !prev.querySelector(DARK + ',img,svg,video,iframe,canvas,input,button') && !(prev.textContent || '').trim()))) prev = prev.previousElementSibling;
+        // (11. 11.: ista provjera kao za footer — i elementi van toka stranice, fiksirani/apsolutni, se preskaču)
+        while (prev && empty(prev)) prev = prev.previousElementSibling;
         if (!prev) continue;
         var dk = prev.matches(DARK) ? [prev] : [].slice.call(prev.querySelectorAll(DARK));
         if (!dk.length) return;
@@ -79,10 +108,12 @@ for name in sys.argv[1:]:
         el.style.removeProperty('margin-top');
         if (pe !== el) pe.style.removeProperty('margin-top');
         var gap = el.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;   // i preko praznih elemenata između
-        if (gap > .5 && gap <= 160) el.style.setProperty('margin-top', (parseFloat(getComputedStyle(el).marginTop) || 0) - gap + 'px', 'important');
+        // 11. 11. (analiza: bijela linija iznad ratraka na ~1000 px): zatvara se i razmak manji od pola piksela (ekrani sa
+        // skaliranjem, npr. 125 %), a blok sjedne 1 px preko prethodnog — kao spoj sa footerom
+        if (gap > .01 && gap <= 160) el.style.setProperty('margin-top', (parseFloat(getComputedStyle(el).marginTop) || 0) - gap + 'px', 'important');
         // ostatak (bijeli padding kontejnera iznad i ispod) prekrije blok
         var rest = root.getBoundingClientRect().top - dk.getBoundingClientRect().bottom;
-        if (rest > .5 && rest <= 160) pe.style.setProperty('margin-top', (parseFloat(getComputedStyle(pe).marginTop) || 0) - rest + 'px', 'important');
+        if (rest > -1 && rest <= 160) pe.style.setProperty('margin-top', (parseFloat(getComputedStyle(pe).marginTop) || 0) - rest - 1 + 'px', 'important');
         SH.up = true; shadow();   // pola piksela između tamnih blokova
         return;
       }
