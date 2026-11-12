@@ -194,3 +194,7 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - Pregled vijesti (artifact): https://claude.ai/artifact/YVHQy2joUTm9avVS1mP3Wv
 - Pregled foto galerije (artifact): https://claude.ai/artifact/87m6WYwwAmfBJVU7fzxa5R
 - Društvene mreže: FB https://www.facebook.com/JahorinaOC/?locale=sr_RS · YT https://www.youtube.com/@jahorinaoc · IG https://www.instagram.com/jahorina/ · TikTok https://www.tiktok.com/@jahorinaoc
+
+## 12. 11. 2026 – usklađivanje sa podstranicama
+- Bar: radno vrijeme preko atributa widgeta eb07ea1 (data-radno="Otvoreno 10–21h", data-radno-en="Open 10 am – 9 pm"), kao na podstranici.
+- Ski bike (park @524651f): cijena čita trajanje i kartu za vrtić sa podstranice → "30 KM / 1 sat + karta za ski vrtić" (EN "1 hour + ski kindergarten ticket"). Widget 6ff37cb ažuriran.
