@@ -124,12 +124,18 @@ const scrollTo = async (p, y) => { await p.evaluate((y) => window.scrollTo(0, y)
   check('nazad na vrh → skriveno', !(await st(r.p)).on, '');
   await r.ctx.close();
 
-  console.log('\n2) Računar i tablet: ne prikazuje se');
+  console.log('\n2) Računar i tablet: prikazuje se (v4, korisnik 12. 11.)');
   for (const vw of [1440, 820]) {
     r = await open(browser, { vw, vh: 900 });
+    s = await st(r.p);
+    check(vw + ' px: na vrhu (hero) skriveno', s.exists && !s.on && s.op < .05, s);
     await scrollTo(r.p, 1100);
     s = await st(r.p);
-    check(vw + ' px: dugme se ne prikazuje', s.display === 'none', s.display);
+    check(vw + ' px: ispod hero-a vidljivo, dolje desno 24 px, 56 px', s.display === 'block' && s.on && s.op > .95 && s.right === 24 && s.bottom === 24 && s.h === 56, [s.display, s.on, s.right, s.bottom, s.h]);
+    await r.p.screenshot({ path: path.join(OUT, '3-racunar-' + vw + '.png') });
+    await scrollTo(r.p, 99999);
+    s = await st(r.p);
+    check(vw + ' px: footer na ekranu → skriveno', !s.on, s.on);
     await r.ctx.close();
   }
 

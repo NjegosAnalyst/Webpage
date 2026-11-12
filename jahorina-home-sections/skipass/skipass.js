@@ -1,10 +1,11 @@
 /* =====================================================================
-   JAHORINA — "KUPI SKI PASS" NA TELEFONU (plutajuće dugme pri dnu ekrana) · v3
+   JAHORINA — "KUPI SKI PASS" (plutajuće dugme pri dnu ekrana, telefon, tablet i računar) · v4
    Tema hero-a i ostalih blokova: tamno staklo, jedan cyan akcenat (cyan glavno dugme), Archivo/Barlow, obična slova.
      · v3 (11. 11., „Početna 2027“): krug u cyan gradijentu kao glavno dugme sekcija, staklo kao trake sekcija (bez
        backdrop-filter — telefon), „Kupi online“ običnim slovima, bijeli okvir fokusa; footer: na sajtu je prvi u
        dokumentu Betheme #Footer (sakriven) → posmatraju se SVI footeri, dugme se skloni kad se bilo koji vidi;
-     · samo na telefonu (do 760 px); na računaru i tabletu se ne prikazuje;
+     · v4 (12. 11., korisnik: „treba da se prikazuje i na računaru i na tabletu“): na svim ekranima; od 761 px 24 px od
+       ivice, na računaru (miš) cyan prsten pri prelasku; ranije samo telefon;
      · v2 (korisnik: „ljepši i profesionalniji, istaknut, ali da ne ometa pretragu i preglednost“): kompaktna plutajuća
        pilula DOLJE DESNO (ne preko cijele širine): tamno staklo, cyan krug sa ikonom karte + "Ski pass" / "KUPI ONLINE";
        dok se skroluje nadolje (čitanje) skupi se u krug, nagore se raširi; prvi put cyan prsten dvaput tiho pulsira;
@@ -40,8 +41,8 @@
      stranicama), cyan krug sa ikonom karte, tekst pored; dok se skroluje nadolje skupi se u krug, nagore se raširi */
   var CSS = [
     '#D{--fd:\'Archivo\',system-ui,-apple-system,\'Segoe UI\',sans-serif;--fb:\'Barlow\',system-ui,-apple-system,\'Segoe UI\',sans-serif;',
-    'position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:2147482000;display:none;pointer-events:none;color-scheme:dark}',
-    '@media (max-width:760px){#D{display:block}}',
+    'position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:2147482000;display:block;pointer-events:none;color-scheme:dark}',
+    '@media (min-width:761px){#D{right:24px;bottom:24px}}',
     '#D *,#D *::before,#D *::after{box-sizing:border-box}',
     '#D a.jks-pill{all:unset;box-sizing:border-box!important;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;display:flex!important;align-items:center;height:56px;padding:5px!important;border-radius:30px!important;',
     'background:linear-gradient(180deg,rgba(18,27,45,.95),rgba(9,14,26,.97))!important;',
@@ -63,6 +64,7 @@
     '#D.is-mini .jks-txt{max-width:0;padding:0;opacity:0}',
     '#D a.jks-pill:active{transform:scale(.96)!important}',
     '#D a.jks-pill:focus-visible{outline:2px solid #fff!important;outline-offset:3px!important}',
+    '@media (hover:hover){#D a.jks-pill:hover{box-shadow:0 14px 30px -10px rgba(4,9,20,.7),0 2px 6px rgba(4,9,20,.35),inset 0 0 0 1px rgba(111,219,255,.38),inset 0 1px 0 rgba(255,255,255,.14),0 0 18px -4px rgba(0,185,242,.45)!important}}',
     '@media (prefers-reduced-motion:reduce){#D a.jks-pill,#D .jks-txt{transition:opacity .2s ease!important}#D a.jks-pill{transform:none!important}#D .jks-ico::after{animation:none!important}}'
   ].join('\n').replace(/#D/g, '#jks-dock');
 
