@@ -739,7 +739,7 @@
     // razmak poslije svakog bloka, da se pasusi ne slijepe u tekstu
     [].forEach.call(b.querySelectorAll('p,li,div,br,h1,h2,h3,h4,h5,h6,td'), function (e) { e.parentNode.insertBefore(b.ownerDocument.createTextNode(' '), e.nextSibling); });
     var ps = [].slice.call(b.querySelectorAll('p')).map(function (p) { return clean(p.textContent); }).filter(function (t) { return t.length > 30; });
-    var txt = clean(b.textContent), txtF = EN ? txt + ' \u2016 ' + srText(raw) : txt, m, r = { facts: [] };
+    var txt = clean(b.textContent), txtF = EN ? txt + ' \u2016 ' + srText(pg.__sr || raw) : txt, m, r = { facts: [] };
     var all = [].concat.apply([], ps.map(sentences)).filter(function (s) { return s.length > 40 && !OFF.test(s) && !/\d\s*(KM|BAM|€)/i.test(s); });
     var hit = '';
     LEAD[k].forEach(function (re) { if (!hit) hit = all.filter(function (s) { return re.test(s); })[0] || ''; });
@@ -794,8 +794,17 @@
       });
     });
   }
+  // EN stranica: isti WordPress tekst na srpskom (podaci kojih nema u prevodu). Bez kolačića i referera,
+  // sa Accept-Language: sr, qTranslate vraća srpsku verziju; greška ne smeta (ostaje samo engleski tekst).
+  function withSr(pg) {
+    if (!EN || !pg || !pg.id) return Promise.resolve(pg);
+    return fetch(O + '/wp-json/wp/v2/pages/' + pg.id + '?_fields=content', { credentials: 'omit', referrerPolicy: 'no-referrer', headers: { Accept: 'application/json', 'Accept-Language': 'sr' } })
+      .then(function (r) { return r.ok ? r.text() : ''; })
+      .then(function (t) { var j = t ? json(t, 'sr') : null; if (j && j.content && j.content.rendered) pg.__sr = j.content.rendered; return pg; },
+        function () { return pg; });
+  }
   function load(k) {
-    return page(k).then(function (pg) {
+    return page(k).then(withSr).then(function (pg) {
       var r = parse(k, pg);
       if (r.imgs.length) return r;
       // tekst stranice bez fotografija (npr. galerija kao poseban blok) → slike priložene uz stranicu
