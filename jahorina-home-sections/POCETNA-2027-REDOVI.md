@@ -1,4 +1,4 @@
-# Početna 2027 — redovi za Elementor (stanje 11. 11. 2026)
+# Početna 2027 — redovi za Elementor (stanje 12. 11. 2026)
 
 Redoslijed na stranici: hero → **stanje** → vijesti → ratrak → suvenirnica → Olimpijski bar → VIP gondola → Ski depo → Snowboard park i Ski bike → Sankalište (+ Ski pass) → footer.
 Poslije zamjene: **Ažuriraj** u Elementoru, obriši keš (WP Fastest Cache), provjeri računar i telefon. Fajl pravi `alati/napravi-redove.py` — ne mijenjati ručno.
@@ -68,7 +68,7 @@ U ISTI widget, ispod njegovog reda, ide i red dugmeta „Ski pass“ (ispod).
 U isti HTML widget kao Sankalište, ispod njegovog reda.
 
 ```html
-<div id="jks-skipass" data-link="https://webshop.oc-jahorina.com/"></div><script>(function(d,u,i){function g(a,b){var s=d.createElement('script');s.src=a;if(b){s.integrity=b;s.crossOrigin='anonymous';s.onerror=function(){g(a.replace('cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@','rawcdn.githack.com/NjegosAnalyst/Webpage/'))}}(d.head||d.documentElement).appendChild(s)}g(u,i)})(document,'https://cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@65d53212beeb96ab054008fc83b925d2b596a63e/jahorina-home-sections/skipass/skipass.js','sha384-KhVfZ6FBGuJ6KY3oJuZqScTtZlYTXJ76bFQceoWnV+j1mIcCAKbRZLbe2XlRWw+I')</script>
+<div id="jks-skipass" data-link="https://webshop.oc-jahorina.com/"></div><script>(function(d,u,i){function g(a,b){var s=d.createElement('script');s.src=a;if(b){s.integrity=b;s.crossOrigin='anonymous';s.onerror=function(){g(a.replace('cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@','rawcdn.githack.com/NjegosAnalyst/Webpage/'))}}(d.head||d.documentElement).appendChild(s)}g(u,i)})(document,'https://cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@9969060c51dd49fc7d5f9164e5f45b5687bb4bcd/jahorina-home-sections/skipass/skipass.js','sha384-+FkNOcMJr8yQRNpN48Bn+pVneNUqNst/iCmSmKpuvn2QmNZKI8xoai7ycoRO+vGv')</script>
 ```
 
 ## Hero (Slider Revolution) i WPCode
