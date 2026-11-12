@@ -362,7 +362,7 @@
   function hm(min) { return pad(Math.floor(min / 60) % 24) + ':' + pad(min % 60); }
   function hh(min) { return min % 60 ? hm(min) : String(min / 60 | 0); }
   // qTranslate-XT: "[:SH]tekst[:en]text[:]" → samo jezik ove stranice (isto kao u ostalim blokovima)
-  function pickLang(s) {
+  function pickLang(s, lang) {
     s = s || '';
     var re = /\[:([a-z]{2})?\]|\{:([a-z]{2})?\}|<!--:([a-z]{2})?-->/gi;
     if (!re.test(s)) return s;
@@ -375,7 +375,8 @@
       last = re.lastIndex;
     }
     segs.push([cur, s.slice(last)]);
-    var want = EN ? 'en' : langs.filter(function (l) { return l !== 'en'; })[0];
+    var other = langs.filter(function (l) { return l !== 'en'; })[0];
+    var want = lang === 'sr' ? other : lang === 'en' ? 'en' : EN ? 'en' : other;
     if (!want || langs.indexOf(want) < 0) want = langs[0];
     return segs.filter(function (g) { return !g[0] || g[0] === want; }).map(function (g) { return g[1]; }).join('');
   }
@@ -835,13 +836,20 @@
   var NOLEAD = /cijen|ovdje|price|\bhere\b|\d+\s*h\b|\d+\s*metar|\d+\s*m\b|kas[ia]\b|desk|office/i;
   // "Poljicama" → "Poljice" (mjesto u lokativu → naziv)
   function nom(s) { return s.replace(/ama$/, 'e').replace(/ima$/, 'a').replace(/(sk|čk|šk|ck)oj$/, '$1a'); }
+  // tekst srpske verzije (za EN stranicu: podaci kojih nema u prevodu, npr. dužina, lift, staza)
+  function srText(raw) {
+    var h = pickLang(raw, 'sr'); if (!h) return '';
+    var bb = new DOMParser().parseFromString('<!doctype html><body>' + h, 'text/html').body;
+    [].forEach.call(bb.querySelectorAll('p,li,div,br,h1,h2,h3,h4,h5,h6,td'), function (e) { e.parentNode.insertBefore(bb.ownerDocument.createTextNode(' '), e.nextSibling); });
+    return clean(bb.textContent);
+  }
   function parse(pg) {
     var raw = pg.content && pg.content.rendered || '', html = pickLang(raw);
     var b = new DOMParser().parseFromString('<!doctype html><body>' + html, 'text/html').body;   // ne izvršava skripte, ne učitava slike
     // razmak poslije svakog bloka, da se pasusi ne slijepe u tekstu
     [].forEach.call(b.querySelectorAll('p,li,div,br,h1,h2,h3,h4,h5,h6,td'), function (e) { e.parentNode.insertBefore(b.ownerDocument.createTextNode(' '), e.nextSibling); });
     var ps = [].slice.call(b.querySelectorAll('p')).map(function (p) { return clean(p.textContent); }).filter(function (t) { return t.length > 30; });
-    var txt = clean(b.textContent), m, r = {}, f = {};
+    var txt = clean(b.textContent), txtF = EN ? txt + ' \u2016 ' + srText(pg.__sr || raw) : txt, m, r = {}, f = {};
     var allS = sentences(txt);
     var off = allS.filter(function (s) { return CLOSED.test(s); })[0] || '';
     r.closed = !!off;
@@ -853,16 +861,16 @@
     r.lead = hit ? clip(hit, 240) : '';
     // dužina i širina staze: "Dužine čak 600 metara, te širine od čak 5 metara" / "600 m long and 5 m wide"
     var N = '(\\d{1,4}(?:[.,]\\d+)?)\\s*(?:metar[a-z]*|metr[a-z]*|m\\b|meters?|metres?)';
-    f.len = (m = txt.match(new RegExp('dužin[a-z]*\\s+(?:od\\s+)?(?:čak\\s+|oko\\s+|preko\\s+|cca\\.?\\s+)?' + N, 'i'))) || (m = txt.match(new RegExp(N + '\\s+(?:dug[a-z]*|long)\\b', 'i'))) ||
-      (m = txt.match(/length\s+of\s+(?:about\s+|around\s+)?(\d{1,4})/i)) ? m[1] : '';
-    f.wid = (m = txt.match(new RegExp('širin[a-z]*\\s+(?:od\\s+)?(?:čak\\s+|oko\\s+|cca\\.?\\s+)?' + N, 'i'))) || (m = txt.match(new RegExp(N + '\\s+(?:širok[a-z]*|wide)\\b', 'i'))) ||
-      (m = txt.match(/width\s+of\s+(?:about\s+|around\s+)?(\d{1,2}(?:[.,]\d)?)/i)) ? m[1] : '';
+    f.len = (m = txtF.match(new RegExp('dužin[a-z]*\\s+(?:od\\s+)?(?:čak\\s+|oko\\s+|preko\\s+|cca\\.?\\s+)?' + N, 'i'))) || (m = txtF.match(new RegExp(N + '\\s+(?:dug[a-z]*|long)\\b', 'i'))) ||
+      (m = txtF.match(/length\s+of\s+(?:about\s+|around\s+)?(\d{1,4})/i)) ? m[1] : '';
+    f.wid = (m = txtF.match(new RegExp('širin[a-z]*\\s+(?:od\\s+)?(?:čak\\s+|oko\\s+|cca\\.?\\s+)?' + N, 'i'))) || (m = txtF.match(new RegExp(N + '\\s+(?:širok[a-z]*|wide)\\b', 'i'))) ||
+      (m = txtF.match(/width\s+of\s+(?:about\s+|around\s+)?(\d{1,2}(?:[.,]\d)?)/i)) ? m[1] : '';
     // broj staze i mjesto: "na Poljicama, tačnije na stazi 7" / "slope 7 at Poljice"
-    f.slope = (m = txt.match(/\bstaz[aeiu]\s+(?:broj\s+|br\.\s*)?(\d{1,2})\b/i)) || (m = txt.match(/\b(?:slope|run|piste|trail)\s+(?:no\.?\s*|number\s+)?(\d{1,2})\b/i)) ? m[1] : '';
-    f.lift = (m = txt.match(new RegExp('\\bsidr(?:o|a|u|om)\\s+[„"“]?' + UP))) || (m = txt.match(new RegExp(UP + '\\s+(?:T-bar|drag\\s+lift|ski\\s+tow|surface\\s+lift)'))) ||
-      (m = txt.match(new RegExp('(?:T-bar|drag\\s+lift|ski\\s+tow)\\s+' + UP))) ? m[1] : '';
-    f.place = (m = txt.match(new RegExp('nalazi\\s+se\\s+na\\s+' + UP))) || (m = txt.match(new RegExp('\\bna\\s+' + UP + ',\\s+tačnije'))) ||
-      (m = txt.match(new RegExp('\\b(?:located|is)\\s+(?:at|on|in)\\s+' + UP))) ? nom(m[1]) : f.lift;
+    f.slope = (m = txtF.match(/\bstaz[aeiu]\s+(?:broj\s+|br\.\s*)?(\d{1,2})\b/i)) || (m = txtF.match(/\b(?:slope|run|piste|trail)\s+(?:no\.?\s*|number\s+)?(\d{1,2})\b/i)) ? m[1] : '';
+    f.lift = (m = txtF.match(new RegExp('\\bsidr(?:o|a|u|om)\\s+[„"“]?' + UP))) || (m = txtF.match(new RegExp(UP + '\\s+(?:T-bar|drag\\s+lift|ski\\s+tow|surface\\s+lift)'))) ||
+      (m = txtF.match(new RegExp('(?:T-bar|drag\\s+lift|ski\\s+tow)\\s+' + UP))) ? m[1] : '';
+    f.place = (m = txtF.match(new RegExp('nalazi\\s+se\\s+na\\s+' + UP))) || (m = txtF.match(new RegExp('\\bna\\s+' + UP + ',\\s+tačnije'))) ||
+      (m = txtF.match(new RegExp('\\b(?:located|is)\\s+(?:at|on|in)\\s+' + UP))) ? nom(m[1]) : f.lift;
     // radno vrijeme: "od 16h do 18h" / "16:00 – 18:00" / "from 4 pm to 6 pm"
     var hrs = null;
     if ((m = txt.match(/\bod\s*(\d{1,2})(?:[:.](\d{2}))?\s*(?:h|č|sati)?\s*(?:do|–|-)\s*(\d{1,2})(?:[:.](\d{2}))?\s*(?:h\b|č|sati)/i)) ||
@@ -874,9 +882,9 @@
     }
     if (hrs && hrs[0] >= 0 && hrs[1] <= 24 * 60 && hrs[1] > hrs[0]) r.hrs = hrs;
     // sanke: najam na ski kasi (i "svoje sanke ostavite kući")
-    f.rent = /unajm|iznajm|najam|\brent|\bhire/i.test(txt);
-    f.desk = (m = txt.match(new RegExp('ski[\\s-]*kas[aieu]\\s+[„"“]?' + UP, 'i'))) || (m = txt.match(new RegExp(UP + '\\s+(?:ski\\s+desk|ticket\\s+office|ski\\s*pass\\s+office)'))) ? m[1] : '';
-    f.own = /svoje\s+sanke|vlastite\s+sanke|own\s+sled/i.test(txt);
+    f.rent = /unajm|iznajm|najam|\brent|\bhire/i.test(txtF);
+    f.desk = (m = txtF.match(new RegExp('ski[\\s-]*kas[aieu]\\s+[„"“]?' + UP, 'i'))) || (m = txtF.match(new RegExp(UP + '\\s+(?:ski\\s+desk|ticket\\s+office|ski\\s*pass\\s+office)'))) ? m[1] : '';
+    f.own = /svoje\s+sanke|vlastite\s+sanke|own\s+sled/i.test(txtF);
     r.facts = factsOf(f);
     r.f = f;
     // cijene: link "OVDJE" (ili link u rečenici o cijenama)
@@ -910,8 +918,17 @@
       });
     });
   }
+  // EN stranica: isti WordPress tekst na srpskom (podaci kojih nema u prevodu). Bez kolačića i referera,
+  // sa Accept-Language: sr, qTranslate vraća srpsku verziju; greška ne smeta (ostaje samo engleski tekst).
+  function withSr(pg) {
+    if (!EN || !pg || !pg.id) return Promise.resolve(pg);
+    return fetch(O + '/wp-json/wp/v2/pages/' + pg.id + '?_fields=content', { credentials: 'omit', referrerPolicy: 'no-referrer', headers: { Accept: 'application/json', 'Accept-Language': 'sr' } })
+      .then(function (r) { return r.ok ? r.text() : ''; })
+      .then(function (t) { var j = t ? json(t, 'sr') : null; if (j && j.content && j.content.rendered) pg.__sr = j.content.rendered; return pg; },
+        function () { return pg; });
+  }
   function load() {
-    return page().then(function (pg) {
+    return page().then(withSr).then(function (pg) {
       var r = parse(pg);
       if (r.imgs.length) return r;
       // tekst stranice bez fotografija (npr. galerija kao poseban blok) → slike priložene uz stranicu
