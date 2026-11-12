@@ -52,7 +52,7 @@
     bike: { name: 'Ski bike', h: ['Ski', 'bike'], more: 'More about the ski bike', moreS: 'Learn more',
       lead: 'The Ski Bike is a unique combination of a bike and skis that lets you ride down the slopes in a whole new way.',
       fPrice: 'Rental', fSlope: 'Slope', fPoly: 'Riding area', fEasy: ['No experience', 'Easy to learn'], fAll: ['For everyone', 'Any age'],
-      per: { h: 'per hour', d: 'per day', r: 'per ride' },
+      per: { h: 'per hour', d: 'per day', r: 'per ride' }, hrs: function (n) { return n + (n == 1 ? ' hour' : ' hours'); }, kid: '+ ski kindergarten ticket',
       base: [{ v: '2 skis', l: 'Instead of wheels' }, { v: 'Handlebars', l: 'Rides like a bike' }, { v: 'Suspension', l: 'For a softer ride' }],
       photos: ['Ski bike in action: the rider carves a turn and sprays snow, a chairlift above', 'Rider on a white ski bike with two skis, helmet and goggles'] },
     galT: 'Photos', photo: 'Photo', prev: 'Previous photo', next: 'Next photo', close: 'Close',
@@ -66,7 +66,7 @@
     bike: { name: 'Ski bike', h: ['Ski', 'bike'], more: 'Više o ski bike-u', moreS: 'Saznaj više',
       lead: 'Ski Bike je jedinstvena kombinacija bicikla i skija koja vam omogućava da se spuštate niz staze na potpuno nov način.',
       fPrice: 'Najam', fSlope: 'Staza', fPoly: 'Poligon za vožnju', fEasy: ['Bez iskustva', 'Lako se savladava'], fAll: ['Za sve', 'Bez obzira na godine'],
-      per: { h: 'po satu', d: 'po danu', r: 'po vožnji' },
+      per: { h: 'po satu', d: 'po danu', r: 'po vožnji' }, hrs: function (n) { return n + (n == 1 ? ' sat' : n < 5 ? ' sata' : ' sati'); }, kid: '+ karta za ski vrtić',
       base: [{ v: '2 skije', l: 'Umjesto točkova' }, { v: 'Volan', l: 'Vozi se kao bicikl' }, { v: 'Amortizer', l: 'Za mekšu vožnju' }],
       photos: ['Ski bike u vožnji: vozač u zavoju podiže snijeg, iznad je žičara', 'Vozač na bijelom ski bike-u sa dvije skije, kacigom i naočarima'] },
     galT: 'Fotografije', photo: 'Fotografija', prev: 'Prethodna fotografija', next: 'Sljedeća fotografija', close: 'Zatvori',
@@ -760,7 +760,11 @@
       // najam: "20 KM po satu" / "20 KM / 1 h" / "20 KM per hour"
       if ((m = txt.match(new RegExp('(\\d+(?:[.,]\\d{1,2})?)\\s*' + CUR + '\\s*(?:po|per|\\/|za)?\\s*(?:1\\s*)?(sat[a-z]*|h\\b|hour|dan[a-z]*|day|vožnj[a-z]*|ride)?', 'i')))) {
         var pr = money(m), u = (m[3] || '').toLowerCase();
-        r.facts.push({ v: pr.v + ' ' + pr.cur, l: T.bike.fPrice + (u ? ' ' + T.bike.per[/^(sat|h|hour)/.test(u) ? 'h' : /^(dan|day)/.test(u) ? 'd' : 'r'] : '') });
+        // cjenovnik "1h – 30 KM + karta za ski vrtić": trajanje stoji ispred cijene, karta za vrtić se doplaćuje
+        var pre = txt.slice(0, m.index).match(/(\d+)\s*(?:h|sat[a-z]*|hours?)\s*[–—\-:]*\s*$/i);
+        var kid = /vrti[ćc]|kindergarten/i.test(txt.slice(m.index, m.index + m[0].length + 60));
+        var lab = pre ? T.bike.hrs(+pre[1]) : T.bike.fPrice + (u ? ' ' + T.bike.per[/^(sat|h|hour)/.test(u) ? 'h' : /^(dan|day)/.test(u) ? 'd' : 'r'] : '');
+        r.facts.push({ v: pr.v + ' ' + pr.cur, l: lab + (kid ? ' ' + T.bike.kid : '') });
       }
       // gdje se vozi: "na poligonu Trnovo" (ili staza)
       var poly = (m = txtF.match(/poligon[a-z]*\s+[„"“]?(?!Jahorin)([A-ZŠĐČĆŽ][a-zšđčćž]+)/)) ? m[1] : '';
