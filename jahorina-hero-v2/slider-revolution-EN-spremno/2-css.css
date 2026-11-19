@@ -468,11 +468,6 @@
   .jh-wx__di svg{width:18px;height:18px}
   .jh-wx__mm{font-size:11px;font-weight:600;color:rgba(255,255,255,.92);font-variant-numeric:tabular-nums}
   .jh-wx__mm i{font-style:normal;font-weight:600;color:rgba(196,238,255,.58);padding-left:4px}
-  /* izvor podataka (obavezno navesti \2014  licenca CC BY 4.0): sitno ispod trake (telefon: na kraju trake) */
-  .jh-wx__src{position:absolute;right:14px;top:100%;margin-top:5px;
-    font-size:10px;font-weight:600;letter-spacing:0;color:rgba(255,255,255,.62);text-decoration:none}   /* kontrast ~7:1 */
-  .jh-wx:hover .jh-wx__src{color:#6FDBFF}
-  .jh-wx__src-s{display:none}
 
   /* ---------- mobilni meni (hamburger) ---------- */
   .jh-burger{
@@ -610,10 +605,6 @@
     .jh-wx__di svg{width:15px;height:15px}
     .jh-wx__mm{font-size:11px}
     .jh-wx__mm i{display:none}
-    .jh-wx__src{position:static;margin:0;align-self:stretch;display:flex;align-items:center;padding-left:7px;
-      box-shadow:inset 1px 0 0 rgba(255,255,255,.08);font-size:9px;letter-spacing:0;text-transform:none}
-    .jh-wx__src-l{display:none}
-    .jh-wx__src-s{display:inline}
   }
   @media (max-width:340px){
     .jh-wx__day:nth-child(3){display:none}
