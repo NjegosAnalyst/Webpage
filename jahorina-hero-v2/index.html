@@ -425,9 +425,12 @@
     background:linear-gradient(180deg,rgba(18,27,45,.5),rgba(9,14,26,.62));
     -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.07);
-    color:#C4EEFF;font-family:'Archivo',sans-serif;line-height:1.1;white-space:nowrap;text-align:left;
-    opacity:0;visibility:hidden;
+    color:#C4EEFF;font-family:'Archivo',sans-serif;line-height:1.1;white-space:nowrap;text-align:left;text-decoration:none;cursor:pointer;
+    opacity:0;visibility:hidden;transition:box-shadow .2s;
   }
+  /* 12. 11. (korisnik): cijela traka je link na detaljnu prognozu snow-forecast.com (nova kartica) */
+  .jh-wx:hover{box-shadow:inset 0 0 0 1px rgba(111,219,255,.38),0 0 18px -4px rgba(0,185,242,.45)}
+  .jh-wx:focus-visible{outline:2px solid #6FDBFF;outline-offset:3px}
   .jh-wx.is-on{opacity:1;visibility:visible;animation:jhCardIn .8s cubic-bezier(.2,.7,.2,1) var(--wx-d,0s) both}
   .jh-wx svg{display:block;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
   .jh-wx__now{display:flex;align-items:center;gap:10px}
@@ -445,7 +448,7 @@
   /* izvor podataka (obavezno navesti — licenca CC BY 4.0): sitno ispod trake (telefon: na kraju trake) */
   .jh-wx__src{position:absolute;right:14px;top:100%;margin-top:5px;
     font-size:10px;font-weight:600;letter-spacing:0;color:rgba(255,255,255,.62);text-decoration:none}   /* kontrast ~7:1 */
-  .jh-wx__src:hover{color:#6FDBFF}
+  .jh-wx:hover .jh-wx__src{color:#6FDBFF}
   .jh-wx__src-s{display:none}
 
   /* ---------- mobilni meni (hamburger) ---------- */
@@ -789,18 +792,21 @@
     var en = /^en/i.test(document.documentElement.lang || '') || /^\/en(\/|$)/.test(location.pathname) ||
       /Olympic/.test(hero.getAttribute('aria-label') || '');   // EN modul hero-a
     var L = en ? {
-      label: 'Weather forecast for Jahorina', wind: 'Wind', src: 'MET Norway', srcS: 'met.no',
+      label: 'Weather forecast for Jahorina', more: 'Detailed forecast: snow-forecast.com', wind: 'Wind', src: 'MET Norway', srcS: 'met.no',
       d: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
       k: { clear: 'Clear', fair: 'Mostly clear', partly: 'Partly cloudy', cloudy: 'Cloudy', fog: 'Fog', lrain: 'Light rain', rain: 'Rain', hrain: 'Heavy rain',
         rshow: 'Showers', sleet: 'Sleet', lsnow: 'Light snow', snow: 'Snow', hsnow: 'Heavy snow', sshow: 'Snow showers', thunder: 'Thunder' }
     } : {
-      label: 'Vremenska prognoza za Jahorinu', wind: 'Vjetar', src: 'MET Norway', srcS: 'met.no',
+      label: 'Vremenska prognoza za Jahorinu', more: 'Detaljna prognoza: snow-forecast.com', wind: 'Vjetar', src: 'MET Norway', srcS: 'met.no',
       d: ['Ned', 'Pon', 'Uto', 'Sri', 'Čet', 'Pet', 'Sub'],
       k: { clear: 'Vedro', fair: 'Pretežno vedro', partly: 'Djelimično oblačno', cloudy: 'Oblačno', fog: 'Magla', lrain: 'Slaba kiša', rain: 'Kiša', hrain: 'Jaka kiša',
         rshow: 'Pljuskovi', sleet: 'Susnježica', lsnow: 'Slab snijeg', snow: 'Snijeg', hsnow: 'Jak snijeg', sshow: 'Snježni pljuskovi', thunder: 'Grmljavina' }
     };
-    var t0 = performance.now(), box = document.createElement('div'), shown = false, tries = 0;
-    box.className = 'jh-wx'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', L.label);
+    // 12. 11. (korisnik): klik na prognozu otvara detaljnu prognozu za Jahorinu na snow-forecast.com (nova kartica)
+    var MORE = 'https://www.snow-forecast.com/resorts/Jahorina/';
+    var t0 = performance.now(), box = document.createElement('a'), shown = false, tries = 0;
+    box.className = 'jh-wx'; box.href = MORE; box.target = '_blank'; box.rel = 'noopener';
+    box.setAttribute('aria-label', L.label + ' · ' + L.more); box.title = L.more;
     frame.appendChild(box);
 
     // MET simbol (npr. "lightsnowshowers_night") → vrsta vremena
@@ -890,8 +896,9 @@
           return '<div class="jh-wx__day" title="' + L.k[kk] + '"><span class="jh-wx__dn">' + L.d[x.wd] + '</span>' +
             '<span class="jh-wx__di">' + icon(kk, false) + '</span><span class="jh-wx__mm">' + deg(x.hi) + '<i>' + deg(x.lo) + '</i></span></div>';
         }).join('') + '</div>' +
-        '<a class="jh-wx__src" href="https://www.met.no/en" target="_blank" rel="noopener" title="' + (en ? 'Forecast data' : 'Podaci o prognozi') + ': MET Norway (CC BY 4.0)">' +
-        '<span class="jh-wx__src-l">' + L.src + '</span><span class="jh-wx__src-s">' + L.srcS + '</span></a>';
+        // izvor podataka ostaje naveden (licenca CC BY 4.0), ali kao tekst — cijela traka vodi na snow-forecast.com
+        '<span class="jh-wx__src" title="' + (en ? 'Forecast data' : 'Podaci o prognozi') + ': MET Norway (CC BY 4.0)">' +
+        '<span class="jh-wx__src-l">' + L.src + '</span><span class="jh-wx__src-s">' + L.srcS + '</span></span>';
       shown = true; place(topPx);
     }
 

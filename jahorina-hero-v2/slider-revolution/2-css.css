@@ -29,7 +29,8 @@
 .jh-hero .jh-rating,.jh-hero .jh-rating *{line-height:1!important}
 .jh-hero .jh-quick__label{line-height:1.1!important}
 .jh-hero .jh-wx,.jh-hero .jh-wx *{line-height:1.1!important;white-space:nowrap!important}   /* prognoza: SR daje line-height 25px */
-.jh-hero .jh-wx a{text-decoration:none!important}
+.jh-hero a.jh-wx,.jh-hero a.jh-wx:hover,.jh-hero a.jh-wx:focus{color:#C4EEFF!important;text-decoration:none!important}   /* 12. 11.: prognoza je link (snow-forecast.com) */
+.jh-hero a.jh-wx:focus-visible{outline:2px solid #6FDBFF!important;outline-offset:3px!important}
 .jh-hero .jh-nav__link,.jh-hero .jh-btn{align-items:center!important}
 /* ============================================================
      Jahorina Hero v2 \2014  samostalna verzija (bez DC/Tweaks omota\10D a)
@@ -447,9 +448,12 @@
     background:linear-gradient(180deg,rgba(18,27,45,.5),rgba(9,14,26,.62));
     -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.07);
-    color:#C4EEFF;font-family:'Archivo',sans-serif;line-height:1.1;white-space:nowrap;text-align:left;
-    opacity:0;visibility:hidden;
+    color:#C4EEFF;font-family:'Archivo',sans-serif;line-height:1.1;white-space:nowrap;text-align:left;text-decoration:none;cursor:pointer;
+    opacity:0;visibility:hidden;transition:box-shadow .2s;
   }
+  /* 12. 11. (korisnik): cijela traka je link na detaljnu prognozu snow-forecast.com (nova kartica) */
+  .jh-wx:hover{box-shadow:inset 0 0 0 1px rgba(111,219,255,.38),0 0 18px -4px rgba(0,185,242,.45)}
+  .jh-wx:focus-visible{outline:2px solid #6FDBFF;outline-offset:3px}
   .jh-wx.is-on{opacity:1;visibility:visible;animation:jhCardIn .8s cubic-bezier(.2,.7,.2,1) var(--wx-d,0s) both}
   .jh-wx svg{display:block;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
   .jh-wx__now{display:flex;align-items:center;gap:10px}
@@ -467,7 +471,7 @@
   /* izvor podataka (obavezno navesti \2014  licenca CC BY 4.0): sitno ispod trake (telefon: na kraju trake) */
   .jh-wx__src{position:absolute;right:14px;top:100%;margin-top:5px;
     font-size:10px;font-weight:600;letter-spacing:0;color:rgba(255,255,255,.62);text-decoration:none}   /* kontrast ~7:1 */
-  .jh-wx__src:hover{color:#6FDBFF}
+  .jh-wx:hover .jh-wx__src{color:#6FDBFF}
   .jh-wx__src-s{display:none}
 
   /* ---------- mobilni meni (hamburger) ---------- */

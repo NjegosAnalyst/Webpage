@@ -59,7 +59,8 @@ SR_RESET = """
 .jh-hero .jh-rating,.jh-hero .jh-rating *{line-height:1!important}
 .jh-hero .jh-quick__label{line-height:1.1!important}
 .jh-hero .jh-wx,.jh-hero .jh-wx *{line-height:1.1!important;white-space:nowrap!important}   /* prognoza: SR daje line-height 25px */
-.jh-hero .jh-wx a{text-decoration:none!important}
+.jh-hero a.jh-wx,.jh-hero a.jh-wx:hover,.jh-hero a.jh-wx:focus{color:#C4EEFF!important;text-decoration:none!important}   /* 12. 11.: prognoza je link (snow-forecast.com) */
+.jh-hero a.jh-wx:focus-visible{outline:2px solid #6FDBFF!important;outline-offset:3px!important}
 .jh-hero .jh-nav__link,.jh-hero .jh-btn{align-items:center!important}
 """
 
