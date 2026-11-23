@@ -18,7 +18,7 @@ body:has(.jpa) #Content{padding-top:0!important}
 .jpa a{color:var(--ice)!important;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 .jpa a:hover{color:#fff!important}
 .jpa :focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}
-.jpa h2,.jpa h3,.jpa h4{font-family:var(--fd)!important;color:#fff!important;margin:0;letter-spacing:0}
+.jpa h1,.jpa h2,.jpa h3,.jpa h4{font-family:var(--fd)!important;color:#fff!important;margin:0;letter-spacing:0}
 .jpa strong{color:#fff;font-weight:600}
 .jpa .jpa-c{font-family:var(--fd)!important;font-stretch:66%}
 
@@ -167,18 +167,30 @@ body:has(.jpa) #Content{padding-top:0!important}
 }
 /* ---------- telefon ---------- */
 @media (max-width:760px){
-  .jpa{font-size:16px}
-  .jpa-kicker{letter-spacing:2.5px;font-size:11px}
-  .jpa-facts{grid-template-columns:1fr}
-  .jpa-facts>div,.jpa-facts>div+div{padding:16px 0;border-left:0}
+  .jpa{font-size:16px;padding-top:28px}
+  .jpa::before{top:-60px;height:380px;width:100%;right:-30%}
+  .jpa-kicker{display:none}
+  .jpa-sub{margin-top:10px;font-size:22px;letter-spacing:.5px}
+  .jpa-lead{margin-top:16px!important;font-size:16px;line-height:1.55}
+  /* rokovi: natpis lijevo, vrijednost desno */
+  .jpa-facts{grid-template-columns:1fr;margin-top:24px}
+  .jpa-facts>div,.jpa-facts>div+div{display:grid;grid-template-columns:104px 1fr;gap:12px;align-items:baseline;padding:13px 0;border-left:0}
   .jpa-facts>div+div{border-top:1px solid var(--line)}
-  .jpa-facts dd{font-size:20px}
-  .jpa-actions .jpa-btn{flex:1 1 100%;justify-content:center}
-  .jpa-lineup{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin:0 calc(-1 * clamp(16px,4vw,48px))!important;padding:0 clamp(16px,4vw,48px) 6px!important;scrollbar-width:none}
-  .jpa-lineup::-webkit-scrollbar{display:none}
-  .jpa-card{flex:0 0 78%;scroll-snap-align:center}
+  .jpa-facts dt{margin:0;font-size:10.5px;letter-spacing:1.8px;line-height:1.35}
+  .jpa-facts dd{font-size:18px;line-height:1.25}
+  .jpa-sec{margin-top:44px}
+  .jpa .jpa-label{margin-bottom:16px!important}
+  /* izvođači: sva četiri odjednom, 2 x 2 */
+  .jpa-lineup{grid-template-columns:1fr 1fr;gap:10px}
+  .jpa-card{border-radius:16px;aspect-ratio:5/6}
+  .jpa-card-txt{left:7cqw;top:7cqw;right:30cqw}
+  .jpa-name{font-size:11cqw}
+  .jpa-card time{font-size:9cqw}
+  .jpa-tag{font-size:5.5cqw;padding:1.6cqw 3.4cqw}
   .jpa-grid{grid-template-columns:1fr;gap:16px}
+  .jpa-step{padding:22px 0}
   .jpa input[type=submit].wpcf7-submit{width:100%}
+  .jpa-send>p{flex:1 1 100%}
 }
 @media (prefers-reduced-motion:reduce){.jpa *{transition:none!important}}
 
@@ -195,3 +207,6 @@ body:has(.jpa) #Content{padding-top:0!important}
 .jpa .jpa-body>p,.jpa .jpa-step>p{margin:0!important}
 .jpa .wpcf7-list-item label,.jpa .wpcf7-list-item-label{color:#fff!important}
 .jpa .wpcf7-acceptance .wpcf7-list-item label,.jpa .wpcf7-acceptance .wpcf7-list-item-label{color:var(--text-2)!important}
+
+/* traka teme sa naslovom (#Subheader) ponavlja naslov; na ovoj stranici H1 je u sadržaju */
+body:has(.jpa) #Subheader{display:none!important}

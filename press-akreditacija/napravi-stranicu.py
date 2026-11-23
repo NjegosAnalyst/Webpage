@@ -67,7 +67,7 @@ def blok(j, forma, css_tag, slike):
     return (css_tag
             + '<div class="jpa">'
             + f'<header class="jpa-intro"><div class="jpa-kicker">{t["kicker"]}</div>'
-            + f'<h2 class="jpa-h2">{t["h2"][0]} <span>{t["h2"][1]}</span></h2><span class="jpa-sub">{t["sub"]}</span>'
+            + f'<h1 class="jpa-h2">{t["h2"][0]} <span>{t["h2"][1]}</span></h1><span class="jpa-sub">{t["sub"]}</span>'
             + f'<p class="jpa-lead">{t["lead"]}</p>'
             + f'<dl class="jpa-facts">{facts}</dl></header>'
             + f'<section class="jpa-sec"><h3 class="jpa-label">{t["nastupi_h"]}</h3><ul class="jpa-lineup">{kartice}</ul></section>'
