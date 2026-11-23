@@ -77,3 +77,18 @@ add_action( 'wpcf7_submit', function ( $form, $res ) {
 		update_option( 'jpa_sheets_greske', array_slice( $greske, -50 ), false );
 	}
 }, 5, 2 );
+
+/* 3) Stil stranice press akreditacije (ID 34219) se učitava ovdje, ne iz sadržaja:
+      vizuelni editor briše <link> iz sadržaja kad se stranica snimi. */
+define( 'JPA_STRANICA', 34219 );
+define( 'JPA_CSS_URL', 'https://cdn.jsdelivr.net/gh/NjegosAnalyst/Webpage@254658559ff32deb5b0862b8acfab2bae2ccbc74/press-akreditacija/press.css' );
+define( 'JPA_CSS_SRI', 'sha384-dOhOuxbZ4HHTV1QR7HFrpmBmILHgTyW/DnArILl71ZmysB36VqaD/qu1AQge6VL3' );
+add_action( 'wp_enqueue_scripts', function () {
+	if ( is_page( JPA_STRANICA ) ) {
+		wp_enqueue_style( 'jpa-press', JPA_CSS_URL, array(), null );
+	}
+}, 20 );
+add_filter( 'style_loader_tag', function ( $tag, $handle ) {
+	if ( 'jpa-press' !== $handle ) { return $tag; }
+	return str_replace( ' href=', ' integrity="' . JPA_CSS_SRI . '" crossorigin="anonymous" href=', $tag );
+}, 10, 2 );

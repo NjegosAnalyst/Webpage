@@ -129,7 +129,8 @@ def main():
             (D / f'pregled-{j.lower()}.html').write_text(stranica, encoding='utf-8')
         print('pregled-sr.html, pregled-en.html')
         return
-    css = f'<link rel="stylesheet" href="{a.css_url}" integrity="{a.css_sri}" crossorigin="anonymous">'
+    # stil učitava WPCode snippet (vizuelni editor briše <link> iz sadržaja); --css-url samo za stari način
+    css = f'<link rel="stylesheet" href="{a.css_url}" integrity="{a.css_sri}" crossorigin="anonymous">' if a.css_url else ''
     sr = blok('SR', f'[contact-form-7 id="{a.sr}"]', css, a.slike)
     en = blok('EN', f'[contact-form-7 id="{a.en}"]', css, a.slike)
     (D / 'stranica-sr.txt').write_text(sr, encoding='utf-8')

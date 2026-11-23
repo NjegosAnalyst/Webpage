@@ -12,7 +12,7 @@ body:has(.jpa) #Content{padding-top:0!important}
   --accent:#00B9F2;--ice:#9BE6FF;--navy:#0B1A45;--navy-2:#1B62AE;--warn:#FFB547;--err:#FF8080;
   --fd:'Archivo',system-ui,sans-serif;--fb:'Barlow',system-ui,sans-serif;
   position:relative;max-width:1180px;margin:0 auto;padding:clamp(40px,7vw,96px) clamp(16px,4vw,48px) clamp(64px,9vw,120px);
-  color:var(--text-2);font:400 17px/1.6 var(--fb);background:var(--bg);isolation:isolate;overflow-x:hidden;overflow-x:clip}
+  color:var(--text-2);font:400 17px/1.6 var(--fb);background:var(--bg);isolation:isolate;overflow-x:hidden;overflow-x:clip;container-type:inline-size}
 .jpa *,.jpa *::before,.jpa *::after{box-sizing:border-box}
 .jpa p{margin:0 0 14px;color:var(--text-2)!important}
 .jpa a{color:var(--ice)!important;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
@@ -27,7 +27,7 @@ body:has(.jpa) #Content{padding-top:0!important}
   background:radial-gradient(closest-side,rgba(0,185,242,.16),rgba(0,185,242,0))}
 .jpa-kicker{display:flex;align-items:center;gap:12px;font:600 12px/1.4 var(--fd);letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.72);margin-bottom:22px}
 .jpa-kicker::before{content:"";flex:0 0 34px;height:1.5px;background:linear-gradient(90deg,var(--accent),#fff,var(--accent));box-shadow:0 0 8px rgba(0,185,242,.7)}
-.jpa-h2{font-family:var(--fd)!important;font-stretch:64%;font-weight:800!important;text-transform:uppercase;font-size:clamp(64px,11.5vw,140px)!important;line-height:.84!important;letter-spacing:.5px!important;color:#fff!important}
+.jpa-h2{font-family:var(--fd)!important;font-stretch:64%;font-weight:800!important;text-transform:uppercase;font-size:clamp(40px,15cqw,140px)!important;line-height:.84!important;letter-spacing:.5px!important;color:#fff!important}
 .jpa-h2 span{display:block;background:linear-gradient(95deg,#fff 0%,#BDEFFF 45%,#00B9F2 100%);-webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent}
 .jpa-sub{display:block;margin-top:14px;font:300 clamp(24px,3.2vw,38px)/1.05 var(--fd);font-stretch:66%;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.88)}
 .jpa-lead{max-width:600px;margin:26px 0 0!important;font-size:clamp(17px,1.5vw,19px)}
@@ -168,7 +168,6 @@ body:has(.jpa) #Content{padding-top:0!important}
 /* ---------- telefon ---------- */
 @media (max-width:760px){
   .jpa{font-size:16px}
-  .jpa-h2{font-size:clamp(46px,15.5vw,84px)!important}
   .jpa-kicker{letter-spacing:2.5px;font-size:11px}
   .jpa-facts{grid-template-columns:1fr}
   .jpa-facts>div,.jpa-facts>div+div{padding:16px 0;border-left:0}
