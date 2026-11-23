@@ -1,0 +1,192 @@
+/* Press akreditacija - otvaranje sezone 2026/27 (oc-jahorina.com)
+   Stil stranice i CF7 formulara, sve pod .jpa. Betheme i globalni CSS sajta nameću
+   boje i pozadine polja, zato !important gdje treba. Tipografija prati plakate kampanje:
+   Archivo uži rez (wdth) za imena i datume, Barlow za tekst. */
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=Barlow:wght@300;400;500;600;700&display=swap");
+
+body:has(.jpa) #Content,body:has(.jpa) #Wrapper,body:has(.jpa) .content_wrapper,body:has(.jpa) .section_wrapper,body:has(.jpa) .the_content_wrapper{background:#0A1120!important}
+body:has(.jpa) #Content{padding-top:0!important}
+
+.jpa{--bg:#0A1120;--surface:#0F1829;--line:rgba(255,255,255,.1);--line-2:rgba(255,255,255,.16);
+  --text:#fff;--text-2:rgba(255,255,255,.78);--text-3:rgba(255,255,255,.55);
+  --accent:#00B9F2;--ice:#9BE6FF;--navy:#0B1A45;--navy-2:#1B62AE;--warn:#FFB547;--err:#FF8080;
+  --fd:'Archivo',system-ui,sans-serif;--fb:'Barlow',system-ui,sans-serif;
+  position:relative;max-width:1180px;margin:0 auto;padding:clamp(40px,7vw,96px) clamp(16px,4vw,48px) clamp(64px,9vw,120px);
+  color:var(--text-2);font:400 17px/1.6 var(--fb);background:var(--bg);isolation:isolate;overflow-x:hidden;overflow-x:clip}
+.jpa *,.jpa *::before,.jpa *::after{box-sizing:border-box}
+.jpa p{margin:0 0 14px;color:var(--text-2)!important}
+.jpa a{color:var(--ice)!important;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.jpa a:hover{color:#fff!important}
+.jpa :focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px!important}
+.jpa h2,.jpa h3,.jpa h4{font-family:var(--fd)!important;color:#fff!important;margin:0;letter-spacing:0}
+.jpa strong{color:#fff;font-weight:600}
+.jpa .jpa-c{font-family:var(--fd)!important;font-stretch:66%}
+
+/* ---------- uvod ---------- */
+.jpa::before{content:"";position:absolute;z-index:-1;top:-120px;right:-10%;width:70%;height:620px;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(0,185,242,.16),rgba(0,185,242,0))}
+.jpa-kicker{display:flex;align-items:center;gap:12px;font:600 12px/1.4 var(--fd);letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.72);margin-bottom:22px}
+.jpa-kicker::before{content:"";flex:0 0 34px;height:1.5px;background:linear-gradient(90deg,var(--accent),#fff,var(--accent));box-shadow:0 0 8px rgba(0,185,242,.7)}
+.jpa-h2{font-family:var(--fd)!important;font-stretch:64%;font-weight:800!important;text-transform:uppercase;font-size:clamp(64px,11.5vw,140px)!important;line-height:.84!important;letter-spacing:.5px!important;color:#fff!important}
+.jpa-h2 span{display:block;background:linear-gradient(95deg,#fff 0%,#BDEFFF 45%,#00B9F2 100%);-webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent}
+.jpa-sub{display:block;margin-top:14px;font:300 clamp(24px,3.2vw,38px)/1.05 var(--fd);font-stretch:66%;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.88)}
+.jpa-lead{max-width:600px;margin:26px 0 0!important;font-size:clamp(17px,1.5vw,19px)}
+.jpa-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 22px;margin-top:30px}
+.jpa .jpa-btn{display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 26px;border-radius:16px;text-decoration:none!important;
+  font:700 16px/1 var(--fd);color:#06131F!important;background:linear-gradient(160deg,#45D6FF 0%,#00AEE6 50%,#008BC7 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 12px 28px -12px rgba(0,185,242,.95);transition:filter .2s,transform .15s}
+.jpa .jpa-btn::after{content:"\2193";font-weight:600}
+.jpa .jpa-btn:hover{filter:brightness(1.07);color:#06131F!important}
+.jpa .jpa-btn:active{transform:scale(.97)}
+
+/* tri ključna podatka: traka sa tankim linijama */
+.jpa-facts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);margin:clamp(40px,5vw,60px) 0 0;padding:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.jpa-facts>div{padding:20px 24px 22px 0;min-width:0}
+.jpa-facts>div+div{padding-left:24px;border-left:1px solid var(--line)}
+.jpa-facts dt{font:600 11px/1.3 var(--fd);letter-spacing:2.5px;text-transform:uppercase;color:var(--text-3);margin:0 0 8px}
+.jpa-facts dd{margin:0;font:600 22px/1.2 var(--fd);font-stretch:70%;color:#fff}
+.jpa-tbd{display:inline-block;padding:0 8px;border-radius:6px;background:rgba(255,181,71,.14);color:var(--warn)!important;font-weight:600}
+
+/* ---------- sekcije ---------- */
+.jpa-sec{margin-top:clamp(64px,8vw,104px)}
+.jpa .jpa-label{display:flex;align-items:center;gap:14px;margin:0 0 22px!important;font:600 12px/1.3 var(--fd)!important;letter-spacing:3.5px!important;text-transform:uppercase;color:var(--text-3)!important}
+.jpa .jpa-label::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* ---------- nastupi: kartice kao plakati kampanje ---------- */
+.jpa-lineup{list-style:none!important;margin:0!important;padding:0!important;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media (max-width:1100px) and (min-width:761px){.jpa-lineup{grid-template-columns:repeat(2,1fr)}}
+.jpa-card{position:relative;margin:0!important;list-style:none!important;aspect-ratio:4/5;border-radius:22px;overflow:hidden;isolation:isolate;container-type:inline-size;
+  background:radial-gradient(120% 85% at 88% 8%,#fff 0%,#F1F5F9 42%,#D8E3EE 100%);
+  box-shadow:0 0 0 1px rgba(255,255,255,.1),0 34px 60px -30px rgba(0,0,0,.95)}
+.jpa-card::before{display:none!important}
+.jpa-card img{position:absolute!important;right:0;bottom:0;z-index:1;height:100%!important;width:auto!important;max-width:none!important;margin:0!important;border-radius:0!important;
+  mix-blend-mode:multiply;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 34%);mask-image:linear-gradient(90deg,transparent 0,#000 34%)}
+.jpa-wm{position:absolute;z-index:0;left:-3cqw;bottom:-22cqw;font:800 118cqw/1 var(--fd);font-stretch:62%;color:rgba(11,26,69,.05);pointer-events:none}
+.jpa-card-txt{position:absolute;z-index:2;left:8cqw;top:8cqw;right:38cqw}
+.jpa-name{display:block;font-family:var(--fd);font-stretch:62%;font-weight:800;text-transform:uppercase;font-size:11.4cqw;line-height:.9;letter-spacing:.2px;padding-top:.16em;margin-top:-.16em;
+  background:linear-gradient(95deg,var(--navy) 0%,var(--navy-2) 100%);-webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent}
+.jpa-name span{display:block;white-space:nowrap}
+.jpa-card time{display:block;margin-top:2.5cqw;font:300 8.6cqw/1 var(--fd);font-stretch:62%;color:var(--navy);letter-spacing:.3px}
+.jpa-tag{display:inline-block;margin-bottom:3cqw;padding:1.2cqw 2.6cqw;border-radius:999px;font:500 4.4cqw/1 var(--fd);font-stretch:70%;letter-spacing:1.5px;text-transform:uppercase;color:#fff;background:var(--navy)}
+
+/* ---------- pravila ---------- */
+.jpa-rules ul{list-style:none!important;margin:0!important;padding:0!important;max-width:760px}
+.jpa-rules li{position:relative;margin:0!important;padding:0 0 0 22px;list-style:none!important;line-height:1.6;color:var(--text-2)}
+.jpa-rules li+li{margin-top:12px!important}
+.jpa-rules li::before{content:"";position:absolute;left:0;top:.72em;width:8px;height:1.5px;background:var(--accent)}
+
+/* ---------- formular ---------- */
+.jpa .wpcf7{margin:0}
+.jpa .wpcf7 form>p,.jpa .wpcf7 form br{display:none}
+.jpa-step{display:grid;grid-template-columns:200px 1fr;gap:14px clamp(24px,4vw,56px);padding:clamp(22px,3vw,34px) 0;margin:0!important}
+.jpa-step+.jpa-step{border-top:1px solid var(--line)}
+.jpa-side{min-width:0}
+.jpa-side h4{font:600 17px/1.3 var(--fd)!important;color:#fff!important;padding-top:4px}
+.jpa-opt{display:block;margin-top:2px;font:400 14px/1.3 var(--fb);color:var(--text-3)}
+.jpa-req{color:var(--accent)}
+.jpa-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 16px;min-width:0}
+.jpa-f{display:flex;flex-direction:column;gap:8px;min-width:0}
+.jpa-f--wide{grid-column:1/-1}
+.jpa-f>label{font:600 14px/1.3 var(--fb);letter-spacing:.2px;color:rgba(255,255,255,.92)!important;margin:0!important}
+.jpa-f>label b{color:var(--accent);font-weight:700}
+.jpa-hint{font-size:13.5px;line-height:1.45;color:var(--text-3)}
+.jpa .wpcf7-form-control-wrap{display:block;position:relative}
+
+.jpa input[type=text],.jpa input[type=email],.jpa input[type=tel],.jpa input[type=url],.jpa select,.jpa textarea{
+  -webkit-appearance:none;appearance:none;display:block;width:100%!important;max-width:none!important;margin:0!important;
+  min-height:54px;padding:14px 16px!important;border-radius:14px!important;border:0!important;
+  font:400 17px/1.4 var(--fb)!important;color:#fff!important;background:rgba(255,255,255,.035)!important;
+  box-shadow:inset 0 0 0 1px var(--line-2)!important;transition:box-shadow .2s,background .2s}
+.jpa textarea{min-height:120px;resize:vertical}
+.jpa input::placeholder,.jpa textarea::placeholder{color:rgba(255,255,255,.34)!important;opacity:1}
+.jpa input:not([type=checkbox]):not([type=submit]):hover,.jpa select:hover,.jpa textarea:hover{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)!important}
+.jpa input:not([type=checkbox]):not([type=submit]):focus,.jpa select:focus,.jpa textarea:focus{outline:0!important;background:rgba(0,185,242,.05)!important;box-shadow:inset 0 0 0 1.5px var(--accent),0 0 0 4px rgba(0,185,242,.14)!important}
+.jpa select{padding-right:46px!important;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%239BE6FF' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;background-position:right 18px center!important}
+.jpa select option{color:#fff;background:#111A2C}
+.jpa input:-webkit-autofill{-webkit-text-fill-color:#fff!important;-webkit-box-shadow:inset 0 0 0 1px var(--line-2),inset 0 0 0 100px #0F1A2D!important;caret-color:#fff}
+
+/* checkbox kartice */
+.jpa .wpcf7-checkbox,.jpa .wpcf7-acceptance{display:grid;gap:10px}
+.jpa-pick .wpcf7-checkbox{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.jpa .wpcf7-list-item{display:block;margin:0!important}
+.jpa .wpcf7-list-item label{display:flex;align-items:flex-start;gap:12px;min-height:54px;padding:15px 16px;border-radius:14px;cursor:pointer;
+  background:rgba(255,255,255,.03);box-shadow:inset 0 0 0 1px var(--line-2);transition:box-shadow .2s,background .2s;color:#fff;font-size:16px;line-height:1.4}
+.jpa .wpcf7-list-item label:hover{background:rgba(255,255,255,.055)}
+.jpa .wpcf7-list-item input{-webkit-appearance:none;appearance:none;flex:0 0 22px;width:22px;height:22px;margin:0!important;border-radius:7px;
+  background:transparent;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.42);cursor:pointer;display:grid;place-items:center;transition:background .15s,box-shadow .15s}
+.jpa .wpcf7-list-item input::after{content:"";width:6px;height:11px;border:solid #0A1120;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px);opacity:0}
+.jpa .wpcf7-list-item input:checked{background:var(--accent)!important;box-shadow:none!important}
+.jpa .wpcf7-list-item input:checked::after{opacity:1}
+.jpa .wpcf7-list-item input:focus-visible{outline:2px solid var(--accent)!important;outline-offset:2px!important}
+.jpa .wpcf7-list-item label:has(input:checked){background:rgba(0,185,242,.09);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.jpa .wpcf7-list-item-label{padding-top:1px}
+.jpa-pick .wpcf7-list-item-label{font:600 17px/1.25 var(--fd);font-stretch:72%;letter-spacing:.2px}
+.jpa .wpcf7-acceptance .wpcf7-list-item label{font-size:15px;color:var(--text-2)}
+.jpa-pick .jpa-f{margin-top:16px}
+
+/* snimatelj / fotograf: otvara se */
+.jpa details.jpa-more{border-radius:16px;box-shadow:inset 0 0 0 1px var(--line-2);background:rgba(255,255,255,.02)}
+.jpa details.jpa-more>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;min-height:56px;padding:0 16px;font:600 16px/1.3 var(--fb);color:#fff}
+.jpa details.jpa-more>summary::-webkit-details-marker{display:none}
+.jpa details.jpa-more>summary::before{content:"+";flex:0 0 28px;height:28px;border-radius:9px;display:grid;place-items:center;font:400 20px/1 var(--fb);color:#06131F;background:var(--ice)}
+.jpa details.jpa-more[open]>summary::before{content:"\2212"}
+.jpa details.jpa-more>.jpa-grid{padding:4px 16px 18px}
+
+/* slanje */
+.jpa-send{display:flex;flex-wrap:wrap;align-items:center;gap:16px 24px;margin-left:calc(200px + clamp(24px,4vw,56px));padding-top:8px}
+.jpa input[type=submit].wpcf7-submit{-webkit-appearance:none;appearance:none;margin:0!important;height:58px;padding:0 34px!important;border:0!important;border-radius:16px!important;cursor:pointer;
+  font:700 17px/1 var(--fd)!important;letter-spacing:.2px;color:#06131F!important;text-transform:none!important;
+  background:linear-gradient(160deg,#45D6FF 0%,#00AEE6 50%,#008BC7 100%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 1px rgba(255,255,255,.18),0 12px 28px -12px rgba(0,185,242,.95)!important;transition:filter .2s,transform .15s}
+.jpa input[type=submit].wpcf7-submit:hover{filter:brightness(1.07)}
+.jpa input[type=submit].wpcf7-submit:active{transform:scale(.97)}
+.jpa input[type=submit].wpcf7-submit:disabled{filter:grayscale(.6) brightness(.8);cursor:wait}
+.jpa .wpcf7-spinner{background:var(--accent)!important;margin:0!important}
+.jpa-legal{flex:1 1 280px;font-size:13px!important;line-height:1.5!important;color:var(--text-3)!important;margin:0!important}
+.jpa-legal a{color:var(--text-2)!important}
+
+/* greške i poruke CF7 */
+.jpa .wpcf7-not-valid-tip{margin-top:6px;font:500 14px/1.4 var(--fb);color:var(--err)!important}
+.jpa .wpcf7-not-valid{box-shadow:inset 0 0 0 1.5px var(--err)!important}
+.jpa .wpcf7-checkbox.wpcf7-not-valid .wpcf7-list-item label,.jpa .wpcf7-acceptance.wpcf7-not-valid .wpcf7-list-item label{box-shadow:inset 0 0 0 1.5px var(--err)}
+.jpa .wpcf7 form .wpcf7-response-output{margin:24px 0 0!important;padding:16px 18px!important;border:0!important;border-radius:14px;font:500 16px/1.5 var(--fb);color:#fff!important;background:rgba(255,255,255,.05)!important;box-shadow:inset 0 0 0 1px var(--line-2)}
+.jpa .wpcf7 form.sent .wpcf7-response-output{background:rgba(0,185,242,.12)!important;box-shadow:inset 0 0 0 1.5px var(--accent)}
+.jpa .wpcf7 form.invalid .wpcf7-response-output,.jpa .wpcf7 form.unaccepted .wpcf7-response-output,.jpa .wpcf7 form.failed .wpcf7-response-output,.jpa .wpcf7 form.spam .wpcf7-response-output{background:rgba(255,128,128,.1)!important;box-shadow:inset 0 0 0 1.5px var(--err)}
+.jpa .wpcf7 form.init .wpcf7-response-output{display:none}
+.jpa .screen-reader-response{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+.jpa-contact{margin-top:32px!important;text-align:center;font-size:15px;color:var(--text-3)!important}
+
+/* ---------- tablet ---------- */
+@media (max-width:1000px){
+  .jpa-step{grid-template-columns:1fr;gap:12px}
+  .jpa-send{margin-left:0}
+  .jpa-opt{display:inline;margin-left:6px}
+}
+/* ---------- telefon ---------- */
+@media (max-width:760px){
+  .jpa{font-size:16px}
+  .jpa-h2{font-size:clamp(46px,15.5vw,84px)!important}
+  .jpa-kicker{letter-spacing:2.5px;font-size:11px}
+  .jpa-facts{grid-template-columns:1fr}
+  .jpa-facts>div,.jpa-facts>div+div{padding:16px 0;border-left:0}
+  .jpa-facts>div+div{border-top:1px solid var(--line)}
+  .jpa-facts dd{font-size:20px}
+  .jpa-actions .jpa-btn{flex:1 1 100%;justify-content:center}
+  .jpa-lineup{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin:0 calc(-1 * clamp(16px,4vw,48px))!important;padding:0 clamp(16px,4vw,48px) 6px!important;scrollbar-width:none}
+  .jpa-lineup::-webkit-scrollbar{display:none}
+  .jpa-card{flex:0 0 78%;scroll-snap-align:center}
+  .jpa-grid{grid-template-columns:1fr;gap:16px}
+  .jpa input[type=submit].wpcf7-submit{width:100%}
+}
+@media (prefers-reduced-motion:reduce){.jpa *{transition:none!important}}
+
+/* dodatni novinari: "Dodaj još jednog novinara" otvara isti blok polja */
+.jpa details.jpa-add{margin-top:18px}
+.jpa details.jpa-add details.jpa-add{margin:6px 16px 18px}
+.jpa details.jpa-add .jpa-otv{display:none}
+.jpa details.jpa-add[open]>summary .jpa-zat{display:none}
+.jpa details.jpa-add[open]>summary .jpa-otv{display:inline}
+.jpa details.jpa-add[open]>summary{font-family:var(--fd);font-weight:600}

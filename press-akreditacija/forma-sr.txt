@@ -1,0 +1,64 @@
+<div class="jpa-step" role="group" aria-labelledby="jpa-k1"><div class="jpa-side"><h4 id="jpa-k1">Medij</h4></div>
+<div class="jpa-body">
+<div class="jpa-grid">
+<div class="jpa-f jpa-f--wide"><label for="jpa-medij-naziv">Naziv medija <b>*</b></label>[text* medij-naziv autocomplete:organization id:jpa-medij-naziv]</div>
+<div class="jpa-f"><label for="jpa-medij-vrsta">Vrsta medija <b>*</b></label>[select* medij-vrsta first_as_label "Izaberite" "TV" "Radio" "Štampa" "Internet portal" "Novinska agencija" "Fotograf / freelance" id:jpa-medij-vrsta]</div>
+<div class="jpa-f"><label for="jpa-medij-link">Link na medij <b>*</b></label>[url* medij-link placeholder "https://" id:jpa-medij-link]</div>
+<div class="jpa-f"><label for="jpa-medij-drzava">Država <b>*</b></label>[text* medij-drzava autocomplete:country-name id:jpa-medij-drzava]</div>
+<div class="jpa-f"><label for="jpa-medij-grad">Grad <b>*</b></label>[text* medij-grad autocomplete:address-level2 id:jpa-medij-grad]</div>
+<div class="jpa-f"><label for="jpa-medij-email">Službeni email redakcije <b>*</b></label>[email* medij-email id:jpa-medij-email]<span class="jpa-hint">Na nju šaljemo odgovor.</span></div>
+<div class="jpa-f"><label for="jpa-medij-telefon">Telefon redakcije <b>*</b></label>[tel* medij-telefon placeholder "+387 …" id:jpa-medij-telefon]</div>
+</div>
+</div></div>
+<div class="jpa-step" role="group" aria-labelledby="jpa-k2"><div class="jpa-side"><h4 id="jpa-k2">Novinar</h4></div>
+<div class="jpa-body">
+<div class="jpa-grid">
+<div class="jpa-f"><label for="jpa-nov-ime">Ime i prezime <b>*</b></label>[text* nov-ime autocomplete:name id:jpa-nov-ime]</div>
+<div class="jpa-f"><label for="jpa-nov-funkcija">Funkcija <b>*</b></label>[text* nov-funkcija id:jpa-nov-funkcija]</div>
+<div class="jpa-f"><label for="jpa-nov-mobilni">Mobilni telefon <b>*</b></label>[tel* nov-mobilni autocomplete:tel placeholder "+387 6…" id:jpa-nov-mobilni]</div>
+<div class="jpa-f"><label for="jpa-nov-email">Email <b>*</b></label>[email* nov-email autocomplete:email id:jpa-nov-email]</div>
+</div>
+<details class="jpa-more jpa-add"><summary><span class="jpa-zat">Dodaj još jednog novinara</span><span class="jpa-otv">Novinar 2</span></summary>
+<div class="jpa-grid">
+<div class="jpa-f"><label for="jpa-nov2-ime">Ime i prezime</label>[text nov2-ime id:jpa-nov2-ime]</div>
+<div class="jpa-f"><label for="jpa-nov2-funkcija">Funkcija</label>[text nov2-funkcija id:jpa-nov2-funkcija]</div>
+<div class="jpa-f"><label for="jpa-nov2-mobilni">Mobilni telefon</label>[tel nov2-mobilni placeholder "+387 6…" id:jpa-nov2-mobilni]</div>
+<div class="jpa-f"><label for="jpa-nov2-email">Email</label>[email nov2-email id:jpa-nov2-email]</div>
+</div>
+<details class="jpa-more jpa-add"><summary><span class="jpa-zat">Dodaj još jednog novinara</span><span class="jpa-otv">Novinar 3</span></summary>
+<div class="jpa-grid">
+<div class="jpa-f"><label for="jpa-nov3-ime">Ime i prezime</label>[text nov3-ime id:jpa-nov3-ime]</div>
+<div class="jpa-f"><label for="jpa-nov3-funkcija">Funkcija</label>[text nov3-funkcija id:jpa-nov3-funkcija]</div>
+<div class="jpa-f"><label for="jpa-nov3-mobilni">Mobilni telefon</label>[tel nov3-mobilni placeholder "+387 6…" id:jpa-nov3-mobilni]</div>
+<div class="jpa-f"><label for="jpa-nov3-email">Email</label>[email nov3-email id:jpa-nov3-email]</div>
+</div>
+</details>
+</details>
+</div></div>
+<div class="jpa-step" role="group" aria-labelledby="jpa-k3"><div class="jpa-side"><h4 id="jpa-k3">Snimatelj / fotograf <span class="jpa-opt">opciono</span></h4></div>
+<div class="jpa-body">
+<details class="jpa-more"><summary>Dodaj snimatelja ili fotografa</summary>
+<div class="jpa-grid">
+<div class="jpa-f"><label for="jpa-sni-ime">Ime i prezime</label>[text sni-ime id:jpa-sni-ime]</div>
+<div class="jpa-f"><label for="jpa-sni-funkcija">Funkcija</label>[text sni-funkcija id:jpa-sni-funkcija]</div>
+<div class="jpa-f"><label for="jpa-sni-mobilni">Mobilni telefon</label>[tel sni-mobilni placeholder "+387 6…" id:jpa-sni-mobilni]</div>
+<div class="jpa-f"><label for="jpa-sni-email">Email</label>[email sni-email id:jpa-sni-email]</div>
+</div>
+</details>
+</div></div>
+<div class="jpa-step jpa-pick" role="group" aria-labelledby="jpa-k4"><div class="jpa-side"><h4 id="jpa-k4">Nastupi</h4></div>
+<div class="jpa-body">
+[checkbox* nastupi use_label_element "Željko Joksimović · 27. 11.|Željko Joksimović (27. 11.)" "Aco Pejović · 27. 11.|Aco Pejović (27. 11.)" "Nikola Rokvić · 28. 11.|Nikola Rokvić (28. 11.)" "Naomi Campbell · 28. 11.|Naomi Campbell DJ set (28. 11.)"]
+</div></div>
+<div class="jpa-step jpa-pick" role="group" aria-labelledby="jpa-k5"><div class="jpa-side"><h4 id="jpa-k5">Posebne potrebe <span class="jpa-opt">opciono</span></h4></div>
+<div class="jpa-body">
+[checkbox potrebe-izbor use_label_element "Parking za vozilo medija|Parking" "Pozicija za kameru ili stativ|Pozicija za kameru" "Zahtjev za intervju|Intervju"]
+<div class="jpa-f jpa-f--wide"><label for="jpa-potrebe">Detalji</label>[textarea potrebe x4 id:jpa-potrebe]</div>
+</div></div>
+<div class="jpa-step" role="group" aria-labelledby="jpa-k6"><div class="jpa-side"><h4 id="jpa-k6">Saglasnost</h4></div>
+<div class="jpa-body">
+[acceptance saglasnost]Saglasan/na sam sa obradom ličnih podataka u skladu sa <a href="https://www.oc-jahorina.com/politika-privatnosti/" target="_blank" rel="noopener">politikom privatnosti</a>.[/acceptance]
+[acceptance pravila]Prihvatam pravila akreditacije.[/acceptance]
+</div></div>
+[hidden obrazac "press-otvaranje-2627"][hidden jezik "SR"]
+<div class="jpa-send">[submit "Pošalji prijavu"]<p class="jpa-legal">Zaštićeno reCAPTCHA sistemom, važe Googleova <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">pravila privatnosti</a> i <a href="https://policies.google.com/terms" target="_blank" rel="noopener">uslovi korišćenja</a>.</p></div>
