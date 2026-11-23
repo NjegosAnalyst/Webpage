@@ -87,8 +87,8 @@ body:has(.jpa) #Content{padding-top:0!important}
 .jpa-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 16px;min-width:0}
 .jpa-f{display:flex;flex-direction:column;gap:8px;min-width:0}
 .jpa-f--wide{grid-column:1/-1}
-.jpa-f>label{font:600 14px/1.3 var(--fb);letter-spacing:.2px;color:rgba(255,255,255,.92)!important;margin:0!important}
-.jpa-f>label b{color:var(--accent);font-weight:700}
+.jpa .jpa-f label{font:600 14px/1.3 var(--fb);letter-spacing:.2px;color:rgba(255,255,255,.92)!important;margin:0!important}
+.jpa .jpa-f label b{color:var(--accent);font-weight:700}
 .jpa-hint{font-size:13.5px;line-height:1.45;color:var(--text-3)}
 .jpa .wpcf7-form-control-wrap{display:block;position:relative}
 
@@ -190,3 +190,9 @@ body:has(.jpa) #Content{padding-top:0!important}
 .jpa details.jpa-add[open]>summary .jpa-zat{display:none}
 .jpa details.jpa-add[open]>summary .jpa-otv{display:inline}
 .jpa details.jpa-add[open]>summary{font-family:var(--fd);font-weight:600}
+
+/* CF7 (wpautop) umeće <p> oko natpisa i polja; tema boji natpise u sivo */
+.jpa .jpa-f>p{display:flex;flex-direction:column;gap:8px;margin:0!important;padding:0!important}
+.jpa .jpa-body>p,.jpa .jpa-step>p{margin:0!important}
+.jpa .wpcf7-list-item label,.jpa .wpcf7-list-item-label{color:#fff!important}
+.jpa .wpcf7-acceptance .wpcf7-list-item label,.jpa .wpcf7-acceptance .wpcf7-list-item-label{color:var(--text-2)!important}
