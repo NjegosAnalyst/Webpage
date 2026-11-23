@@ -68,9 +68,12 @@ def napravi(j):
 
     def polje(naziv, oznaka, wide=False, hint=''):
         oznaka = oznaka.replace(' placeholder ""', '')
-        idv = 'jpa-' + oznaka.split()[1]
+        tip, ime, *ostalo = oznaka.split(' ', 2)
+        idv = 'jpa-' + ime
+        # CF7: sve opcije (id:, autocomplete:, placeholder) moraju biti ispred vrijednosti u navodnicima
+        oznaka = ' '.join([tip, ime, f'id:{idv}'] + ostalo)
         h = f'<span class="jpa-hint">{hint}</span>' if hint else ''
-        return f'<div class="jpa-f{" jpa-f--wide" if wide else ""}"><label for="{idv}">{naziv}</label>[{oznaka} id:{idv}]{h}</div>'
+        return f'<div class="jpa-f{" jpa-f--wide" if wide else ""}"><label for="{idv}">{naziv}</label>[{oznaka}]{h}</div>'
 
     def korak(n, naslov, opis, tijelo, klasa='', req=False):
         o = f' <span class="jpa-opt">{opis}</span>' if opis else ''

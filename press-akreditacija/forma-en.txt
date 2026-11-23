@@ -1,35 +1,35 @@
 <div class="jpa-step" role="group" aria-labelledby="jpa-k1"><div class="jpa-side"><h4 id="jpa-k1">Media outlet</h4></div>
 <div class="jpa-body">
 <div class="jpa-grid">
-<div class="jpa-f jpa-f--wide"><label for="jpa-medij-naziv">Media outlet name <b>*</b></label>[text* medij-naziv autocomplete:organization id:jpa-medij-naziv]</div>
-<div class="jpa-f"><label for="jpa-medij-vrsta">Media type <b>*</b></label>[select* medij-vrsta first_as_label "Select" "TV|TV" "Radio|Radio" "Print|Štampa" "Online portal|Internet portal" "News agency|Novinska agencija" "Photographer / freelance|Fotograf / freelance" id:jpa-medij-vrsta]</div>
-<div class="jpa-f"><label for="jpa-medij-link">Website of the outlet <b>*</b></label>[url* medij-link placeholder "https://" id:jpa-medij-link]</div>
-<div class="jpa-f"><label for="jpa-medij-drzava">Country <b>*</b></label>[text* medij-drzava autocomplete:country-name id:jpa-medij-drzava]</div>
-<div class="jpa-f"><label for="jpa-medij-grad">City <b>*</b></label>[text* medij-grad autocomplete:address-level2 id:jpa-medij-grad]</div>
+<div class="jpa-f jpa-f--wide"><label for="jpa-medij-naziv">Media outlet name <b>*</b></label>[text* medij-naziv id:jpa-medij-naziv autocomplete:organization]</div>
+<div class="jpa-f"><label for="jpa-medij-vrsta">Media type <b>*</b></label>[select* medij-vrsta id:jpa-medij-vrsta first_as_label "Select" "TV|TV" "Radio|Radio" "Print|Štampa" "Online portal|Internet portal" "News agency|Novinska agencija" "Photographer / freelance|Fotograf / freelance"]</div>
+<div class="jpa-f"><label for="jpa-medij-link">Website of the outlet <b>*</b></label>[url* medij-link id:jpa-medij-link placeholder "https://"]</div>
+<div class="jpa-f"><label for="jpa-medij-drzava">Country <b>*</b></label>[text* medij-drzava id:jpa-medij-drzava autocomplete:country-name]</div>
+<div class="jpa-f"><label for="jpa-medij-grad">City <b>*</b></label>[text* medij-grad id:jpa-medij-grad autocomplete:address-level2]</div>
 <div class="jpa-f"><label for="jpa-medij-email">Official newsroom email <b>*</b></label>[email* medij-email id:jpa-medij-email]<span class="jpa-hint">We reply to this address.</span></div>
-<div class="jpa-f"><label for="jpa-medij-telefon">Newsroom phone <b>*</b></label>[tel* medij-telefon placeholder "+387 …" id:jpa-medij-telefon]</div>
+<div class="jpa-f"><label for="jpa-medij-telefon">Newsroom phone <b>*</b></label>[tel* medij-telefon id:jpa-medij-telefon placeholder "+387 …"]</div>
 </div>
 </div></div>
 <div class="jpa-step" role="group" aria-labelledby="jpa-k2"><div class="jpa-side"><h4 id="jpa-k2">Journalist</h4></div>
 <div class="jpa-body">
 <div class="jpa-grid">
-<div class="jpa-f"><label for="jpa-nov-ime">Full name <b>*</b></label>[text* nov-ime autocomplete:name id:jpa-nov-ime]</div>
+<div class="jpa-f"><label for="jpa-nov-ime">Full name <b>*</b></label>[text* nov-ime id:jpa-nov-ime autocomplete:name]</div>
 <div class="jpa-f"><label for="jpa-nov-funkcija">Position <b>*</b></label>[text* nov-funkcija id:jpa-nov-funkcija]</div>
-<div class="jpa-f"><label for="jpa-nov-mobilni">Mobile phone <b>*</b></label>[tel* nov-mobilni autocomplete:tel placeholder "+387 6…" id:jpa-nov-mobilni]</div>
-<div class="jpa-f"><label for="jpa-nov-email">Email <b>*</b></label>[email* nov-email autocomplete:email id:jpa-nov-email]</div>
+<div class="jpa-f"><label for="jpa-nov-mobilni">Mobile phone <b>*</b></label>[tel* nov-mobilni id:jpa-nov-mobilni autocomplete:tel placeholder "+387 6…"]</div>
+<div class="jpa-f"><label for="jpa-nov-email">Email <b>*</b></label>[email* nov-email id:jpa-nov-email autocomplete:email]</div>
 </div>
 <details class="jpa-more jpa-add"><summary><span class="jpa-zat">Add another journalist</span><span class="jpa-otv">Journalist 2</span></summary>
 <div class="jpa-grid">
 <div class="jpa-f"><label for="jpa-nov2-ime">Full name</label>[text nov2-ime id:jpa-nov2-ime]</div>
 <div class="jpa-f"><label for="jpa-nov2-funkcija">Position</label>[text nov2-funkcija id:jpa-nov2-funkcija]</div>
-<div class="jpa-f"><label for="jpa-nov2-mobilni">Mobile phone</label>[tel nov2-mobilni placeholder "+387 6…" id:jpa-nov2-mobilni]</div>
+<div class="jpa-f"><label for="jpa-nov2-mobilni">Mobile phone</label>[tel nov2-mobilni id:jpa-nov2-mobilni placeholder "+387 6…"]</div>
 <div class="jpa-f"><label for="jpa-nov2-email">Email</label>[email nov2-email id:jpa-nov2-email]</div>
 </div>
 <details class="jpa-more jpa-add"><summary><span class="jpa-zat">Add another journalist</span><span class="jpa-otv">Journalist 3</span></summary>
 <div class="jpa-grid">
 <div class="jpa-f"><label for="jpa-nov3-ime">Full name</label>[text nov3-ime id:jpa-nov3-ime]</div>
 <div class="jpa-f"><label for="jpa-nov3-funkcija">Position</label>[text nov3-funkcija id:jpa-nov3-funkcija]</div>
-<div class="jpa-f"><label for="jpa-nov3-mobilni">Mobile phone</label>[tel nov3-mobilni placeholder "+387 6…" id:jpa-nov3-mobilni]</div>
+<div class="jpa-f"><label for="jpa-nov3-mobilni">Mobile phone</label>[tel nov3-mobilni id:jpa-nov3-mobilni placeholder "+387 6…"]</div>
 <div class="jpa-f"><label for="jpa-nov3-email">Email</label>[email nov3-email id:jpa-nov3-email]</div>
 </div>
 </details>
@@ -41,7 +41,7 @@
 <div class="jpa-grid">
 <div class="jpa-f"><label for="jpa-sni-ime">Full name</label>[text sni-ime id:jpa-sni-ime]</div>
 <div class="jpa-f"><label for="jpa-sni-funkcija">Position</label>[text sni-funkcija id:jpa-sni-funkcija]</div>
-<div class="jpa-f"><label for="jpa-sni-mobilni">Mobile phone</label>[tel sni-mobilni placeholder "+387 6…" id:jpa-sni-mobilni]</div>
+<div class="jpa-f"><label for="jpa-sni-mobilni">Mobile phone</label>[tel sni-mobilni id:jpa-sni-mobilni placeholder "+387 6…"]</div>
 <div class="jpa-f"><label for="jpa-sni-email">Email</label>[email sni-email id:jpa-sni-email]</div>
 </div>
 </details>
@@ -53,7 +53,7 @@
 <div class="jpa-step jpa-pick" role="group" aria-labelledby="jpa-k5"><div class="jpa-side"><h4 id="jpa-k5">Special requests <span class="jpa-opt">optional</span></h4></div>
 <div class="jpa-body">
 [checkbox potrebe-izbor use_label_element "Parking for the media vehicle|Parking" "Camera or tripod position|Pozicija za kameru" "Interview request|Intervju"]
-<div class="jpa-f jpa-f--wide"><label for="jpa-potrebe">Details</label>[textarea potrebe x4 id:jpa-potrebe]</div>
+<div class="jpa-f jpa-f--wide"><label for="jpa-potrebe">Details</label>[textarea potrebe id:jpa-potrebe x4]</div>
 </div></div>
 <div class="jpa-step" role="group" aria-labelledby="jpa-k6"><div class="jpa-side"><h4 id="jpa-k6">Consent</h4></div>
 <div class="jpa-body">
