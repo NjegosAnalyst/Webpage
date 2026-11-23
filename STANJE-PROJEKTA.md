@@ -193,3 +193,10 @@ Pročitaj ovo prije rada. Komunikacija sa korisnikom: srpski, latinica, ijekavic
 - Pregled vijesti (artifact): https://claude.ai/artifact/YVHQy2joUTm9avVS1mP3Wv
 - Pregled foto galerije (artifact): https://claude.ai/artifact/87m6WYwwAmfBJVU7fzxa5R
 - Društvene mreže: FB https://www.facebook.com/JahorinaOC/?locale=sr_RS · YT https://www.youtube.com/@jahorinaoc · IG https://www.instagram.com/jahorina/ · TikTok https://www.tiktok.com/@jahorinaoc
+
+## Press akreditacija – otvaranje sezone 2026/27 (23. 11. 2026)
+- Folder `press-akreditacija/`. Izvori: `napravi-formu.py` (CF7 šabloni SR/EN), `napravi-mail.py` (mailovi), `napravi-stranicu.py` (sadržaj stranice + lokalni pregled), `press.css` (stil, jsDelivr + SRI), `apps-script.gs`, `wpcode-press.php`.
+- Na sajtu (PRIVATNO, noindex/nofollow, čeka korisnikov „kreni“ za objavu): stranica **34219** `/press-akreditacija-otvaranje-sezone-2026-27/` (SR + `/en/`), klasični sadržaj sa `[:SH]…[:en]…[:]`; stil `press.css` **@254658559ff3…** (SRI sha384-dOhOux…). CF7 **34213** (SR, shortcode `11796e9`) i **34214** (EN, `8b896e2`): Mail 1 → marketing@oc-jahorina.com (Reply-To email redakcije), Mail 2 → novinar + Cc redakcija; HTML + „exclude blank“. Flamingo instaliran (serijski broj prijave). Slike 34215–34218. WPCode PHP snippet **34221** (everywhere): provjera snimatelj/novinar 2/3 + slanje reda u Google Sheets.
+- **CF7 pravilo:** opcije (`id:`, `placeholder`, `autocomplete:`) moraju biti ISPRED vrijednosti u navodnicima, inače se oznaka ispiše kao tekst. CF7 wpautop umeće `<p>` u `.jpa-f` (stil to pokriva).
+- Google tabela „Press akreditacije – otvaranje 2026/27“ (nalog korisnika), list „Prijave“, Apps Script web app (Execute as me, Anyone). URL web aplikacije je SAMO u snippetu 34221 na sajtu, ne u repou.
+- Testovi 23. 11.: SR prijava (prije veze sa tabelom) i EN prijava → poruka o uspjehu, Flamingo, red u tabeli. Mail nije provjeren iz sesije (nema pristupa marketing@). Probne prijave za brisanje: 2 u Flamingu, 1 red u tabeli.
