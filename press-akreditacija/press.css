@@ -208,5 +208,9 @@ body:has(.jpa) #Content{padding-top:0!important}
 .jpa .wpcf7-list-item label,.jpa .wpcf7-list-item-label{color:#fff!important}
 .jpa .wpcf7-acceptance .wpcf7-list-item label,.jpa .wpcf7-acceptance .wpcf7-list-item-label{color:var(--text-2)!important}
 
-/* traka teme sa naslovom (#Subheader) ponavlja naslov; na ovoj stranici H1 je u sadržaju */
-body:has(.jpa) #Subheader{display:none!important}
+/* traka teme sa naslovom (#Subheader) ponavlja naslov; na ovoj stranici H1 je u sadržaju.
+   Traka ostaje samo kao razmak ispod fiksnog zaglavlja (92 px računar, 76 px telefon). */
+body:has(.jpa) #Subheader{padding:92px 0 0!important;min-height:0!important;background:#0A1120!important;border:0!important;box-shadow:none!important}
+body:has(.jpa) #Subheader::before,body:has(.jpa) #Subheader::after{display:none!important}
+body:has(.jpa) #Subheader .container{display:none!important}
+@media (max-width:760px){body:has(.jpa) #Subheader{padding-top:76px!important}}
