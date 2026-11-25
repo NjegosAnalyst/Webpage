@@ -24,7 +24,7 @@ T = {
   h2=('Press', 'akreditacija'), sub='Otvaranje zimske sezone 2026/27',
   lead='Akreditacije za predstavnike medija (novinare, snimatelje i fotografe) realizuju se putem ovog formulara.',
   cta='Prijavi se',
-  facts=[('Prijave do', '26. 11. do 12h'), ('Preuzimanje akreditacija', '27. 11. do 14h, kancelarije Olimpijskog centra Jahorina')],
+  facts=[('Prijave do', '26. 11. do 21h'), ('Preuzimanje akreditacija', '27. 11. do 14h, kancelarije Olimpijskog centra Jahorina')],
   nastupi_h='Nastupi',
   pravila_h='Pravila',
   pravila=[
@@ -38,7 +38,7 @@ T = {
   h2=('Press', 'accreditation'), sub='2026/27 winter season opening',
   lead='Accreditation for media representatives (journalists, camera operators and photographers) is handled through this form.',
   cta='Apply',
-  facts=[('Apply by', '26 Nov, 12:00'), ('Badge pick-up', '27 Nov by 14:00, Olympic Centre Jahorina offices')],
+  facts=[('Apply by', '26 Nov, 21:00'), ('Badge pick-up', '27 Nov by 14:00, Olympic Centre Jahorina offices')],
   nastupi_h='Performances',
   pravila_h='Rules',
   pravila=[
